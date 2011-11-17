@@ -1,0 +1,71 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "pyramidal-region.hh"
+#include <cassert>
+//******************************************************************************
+namespace Map2d
+{
+  //******************************************************************************
+  //Constructeurs
+  //******************************************************************************
+
+  INLINE
+  CSplitGrey::CSplitGrey() :
+    CCriterionSplit (),  
+    FMergeThreshold  ( 0 ) // On n'éclate pas les régions homogènes
+  {}
+  //------------------------------------------------------------------------------
+  INLINE
+  CSplitGrey::CSplitGrey(CRegion* ARegion, unsigned int AMergeThreshold) :
+    CCriterionSplit(ARegion)
+  {
+    FMergeThreshold = AMergeThreshold;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CSplitGrey::~CSplitGrey(){}
+  
+  //******************************************************************************
+  //Accesseurs
+  //******************************************************************************
+  
+  INLINE
+  unsigned int CSplitGrey::getMergeThreshold() const
+  { return FMergeThreshold; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CSplitGrey::setMergeThreshold(unsigned int AMergeThreshold){
+    FMergeThreshold = AMergeThreshold;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CSplitGrey::isRegionToSplit()
+  {
+    int diff = static_cast<CPyramidalRegion*>(FRegion)->getGreyMax() - static_cast<CPyramidalRegion*>(FRegion)->getGreyMin();
+    assert(diff>=0);  
+  
+    //std::cout<<"différence min / max de la région "<<FRegion->getId()<<" = "<<diff<<std::endl;
+    //std::cout<<"Comparaison par rapport au seuil de merge = "<<getMergeThreshold()<<std::endl;
+    return (unsigned int)diff > getMergeThreshold() ;
+  }
+
+  //******************************************************************************
+} // namespace Map2d
+//******************************************************************************

@@ -1,0 +1,289 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include <cassert>
+//******************************************************************************
+namespace Map2d
+{
+//******************************************************************************
+// Constructeurs
+// On initialise pas les champs FMarks car tout les bits sont
+// initialisées à faux par défaut (constructeur de bitset).
+INLINE
+CDart::CDart() 
+#ifdef CONTOUR_SIMPLIFICATION
+  : FEdgeAttribute (NULL)
+#endif
+{
+  FBeta[0] = NULL;
+  FBeta[1] = NULL;
+  FBeta[2] = NULL;
+}
+//******************************************************************************
+INLINE
+void CDart::init(const std::bitset<NB_MARKS> & AMarks)
+{
+  FBeta[0]   = NULL;
+  FBeta[1]   = NULL;
+  FBeta[2]   = NULL;  
+  FMarks     = AMarks;
+#ifdef CONTOUR_SIMPLIFICATION
+  FEdgeAttribute = NULL;
+#endif  
+}
+//******************************************************************************
+INLINE
+void CDart::copy( CDart* ADart )
+{
+  FBeta[0] = NULL;
+  FBeta[1] = NULL;
+  FBeta[2] = NULL;
+
+  FMarks = ADart->FMarks;
+
+  for ( int i=0; i<NB_DIRECT_INFO; ++i )
+    FDirectInfo[i] = ADart->FDirectInfo[i];
+  
+#ifdef CONTOUR_SIMPLIFICATION
+  FEdgeAttribute = ADart->FEdgeAttribute;
+#endif  
+}
+//******************************************************************************
+// Destructeur
+// Attention, si le brin n'a pas été préalablement décousu alors ses brins 
+// voisins pointent désormais vers une adresse invalide.
+INLINE
+CDart::~CDart()
+{
+#ifdef CONTOUR_SIMPLIFICATION
+  CEdgeAttribute* toDelete = FEdgeAttribute;
+  FEdgeAttribute=NULL;  delete toDelete; 
+#endif // CONTOUR_SIMPLIFICATION
+}
+//******************************************************************************
+INLINE
+CDart* CDart::getBeta0() const
+{ return FBeta[0]; }
+//******************************************************************************
+INLINE
+CDart* CDart::getBeta1() const
+{ return FBeta[1]; }
+//******************************************************************************
+INLINE
+CDart* CDart::getBeta2() const
+{ return FBeta[2]; }
+//******************************************************************************
+INLINE
+CDart* CDart::getBeta(int AIndex) const
+{
+  assert( 0<=AIndex && AIndex<=2);
+  
+  return FBeta[AIndex];
+}
+//******************************************************************************
+INLINE
+void CDart::setBeta0(CDart* ADart)
+{ FBeta[0] = ADart; }
+//******************************************************************************
+INLINE
+void CDart::setBeta1(CDart* ADart)
+{ FBeta[1] = ADart; }
+//******************************************************************************
+INLINE
+void CDart::setBeta2(CDart* ADart)
+{ FBeta[2] = ADart; }
+//******************************************************************************
+INLINE
+void CDart::setBeta(CDart* ADart, int AIndex)
+{
+  assert( 0<=AIndex && AIndex<=2);
+  
+  FBeta[AIndex] = ADart;
+}
+//******************************************************************************
+INLINE
+bool CDart::isFree0() const
+{ return FBeta[0] == NULL; }
+//******************************************************************************
+INLINE
+bool CDart::isFree1() const
+{ return FBeta[1] == NULL; }
+//******************************************************************************
+INLINE
+bool CDart::isFree2() const
+{ return FBeta[2] == NULL; }
+//******************************************************************************
+INLINE
+bool CDart::isFree(int AIndex) const
+{
+  assert( 0<=AIndex && AIndex<=2);
+
+  return FBeta[AIndex] == NULL;
+}
+//******************************************************************************
+INLINE
+void CDart::setFree0()
+{ FBeta[0] = NULL; }
+//******************************************************************************
+INLINE
+void CDart::setFree1()
+{ FBeta[1] = NULL; }
+//******************************************************************************
+INLINE
+void CDart::setFree2()
+{ FBeta[2]=NULL; }
+//******************************************************************************
+INLINE
+void CDart::setFree(int AIndex)
+{
+  assert( 0<=AIndex && AIndex<=2);
+
+  FBeta[AIndex] = NULL;
+}
+//******************************************************************************
+INLINE
+void* CDart::getDirectInfo(int ADirectIndex) const
+{
+  assert( 0<=ADirectIndex && ADirectIndex<NB_DIRECT_INFO );
+
+  return FDirectInfo[ADirectIndex];
+}
+//******************************************************************************
+INLINE
+void CDart::setDirectInfo(int ADirectIndex, void* AValue)
+{
+  assert( 0<=ADirectIndex && ADirectIndex<NB_DIRECT_INFO );
+
+  FDirectInfo[ADirectIndex] = AValue;
+}
+//******************************************************************************
+INLINE
+bool CDart::getMark(int AMarkNumber) const
+{
+  assert( 0<=AMarkNumber && AMarkNumber<NB_MARKS );
+
+  return FMarks[AMarkNumber];
+}
+//******************************************************************************
+INLINE
+void CDart::setMark(int AMarkNumber, bool AValue)
+{
+  assert( 0<=AMarkNumber && AMarkNumber<NB_MARKS );
+
+  FMarks.set(AMarkNumber, AValue);
+}
+//******************************************************************************
+INLINE
+std::bitset<NB_MARKS> CDart::getMarks() const
+{
+  return FMarks;
+}
+//******************************************************************************
+INLINE
+void CDart::setMarks(const std::bitset<NB_MARKS> & AMarks)
+{
+  this->FMarks = AMarks;
+}
+//******************************************************************************
+#ifdef CONTOUR_SIMPLIFICATION
+//******************************************************************************
+INLINE
+CEdgeAttribute* CDart::getEdgeAttribute() const
+{
+  if ( FEdgeAttribute!=NULL ) return FEdgeAttribute;
+
+  return getBeta2()->FEdgeAttribute;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CDart::setEdgeAttribute( CEdgeAttribute* AAttribute )
+{ FEdgeAttribute = AAttribute; }
+//------------------------------------------------------------------------------
+INLINE
+CEdgeAttribute* CDart::removeEdgeAttribute()
+{
+  CEdgeAttribute* res = NULL;
+  
+  if ( FEdgeAttribute!=NULL )
+    {
+      res        = FEdgeAttribute;
+      FEdgeAttribute = NULL;      
+    }
+  else
+    {
+      res            = getBeta2()->FEdgeAttribute;
+      getBeta2()->FEdgeAttribute = NULL;
+    }
+
+  return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CDart::orientEdgesAttribute( CDart* ADart )
+{
+  assert( this!=ADart );
+  assert( getEdgeAttribute()!=NULL );
+  assert( ADart->getEdgeAttribute()!=NULL );
+  assert( !isFree2() );
+  assert( !ADart->isFree2() );
+     
+  if ( FEdgeAttribute==NULL )
+    {
+      FEdgeAttribute = getBeta2()->FEdgeAttribute;
+      getBeta2()->FEdgeAttribute = NULL;
+      FEdgeAttribute->FDss.reverse();
+    }
+  
+  if ( ADart->FEdgeAttribute==NULL )
+    {
+      ADart->FEdgeAttribute = ADart->getBeta2()->FEdgeAttribute;
+      ADart->getBeta2()->FEdgeAttribute = NULL;
+      ADart->FEdgeAttribute->FDss.reverse();
+    }
+}
+//******************************************************************************
+#endif // CONTOUR_SIMPLIFICATION
+//******************************************************************************
+INLINE
+void CDart::print( std::ostream& AOs ) const
+{
+   AOs<<this<<" : "<<FBeta[0]<<", "<<FBeta[1]<<", "<<FBeta[2]<<" : "
+     <<FMarks;
+
+  for ( int i=0; i<NB_DIRECT_INFO; ++i )
+    AOs<<"  "<<FDirectInfo[i];
+
+#ifdef CONTOUR_SIMPLIFICATION
+  AOs<<" "<<FEdgeAttribute;
+#endif // CONTOUR_SIMPLIFICATION
+}
+//------------------------------------------------------------------------------
+INLINE
+std::ostream& operator<<(std::ostream& AOs, const CDart & ADart)
+{
+  ADart.print(AOs);
+  return AOs;
+}
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

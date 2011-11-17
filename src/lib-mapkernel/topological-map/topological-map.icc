@@ -1,0 +1,544 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "topological-dart.hh"
+#include "vertex.hh"
+#include "khalimsky.hh"
+#include "region.hh"
+//******************************************************************************
+extern long int nbEdgeParcouru;
+extern long int nbAppelCanRemoveEdge;
+namespace Map2d
+{
+//******************************************************************************
+INLINE
+CTopologicalMap::CTopologicalMap(unsigned int ASizeDartArray) :
+        CMapGeneric(ASizeDartArray),
+        FImage(NULL),
+        FKhalimsky(NULL),
+        FInclusionTreeRoot(NULL),
+        FNbRegions(0)
+{
+}
+//------------------------------------------------------------------------------
+INLINE
+CTopologicalMap::CTopologicalMap(CImage2D* AImage, unsigned int ALevel,
+                                 unsigned int ASizeDartArray) :
+        CMapGeneric(ASizeDartArray),
+        FImage(NULL),
+        FKhalimsky(NULL),
+        FInclusionTreeRoot(NULL),
+        FNbRegions(0)
+{
+    // Extraction de la carte à partir de l'image
+    extractTopologicalMap(AImage, ALevel);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::initDart(CDart* ADart, const CDoublet & ADoublet,
+                               CRegion* ARegion)
+{ static_cast<CTopologicalDart*>(ADart)->init(ADoublet, ARegion); }
+//------------------------------------------------------------------------------
+INLINE
+CDart* CTopologicalMap::getDart(unsigned int Ai, unsigned int Aj) const
+{
+    // Il est nécessaire de caster en CTopologicalDart* pour que l'arithmétique
+    // sur les pointeurs soit correcte, et il est nécessaire de re-caster en
+    // CDart* (de manière implicite) pour que la signature de la fonction soit
+    // la même que dans la classe CMapBasic.
+    return (static_cast<CTopologicalDart*>(FTabsDarts[Ai]) + Aj);
+}
+//------------------------------------------------------------------------------
+INLINE
+CDart* CTopologicalMap::newTabDarts()
+{ return new CTopologicalDart[FSizeDartArray]; }
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::deleteTabDarts(CDart* ATabDart)
+{
+    delete [](static_cast<CTopologicalDart*>(ATabDart));
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::copyDart(CDart* ADartDest, CDart* ADartSrc)
+{
+    assert(ADartDest != NULL && ADartSrc != NULL);
+    static_cast<CTopologicalDart*>(ADartDest)->
+    copy(static_cast<CTopologicalDart*>(ADartSrc));
+}
+//------------------------------------------------------------------------------
+INLINE
+CDart* CTopologicalMap::addMapDart()
+{
+    // On appelle la méthode de la classe mère.
+     return CMapGeneric::addMapDart();
+}
+//------------------------------------------------------------------------------
+INLINE
+      CTopologicalDart* CTopologicalMap::addMapDart(const CDoublet & ADoublet,
+      CRegion* ARegion)
+{
+   assert(FKhalimsky != NULL);
+
+    // On appelle la méthode de la classe mère.
+   CTopologicalDart* res
+         = static_cast<CTopologicalDart*>(CMapGeneric::addMapDart());
+
+    // Et on initialise la partie additionnelle pour le CTopologicalDart.
+   initDart(res, FKhalimsky->normaliseDoubletPointel(ADoublet), ARegion);
+
+#ifdef CONTOUR_SIMPLIFICATION
+   assert(res->FEdgeAttribute == NULL);
+#endif // CONTOUR_SIMPLIFICATION
+    
+   return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::empty()
+{
+  //std::cout<<"topo map empty"<<std::endl;
+  CMapGeneric::empty();
+
+    delete FKhalimsky;         FKhalimsky         = NULL;
+    delete FInclusionTreeRoot; FInclusionTreeRoot = NULL;
+    FNbRegions = 0;
+
+    // On réserve la marque des brins à détuire.
+    FMarkToDelete = getNewMark();
+    assert(FMarkToDelete != -1);
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CTopologicalMap::getInclusionTreeRoot() const
+{ return FInclusionTreeRoot; }
+//------------------------------------------------------------------------------
+INLINE
+TNatural CTopologicalMap::getSizeX() const
+{
+    assert(FImage != NULL);
+    return FImage->getXSize();
+}
+//------------------------------------------------------------------------------
+INLINE
+TNatural CTopologicalMap::getSizeY() const
+{
+    assert(FImage != NULL);
+    return FImage->getYSize();
+}
+//------------------------------------------------------------------------------
+INLINE
+TNatural CTopologicalMap::getKhalimskySizeX() const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->getSizeX();
+}
+//------------------------------------------------------------------------------
+INLINE
+TNatural CTopologicalMap::getKhalimskySizeY() const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->getSizeY();
+}
+//------------------------------------------------------------------------------
+INLINE
+unsigned int CTopologicalMap::getNbRegions() const
+{ return FNbRegions; }
+//------------------------------------------------------------------------------
+INLINE
+unsigned long int CTopologicalMap::getMemoryForMap() const
+{
+    return sizeof(CTopologicalMap) + getNbDartsInTabs()*sizeof(CTopologicalDart)
+           + sizeof(FTabsDarts);
+}
+//------------------------------------------------------------------------------
+INLINE
+unsigned long int CTopologicalMap::getMemoryForInclusionTree() const
+{
+    assert(FInclusionTreeRoot != NULL);
+    return FNbRegions*sizeof(CRegion) + sizeof(CInfiniteRegion);
+}
+//------------------------------------------------------------------------------
+INLINE
+unsigned long int CTopologicalMap::getMemoryForKhalimsky() const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->getNumberOfByte();
+}
+//------------------------------------------------------------------------------
+INLINE
+unsigned long int CTopologicalMap::getMemoryForImage() const
+{
+    assert(FImage != NULL);
+    return FImage->getNumberOfBytes();
+}
+//******************************************************************************
+INLINE
+CDoublet CTopologicalMap::getDoublet(CDart* ADart) const
+{
+    assert(ADart != NULL);
+    return static_cast<CTopologicalDart*>(ADart)->doublet();
+}
+//------------------------------------------------------------------------------
+INLINE
+CDoublet CTopologicalMap::getOtherDoublet(CDart* ADart) const
+{
+    assert(ADart != NULL);
+    return static_cast<CTopologicalDart*>(ADart)->doublet().getNextPointel();
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::setDoublet(CDart* ADart, const CDoublet& ADoublet)
+{
+    assert(ADart != NULL);
+    static_cast<CTopologicalDart*>(ADart)->doublet() = ADoublet;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CTopologicalMap::getRegion(CDart* ADart)
+{
+    assert(ADart != NULL);
+    return static_cast<CTopologicalDart*>(ADart)->getRegion();
+}
+//------------------------------------------------------------------------------
+INLINE
+CDart* CTopologicalMap::getRepresentativeDart(CRegion* ARegion)
+{
+    assert(ARegion != NULL);
+
+    return ARegion->getRepresentativeDart();
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CTopologicalMap::isRepresentativeDart(CDart* ADart)
+{
+   assert(ADart != NULL);
+
+   return getRepresentativeDart(getRegion(ADart)) == ADart;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::setRepresentativeDart(CRegion* ARegion, CDart* ADart)
+{
+    assert(ARegion != NULL);
+    assert(ADart != NULL);
+
+    return ARegion->setRepresentativeDart(ADart);
+}
+//******************************************************************************
+INLINE
+TRegionId CTopologicalMap::getMaxGreyLevel() const
+{
+    assert(FImage != NULL);
+    return FImage->getMaxLabel();
+}
+//******************************************************************************
+INLINE
+TRegionId CTopologicalMap::getPixel(unsigned int x,
+                                    unsigned int y) const
+{
+    assert(FImage != NULL);
+    return FImage->getPixel(x, y);
+}
+//------------------------------------------------------------------------------
+INLINE
+TRegionId CTopologicalMap::getPixel( const CPoint2D & ACoord ) const
+{ return getPixel( ACoord.getX(), ACoord.getY() ); }
+//------------------------------------------------------------------------------
+INLINE
+bool  CTopologicalMap::isPixelMarked(unsigned int Ax, unsigned int Ay) const
+{
+    assert(FImage != NULL);
+    return FImage->isMarked(Ax, Ay);
+}
+//------------------------------------------------------------------------------
+INLINE
+void  CTopologicalMap::setPixelMark(unsigned int Ax, unsigned int Ay, bool AOn)
+{
+    assert(FImage != NULL);
+    return FImage->setMarkTo(Ax, Ay, AOn);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap:: markPixel(unsigned int Ax, unsigned int Ay)
+{
+    assert(FImage != NULL);
+    return FImage->setMark(Ax, Ay);
+}
+//------------------------------------------------------------------------------
+INLINE
+void  CTopologicalMap::unmarkPixel(unsigned int Ax, unsigned int Ay)
+{
+    assert(FImage != NULL);
+    return FImage->unsetMark(Ax, Ay);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap:: unmarkAllPixels()
+{
+    assert(FImage != NULL);
+    return FImage->unmarkAll();
+}
+//*****************************************************************************
+INLINE
+CPoint2D
+CTopologicalMap::getPixelFromDoublet(const CDoublet & ADoublet) const
+{
+  return getPixelIn( ADoublet );
+}
+//------------------------------------------------------------------------------
+INLINE
+CPoint2D CTopologicalMap::getPixelIn( const CDoublet & ADoublet ) const
+{
+  CPoint2D AVertex(ADoublet);
+  switch ( ADoublet.getLinel() )
+    {
+    case YPOS:
+      AVertex.incX(-1);
+      break;
+    case YNEG:
+      AVertex.incY(-1);
+      break;
+    case XNEG:
+      AVertex.incX(-1);
+      AVertex.incY(-1);
+      break;
+    }
+  return AVertex;
+}
+//------------------------------------------------------------------------------
+INLINE
+CPoint2D CTopologicalMap::getPixelOut( const CDoublet & ADoublet ) const
+{
+  CPoint2D AVertex(ADoublet);
+  switch ( ADoublet.getLinel() )
+    {
+    case XPOS:
+      AVertex.incY(-1);
+      break;
+    case XNEG:
+      AVertex.incX(-1);
+      break;
+    case YNEG:
+      AVertex.incX(-1);
+      AVertex.incY(-1);
+      break;
+    }
+  return AVertex;
+}
+//------------------------------------------------------------------------------
+INLINE
+CPoint2D CTopologicalMap::getFirstPixel(CRegion* ARegion)
+{
+  return getPixelFromDoublet(getDoublet(ARegion->getRepresentativeDart()));
+}
+//******************************************************************************
+INLINE
+bool CTopologicalMap::isPCell(const CDoublet& ADoublet) const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->isPCell(ADoublet);
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CTopologicalMap::isLCell(const CDoublet& ADoublet) const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->isLCell(ADoublet);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::setPCell(const CDoublet& ADoublet, bool AOn)
+{
+    assert(FKhalimsky != NULL);
+    FKhalimsky->setPCell(ADoublet,AOn);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::setLCell(const CDoublet& ADoublet, bool AOn)
+{
+    assert(FKhalimsky != NULL);
+    FKhalimsky->setLCell(ADoublet,AOn);
+}
+//------------------------------------------------------------------------------
+INLINE
+CDoublet CTopologicalMap::normaliseDoubletPointel(const CDoublet& ADoublet) const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->normaliseDoubletPointel(ADoublet);
+}
+//------------------------------------------------------------------------------
+INLINE
+CDoublet CTopologicalMap::normaliseDoubletLinel(const CDoublet& ADoublet) const
+{
+    assert(FKhalimsky != NULL);
+    return FKhalimsky->normaliseDoubletLinel(ADoublet);
+}
+//******************************************************************************
+INLINE
+unsigned int CTopologicalMap::getPointelDegree(const CDoublet& ADoublet) const
+{
+   unsigned int count = 0;
+   CDoublet doublet(ADoublet);
+   do
+   {
+      if (FKhalimsky->isLCell(doublet)) ++count;
+      doublet.setNextLinel();
+   }
+   while (doublet != ADoublet);
+      
+   return count;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CTopologicalMap::isDegreeTwoPointel(const CDoublet& ADoublet) const
+{ return (getPointelDegree(ADoublet)== 2); }
+//------------------------------------------------------------------------------
+INLINE
+CDoublet CTopologicalMap::getOtherLinel(const CDoublet& ADoublet) const
+{
+    CDoublet doublet(ADoublet.getNextLinel());
+    bool found = false;
+    while (!found && doublet!=ADoublet)
+    {
+        if (FKhalimsky->isLCell(doublet)) found = true;
+        else doublet.setNextLinel();
+    }
+
+    return doublet;
+}
+//******************************************************************************
+INLINE
+bool CTopologicalMap::isEdgeLoop(CDart* ADart)
+{
+    assert(ADart != NULL);
+    assert(!isFree2(ADart));
+
+    bool res = false;
+
+    CDynamicCoverageVertex it(this, ADart);
+
+    for (; it.cont() && !res; ++it)
+    {
+        if (*it == beta2(ADart))
+        {
+            res = true; // Cette arête est une boucle
+        }
+    }
+
+    return res;
+}
+//******************************************************************************
+INLINE
+CDart* CTopologicalMap::createSquareFace(CDart* Alast, CDart* Aup,
+        const CDoublet& ADoublet, CRegion* ARegion)
+{
+    CTopologicalDart* first = addMapDart(ADoublet, ARegion);
+    CTopologicalDart* prev  = first;
+    CTopologicalDart* actu;
+
+    /*on cree la face carré a partir du premier brin*/
+    CDoublet otherDoublet(ADoublet.getNextPointel());
+    otherDoublet.setNextLinel();
+
+    for (int i=0; i<3; ++i)
+      {
+	actu = addMapDart(otherDoublet, ARegion);
+	linkBeta1(prev, actu);
+	prev = actu;
+
+	otherDoublet.setNextPointel();
+	otherDoublet.setNextLinel();
+      }    
+
+    linkBeta1(prev, first);
+
+    /*on coud maintenant les brins last et up à la nouvelle face*/
+    linkBeta2(prev, Alast);
+    linkBeta2(first, Aup);
+
+    /* Si on veut des attributs sur les arêtes, on les ajoutes. 
+     Uniquement sur les brins prev et first car un seul brin par arête porte
+     l'attribut. */
+#ifdef CONTOUR_SIMPLIFICATION
+    CDoublet d1(normaliseDoubletPointel(getDoublet(prev)));
+    CDoublet d2(normaliseDoubletPointel(getOtherDoublet(prev)));
+
+    assert(d1 == getDoublet(prev));
+    if (d2 == getOtherDoublet(prev))
+        prev->setEdgeAttribute(new CEdgeAttribute(d1.getX(),
+                               d1.getY(), // getSizeY() - d1.getY(),
+                               d2.getX(),
+                               d2.getY())); // getSizeY() - d2.getY()));
+
+    d1 = normaliseDoubletPointel(getDoublet(first));
+    d2 = normaliseDoubletPointel(getOtherDoublet(first));
+
+    assert(d1 == getDoublet(first));
+    if (d2 == getOtherDoublet(first))
+        first->setEdgeAttribute(new CEdgeAttribute(d1.getX(),
+                                d1.getY(), // getSizeY() - d1.getY(),
+                                d2.getX(),
+                                d2.getY())); // getSizeY() - d2.getY()));
+#endif // CONTOUR_SIMPLIFICATION
+
+    return (first->getBeta1()); //retourne le brin last de la face carré
+}
+//******************************************************************************
+INLINE
+CVertex CTopologicalMap::barycenter(CDart * ADart, TOrbit AOrbit)
+{
+    assert(ADart != NULL);
+
+    CVertex bary(ORIGIN);
+    int n = 0;
+    int treated = getNewMark();
+
+    CCoverage * cov = getDynamicCoverage(ADart, AOrbit);
+
+    assert(cov != NULL);
+
+    for (; cov->cont(); ++(*cov))
+        if (!isMarked(**cov, treated))
+        {
+            bary += getDoublet(**cov);
+            ++n;
+            markOrbit(**cov, ORBIT_VERTEX, treated);
+        }
+
+    // Démarquage:
+    for (cov->reinit(); cov->cont(); ++(*cov))
+    {
+        if (isMarked(**cov, treated))
+            unmarkOrbit(**cov, ORBIT_VERTEX, treated);
+    }
+
+    delete cov;
+
+    freeMark(treated);
+
+    return n == 0 ? ORIGIN : bary / n;
+}
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

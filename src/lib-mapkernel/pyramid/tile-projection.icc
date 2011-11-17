@@ -1,0 +1,161 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "dk-doublet.hh"
+//******************************************************************************
+namespace Map2d
+{
+  //------------------------------------------------------------------------------
+  INLINE
+  void CTile::projection(const ProjectionMode & AProjectionMode)
+  {
+    //std::cout<<"\n[start] CTile::projection mode = "<< AProjectionMode <<std::endl;
+    if(upRatio() == CPoint2D(1,1))
+      {
+	//delete khalimsky(); //todo
+	setKhalimsky( new CKhalimsky(*(tileUp()->khalimsky())) );
+	return;
+      }
+    else
+      setKhalimsky(new CKhalimsky(width(), height()));
+
+    switch(AProjectionMode)
+      {
+      case DirectProjection:
+	projectionStandard();
+	break;
+      case DijkstraProjection:
+	projectionDijkstra();
+	break;
+      case ProjectionOff:
+	break;
+      default:
+	std::cout<<"CTile::projection error projectionMode not supported"<<std::endl;
+	assert(false);
+      }
+    //std::cout<<"\n[end] CTile::projection()"<<std::endl;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  float CTile::weight(CDkDoublet* ANode1, CDkDoublet* ANode2)
+  {
+    //std::cout<<"[start] CTile::weight"<<std::endl;
+    assert(ANode1 != ANode2);
+    if( ANode2->getX() == ANode1->getX()+1)
+      ANode1->setLinel(XPOS);
+    else if( ANode2->getX() == ANode1->getX()-1)
+      ANode1->setLinel(XNEG);
+    else if( ANode2->getY() == ANode1->getY()+1)
+      ANode1->setLinel(YPOS);
+    else if( ANode2->getY() == ANode1->getY()-1)
+      ANode1->setLinel(YNEG);
+    else
+      std::cout<<"CTile::weight : Warning Anode2 is not a neighbor of ANode1"<<std::endl;
+
+    //std::cout<<"[end] CTile::weight"<<std::endl;
+    return gradientInverse(*ANode1, Relative); 
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  float CTile::gradientInverse(const CDoublet & ADoublet, const SystemMode & ASystem)
+  {
+    return  (1.0/(gradient(ADoublet, ASystem)+1))*256;
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  CEdge CTile::reductionWindow(const CDoublet & APointel)
+  {
+    //std::cout<<"[start] CTile::reductionWindow for pointel "<< APointel <<std::endl;
+
+    // Lorsqu'un pointel doit être plongé dans le niveau inférieur, 
+    // il peut prendre ratiox*ratioy positions, sauf pour les bords
+    uint ratiox = upRatioX(); uint ratioy = upRatioY();
+    CEdge result; 
+  
+    //projection de la tuile mère vers la tuile fille
+    CPoint2D son = coordinateFromParent(APointel, Relative); //projeté direct
+    CDoublet ref; 
+    ref.setDoublet(son.x(), son.y(), APointel.getLinel());
+    CDoublet current(ref);
+
+    for(uint j=0; j<ratioy; ++j)
+      for(uint i=0; i<ratiox; ++i)
+	{
+	  current.setX(ref.getX()+i);
+	  current.setY(ref.getY()+j);
+	  
+	  //la projection directe du pointel est toujours candidate
+	  //on exclue les candidats sur le bord des tuiles
+	  if( (i==0 && j==0) || isPointelInTile(current, false, Relative) )
+	    result.push_back(current);
+	}
+    //std::cout<<"[end] CTile::candidatePosisitons "<<std::endl;
+    return result;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  std::vector<CDkDoublet*> CTile::findNeighbors(CDkDoublet* ANode, const Heap & AHeap)
+  {
+    //std::cout<<"[start] CTile::findNeighbors of "<<ANode<<std::endl;
+    // todo: faire un parcours sur l'index. Et même mieux, faire une multimap
+    // pour coder l'adjacence des pointels 
+    
+    std::vector<CDkDoublet*> result;
+    typedef __gnu_pbds::priority_queue<CDkDoublet*, EdgeComp, rc_binomial_heap_tag> ThinHeap;
+    const ThinHeap nodes = AHeap.heap;
+    ThinHeap::iterator it;
+    for(it = nodes.begin(); it!=nodes.end(); ++it)
+      {
+	//On récupère tous les noeuds à une distance de 1
+	const uint dx = abs( (*it)->getX() - ANode->getX() );
+	const uint dy = abs( (*it)->getY() - ANode->getY() );
+	//std::cout<<"test of node "<<*it<<" dx="<<dx<<" dy="<<dy<<std::endl;
+	if( dx<=1 && dy<=1 && dx!=dy )
+	  result.push_back(*it);
+      }
+    //std::cout<<"[end] CTile::findNeighbors nb ="<<result.size()<<std::endl;
+    return result;
+  }
+  
+  //------------------------------------------------------------------------------
+  INLINE
+  void CTile::addNewEdge(std::vector<CEdge> & AVector)
+  {
+    if(AVector.empty() || !AVector.back().empty())
+      {
+	//std::cout<<"start new edge"<<std::endl;
+	const CEdge edge;
+	AVector.push_back(edge);
+      }
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  void CTile::addDoublet(std::vector<CEdge> & AVector, const CDoublet & ADoublet)
+  {
+    if(AVector.empty())
+      addNewEdge(AVector);
+    assert(!AVector.empty());
+    AVector.back().push_back(ADoublet);
+  }
+
+  //******************************************************************************
+}//namespace Map2d
+//******************************************************************************

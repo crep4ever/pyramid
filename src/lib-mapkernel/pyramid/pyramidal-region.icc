@@ -1,0 +1,296 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include <cmath>
+#include "pyramidal-dart.hh"
+//******************************************************************************
+namespace Map2d
+{
+  INLINE
+  CPyramidalRegion::~CPyramidalRegion()
+  {
+    //std::cout<<" [start] CPyramidalRegion::destructeur() "<<std::endl;
+    FRegionUp   = NULL;
+    FRegionDown = NULL;
+    FLabel = Invalid;
+    //  std::cout<<" [end] CPyramidalRegion::destructeur() "<<std::endl;
+  }
+
+  //******************************************************************************
+  //Constructeurs
+  //******************************************************************************
+
+  INLINE
+  CPyramidalRegion::CPyramidalRegion() :
+    CRegion            (  ),
+    FRegionUp          ( NULL ), 
+    FRegionDown        ( NULL ),
+    FLabel             ( Invalid ),
+    FFirstPixel        ( 0,0 )
+  { }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion::CPyramidalRegion(const CRegion& ARegion) :
+    CRegion           (  ),
+    FRegionUp         ( NULL ), 
+    FRegionDown       ( NULL ),
+    FLabel            ( Invalid ),
+    FFirstPixel       ( 0,0 )
+  { }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion::CPyramidalRegion(const CPyramidalRegion& ARegion) :
+    CRegion            ( )
+  {
+    //    std::cout<<"CPyramidalRegion: constructeur 3 "<<std::endl;
+    FId            =  static_cast<TRegionId>(0);
+    FProfondeur    =  ARegion.FProfondeur;
+    FFirstPixel    =  ARegion.FFirstPixel;
+    FNbPixels      =  ARegion.FNbPixels;
+    FMarks      =  ARegion.FMarks;
+    FRegionUp   =  NULL;
+    FRegionDown =  NULL;
+    FLabel      =  ARegion.FLabel;
+    FColorSum = ARegion.FColorSum;
+    FSquaredColorSum = ARegion.FSquaredColorSum;
+    FColorMin = ARegion.FColorMin;
+    FColorMax = ARegion.FColorMax;
+  }
+  //******************************************************************************
+  //Accesseurs
+  //******************************************************************************
+
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::getRegionUp() const
+  { return FRegionUp; }
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::regionUp() const
+  { return FRegionUp; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setRegionUp( CPyramidalRegion* ARegion ){
+    FRegionUp = ARegion;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  int CPyramidalRegion::label() const
+  { return FLabel; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setLabel( const Label & ALabel ){
+    FLabel = ALabel;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::getRegionDown() const
+  { return FRegionDown; }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::regionDown() const
+  { return FRegionDown; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setRegionDown(CPyramidalRegion* ARegion){
+    FRegionDown = ARegion;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  TRegionId CPyramidalRegion::getGreyMin() const
+  { return FColorMin; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setGreyMin(TRegionId AGreyMin){
+    FColorMin = AGreyMin;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  TRegionId CPyramidalRegion::getGreyMax() const
+  { return FColorMax; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setGreyMax(TRegionId AGreyMax){
+    FColorMax = AGreyMax;
+  }
+ //------------------------------------------------------------------------------
+  INLINE
+  TRegionId CPyramidalRegion::getGreySum() const{ 
+    return FColorSum;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setGreySum(TRegionId ASum){
+    FColorSum = ASum;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  unsigned int CPyramidalRegion::getGreySquareSum() const{
+    return FSquaredColorSum;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setGreySquareSum( unsigned int ASquaredGreySum ){
+    FSquaredColorSum = ASquaredGreySum;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CPyramidalRegion::getFirstPixel() const{ 
+    return FFirstPixel;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CPyramidalRegion::firstPixel() const{ 
+    return FFirstPixel;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setFirstPixel(const CPoint2D& APixel) { 
+    FFirstPixel = APixel;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  unsigned int CPyramidalRegion::getNbPixels() const{
+    return FNbPixels;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setNbPixels(unsigned int ANbPixels){
+    FNbPixels = ANbPixels;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CPyramidalRegion::existRegionUp()
+  {
+    return(FRegionUp != NULL);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::addPixel( TRegionId ACoul, CDart* ADart )
+  {
+    ++FNbPixels;
+    CRegion::addPixel(ACoul, ADart);
+  }
+  
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CPyramidalRegion::existRegionDown()
+  {
+    return(FRegionDown != NULL);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDart* CPyramidalRegion::getRepresentativeDart() const
+  { return static_cast<CPyramidalDart*>(CRegion::getRepresentativeDart()); }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::setRepresentativeDart(CDart* ADart)
+  { return CRegion::setRepresentativeDart(static_cast<CPyramidalDart*>(ADart)); }
+  
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::getFather() const
+  { return static_cast<CPyramidalRegion*>(CRegion::getFather()); }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::getBrother() const
+  { return static_cast<CPyramidalRegion*>(CRegion::getBrother()); }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::getFirstSon() const
+  { return static_cast<CPyramidalRegion*>(CRegion::getFirstSon()); }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::getNextSameCC() const
+  { return static_cast<CPyramidalRegion*>(CRegion::getNextSameCC()); }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CPyramidalRegion::addGrey(TRegionId AGrey){ 
+    FColorSum += AGrey;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  TRegionId CPyramidalRegion::getAverageGrey() const{ 
+    assert( FNbPixels > 0 );
+    return FColorSum/FNbPixels;
+  }
+
+  //******************************************************************************
+  //Opérations sur les régions
+  //******************************************************************************
+
+  INLINE
+  CRegion* CPyramidalRegion::addSon( TRegionId AId )
+  {
+    CPyramidalRegion* tmp = new CPyramidalRegion(*this);
+    tmp->setId( AId );
+    tmp->setFather( this );
+    CRegion::addSon(tmp);
+    return tmp;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CRegion* CPyramidalRegion::addBrother( TRegionId AId )
+  { 
+    assert( getFather()!=NULL );
+    return getFather()->CRegion::addSon(AId); 
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CRegion* CPyramidalRegion::addSameCC( TRegionId AId )
+  {
+    CPyramidalRegion* tmp = new CPyramidalRegion(*this);
+    tmp->setId( AId );
+    tmp->setFather( getFather() );
+    CRegion::addSameCC(tmp);
+    return tmp;
+  }
+
+//------------------------------------------------------------------------------
+INLINE
+void CPyramidalRegion::mergeWith(CPyramidalRegion* ARegion)
+{
+  //Conservation des up/down
+  if( ARegion->existRegionUp() && ARegion->getRegionUp()->getRegionDown()==ARegion)
+    ARegion->getRegionUp()->setRegionDown(this);
+  CRegion::mergeWith(ARegion);
+}
+
+
+  //******************************************************************************
+  //La région infinie
+  //******************************************************************************
+
+  INLINE
+  CInfinitePyramidalRegion::CInfinitePyramidalRegion() :
+    CPyramidalRegion ()
+  {
+    setId(static_cast<TRegionId>(1));
+    setRegionUp( NULL);
+    setRegionDown( NULL);
+    setGreyMin( 255 );
+    setGreyMax( 0 );
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CInfinitePyramidalRegion::isInfiniteRegion() const
+  { return true; }
+  //******************************************************************************
+} // namespace Map2d
+//******************************************************************************

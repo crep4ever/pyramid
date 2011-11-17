@@ -1,0 +1,241 @@
+/*
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include <cassert>
+#include <cmath>
+//******************************************************************************
+INLINE
+CVertex::CVertex()
+{
+  FCoord[0] = 0;
+  FCoord[1] = 0;
+
+}
+//------------------------------------------------------------------------------
+INLINE
+CVertex::CVertex(TCoordinate Ax, TCoordinate Ay)
+{
+  FCoord[0] = Ax;
+  FCoord[1] = Ay;
+
+}
+//------------------------------------------------------------------------------
+INLINE
+CVertex::CVertex(TCoordinate ATab[2])
+{
+  FCoord[0] = ATab[0];
+  FCoord[1] = ATab[1];
+ 
+}
+//------------------------------------------------------------------------------
+INLINE
+CVertex::CVertex(const CVertex& AVertex)
+{
+  FCoord[0] = AVertex.FCoord[0];
+  FCoord[1] = AVertex.FCoord[1];
+ 
+}
+//------------------------------------------------------------------------------
+INLINE
+CVertex::CVertex(const CDoublet& ADoublet)
+{
+  FCoord[0] = ADoublet.getX();
+  FCoord[1] = ADoublet.getY();
+}
+//******************************************************************************
+INLINE
+TCoordinate CVertex::getX() const
+{ return FCoord[0]; }
+//------------------------------------------------------------------------------
+INLINE
+TCoordinate CVertex::getY() const
+{ return FCoord[1]; }
+
+//------------------------------------------------------------------------------
+INLINE
+TCoordinate CVertex::getCoord(int ADim) const
+{
+  assert(0<=ADim && ADim<=1);
+  return FCoord[ADim];
+}
+//******************************************************************************
+INLINE
+void CVertex::setX(TCoordinate ANewX)
+{ FCoord[0] = ANewX; }
+//------------------------------------------------------------------------------
+INLINE
+void CVertex::setY(TCoordinate ANewY)
+{ FCoord[1] = ANewY; }
+//------------------------------------------------------------------------------
+INLINE
+void CVertex::setCoord(int ADim, TCoordinate ANewCoord)
+{
+  assert(0<=ADim && ADim<=1);
+  FCoord[ADim] = ANewCoord;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CVertex::setXY(TCoordinate ANewX, TCoordinate ANewY)
+{
+  setX(ANewX);
+  setY(ANewY);
+}
+//******************************************************************************
+INLINE
+CVertex& CVertex::operator=(const CVertex& AVector)
+{
+  setXY(AVector.getX(), AVector.getY());
+  return *this;
+}
+//******************************************************************************
+INLINE
+bool CVertex::operator==(const CVertex& AVector) const
+{
+  return
+    isZero(this->getX() - AVector.getX()) &&
+    isZero(this->getY() - AVector.getY());
+}
+//******************************************************************************
+INLINE
+bool CVertex::operator!=(const CVertex& AVector) const
+{ return ! (*this == AVector); }
+//******************************************************************************
+INLINE
+CVertex CVertex::operator*(TCoordinate ACoef) const
+{ return CVertex(getX()*ACoef, getY()*ACoef); }
+//******************************************************************************
+INLINE
+CVertex CVertex::operator/(TCoordinate ACoef) const
+{
+  assert(!isZero(ACoef));
+  return CVertex(getX()/ACoef, getY()/ACoef);
+}
+//******************************************************************************
+INLINE
+CVertex CVertex::operator+(const CVertex& AVector) const
+{
+  return CVertex(getX() + AVector.getX(),
+		 getY() + AVector.getY());
+}
+//******************************************************************************
+INLINE
+CVertex CVertex::operator-(const CVertex& AVector) const
+{
+  return CVertex(getX() - AVector.getX(),
+		 getY() - AVector.getY());
+}
+//******************************************************************************
+INLINE
+CVertex CVertex::operator+() const
+{ return *this; }
+//******************************************************************************
+INLINE
+CVertex CVertex::operator-() const
+{ return CVertex(-getX(),-getY()); }
+//******************************************************************************
+INLINE
+TCoordinate CVertex::normVectoriel(const CVertex& AVector) const
+{ return getX()*AVector.getY() - AVector.getX()*getY(); }
+//******************************************************************************
+INLINE
+CVertex CVertex::multiply(const CVertex& AVector) const
+{
+  return CVertex(getX()*AVector.getX(),
+		 getY()*AVector.getY());
+}
+//******************************************************************************
+INLINE
+CVertex CVertex::divide(const CVertex& AVector) const
+{
+  assert(!isZero(AVector.getX()));
+  assert(!isZero(AVector.getY()));
+ 
+
+  return CVertex(getX()/AVector.getX(),
+		 getY()/AVector.getY());
+}
+//******************************************************************************
+INLINE
+TCoordinate CVertex::dot(const CVertex& AVector) const
+{
+  return
+    getX()*AVector.getX() +
+    getY()*AVector.getY();
+}
+//******************************************************************************
+INLINE
+CVertex& CVertex::operator+=(const CVertex& AVector)
+{
+  *this= *this + AVector;
+  return *this;
+}
+//******************************************************************************
+INLINE
+CVertex& CVertex::operator-=(const CVertex& AVector)
+{ return *this= *this - AVector; }
+//******************************************************************************
+INLINE
+CVertex& CVertex::operator*=(TCoordinate ACoef)
+{ return *this = *this * ACoef; }
+//******************************************************************************
+INLINE
+CVertex& CVertex::operator/=(TCoordinate ACoef)
+{ return *this = *this / ACoef; }
+//******************************************************************************
+INLINE
+bool CVertex::isNull() const
+{
+  return
+    isZero(getX()) &&
+    isZero(getY());
+}
+//******************************************************************************
+INLINE
+TCoordinate CVertex::sqrNorm() const
+{
+  return sqr(getX()) + sqr(getY());
+}
+//******************************************************************************
+INLINE
+TCoordinate CVertex::norm() const
+{
+  return sqrt(sqrNorm());
+}
+//******************************************************************************
+INLINE
+CVertex operator*(TCoordinate ACoef, const CVertex& AVertex)
+{
+  return AVertex*ACoef;
+}
+//******************************************************************************
+INLINE
+std::ostream& operator<<(std::ostream& AStream, const CVertex& AVertex)
+{
+  AStream << "(";
+  AStream << "x="; AStream << AVertex.getX() << "\t";
+  // AStream.form("% .5f", AVertex.getX());
+  AStream << ",";
+  AStream << "y="; AStream << AVertex.getY() << "\t";
+  // AStream.form("% .5f", AVertex.getY());
+   AStream << ")";
+
+  return AStream;
+}
+//******************************************************************************

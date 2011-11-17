@@ -1,0 +1,52 @@
+#include "region.hh"
+#include <cassert>
+
+//******************************************************************************
+//Constructeurs
+//******************************************************************************
+namespace Map2d
+{
+  INLINE
+  CCriterionMerge::CCriterionMerge() :
+    FRegion1 ( NULL),
+    FRegion2 ( NULL )
+  {}
+  
+  //------------------------------------------------------------------------------
+  INLINE
+  CCriterionMerge::~CCriterionMerge(){}
+  //------------------------------------------------------------------------------
+  INLINE
+  CCriterionMerge::CCriterionMerge(CRegion* ARegion1, CRegion* ARegion2)
+  {
+    FRegion1 = ARegion1;
+    FRegion2 = ARegion2;
+  }
+  
+  //******************************************************************************
+  //Accesseurs
+  //******************************************************************************
+  
+  INLINE
+  CRegion* CCriterionMerge::getRegion1() const
+  { return FRegion1; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CCriterionMerge::setRegion1(CRegion* ARegion)
+  {
+    assert(ARegion!=NULL);
+    FRegion1 = ARegion;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CRegion* CCriterionMerge::getRegion2() const
+  { return FRegion2; }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CCriterionMerge::setRegion2(CRegion* ARegion)
+  {
+    assert(ARegion!=NULL);
+    FRegion2 = ARegion;
+  }
+}
+//******************************************************************************

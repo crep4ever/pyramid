@@ -1,0 +1,293 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "tile.hh"
+#include "traversal-region-pixels.hh"
+// split/merge criteria
+#include "split-nbpix.hh"
+#include "split-grey.hh"
+#include "split-histo.hh"
+//#include "split-hole.hh"
+#include "merge-grey.hh"
+#include "split-deviation.hh"
+
+
+//******************************************************************************
+namespace Map2d
+{
+  INLINE
+  bool CTile::isRegionToSplit(CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode) 
+  {	
+    //std::cout<<"CTile::isRegionToSplit criterion = "<< AFocusAttentionMode <<std::endl;
+    if(!ARegion)
+      std::cout<<"CTile::isRegionToSplit : warning null region won't be refined"<<std::endl;
+    if(ARegion==NULL || ARegion->isInfiniteRegion()) 
+      return false;
+    
+    CCriterionSplit* oracle = NULL;
+    CPyramidalRegion* region = static_cast<CPyramidalRegion*>(ARegion);
+
+    switch(AFocusAttentionMode)
+      {
+      case FocusSize:
+	oracle = new CSplitNbPix(ARegion, 4);
+	break;
+	
+      case FocusGrey:
+	oracle = new CSplitGrey(ARegion, mergeThreshold());
+	break;
+
+      case FocusHomogeneous:
+	oracle = new CSplitDeviation(ARegion, mergeThreshold());
+	break;
+
+      case FocusHisto:
+	//std::cout<<"CTile::isRegionToSplit region "<< region->getFirstPixel() << " label = "<< (int)region->label() <<" depth = " << depth() <<std::endl;
+	switch(depth())
+	  {
+	  case 0:
+	    return region->label()==CPyramidalRegion::Invalid;
+	  case 1:
+	    return region->label()==CPyramidalRegion::Tissue;
+	  case 2:
+	    return region->label()==CPyramidalRegion::DarkTissue;
+	  case 3:
+	    return region->label()==CPyramidalRegion::Lesion;
+	    //	  case 4:
+	    //	    return region->label()==CPyramidalRegion::Cancer;
+	  case 4:
+	    return region->label()==CPyramidalRegion::Mitosis;
+	  default:
+	    std::cout<<"CTile::isRegionToSplit warning label "<<region->label()
+		     <<" is not supported at depth "<<depth()<<std::endl;
+	    return false;
+	  }
+	assert(false);
+	
+      case FocusAll:
+	return !ARegion->isInfiniteRegion();
+
+      case FocusNone:
+	return false;
+
+      case FocusRed:
+	{
+	  //std::cout<<"CTile::isRegionToSplit focus red"<<std::endl;
+	  int red= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
+	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
+	    {
+	      pix.x=(*it).getX(); 
+	      pix.y=(*it).getY();
+	      image()->getPixel( pix, index(2) );
+	      ++count;
+	      red += pix.value[0];
+	    }
+	  std::cout<<"red = " << red << " for nb = " << count << std::endl;
+	  return (red/count > 100);
+	}
+
+      case FocusBlue:
+	{
+	  //std::cout<<"CTile::isRegionToSplit focus red"<<std::endl;
+	  int blue= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
+	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
+	    {
+	      pix.x=(*it).getX(); 
+	      pix.y=(*it).getY();
+	      image()->getPixel( pix, index(2) );
+	      ++count;
+	      blue += pix.value[2];
+	    }
+	  std::cout<<"blue = " << blue << "for nb = " << count << std::endl;
+	  return (blue/count > 70);
+	}
+	
+      default:
+	std::cout<<"CTile::isRegionToSplit criterion not supported"<<std::endl;
+	assert(false);
+	break;
+      }
+    assert(oracle);
+    bool res = oracle->isRegionToSplit();
+    delete oracle;
+    return res;
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CTile::isRegionToMerge(CRegion* ARegion1, CRegion* ARegion2, const SegmentationMode & ASegmentationMode)
+  {
+    assert(ARegion1 != NULL && ARegion2 != NULL);
+    
+    if( ARegion1->isInfiniteRegion() || ARegion2->isInfiniteRegion() )
+      return false;
+
+    CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
+    CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);      
+    uint x1, y1, x2, y2;
+    x1 = region1->getFirstPixel().getX(); y1 = region1->getFirstPixel().getY();
+    x2 = region2->getFirstPixel().getX(); y2 = region2->getFirstPixel().getY();
+    uint pos1 = ( (x1) + (width())*(y1) );
+    uint pos2 = ( (x2) + (width())*(y2) );
+
+    switch(ASegmentationMode)
+      {
+      case Thresholds:
+	{
+	  CMergeGrey crit1 (ARegion1, ARegion2, mergeThreshold());
+	  return crit1.isRegionToMerge();
+	}
+	
+      case GreyValue:
+	break;
+	
+      case Classif:
+	{
+	  return FClassif[pos1] == FClassif[pos2];
+	}
+	break;
+      case Histology:
+	{
+	  int label1 = static_cast<CPyramidalRegion*>(ARegion1)->label();
+	  int label2 = static_cast<CPyramidalRegion*>(ARegion2)->label();
+	  return label1 == label2;
+	}
+      case SegmentationOff:
+	if(depth()==1 && FClassif)
+	  return FClassif[pos1] == FClassif[pos2];
+	return true;
+      }
+    
+    return false;
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CTile::oracle(const IM_Pixel & APixel1, const IM_Pixel & APixel2,
+		     const SegmentationMode & ASegmentationMode)
+  {
+    uint ratiox = upRatioX();  uint ratioy = upRatioY();
+    uint offsetx = tileUp()->xmin()*ratiox;
+    uint offsety = tileUp()->ymin()*ratioy;
+  
+    //pour une classif sur l'ensemble des tuiles filles
+    uint pos1 = ( (APixel1.x-offsetx) + (width()*ratiox)*(APixel1.y-offsety) ) ;
+    uint pos2 = ( (APixel2.x-offsetx) + (width()*ratiox)*(APixel2.y-offsety) ) ;
+
+    //pour la classif des mitoses
+    //uint pos3 = ( (APixel1.x-offsetx) + (width()*ratiox)*(APixel1.y-offsety) ) ;
+    //uint pos4 = ( (APixel2.x-offsetx) + (width()*ratiox)*(APixel2.y-offsety) ) ;
+
+    //pour la classif sur toute l'image
+    //uint pos5 = ( (APixel1.x ) + (image()->getXSize(depth()))*(APixel1.y) ) * 3 ;
+    //uint pos6 = ( (APixel2.x ) + (image()->getXSize(depth()))*(APixel2.y) ) * 3 ;
+
+    uint pos7 = ( (APixel1.x ) + (image()->getXSize(depth()))*(APixel1.y) )  ;
+    uint pos8 = ( (APixel2.x ) + (image()->getXSize(depth()))*(APixel2.y) )  ;
+
+    uint pos9  = ( (APixel1.x) + (width())*(APixel1.y) );
+    uint pos10 = ( (APixel2.x) + (width())*(APixel2.y) );
+
+    switch(ASegmentationMode)
+      {
+      case GreyValue:
+	//Attention! pas bon pour les images couleurs car ne définit pas une partition, 
+	//ok pour les images en niveau de gris
+	//std::cout << "CTile::sameRegions : GreyValue "<<std::endl;
+	//std::cout<<"value 1 = "<<image()->getPixelGreyValue(APixel1)<<" value 2 = "<<image()->getPixelGreyValue(APixel2)<<std::endl;
+	return image()->getPixelGreyValue(APixel1) == image()->getPixelGreyValue(APixel2);
+
+      case Thresholds:
+	//std::cout << "CTile::sameRegions : Thresholds "<<std::endl;
+	//std::cout<<"diff = "<<abs(image()->getPixelGreyValue(APixel1) - image()->getPixelGreyValue(APixel2))<<std::endl;
+	return (uint) abs(image()->getPixelGreyValue(APixel1) - image()->getPixelGreyValue(APixel2)) < mergeThreshold();
+      
+      case Classif:
+	return FClassif[pos1] == FClassif[pos2];
+
+      case Histology:
+	{
+	  //std::cout << "CTile::sameRegions : Histology SameRegionOracle "<<std::endl;
+
+	  if(depth()==1)
+	    {	
+	      //	    if(image()->colorMode()==CImageTiff::RGB)
+	      //	      return FClassif[pos5] == FClassif[pos6] &&
+	      //		FClassif[pos5+1] == FClassif[pos6+1] &&
+	      //		FClassif[pos5+2] == FClassif[pos6+2];
+	      //	    else if(image()->colorMode()==CImageTiff::Grey)
+	      return FClassif[pos7] == FClassif[pos8];
+	    }
+
+	  //	if(depth()==2)
+	  //	  {	
+	  //	    if(image()->colorMode()==CImageTiff::RGB)
+	  //	      return FClassif[pos1] == FClassif[pos2] &&
+	  //		FClassif[pos1+1] == FClassif[pos2+1] &&
+	  //		FClassif[pos1+2] == FClassif[pos2+2];
+	  //	    else if(image()->colorMode()==CImageTiff::Grey)
+	  //	      return FClassif[pos5] == FClassif[pos6];
+	  //	  }
+
+	  //	if(depth()==4)
+	  //	  {
+	  //	    if(!FClassif)
+	  //	      return true;
+	  //	    else
+	  //	      return FClassif[pos3] == FClassif[pos4];
+	  //	  }
+
+	  if(!FAssignment)
+	    return true;
+	
+	  return (*FAssignment)(APixel1.value[0], APixel1.value[1], APixel1.value[2]) ==
+	    (*FAssignment)(APixel2.value[0], APixel2.value[1], APixel2.value[2]);
+	}
+
+      case SegmentationOff:
+	{
+	  //std::cout << "CTile::sameRegions : SegmentationOff "<<std::endl;
+	  if(depth()==1)
+	    {
+	      //TODO
+	      //return FClassif[pos1] == FClassif[pos2];
+	      assert(FClassif);
+	      return FClassif[pos9] == FClassif[pos10];
+	    
+	    }
+	  return true;
+	  //	if(image()->colorMode()==CImageTiff::RGB)
+	  //	  return FClassif[pos1] == FClassif[pos2] &&
+	  //	    FClassif[pos1+1] == FClassif[pos2+1] &&
+	  //	    FClassif[pos1+2] == FClassif[pos2+2];
+	  //	else if(image()->colorMode()==CImageTiff::Grey)
+	  //	  return FClassif[pos1] == FClassif[pos2];
+	}
+      
+      default:
+	std::cout<<"CTile::sameRegions : Warning unsupported SameRegionOracle"<<std::endl;
+	break;
+      }
+    std::cout<<"[end] CTile::sameRegions : false"<<std::endl;
+    return false;
+  }
+  
+  //******************************************************************************
+} // namespace Map2d
+  //******************************************************************************

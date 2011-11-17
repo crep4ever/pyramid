@@ -1,0 +1,584 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "tile.hh"
+#include "CImg.h"
+namespace Map2d
+{
+  //******************************************************************************
+  //Constructeur
+  //******************************************************************************
+
+  INLINE
+  CLevel::CLevel():
+    FDepth(0),
+    FMergeThreshold(0),
+    FTileWidth(0),
+    FTileHeight(0),
+    FTileCounter(0),
+    FImage(NULL),
+    FLevelUp(NULL),
+    FLevelDown(NULL),
+    FClassif(NULL),
+    FHisto(NULL),
+    FAssignment(NULL)
+  { }
+
+  //******************************************************************************
+  //Accesseurs
+  //******************************************************************************
+
+  //------------------------------------------------------------------------------
+  INLINE
+  CLevel* CLevel::levelUp() const
+  {
+    return FLevelUp;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setLevelUp(CLevel* ALevel)
+  {
+    //if(ALevel) std::cout<<"setLevelUp= "<<ALevel->id()<<" down = "<<id()<<std::endl;
+    FLevelUp = ALevel;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CLevel* CLevel::levelDown() const
+  {
+    return FLevelDown;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setLevelDown(CLevel* ALevel)
+  {
+    //if(ALevel) std::cout<<"setLevelUp= "<<ALevel->id()<<" down = "<<id()<<std::endl;
+    FLevelDown = ALevel;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CImageTiff* CLevel::image() const
+  {
+    return FImage;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setImage(CImageTiff* AImage)
+  {
+    assert( AImage!=NULL );
+    FImage = AImage;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  std::deque<CTile*> CLevel::tiles() const
+  {
+    return FTiles;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setTiles(std::deque<CTile*>& ATiles)
+  {
+    assert( !ATiles.empty() );
+    FTiles = ATiles;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::mergeThreshold() const
+  {
+    return FMergeThreshold;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setMergeThreshold(uint AMergeThreshold)
+  {
+    FMergeThreshold = AMergeThreshold;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::depth() const
+  {
+    return FDepth;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setDepth(uint ADepth)
+  {
+    FDepth = ADepth;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::tileHeight() const
+  {
+    return FTileHeight;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setTileHeight(uint ATileHeight)
+  {
+    if(ATileHeight>imageHeight()) 
+      FTileHeight = imageHeight();
+    else
+      FTileHeight = ATileHeight;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::tileWidth() const
+  {
+    return FTileWidth;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::setTileWidth(uint ATileWidth)
+  {
+    if(ATileWidth>imageWidth()) 
+      FTileWidth = imageWidth();
+    else
+      FTileWidth = ATileWidth;
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CLevel::upRatios() const
+  {
+    if(FDepth==0) return CPoint2D(1,1);
+    return CPoint2D( imageWidth()/image()->getXSize(FDepth-1),
+		     imageHeight()/image()->getYSize(FDepth-1) );
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CLevel::downRatios() const
+  {
+    return CPoint2D( image()->getXSize(FDepth+1)/imageWidth(),
+		     image()->getYSize(FDepth+1)/imageHeight() );
+  }
+
+  //******************************************************************************	  
+  // Méthodes sur l'image
+  //******************************************************************************	    
+
+
+  INLINE
+  void CLevel::loadTileImage(CTile* ATile)
+  {
+    ATile->loadImage();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::imageWidth() const
+  {
+    assert( FImage!=NULL);
+    return FImage->getXSize(depth());
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::imageHeight() const
+  {
+    assert( FImage!=NULL);
+    return FImage->getYSize(depth());
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::componentWidth() const
+  {
+    assert( FImage!=NULL);
+    return FImage->getProperties().componentWidth;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::componentHeight() const
+  {
+    assert( FImage!=NULL);
+    return FImage->getProperties().componentHeight;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::nbComponentsWidth() const
+  {
+    assert( FImage!=NULL);
+    return FImage->getProperties().width/FImage->getProperties().componentWidth;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::nbComponentsHeight() const
+  {
+    assert( FImage!=NULL);
+    return FImage->getProperties().height/FImage->getProperties().componentHeight;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::nbTilesWidth() const
+  {
+    uint width = imageWidth();
+    uint truncated = (width%FTileWidth > 0)?1:0;
+    return width/FTileWidth + truncated;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::nbTilesHeight() const
+  {
+    uint height = imageHeight();
+    uint truncated = (height%FTileHeight > 0)?1:0;
+    return height/FTileHeight + truncated;
+  }
+
+
+  //******************************************************************************	  
+  // Système de coordonnées pour les tuiles
+  //******************************************************************************	    
+
+
+  INLINE
+  uint CLevel::xmax( CTile* ATile ) const
+  {
+    return ATile->xmax();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::xmin( CTile* ATile ) const
+  {
+    return ATile->xmin();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::ymax( CTile* ATile ) const
+  {
+    return ATile->ymax();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::ymin( CTile* ATile ) const
+  {
+    return ATile->ymin();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CLevel::tileTopLeft(CTile* ATile) const
+  {
+    return CPoint2D(xmin(ATile),ymin(ATile));    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CLevel::tileTopRight(CTile* ATile) const
+  {
+    return CPoint2D(xmax(ATile),ymin(ATile));    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CLevel::tileBottomLeft(CTile* ATile) const
+  {
+    return CPoint2D(xmin(ATile),ymax(ATile));    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CPoint2D CLevel::tileBottomRight(CTile* ATile) const
+  {
+    return CPoint2D(xmax(ATile),ymax(ATile));    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CLevel::existTileLeft(CTile* ATile) const
+  {
+    return xmin(ATile) > 0;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CLevel::existTileTop(CTile* ATile) const
+  {
+    return ymin(ATile) > 0;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::tileWidth(CTile* ATile) const
+  {
+    return ATile->width();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::tileHeight(CTile* ATile) const
+  {
+    return ATile->height();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::tileIndexI(CTile* ATile) const
+  {
+    return ATile->index(0);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CLevel::tileIndexJ(CTile* ATile) const
+  {
+    return ATile->index(1);
+  }
+
+  //******************************************************************************
+  // Traitements sur le bord des tuiles
+  //******************************************************************************
+
+
+  INLINE
+  void CLevel::simplifyTile(const CPoint2D & APos)
+  {
+    tile(APos)->simplifyMap();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::splitTileBorder(const CPoint2D & APos)
+  {
+    tile(APos)->splitBorder();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::splitTileBorder(CTile* ATile)
+  {
+    ATile->splitBorder();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::retrieveTileCorners(const CPoint2D & APos)
+  {
+    retrieveTileCorners(tile(APos));
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::retrieveTileBeta2(const CPoint2D & APos,
+				 const SegmentationMode & ASegmentationMode,
+				 const DetectFictiveBordersMode & ADetectFictiveBordersMode)
+  {
+    retrieveTileBeta2(tile(APos), ASegmentationMode, ADetectFictiveBordersMode);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::splitTile(const CPoint2D & APos, 
+			 const FocusAttentionMode & AFocusAttentionMode,
+			 const SegmentationMode & ASegmentationMode)
+  {
+    tile(APos)->burstAndMerge(AFocusAttentionMode, ASegmentationMode);
+  }
+
+  //******************************************************************************
+  // Swap/Load des tuiles
+  //******************************************************************************
+
+  INLINE
+  CTile* CLevel::tile(const CPoint2D & APos)
+  {
+    for(it = FTiles.begin(); it!=FTiles.end(); ++it)
+      if( (*it)->index(0) == APos.getX() && (*it)->index(1) == APos.getY())
+	return *it;
+    
+    return loadTile(APos);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::addTile(CTile* ATile)
+  {
+    assert( ATile!=NULL );
+    //assert( ATile->isOk());
+    FTiles.push_back(ATile);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::writeTile(const CPoint2D & APos)
+  {
+    assert(isTileLoaded(APos));
+    tile(APos)->write();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::writeTile(CTile* ATile)
+  {
+    assert(ATile!=NULL);
+    ATile->write();
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CTile* CLevel::loadTile(uint i, uint j)
+  {
+    return loadTile(CPoint2D(i,j));
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  CTile* CLevel::loadTile(const CPoint2D & APos)
+  {
+    //std::cout<<" CLevel::loadTile ("<<APos.getX()<<","<<APos.getY()<<","<<depth()<<")"<<std::endl;
+    //std::cout<<" w = "<<FTileWidth<<" h = "<<FTileHeight<<std::endl;
+    assert(FTileWidth!=0 && FTileHeight!=0);
+    CTile* newTile = new CTile(FTileWidth, FTileHeight);
+ 
+    newTile->setMergeThreshold(FMergeThreshold);
+    newTile->setImage(FImage);
+    newTile->setPixelMark();
+    newTile->load(APos.getX(), APos.getY(), depth());
+    addTile(newTile);
+
+    //todo: tester s'il y une tuile gauche ou haut et faire les coutures par beta2'
+    return newTile;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CLevel::unloadTile(uint i, uint j)
+  {
+    return unloadTile(CPoint2D(i,j));
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CLevel::unloadTile(const CPoint2D & APos)
+  {
+    // On cherche la tuile dans le vecteur et on la supprime
+    for(it = FTiles.begin(); it!=FTiles.end();++it)
+      if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
+	{
+	  CTile* tmp = *it;
+	  it = FTiles.erase(it);
+	  delTile(tmp);
+	  return true;
+	}
+    assert(!isTileLoaded(APos));
+    return false;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CLevel::isTileLoaded(const CPoint2D & APos)
+  {
+    for(it = FTiles.begin(); it!=FTiles.end(); ++it)
+      if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
+	return true;
+  
+    return false;    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::unloadAllTiles()
+  {
+    //std::cout<<"[start] CLevel::unloadAllTiles lvl "<<FDepth<<std::endl;
+    for(uint i=0; i<FTiles.size(); ++i)
+      delTile(FTiles[i]);
+      
+    FTiles.clear();
+    assert(FTiles.empty());
+    //std::cout<<"[end] CLevel::unloadAllTiles"<<std::endl;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::loadAllTiles()
+  {
+    for(uint j=0; j<nbTilesHeight(); ++j)
+      for(uint i=0; i<nbTilesWidth(); ++i)
+	tile(CPoint2D(i,j));
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::unload()
+  {
+    unloadAllTiles();
+    image()->close();
+    image()->unload();
+    image()->open();
+    if(FClassif) delete FClassif; FClassif=NULL;
+    if(FAssignment) delete FAssignment; FAssignment=NULL;
+    FHisto=NULL;
+  }   
+
+  //******************************************************************************
+  // Opérateurs sur les cartes tuilées
+  //******************************************************************************
+
+  INLINE
+  CDart* CLevel::beta0(CDart* ADart) const
+  {
+    return ADart->getBeta0();    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDart* CLevel::beta1(CDart* ADart) const
+  {
+    return ADart->getBeta1();    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDart* CLevel::beta2(CDart* ADart) const
+  {
+    return ADart->getBeta2();    
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDart* CLevel::delta2(CDart* dart) const
+  {
+    assert(false);
+    return NULL;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDart* CLevel::delta1(CDart* ADart) const
+  {
+    assert(false);
+    return ADart->getBeta2();    
+  }
+
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::regularization(int nb_iteration, int pp, double lambda, int voisinage)
+  {
+    //std::cout<<" [start] CLevel::regularization\n";
+    assert(false);
+    IM_Box box;
+    for(uint j=0; j<nbTilesHeight(); ++j)
+      for(uint i=0; i<nbTilesWidth(); ++i)
+	{
+	  box.XTop = i*tileWidth();      box.YTop = j*tileHeight();
+	  box.XBtm = (i+1)*tileWidth();  box.YBtm = (j+1)*tileHeight();
+	  image()->regularization(box, depth(), nb_iteration, pp, lambda, voisinage);
+	}
+    //std::cout<<" [end] CLevel::regularization\n";
+  }
+  
+  //------------------------------------------------------------------------------
+  INLINE
+  void CLevel::histogram()
+  {
+    FHisto = new CImg<float>;
+    FHisto->assign(256,256,256,1);
+    (*FHisto) = 0.; 
+
+    CTile* tile;  IM_Box box;
+    uint ratiox = upRatios().x(); uint ratioy = upRatios().y();
+    uint nbwidth = levelUp()->nbTilesWidth();
+    uint nbheight = levelUp()->nbTilesHeight();
+    for(uint j=0; j<nbheight; ++j)
+      for(uint i=0; i<nbwidth; ++i)
+	{
+	  //load tile
+	  tile = levelUp()->tile(CPoint2D(i,j));
+
+	  //read children box
+	  box.XTop = tile->xmin()*ratiox;  box.YTop = tile->ymin()*ratioy;
+	  box.XBtm = tile->xmax()*ratiox;  box.YBtm = tile->ymax()*ratioy;
+	  image()->read(box, depth());
+	  
+	  //append histogram
+	  tile->histogram(FHisto);
+	  levelUp()->unloadTile(CPoint2D(i,j));
+	}
+  }
+  
+  //******************************************************************************
+} // namespace Map2d
+//******************************************************************************

@@ -1,0 +1,319 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include <cassert>
+#include <iostream>
+#include "string.h"
+//******************************************************************************
+INLINE
+void CKhalimsky::empty()
+{
+  bzero(FMatrix, FSize );
+  //for (long int i=0;i<FSize;++i)
+  //  FMatrix[i]=uint8_t(0);
+}
+//******************************************************************************
+INLINE
+CKhalimsky::CKhalimsky(TNatural ASizeX,
+		       TNatural ASizeY) :
+  FSizeX(ASizeX+1),
+  FSizeY(ASizeY+1)
+{
+  assert(0 < ASizeX);
+  assert(0 < ASizeY);
+
+  FDeltaX = 1;
+  FDeltaY = FSizeX;
+
+  FSize = (long int)(FSizeX) * FSizeY;
+  FMatrix = new uint8_t[FSize];
+  
+  empty();
+}
+//------------------------------------------------------------------------------
+//RGE : Constructeur par recopie
+INLINE
+CKhalimsky::CKhalimsky(const CKhalimsky & AKhalimsky) :
+  FSizeX   (AKhalimsky.FSizeX),
+  FSizeY   (AKhalimsky.FSizeY),
+  FSize    (AKhalimsky.FSize),
+  FDeltaX  (AKhalimsky.FDeltaX),
+  FDeltaY  (AKhalimsky.FDeltaY)
+{
+  FMatrix = new uint8_t[AKhalimsky.FSize];
+  memcpy(FMatrix, AKhalimsky.FMatrix, AKhalimsky.FSize);
+  //for (long int i=0;i<FSize;++i)
+  //  FMatrix[i]=AKhalimsky.FMatrix[i];
+
+}
+//------------------------------------------------------------------------------
+INLINE
+CKhalimsky::~CKhalimsky()
+{
+  delete [] FMatrix;
+  FMatrix = NULL;
+}
+//******************************************************************************
+INLINE
+TNatural  CKhalimsky::getSizeX() const
+{ return FSizeX; }
+//------------------------------------------------------------------------------
+INLINE
+TNatural  CKhalimsky::getSizeY() const
+{ return FSizeY; }
+//------------------------------------------------------------------------------
+INLINE
+long int CKhalimsky::getNumberOfByte() const
+{ return sizeof(CKhalimsky)+(FSize); } 
+//------------------------------------------------------------------------------
+INLINE
+TKhalimskyElt* CKhalimsky::getMatrix() const
+{
+  return FMatrix;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CKhalimsky::setMatrix(TKhalimskyElt* AMatrix)
+{
+  FMatrix = AMatrix;
+}
+//******************************************************************************
+INLINE
+CDoublet CKhalimsky::normaliseDoubletPointel(const CDoublet& ADoublet) const
+{
+  // cas possible pour lever ces assert: parcours de la geometrie
+  // sur les dimensions de l'image plutot que sur les dimensions de la tuile ...
+  assert( ADoublet.getX()<=FSizeX );
+  assert( ADoublet.getY()<=FSizeY );
+  
+  CDoublet res(ADoublet);
+  
+  // On a le droit de déborder de un autour de la matrice, mais on la replie
+  // sur un tore (droit = gauche + 1, devant = derriere + 1).
+  if ( res.getX()==FSizeX )
+    { 
+      res.setX(0); res.incY(); 
+    }
+
+  return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+CDoublet CKhalimsky::normaliseDoubletLinel(const CDoublet& ADoublet) const
+{
+   assert( ADoublet.getX()<=FSizeX );
+   assert( ADoublet.getY()<=FSizeY );
+
+  CDoublet res(normaliseDoubletPointel(ADoublet));
+  
+  if ( res.getLinel()==XNEG )
+    {
+      if ( res.getX()==0 ) res.setX(FSizeX-1);
+      else res.setX(res.getX()-1);
+
+      res.setLinel(XPOS);
+    }
+  else if ( res.getLinel()==YNEG )
+    {
+      if ( res.getY()==0 ) res.setY(FSizeY-1);
+      else res.incY(-1);
+      
+      res.setLinel(YPOS);
+    }
+  
+  return res;
+}
+//******************************************************************************
+INLINE
+long int CKhalimsky::getIndex(const CDoublet& ADoublet) const
+{
+  assert( ADoublet.getX()<FSizeX );
+  assert( ADoublet.getY()<FSizeY );
+      
+  return
+    FDeltaX * ADoublet.getX() +
+    FDeltaY * ADoublet.getY();
+}
+//------------------------------------------------------------------------------
+INLINE
+uint8_t CKhalimsky::getKhalimskyElt(const CDoublet& ADoublet) const
+{
+  assert( getIndex(ADoublet)<FSize );
+
+  return FMatrix[getIndex(ADoublet)];
+}
+//------------------------------------------------------------------------------
+INLINE
+void CKhalimsky::setBits(long int AIndex, TKhalimskyElt AMask, bool AOn)
+{
+  assert(AIndex < FSize);
+
+  if (AOn)
+    FMatrix[AIndex] |= AMask;
+  else
+    FMatrix[AIndex] &= ~AMask;
+}
+//******************************************************************************
+/** Organisation des bits de chaque pixel :
+ *
+ *  0 : Pointel		 3 : Pointel fictif
+ *
+ *  1 : Lignel  x	 4 : Lignel x   fictif
+ *  2 : Lignel  y	 5 : Lignel  y  fictif
+ *  
+ *
+ */
+enum
+{
+  POINTEL = 1,
+  LIGNELX = 2, LIGNELY = 4,
+ 
+//  POINTEL_FICTIF = 8 ,
+//  LIGNELX_FICTIF = 16, LIGNELY_FICTIF = 32
+};
+//------------------------------------------------------------------------------
+INLINE
+bool CKhalimsky::isPCell(const CDoublet& ADoublet) const
+{
+  CDoublet doublet(normaliseDoubletPointel(ADoublet));
+  
+  if ( doublet.getX()>=FSizeX ||  doublet.getY()>=FSizeY)
+    return false;
+
+  return getKhalimskyElt(doublet) & POINTEL;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CKhalimsky::isLCell(const CDoublet& ADoublet) const
+{
+  CDoublet doublet(normaliseDoubletLinel(ADoublet));
+
+  if ( doublet.getX()>=FSizeX ||  doublet.getY()>=FSizeY)
+    return false;
+
+  uint8_t element = getKhalimskyElt(doublet);
+  
+  switch (ADoublet.getLinel())
+    {
+    case XNEG:
+    case XPOS: return element & LIGNELX;
+    case YNEG:
+    case YPOS: return element & LIGNELY;
+    default: assert(false);
+    }
+  return false;
+}
+//------------------------------------------------------------------------------
+/*
+INLINE
+bool CKhalimsky::isFictivePCell(const CDoublet& ADoublet) const
+{
+  if ( ADoublet.getX()>FSizeX || ADoublet.getY()>FSizeY ) return false;
+  return getKhalimskyElt(normaliseDoubletPointel(ADoublet)) & POINTEL_FICTIF;
+}
+*/
+//------------------------------------------------------------------------------
+/*
+INLINE
+bool CKhalimsky::isFictiveLCell(const CDoublet& ADoublet) const
+{
+  CDoublet doublet(normaliseDoubletPointel(ADoublet));
+  if ( doublet.getX()>=FSizeX || doublet.getY()>=FSizeY)
+    return false;
+
+  uint8_t element = getKhalimskyElt(doublet);
+
+  switch (ADoublet.getLinel())
+    {
+    case XNEG:
+    case XPOS: return element & LIGNELX_FICTIF;
+    case YNEG:
+    case YPOS: return element & LIGNELY_FICTIF;
+    default: assert(false);
+    }
+  return false;
+}
+*/
+//------------------------------------------------------------------------------
+INLINE
+void CKhalimsky::setPCell(const CDoublet& ADoublet, bool AOn)
+{
+  setBits(getIndex(normaliseDoubletPointel(ADoublet)), POINTEL, AOn);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CKhalimsky::setLCell(const CDoublet& ADoublet, bool AOn)
+{
+  long int index = getIndex(normaliseDoubletLinel(ADoublet));
+
+  switch (ADoublet.getLinel())
+    {
+    case XNEG: 
+    case XPOS: setBits(index, LIGNELX, AOn); break;
+    case YNEG: 
+    case YPOS: setBits(index, LIGNELY, AOn); break;
+    default: assert(false);
+    }
+}
+//------------------------------------------------------------------------------
+/*
+INLINE
+void CKhalimsky::setFictivePCell(const CDoublet& ADoublet, bool AOn)
+{
+  setBits(getIndex(normaliseDoubletPointel(ADoublet)), POINTEL_FICTIF, AOn);
+}
+*/
+//------------------------------------------------------------------------------
+ /*
+INLINE
+void CKhalimsky::setFictiveLCell(const CDoublet& ADoublet, bool AOn)
+{
+    long int index = getIndex(normaliseDoubletLinel(ADoublet));
+
+  switch ( ADoublet.getLinel() )
+    {
+    case XNEG:
+    case XPOS: setBits(index, LIGNELX_FICTIF, AOn); break;
+    case YNEG:
+    case YPOS: setBits(index, LIGNELY_FICTIF, AOn); break;
+    default: assert(false);
+    }
+}
+ */
+//------------------------------------------------------------------------------
+//******************************************************************************
+INLINE
+int CKhalimsky::degreePCell( const CDoublet & APointel ) const
+{
+  int degre = 0;
+  CDoublet tCur( APointel );
+  do
+    {
+      if( isLCell( tCur ) ) { ++degre; }
+      tCur.setPrevLinel();
+    }
+  while( tCur != APointel );
+
+  return degre;
+}
+//******************************************************************************

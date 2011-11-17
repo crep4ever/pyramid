@@ -1,0 +1,115 @@
+//*****************************************************************************
+#include <cassert>
+#include <cmath>
+//*****************************************************************************
+INLINE
+CPoint3D::CPoint3D()
+{
+  FCoord[0] = 0;
+  FCoord[1] = 0;
+  FCoord[2] = 0;
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint3D::CPoint3D(uint Ax, uint Ay, uint Az)
+{
+  FCoord[0] = Ax;
+  FCoord[1] = Ay;
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint3D::CPoint3D(uint ATab[3])
+{
+  FCoord[0] = ATab[0];
+  FCoord[1] = ATab[1];
+  FCoord[2] = ATab[2]; 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint3D::CPoint3D(const CPoint3D& AVertex)
+{
+  FCoord[0] = AVertex.FCoord[0];
+  FCoord[1] = AVertex.FCoord[1];
+  FCoord[2] = AVertex.FCoord[2]; 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint3D::~CPoint3D()
+{}
+//*****************************************************************************
+INLINE
+uint CPoint3D::x() const
+{ return FCoord[0]; }
+//-----------------------------------------------------------------------------
+INLINE
+uint CPoint3D::y() const
+{ return FCoord[1]; }
+//-----------------------------------------------------------------------------
+INLINE
+uint CPoint3D::z() const
+{ return FCoord[2]; }
+//*****************************************************************************
+INLINE
+void CPoint3D::setX(uint value)
+{ FCoord[0] = value; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint3D::setY(uint value)
+{ FCoord[1] = value; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint3D::setZ(uint value)
+{ FCoord[2] = value; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint3D::incX(uint value)
+{ FCoord[0] += value; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint3D::incY(uint value)
+{ FCoord[1] += value; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint3D::incZ(uint value)
+{ FCoord[2] += value; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint3D::setXYZ(uint ANewX, uint ANewY, uint ANewZ)
+{
+  setX(ANewX);
+  setY(ANewY);
+  setY(ANewZ);
+}
+//*****************************************************************************
+INLINE
+CPoint3D& CPoint3D::operator=(const CPoint3D& AVector)
+{
+  setXYZ(AVector.x(), AVector.y(), AVector.z());
+  return *this;
+}
+//*****************************************************************************
+INLINE
+bool CPoint3D::operator==(const CPoint3D& AVector) const
+{
+  return( x()==AVector.x() && y()==AVector.y() && z()==AVector.z());    
+}
+//*****************************************************************************
+INLINE
+bool CPoint3D::operator!=(const CPoint3D& AVector) const
+{ return ! (*this == AVector); }
+//*****************************************************************************
+INLINE
+bool operator < (CPoint3D u,CPoint3D v)
+{
+  return( u.x()<v.x() || 
+	  ( u.x()==v.x() && u.y()<v.y() ) ||
+	  ( u.x()==v.x() && u.y()==v.y() && u.z()<v.z() ) );
+}
+//*****************************************************************************
+//*****************************************************************************
+INLINE
+std::ostream & operator<<(std::ostream & AStream, const CPoint3D & AVector)
+{
+  AStream<<"("<<AVector.x()<< ","<<AVector.y()<<","<<AVector.z()<<") ";
+  return AStream;
+}

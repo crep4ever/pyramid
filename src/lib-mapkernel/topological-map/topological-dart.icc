@@ -1,0 +1,88 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+namespace Map2d
+{
+//******************************************************************************
+INLINE
+CTopologicalDart::CTopologicalDart() :
+  CDart   (),
+  FDoublet(),
+  FRegion (NULL)
+{}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalDart::init(const CDoublet & ADoublet, CRegion* ARegion)
+{
+  FDoublet = ADoublet;
+  FRegion  = ARegion;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalDart::copy( CTopologicalDart* ADart )
+{
+  CDart::copy(ADart);
+
+  FDoublet = ADart->FDoublet;
+  FRegion  = ADart->FRegion;
+}
+//******************************************************************************
+INLINE
+CDoublet& CTopologicalDart::doublet()
+{ return FDoublet; }
+//******************************************************************************
+INLINE
+void CTopologicalDart::setDoublet(const CDoublet& ADoublet)
+{ FDoublet = ADoublet; }
+//******************************************************************************
+INLINE
+CRegion* CTopologicalDart::getRegion() const
+{ return FRegion; }
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalDart::setRegion(CRegion* ARegion)
+{
+  assert( ARegion!=NULL );
+  
+  FRegion=ARegion;
+}
+//******************************************************************************
+INLINE
+void CTopologicalDart::print( std::ostream& AOs ) const
+{
+
+  CDart::print(AOs);
+
+  AOs<<", "<<FDoublet<<", "<<FRegion;
+}
+//------------------------------------------------------------------------------
+INLINE
+std::ostream& operator<<(std::ostream& AOs,
+			 const CTopologicalDart &ADart)
+{
+  ADart.print(AOs);
+  return AOs;
+}
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

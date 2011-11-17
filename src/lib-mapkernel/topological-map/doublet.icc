@@ -1,0 +1,194 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+INLINE
+CDoublet::CDoublet() :
+  Fx(0), Fy(0),
+  FL(XPOS)
+{}
+//******************************************************************************
+INLINE
+CDoublet::CDoublet(const CDoublet & ADoublet) :
+  Fx(ADoublet.Fx), Fy(ADoublet.Fy), 
+  FL(ADoublet.FL)
+{}
+//******************************************************************************
+INLINE
+CDoublet::CDoublet(TNatural Ax, TNatural Ay) :
+  Fx(Ax), Fy(Ay),
+  FL(XPOS)
+{}
+//******************************************************************************
+INLINE
+CDoublet::CDoublet(TNatural Ax, TNatural Ay,
+		   const TLinel& ALinel) :
+  Fx(Ax), Fy(Ay),
+  FL(ALinel)
+{}
+//******************************************************************************
+INLINE
+CDoublet& CDoublet::operator = (const CDoublet& ADoublet)
+{
+  Fx = ADoublet.Fx;
+  Fy = ADoublet.Fy;
+  FL = ADoublet.FL;
+  return *this;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDoublet::operator == (const CDoublet & ADoublet) const
+{
+  return ( Fx == ADoublet.Fx && Fy == ADoublet.Fy &&
+	   FL == ADoublet.FL);
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDoublet::operator != (const CDoublet & ADoublet) const
+{ return ! operator==(ADoublet); }
+//------------------------------------------------------------------------------
+INLINE
+bool CDoublet::operator < (const CDoublet & ADoublet) const
+{
+  return ( ( Fx < ADoublet.Fx ) ||
+	   ( Fx == ADoublet.Fx && Fy < ADoublet.Fy ) ||
+	   ( Fx == ADoublet.Fx && Fy == ADoublet.Fy &&
+	     FL < ADoublet.FL) );
+}
+//******************************************************************************
+INLINE
+CDoublet::~CDoublet()
+{}
+//******************************************************************************
+INLINE TNatural CDoublet::getX() const { return Fx; }
+INLINE TNatural CDoublet::getY() const { return Fy; }
+
+INLINE TNatural CDoublet::incX(int ANb) { Fx+=ANb; return Fx; }
+INLINE TNatural CDoublet::incY(int ANb) { Fy+=ANb; return Fy; }
+
+INLINE void CDoublet::setX(const TNatural& Ax) { Fx = Ax; }
+INLINE void CDoublet::setY(const TNatural& Ay) { Fy = Ay; }
+
+//******************************************************************************
+INLINE
+TLinel CDoublet::getLinel() const
+{ return(FL); }
+
+INLINE
+void CDoublet::setLinel(const TLinel& ALinel)
+{ FL = ALinel; }
+
+INLINE
+bool CDoublet::samePointel(const CDoublet & ADoublet) const
+{ return (Fx==ADoublet.Fx && Fy==ADoublet.Fy); }
+
+INLINE
+void CDoublet::setPointel(const CDoublet & ADoublet)
+{
+  Fx=ADoublet.Fx;
+  Fy=ADoublet.Fy;
+}
+
+INLINE
+void CDoublet::setPointel(const TNatural& Ax, const TNatural& Ay)
+{ Fx=Ax; Fy=Ay;}
+
+INLINE
+void CDoublet::setDoublet(const TNatural& Ax, const TNatural& Ay,
+			   const TLinel& ALinel)
+{
+  Fx=Ax; Fy=Ay;
+  setLinel(ALinel);
+}
+//******************************************************************************
+INLINE
+void CDoublet::setNextPointel()
+{
+  if      ( getLinel()==XNEG ) --Fx;
+  else if ( getLinel()==XPOS ) ++Fx;
+  else if ( getLinel()==YNEG ) --Fy;
+  else if ( getLinel()==YPOS ) ++Fy;
+
+  setLinel(CDoublet::getOppositeLinel(getLinel()));
+}
+//******************************************************************************
+INLINE
+CDoublet CDoublet::getNextPointel() const
+{
+  CDoublet res(*this);
+  res.setNextPointel();  
+  return res;
+}
+//******************************************************************************
+INLINE
+void CDoublet::setNextLinel()
+{
+  setLinel(CDoublet::getOrthogonalLinel(getLinel()));
+}
+//******************************************************************************
+INLINE
+CDoublet CDoublet::getNextLinel() const
+{
+  CDoublet res(*this);
+  res.setNextLinel();  
+  return res;
+}
+//******************************************************************************
+INLINE
+void CDoublet::setPrevLinel()
+{
+  setLinel(CDoublet::getOtherOrthogonalLinel(getLinel()));
+}
+//******************************************************************************
+INLINE
+CDoublet CDoublet::getPrevLinel() const
+{
+  CDoublet res(*this);
+  res.setPrevLinel();
+  return res;
+}
+//******************************************************************************
+INLINE
+std::ostream & operator<<(std::ostream & AStream,
+			  const CDoublet & ADoublet)
+{
+  AStream << "[ ("
+	  << ADoublet.Fx << ", "
+	  << ADoublet.Fy << ") ";
+
+  switch (ADoublet.FL)
+    {
+    case XPOS: AStream<<"XPOS "; break;
+    case YPOS: AStream<<"YPOS "; break;
+    case XNEG: AStream<<"XNEG "; break;
+    case YNEG: AStream<<"YNEG "; break;
+    }
+  
+  return AStream<<"]";
+}
+//******************************************************************************
+INLINE
+void CDoublet::print(const std::string & APrefix)
+{
+  std::cout<<APrefix<<" "<<(*this)<<std::endl;
+}
+

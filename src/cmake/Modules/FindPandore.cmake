@@ -1,0 +1,43 @@
+#
+# @file    Find PANDORE
+# @author  Vincent Roullier
+# @date    jan 2010
+# @brief   Based on Vinh Thon Ta modules
+#
+MESSAGE("Try to find Pandore library...")
+#-- find PANDORE include use PANDOREHOME variable
+
+FIND_PATH( PANDORE_INCLUDE_DIR
+	NAMES pandore.h
+	PATHS 
+		"$ENV{PANDOREHOME}/include"
+)
+#-- find PANDORE library
+FIND_LIBRARY( PANDORE_LIBRARY
+	NAMES pandore
+	PATHS 
+		"$ENV{PANDOREHOME}/lib"
+)
+
+IF( NOT PANDORE_INCLUDE_DIR )
+	MESSAGE("ERROR: PANDORE include file not found")
+	MESSAGE(FATAL_ERROR "Please set PANDOREHOME variable")
+ENDIF( NOT PANDORE_INCLUDE_DIR )
+
+IF( NOT PANDORE_LIBRARY )
+	MESSAGE("PANDORE library not found")
+	MESSAGE(FATAL_ERROR "Please set PANDOREHOME variable")
+ENDIF( NOT PANDORE_LIBRARY )
+
+IF( PANDORE_INCLUDE_DIR AND PANDORE_LIBRARY )
+	SET( PANDORE_FOUND TRUE )
+ENDIF( PANDORE_INCLUDE_DIR AND PANDORE_LIBRARY )
+
+IF( PANDORE_FOUND )
+		MESSAGE("PANDORE found:")
+		MESSAGE("  [${PANDORE_INCLUDE_DIR}]\n  [${PANDORE_LIBRARY}]")
+ELSE( PANDORE_FOUND )
+		MESSAGE(FATAL_ERROR "PANDORE not found please set PANDOREHOME")
+ENDIF( PANDORE_FOUND )
+
+

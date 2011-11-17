@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "pyramidal-region.hh"
+//******************************************************************************
+namespace Map2d
+{
+  //******************************************************************************
+  //Constructeurs
+  //******************************************************************************
+
+  INLINE
+  CSplitDeviation::CSplitDeviation() :
+    CCriterionSplit ()
+  {}
+  //------------------------------------------------------------------------------
+  INLINE
+  CSplitDeviation::~CSplitDeviation(){}
+  //------------------------------------------------------------------------------
+  INLINE
+  CSplitDeviation::CSplitDeviation(CRegion* ARegion, unsigned int AMergeThreshold) :
+    CCriterionSplit(ARegion)
+  {
+    FMergeThreshold = AMergeThreshold;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CSplitDeviation::isRegionToSplit()
+  {
+    //CPyramidalRegion* father = static_cast<CPyramidalRegion*>(FRegion)->getRegionUp();
+    //CPyramidalRegion* father2 = static_cast<CPyramidalRegion*>(FRegion2)->getRegionUp();
+  
+    // Les deux région doivent être issues du même père
+    // pour garder la causalité top-down
+    //if( father1 != father2)
+    //return false;
+  
+    //int color1 = (int) static_cast<CPyramidalRegion*>(FRegion1)->getAverageGrey(); //couleur de la région 1
+    //int color2 = (int) static_cast<CPyramidalRegion*>(FRegion2)->getAverageGrey(); //couleur de la région 2
+    //unsigned int diff = (unsigned int ) abs(color1-color2);
+  
+    //Calcul de l'écart type de la région mère
+    float deviation = 0;
+    CPyramidalRegion* region = static_cast<CPyramidalRegion*>(FRegion);
+    
+    if(region->getNbPixels() == 0)
+      {
+	std::cout << "CSplitDeviation::isRegionToSplit nb pix = 0" << std::endl;
+	region->print();
+	return false;
+      } 
+
+    deviation = sqrt(region->getGreySquareSum()/region->getNbPixels() - 
+		     (region->getGreySum()/region->getNbPixels())
+		     *(region->getGreySum()/region->getNbPixels()));
+    
+    //std::cout<<"Merge deviation entre "<<FRegion1->getId()<<" et "<<FRegion2->getId()<<std::endl;
+    //std::cout<<"Ecart-type région mère = "<<deviation<<" diff = "<<diff<<std::endl;
+    
+    return FMergeThreshold < (unsigned int) deviation  +1 ;
+  }
+  //******************************************************************************
+} // namespace Map2d
+//******************************************************************************

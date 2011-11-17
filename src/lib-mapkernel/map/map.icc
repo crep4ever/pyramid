@@ -1,0 +1,152 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "dart.hh"
+#include "dynamic-coverage.hh"
+#include "static-coverage.hh"
+#include <iostream>
+#include <cassert>
+//******************************************************************************
+namespace Map2d
+{
+//******************************************************************************
+INLINE
+CMap::CMap(unsigned int ASizeDartArray)
+  : CMapBasic(ASizeDartArray)
+{}
+//******************************************************************************
+INLINE
+bool CMap::isSameOrbit(CDart* ADart1, CDart* D2, TOrbit orbit)
+{
+  bool found = false;
+
+  CCoverage* C = getDynamicCoverage(ADart1,orbit);
+
+  while (!found && C->cont())
+    if ((*C)++ == D2)
+      found = true;
+
+  delete C;
+
+  return found;
+}
+//******************************************************************************
+INLINE
+bool CMap::canSew(CDart* d1, CDart* d2, int i)
+{
+  assert(d1!=NULL && d2!=NULL);
+
+  if ( d1==d2 || !isFree(d1,i) || !isFree(d2,i) )
+    return false;
+
+  bool res = true;
+  
+  return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CMap::canSew0(CDart* d1, CDart* d2)
+{ return canSew(d1,d2, 0); }
+//------------------------------------------------------------------------------
+INLINE
+bool CMap::canSew1(CDart* d1, CDart* d2)
+{ return canSew(d1,d2, 1); }
+//------------------------------------------------------------------------------
+INLINE
+bool CMap::canSew2(CDart* d1, CDart* d2)
+{ return canSew(d1,d2, 2); }
+
+//******************************************************************************
+INLINE
+void CMap::topoSew0(CDart* ADart1, CDart* ADart2)
+{
+  assert(canSew0(ADart1,ADart2));
+
+  linkBeta0(ADart1,ADart2);
+}
+//******************************************************************************
+INLINE
+void CMap::topoSew1(CDart* ADart1, CDart* ADart2)
+{
+  assert(canSew1(ADart1,ADart2));
+  
+  linkBeta1(ADart1,ADart2);
+}
+//******************************************************************************
+INLINE
+void CMap::topoSew2(CDart* ADart1, CDart* ADart2)
+{
+  assert(canSew2(ADart1,ADart2));
+  
+  linkBeta2(ADart1,ADart2);
+}
+//******************************************************************************
+
+INLINE
+void CMap::topoSew(CDart* ADart1, CDart* ADart2, int ADimension)
+{
+  switch(ADimension)
+    {
+    case 0: topoSew0(ADart1, ADart2); break;
+    case 1: topoSew1(ADart1, ADart2); break;
+    case 2: topoSew2(ADart1, ADart2); break;
+    }
+}
+//******************************************************************************
+INLINE
+void CMap::topoUnsew0(CDart* ADart)
+{
+  assert(!isFree0(ADart));
+
+  unlinkBeta0(ADart);
+}
+//******************************************************************************
+INLINE
+void CMap::topoUnsew1(CDart* ADart)
+{
+  assert(!isFree1(ADart));
+
+  unlinkBeta1(ADart);
+}
+//******************************************************************************
+INLINE
+void CMap::topoUnsew2(CDart* ADart)
+{
+  assert(!isFree2(ADart));
+  
+  unlinkBeta2(ADart);
+}
+//******************************************************************************
+INLINE
+void CMap::topoUnsew(CDart* ADart, int ADimension)
+{
+  switch(ADimension)
+    {
+    case 0: topoUnsew0(ADart); break;
+    case 1: topoUnsew1(ADart); break;
+    case 2: topoUnsew2(ADart); break;
+    }
+}
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

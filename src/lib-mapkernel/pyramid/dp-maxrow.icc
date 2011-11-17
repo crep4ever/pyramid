@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+namespace Map2d
+{
+  //------------------------------------------------------------------------------
+  INLINE
+  CMaxRow::CMaxRow():
+    FDoublet1 ( CDoublet() ),
+    FValue    ( 0 ),
+    FDoublet2 ( CDoublet() )
+  { }
+  //------------------------------------------------------------------------------
+  INLINE
+  CMaxRow::CMaxRow(const CDoublet & ADoublet1,
+		   uint AValue,
+		   const CDoublet & ADoublet2):
+    FDoublet1 (ADoublet1),
+    FValue    (AValue),
+    FDoublet2 (ADoublet2)    
+  { }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDoublet CMaxRow::doublet1() const 
+  {
+    return FDoublet1;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CMaxRow::setDoublet1(const CDoublet & ADoublet1) 
+  {
+    FDoublet1 = ADoublet1;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  uint CMaxRow::value() const 
+  {
+    return FValue;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CMaxRow::setValue(uint  AValue) 
+  {
+    FValue = AValue;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CDoublet CMaxRow::doublet2() const 
+  {
+    return FDoublet2;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  void CMaxRow::setDoublet2(const CDoublet & ADoublet2) 
+  {
+    FDoublet2 = ADoublet2;
+  }
+
+  //******************************************************************************
+} //namespace Map2d
+//******************************************************************************
+

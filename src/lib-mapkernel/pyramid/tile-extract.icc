@@ -1,0 +1,90 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "matrix.hh"
+#include "array.hh"
+#include "pyramidal-dart.hh"
+#include "pyramidal-region.hh"
+#include "traversal-region-pixels.hh"
+//******************************************************************************
+namespace Map2d
+{
+  INLINE
+  CMatrix<CRegion*>* CTile::createPixelRegionMatrix()
+  {
+    CMatrix<CRegion*>* matrix = new CMatrix< CRegion* >(width()+1, height()+1);
+    matrix->fill(NULL);
+    
+    for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
+      for( CTraversalRegionPixels it2( this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
+	matrix->setValue( (*it2).getX(), (*it2).getY(), (*it) );
+    
+    return matrix;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CArray* CTile::createLignelDartMatrix()
+  {
+    CArray* array = new CArray(0, 0, width()+1, height()+1);
+    for(CDynamicCoverageAll it( this); it.cont(); ++it)
+      array->setDart(*it); //todo, changer le plongement des brins
+    
+    return array;
+  }
+
+  //-----------------------------------------------------------------------------
+  INLINE
+  bool CTile::samePixelActuLeft(IM_Pixel & APixel,
+				const SegmentationMode & ASegmentationMode,
+				const FocusAttentionMode & AFocusAttentionMode)
+  {
+    uint x = APixel.x; uint y = APixel.y; 
+    if( y>=ymax() ) return true;
+    if( x==xmin() || x>=xmax() ) return false;
+    
+    IM_Pixel pix2(x-1,y);
+    CDoublet doublet(x-xmin(),y-ymin(),YPOS);
+
+    return sameRegions(APixel, pix2, doublet, ASegmentationMode, AFocusAttentionMode);
+  }
+  //-----------------------------------------------------------------------------
+  INLINE
+  bool CTile::samePixelActuUp(IM_Pixel & APixel, 
+			      const SegmentationMode & ASegmentationMode,
+			      const FocusAttentionMode & AFocusAttentionMode)
+  {
+    uint x = APixel.x; uint y = APixel.y; 
+    if( x>=xmax() ) return true;
+    if( y==ymin() || y>=ymax() ) return false;
+
+    IM_Pixel pix2(x,y-1);
+    CDoublet doublet(x-xmin(), y-ymin(), XPOS);  
+  
+    return sameRegions(APixel, pix2, doublet, ASegmentationMode, AFocusAttentionMode);
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  unsigned int CTile::removeSmallRegions(unsigned int AThreshold)
+  {
+    return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
+  }   
+
+  //******************************************************************************
+}//namespace Map2d
+//******************************************************************************

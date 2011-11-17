@@ -1,0 +1,610 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include <iostream>
+#include <cassert>
+#include "topological-map.hh"
+//******************************************************************************
+namespace Map2d
+{
+//******************************************************************************
+INLINE
+CRegion::CRegion() :
+      FId(static_cast<TRegionId>(0)),
+      FFather(NULL),
+      FFirstSon(NULL),
+      FBrother(NULL),
+      FNextSameCC(NULL),
+      FRepresentativeDart(NULL),
+      FNbPixels(0),
+      FProfondeur(0),
+      FColorSum(0),
+      FSquaredColorSum(0),
+      FColorMin(0),
+      FColorMax(0)
+#ifdef CONTOUR_SIMPLIFICATION
+      , FMoments(this)
+#endif // CONTOUR_SIMPLIFICATION
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion::CRegion(TRegionId AId, CDart* ADart, CRegion* AFather) :
+      FId(AId),
+      FFather(AFather),
+      FFirstSon(NULL),
+      FBrother(NULL),
+      FNextSameCC(NULL),
+      FRepresentativeDart(ADart),
+      FNbPixels(0),
+      FProfondeur(0),
+      FColorSum(0),
+      FSquaredColorSum(0),
+      FColorMin(0),
+      FColorMax(0)
+#ifdef CONTOUR_SIMPLIFICATION
+      , FMoments(this)
+#endif // CONTOUR_SIMPLIFICATION
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion::CRegion(TRegionId AId, CRegion* AFather) :
+      FId(AId),
+      FFather(AFather),
+      FFirstSon(NULL),
+      FBrother(NULL),
+      FNextSameCC(NULL),
+      FRepresentativeDart(NULL),
+      FNbPixels(0),
+      FProfondeur(0),
+      FColorSum(0),
+      FSquaredColorSum(0),
+      FColorMin(0),
+      FColorMax(0)
+#ifdef CONTOUR_SIMPLIFICATION
+      , FMoments(this)
+#endif // CONTOUR_SIMPLIFICATION
+{}
+//******************************************************************************
+INLINE
+CRegion* CRegion::getFather() const
+{ return FFather; }
+
+INLINE
+CRegion* CRegion::getBrother() const
+{ return FBrother; }
+
+INLINE
+CRegion* CRegion::getFirstSon() const
+{ return FFirstSon; }
+
+INLINE
+CRegion* CRegion::getNextSameCC() const
+{return FNextSameCC; }
+
+INLINE
+TRegionId CRegion::getId() const
+{ return FId; }
+
+INLINE
+unsigned int CRegion::getNbPixels() const
+{ return FNbPixels; }
+
+INLINE
+TRegionId CRegion::getColorMean() const
+{
+  assert(getPixelCount()>0);
+  return getColorSum() / getPixelCount();
+}
+
+INLINE
+TRegionId CRegion::getColorMin() const
+{ return FColorMin; }
+
+INLINE
+TRegionId CRegion::getColorMax() const
+{ return FColorMax; }
+
+INLINE
+uint32_t CRegion::getPixelCount() const
+{ return FNbPixels; }
+
+INLINE
+TSumColor CRegion::getColorSum() const
+{ return FColorSum; }
+
+INLINE
+TSumColor CRegion::getSquaredColorSum() const
+{ return FSquaredColorSum; }
+
+INLINE
+double CRegion::variance() const
+{
+  return static_cast<double>(getSquaredColorSum())/static_cast<double>(getPixelCount()) - sqr( static_cast<double>(getColorSum())/static_cast<double>(getPixelCount()));
+}
+
+INLINE
+double CRegion::mse() const
+{ return variance() * getPixelCount(); }
+//******************************************************************************
+INLINE
+void CRegion::resetColorData()
+{
+  FNbPixels = 0;
+  FColorSum = 0;
+  FSquaredColorSum = 0;
+  FColorMin = 0;
+  FColorMax = 0;
+}
+//******************************************************************************
+INLINE
+bool CRegion::existBrother() const
+{ return (getBrother() != NULL); }
+
+INLINE
+bool CRegion::existSon() const
+{ return (getFirstSon() != NULL); }
+
+INLINE
+bool CRegion::existFather() const
+{ return (getFather() != NULL); }
+
+INLINE
+bool CRegion::existNextSameCC() const
+{ return (getNextSameCC() != NULL); }
+
+INLINE
+bool CRegion::firstRegionCC() const
+{
+   assert(FFather != NULL);
+   return (getFather()->getFirstSon() == this);
+}
+//******************************************************************************
+INLINE
+void CRegion::setBrother(CRegion* ARegion)
+{ FBrother = ARegion; }
+
+INLINE
+void CRegion::setFirstSon(CRegion* ARegion)
+{ FFirstSon = ARegion; }
+
+INLINE
+void CRegion::setFather(CRegion* ARegion)
+{ FFather = ARegion; }
+
+INLINE
+void CRegion::setNextSameCC(CRegion* ARegion)
+{ FNextSameCC = ARegion; }
+
+INLINE
+void CRegion::setId(TRegionId AId)
+{ FId = AId; }
+
+//******************************************************************************
+INLINE
+void CRegion::addSon(CRegion* ARegion)
+{
+   assert(ARegion != NULL);
+
+   ARegion->FFather  = this;
+   ARegion->FBrother = FFirstSon;
+   FFirstSon         = ARegion;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::addBrother(CRegion* ARegion)
+{
+   assert(getFather() != NULL);
+   getFather()->addSon(ARegion);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::addSameCC(CRegion* ARegion)
+{
+   assert(ARegion != NULL);
+   ARegion->FFather     = FFather;
+   ARegion->FNextSameCC = FNextSameCC;
+   FNextSameCC          = ARegion;
+}
+//******************************************************************************
+INLINE
+CRegion* CRegion::addSon(TRegionId AId)
+{
+   CRegion* tmp = new CRegion(AId, this);
+   addSon(tmp);
+
+   return tmp;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CRegion::addBrother(TRegionId AId)
+{
+   assert(getFather() != NULL);
+   return getFather()->addSon(AId);
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CRegion::addSameCC(TRegionId AId)
+{
+   CRegion* tmp = new CRegion(AId, getFather());
+   addSameCC(tmp);
+   return tmp;
+}
+//******************************************************************************
+INLINE
+bool CRegion::isInfiniteRegion() const
+{ return false; }
+//******************************************************************************
+INLINE
+void CRegion::incNbPixels(unsigned int ANb)
+{ FNbPixels += ANb; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::decNbPixels(unsigned int ANb)
+{
+   assert(FNbPixels >= ANb);
+   FNbPixels -= ANb;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::addPixel(TRegionId ACoul, CDart* ADart)
+{
+   if (FNbPixels == 0)
+   { 
+      FColorMin = FColorMax = ACoul; 
+   }      
+   else
+   {
+      if (ACoul < FColorMin) FColorMin = ACoul;
+      if (ACoul > FColorMax) FColorMax = ACoul;
+   }
+
+   ++FNbPixels;
+   FColorSum += ACoul;
+   FSquaredColorSum += ACoul * ACoul;
+
+#ifdef CONTOUR_SIMPLIFICATION
+   assert(ADart!=NULL);
+   FMoments.addPixel(static_cast<CTopologicalDart*>(ADart));
+#endif // CONTOUR_SIMPLIFICATION
+}
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::removePixel(TRegionId ACoul)
+{
+   if (FNbPixels == 2)
+   {
+      FColorMin = FColorMax = ACoul;
+   }
+
+   --FNbPixels;
+   FColorSum -= ACoul;
+   FSquaredColorSum -= ACoul * ACoul;
+}
+//******************************************************************************
+INLINE
+bool CRegion::getMark(int AMarkNumber) const
+{
+   assert(0 <= AMarkNumber && AMarkNumber < NB_MARKS_REGION);
+
+   return FMarks[AMarkNumber];
+}
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setMark(int AMarkNumber, bool AValue)
+{
+   assert(0 <= AMarkNumber && AMarkNumber < NB_MARKS_REGION);
+
+   FMarks.set(AMarkNumber, AValue);
+}
+//******************************************************************************
+INLINE
+unsigned int CRegion::getProfondeur() const
+{ return FProfondeur; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setProfondeur(unsigned int ANb)
+{ FProfondeur = ANb; }
+//******************************************************************************
+INLINE
+TRegionId CRegion::distanceWith(CRegion* ARegion) const
+{
+   // Si un intervalle est inclut dans l'autre, la distance est 0
+   if ( (FColorMin>=ARegion->FColorMin && FColorMax<=ARegion->FColorMax) ||
+        (ARegion->FColorMin>=FColorMin && ARegion->FColorMax<=FColorMax) )
+     return 0;
+   
+   TRegionId oldInterval = std::max( FColorMax-FColorMin, 
+                                     ARegion->FColorMax-ARegion->FColorMin);
+   TRegionId newInterval = std::max(FColorMax, ARegion->FColorMax)-
+         std::min(FColorMin,ARegion->FColorMin);
+   
+   return newInterval-oldInterval;
+}   
+//------------------------------------------------------------------------------
+INLINE
+bool CRegion::canMergeWith(CRegion* ARegion, int AThreshold) const
+{
+   if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
+   return (std::max(FColorMax, ARegion->FColorMax)-
+         std::min(FColorMin,ARegion->FColorMin) < (TRegionId)AThreshold);
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CRegion::smallRegion(CRegion* ARegion, int AThreshold) const
+{
+   if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
+   return (int)getNbPixels()<=AThreshold || 
+         (int)ARegion->getNbPixels()<=AThreshold;
+}
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::mergeWith(CRegion* ARegion)
+{
+   FNbPixels += ARegion->FNbPixels;
+   FColorSum += ARegion->FColorSum;
+   FSquaredColorSum += ARegion->FSquaredColorSum;
+
+   if (ARegion->FColorMin < FColorMin) FColorMin = ARegion->FColorMin;
+   if (ARegion->FColorMax > FColorMax) FColorMax = ARegion->FColorMax;
+
+#ifdef CONTOUR_SIMPLIFICATION
+   FMoments += ARegion->FMoments;
+#endif
+}
+//******************************************************************************
+INLINE
+CDynamicCoverageCCSons::CDynamicCoverageCCSons(CRegion* ARegion) :
+      FRegionActu(ARegion->getFirstSon())
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCSons::operator ++ ()
+{
+   assert(FRegionActu != NULL);
+
+   FRegionActu = FRegionActu->getBrother();
+
+   return FRegionActu;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCSons::operator ++ (int)
+{
+   assert(FRegionActu != NULL);
+
+   CRegion* r = FRegionActu;
+   operator ++();
+
+   return r;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDynamicCoverageCCSons::cont() const
+{ return FRegionActu != NULL; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCSons::operator -> () const
+{ return FRegionActu; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCSons::operator * () const
+{ return FRegionActu; }
+//******************************************************************************
+INLINE
+CDynamicCoverageSons::CDynamicCoverageSons(CRegion* ARegion) :
+      CDynamicCoverageCCSons(ARegion),
+      FNextCCActu(ARegion->getFirstSon())
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageSons::operator ++ ()
+{
+   assert(cont());
+
+   FNextCCActu = FNextCCActu->getNextSameCC();
+
+   if (FNextCCActu == NULL)
+   {
+      FNextCCActu = CDynamicCoverageCCSons::operator ++();
+   }
+
+   return FNextCCActu;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageSons::operator ++ (int)
+{
+   CRegion* r = FNextCCActu;
+   operator ++();
+
+   return r;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDynamicCoverageSons::cont() const
+{ return FNextCCActu != NULL; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageSons::operator -> () const
+{ return FNextCCActu; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageSons::operator * () const
+{ return FNextCCActu; }
+//******************************************************************************
+INLINE
+CDynamicCoverageCCRegions::CDynamicCoverageCCRegions(CRegion* ARegion) :
+      FRegionActu(ARegion)
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCRegions::operator ++ ()
+{
+   assert(FRegionActu != NULL);
+
+   if (FRegionActu->existSon())
+      FRegionsToVisit.push_back(FRegionActu->getFirstSon());
+
+   FRegionActu = FRegionActu->getBrother();
+
+   if (FRegionActu == NULL && !FRegionsToVisit.empty())
+   {
+      FRegionActu = FRegionsToVisit.front();
+      FRegionsToVisit.pop_front();
+   }
+
+   return FRegionActu;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCRegions::operator ++ (int)
+{
+   assert(FRegionActu != NULL);
+
+   CRegion* r = FRegionActu;
+   operator ++();
+
+   return r;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDynamicCoverageCCRegions::cont() const
+{ return FRegionActu != NULL; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCRegions::operator -> () const
+{ return FRegionActu; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageCCRegions::operator * () const
+{ return FRegionActu; }
+//******************************************************************************
+INLINE
+CDynamicCoverageRegions::CDynamicCoverageRegions(CRegion* ARegion) :
+      CDynamicCoverageCCRegions(ARegion),
+      FNextCCActu(ARegion)
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageRegions::operator ++ ()
+{
+   assert(FNextCCActu != NULL);
+
+   FNextCCActu = FNextCCActu->getNextSameCC();
+
+   if (FNextCCActu == NULL)
+   {
+      FNextCCActu = CDynamicCoverageCCRegions::operator ++();
+   }
+   else
+   {
+      assert(!FNextCCActu->existBrother());
+      if (FNextCCActu->existSon())
+         FRegionsToVisit.push_back(FNextCCActu->getFirstSon());
+   }
+
+   return FNextCCActu;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageRegions::operator ++ (int)
+{
+   assert(FNextCCActu != NULL);
+
+   CRegion* r = FNextCCActu;
+   operator ++();
+
+   return r;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDynamicCoverageRegions::cont() const
+{ return FNextCCActu != NULL; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageRegions::operator -> () const
+{ return FNextCCActu; }
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageRegions::operator * () const
+{ return FNextCCActu; }
+//******************************************************************************
+INLINE
+CDynamicCoverageAllCCRegions::
+CDynamicCoverageAllCCRegions(CTopologicalMap* AMap) :
+      CDynamicCoverageCCRegions(AMap->getInclusionTreeRoot())
+{}
+//******************************************************************************
+INLINE
+CDynamicCoverageAllRegions::CDynamicCoverageAllRegions(CTopologicalMap* AMap) :
+      CDynamicCoverageRegions(AMap->getInclusionTreeRoot())
+{}
+//******************************************************************************
+INLINE
+CRegion* CRegion::find(CRegion* ARegion)
+{
+   for (CDynamicCoverageRegions it(this); it.cont(); ++it)
+   {
+      if ( (*it) == ARegion ) return *it;
+   }
+
+   return NULL;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CRegion::find(TRegionId ARegionId)
+{
+   for (CDynamicCoverageRegions it(this); it.cont(); ++it)
+   {
+      if (it->getId() == ARegionId) return *it;
+   }
+
+   return NULL;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CRegion::exist(TRegionId AId)
+{ return (find(AId) != NULL); }
+//******************************************************************************
+INLINE
+void CRegion::setRepresentativeDart(CDart* ADart)
+{ FRepresentativeDart = ADart; }
+//------------------------------------------------------------------------------
+INLINE
+CDart* CRegion::getRepresentativeDart() const
+{ return FRepresentativeDart; }
+//******************************************************************************
+INLINE
+CInfiniteRegion::CInfiniteRegion() :
+      CRegion()
+{
+   // On met 1 pixel dans la région infinie pour pouvoir calculer sa couleur 
+   FNbPixels=1;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CInfiniteRegion::isInfiniteRegion() const
+{ return true; }
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

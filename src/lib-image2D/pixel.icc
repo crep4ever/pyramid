@@ -1,0 +1,153 @@
+/*
+ * loadImage2D : Outils pour manipuler une image 2D.
+ * Copyright (C) 2008, Guillaume Damiand, guillaume.damiand@liris.cnrs.fr
+ *               http://liris.cnrs.fr
+ *
+ * This file is part of loadImage2D
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+//******************************************************************************
+#include <cassert>
+//******************************************************************************
+inline
+CPixel::CPixel() : Fx ( 0 ), Fy ( 0 )
+{}
+inline
+CPixel::CPixel ( TPixelCoord Ax, TPixelCoord Ay ) :
+		Fx ( Ax ), Fy ( Ay )
+{}
+inline
+CPixel::CPixel ( const CPixel& APixel ) :
+		Fx ( APixel.Fx ), Fy ( APixel.Fy )
+{}
+//------------------------------------------------------------------------------
+inline
+CPixel::~CPixel()
+{}
+//------------------------------------------------------------------------------
+inline
+TPixelCoord CPixel::getX() const
+{ return Fx; }
+inline
+TPixelCoord CPixel::x() const
+{ return Fx; }
+inline
+TPixelCoord CPixel::getY() const
+{ return Fy; }
+inline
+TPixelCoord CPixel::y() const
+{ return Fy; }
+//------------------------------------------------------------------------------
+inline
+void CPixel::setX ( TPixelCoord AValue )
+{ Fx = AValue; }
+inline
+void CPixel::setY ( TPixelCoord AValue )
+{ Fy = AValue; }
+inline
+void CPixel::set ( TPixelCoord Ax, TPixelCoord Ay )
+{ Fx = Ax; Fy = Ay; }
+//------------------------------------------------------------------------------
+inline
+void CPixel::incX ( int ADx )
+{ Fx += ADx; }
+inline
+void CPixel::incY ( int ADy )
+{ Fy += ADy; }
+//------------------------------------------------------------------------------
+inline
+CPixel& CPixel::operator = ( const CPixel & APixel )
+{
+	Fx = APixel.Fx;
+	Fy = APixel.Fy;
+	return *this;
+}
+//------------------------------------------------------------------------------
+inline
+bool CPixel::operator == ( const CPixel& APixel ) const
+{ return Fx == APixel.Fx && Fy == APixel.Fy; }
+inline
+bool CPixel::operator != ( const CPixel& APixel ) const
+{ return !operator== ( APixel ); }
+//------------------------------------------------------------------------------
+inline
+CPixel CPixel::left() const
+{ return CPixel ( Fx -1, Fy ); }
+inline
+CPixel CPixel::right() const
+{ return CPixel ( Fx + 1, Fy ); }
+inline
+CPixel CPixel::bottom() const
+{ return CPixel ( Fx, Fy - 1 ); }
+inline
+CPixel CPixel::top() const
+{ return CPixel ( Fx, Fy + 1 ); }
+inline
+CPixel CPixel::leftTop() const
+{ return CPixel ( Fx -1, Fy+1 ); }
+inline
+CPixel CPixel::rightTop() const
+{ return CPixel ( Fx + 1, Fy+1 ); }
+inline
+CPixel CPixel::leftBottom() const
+{ return CPixel ( Fx -1, Fy - 1 ); }
+inline
+CPixel CPixel::rightBottom() const
+{ return CPixel ( Fx + 1, Fy - 1 ); }
+inline
+CPixel CPixel::neighboor ( int ADir ) const
+{
+	switch ( ADir )
+	{
+		case LEFT:
+			return left ();
+			break;
+		case RIGHT:
+			return right ();
+			break;
+		case BOTTOM:
+			return bottom ();
+			break;
+		case TOP:
+			return top ();
+			break;
+		case LEFT_TOP:
+			return leftTop ();
+			break;
+		case RIGHT_TOP:
+			return rightTop ();
+			break;
+		case LEFT_BOTTOM:
+			return leftBottom ();
+			break;
+		case RIGHT_BOTTOM:
+			return rightBottom ();
+			break;
+
+		default:
+			assert ( false );
+	}
+	assert(false);
+	return *this;
+}
+//******************************************************************************
+inline
+std::ostream& operator << ( std::ostream & os, const CPixel&APixel )
+{
+	os << "(" << APixel.getX() << ", " << APixel.getY() << ")";
+	return os;
+}
+//******************************************************************************

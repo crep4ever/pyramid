@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "pyramidal-region.hh"
+#include "image2D.hh"
+//******************************************************************************
+
+namespace Map2d
+{
+  //******************************************************************************
+  //Constructeurs
+  //******************************************************************************
+  INLINE
+  CMergeKMeans::CMergeKMeans() :
+    CCriterionMerge ()
+  {}
+  //------------------------------------------------------------------------------
+  INLINE
+  CMergeKMeans::~CMergeKMeans()
+  {
+    // delete [] FData;
+  }
+  //------------------------------------------------------------------------------
+  INLINE
+  CMergeKMeans::CMergeKMeans(CImage2D* AImage, unsigned int ANbClasses, CRegion* ARegion1, CRegion* ARegion2) :
+    CCriterionMerge(ARegion1, ARegion2)
+  {
+    // todo: ne pas faire une quantif à chaque fois !!
+    FData = AImage->quantization(ANbClasses);
+  }
+  
+  //******************************************************************************
+  //Accesseurs
+  //******************************************************************************
+
+  //------------------------------------------------------------------------------
+  INLINE
+  bool CMergeKMeans::isRegionToMerge()
+  {
+    CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(FRegion1);
+    CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(FRegion2);
+    
+    unsigned int pos1 = region1->getFirstPixel().getX() * region1->getFirstPixel().getY() * 3;
+    unsigned int pos2 = region2->getFirstPixel().getX() * region2->getFirstPixel().getY() * 3;
+
+    std::cout<<" result "<<(int)( FData[pos1] == FData[pos2] )<<std::endl;
+
+    return FData[pos1] == FData[pos2];
+  }
+}
+//******************************************************************************

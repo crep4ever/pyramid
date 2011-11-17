@@ -1,0 +1,108 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include <cassert>
+#include <iostream>
+//******************************************************************************
+namespace Map2d
+{
+//******************************************************************************
+// Constructeurs
+INLINE
+CEdgeAttribute::CEdgeAttribute()
+{
+  /*if ( pthread_mutex_init( &FMutex, NULL)!=0 )
+    std::cerr<<"Problème lors du pthread_mutex_init dans CEdgeAttribute"
+	     <<std::endl;*/
+}
+//------------------------------------------------------------------------------
+INLINE
+CEdgeAttribute::CEdgeAttribute( int Ax1, int Ay1, int Ax2, int Ay2 ) :
+  FDss(Point<int>(Ax1, Ay1),Point<int>(Ax2, Ay2) )
+{
+  /*if ( pthread_mutex_init( &FMutex, NULL)!=0 )
+    std::cerr<<"Problème lors du pthread_mutex_init dans CEdgeAttribute"
+	     <<std::endl;*/
+}
+//------------------------------------------------------------------------------
+INLINE
+CEdgeAttribute::CEdgeAttribute(const CEdgeAttribute & AEdgeAttribute) :
+            FDss(AEdgeAttribute.FDss)
+{
+  /*if ( pthread_mutex_init( &FMutex, NULL)!=0 )
+    std::cerr<<"Problème lors du pthread_mutex_init dans CEdgeAttribute"
+	     <<std::endl;*/
+}
+//------------------------------------------------------------------------------
+INLINE
+CEdgeAttribute::~CEdgeAttribute()
+{// pthread_mutex_unlock(&FMutex); 
+}
+//******************************************************************************
+INLINE
+void CEdgeAttribute::initDSS( int Ax1, int Ay1, int Ax2, int Ay2 )
+{
+  FDss.init( Ax1, Ay1, Ax2, Ay2 );
+}
+//******************************************************************************
+#ifdef TBB_ACTIVE
+//------------------------------------------------------------------------------
+/*
+INLINE
+void CEdgeAttribute::lock()
+{
+  //if ( pthread_mutex_lock(&FMutex)!=0 )
+  //  std::cerr<<"Problème lors du lock dans CEdgeAttribute"<<std::endl;
+
+ FLock.acquire(FMutex);
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CEdgeAttribute::tryLock()
+{
+//  int res = pthread_mutex_trylock(&FMutex);
+  
+//  if ( res!=0 )
+//    {
+//      if ( res!=EBUSY )
+//	std::cerr<<"Problème lors du tryLock dans CEdgeAttribute"<<std::endl;
+//      return false;
+//    }
+//  return true;
+   
+    return FLock.try_acquire(FMutex);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CEdgeAttribute::unlock()
+{
+// if ( pthread_mutex_unlock(&FMutex)!=0 )
+//   std::cerr<<"Problème lors du unlock dans CEdgeAttribute"<<std::endl;
+   
+  FLock.release();
+}*/
+//------------------------------------------------------------------------------
+#endif // TBB_ACTIVE
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

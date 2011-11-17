@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#include "region.hh"
+//******************************************************************************
+namespace Map2d
+{
+//******************************************************************************
+//Constructeurs
+//******************************************************************************
+
+INLINE
+CSplitNbPix::CSplitNbPix() :
+CCriterionSplit (),  
+FThreshold  ( 2 ) //on ne splitte pas les régions d'un pixel
+{}
+//------------------------------------------------------------------------------
+INLINE
+CSplitNbPix::~CSplitNbPix(){}
+//------------------------------------------------------------------------------
+INLINE
+CSplitNbPix::CSplitNbPix(CRegion* ARegion, unsigned int AThreshold) :
+CCriterionSplit(ARegion)
+{
+  FThreshold = AThreshold;
+}
+
+//******************************************************************************
+//Accesseurs
+//******************************************************************************
+
+INLINE
+unsigned int CSplitNbPix::getThreshold() const
+{ return FThreshold; }
+//------------------------------------------------------------------------------
+INLINE
+void CSplitNbPix::setThreshold(unsigned int AThreshold)
+{
+  FThreshold = AThreshold;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CSplitNbPix::isRegionToSplit()
+{
+  //std::cout<<"nombre de pixels de la région"<<getRegion()->getNbPixels()<<std::endl;
+  //std::cout<<"Valeur du seuil"<<getThreshold()<<std::endl;
+  return (getRegion()->getNbPixels() > getThreshold() );
+}
+  
+//******************************************************************************
+} // namespace Map2d
+//******************************************************************************

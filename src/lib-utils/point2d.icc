@@ -1,0 +1,152 @@
+//*****************************************************************************
+#include <cassert>
+#include <cmath>
+//*****************************************************************************
+INLINE
+CPoint2D::CPoint2D()
+{
+  FCoord[0] = 0;
+  FCoord[1] = 0;
+
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint2D::CPoint2D(unsigned int Ax, unsigned int Ay)
+{
+  FCoord[0] = Ax;
+  FCoord[1] = Ay;
+
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint2D::CPoint2D(unsigned int ATab[2])
+{
+  FCoord[0] = ATab[0];
+  FCoord[1] = ATab[1];
+ 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint2D::CPoint2D(const CPoint2D& AVertex)
+{
+  FCoord[0] = AVertex.FCoord[0];
+  FCoord[1] = AVertex.FCoord[1];
+ 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint2D::CPoint2D(const CDoublet& ADoublet)
+{
+  FCoord[0] = ADoublet.getX();
+  FCoord[1] = ADoublet.getY();
+ 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CPoint2D::~CPoint2D()
+{}
+//*****************************************************************************
+INLINE
+unsigned int CPoint2D::getX() const
+{ return FCoord[0]; }
+//-----------------------------------------------------------------------------
+INLINE
+unsigned int CPoint2D::x() const
+{ return FCoord[0]; }
+//-----------------------------------------------------------------------------
+INLINE
+unsigned int CPoint2D::getY() const
+{ return FCoord[1]; }
+//-----------------------------------------------------------------------------
+INLINE
+unsigned int CPoint2D::y() const
+{ return FCoord[1]; }
+//-----------------------------------------------------------------------------
+INLINE
+unsigned int CPoint2D::getCoord(unsigned int ADim) const
+{
+  assert(0<=ADim && ADim<=1);
+  return FCoord[ADim];
+}
+//-----------------------------------------------------------------------------
+INLINE
+unsigned int CPoint2D::coord(unsigned int ADim) const
+{
+  assert(0<=ADim && ADim<=1);
+  return FCoord[ADim];
+}
+//*****************************************************************************
+INLINE
+void CPoint2D::setX(unsigned int ANewX)
+{ FCoord[0] = ANewX; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint2D::setY(unsigned int ANewY)
+{ FCoord[1] = ANewY; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint2D::incX(unsigned int AIncX)
+{ FCoord[0] += AIncX; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint2D::incY(unsigned int AIncY)
+{ FCoord[1] += AIncY; }
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint2D::setCoord(unsigned int ADim, unsigned int ANewCoord)
+{
+  assert(0<=ADim && ADim<=1);
+  FCoord[ADim] = ANewCoord;
+}
+//-----------------------------------------------------------------------------
+INLINE
+void CPoint2D::setXY(unsigned int ANewX, unsigned int ANewY)
+{
+  setX(ANewX);
+  setY(ANewY);
+}
+//*****************************************************************************
+INLINE
+CPoint2D& CPoint2D::operator=(const CPoint2D& AVector)
+{
+  setXY(AVector.getX(), AVector.getY());
+  return *this;
+}
+//*****************************************************************************
+INLINE
+bool CPoint2D::operator==(const CPoint2D& AVector) const
+{
+  return
+   ( this->getX() == AVector.getX() &&
+    this->getY() == AVector.getY()) ;    
+}
+//*****************************************************************************
+INLINE
+bool CPoint2D::operator!=(const CPoint2D& AVector) const
+{ return ! (*this == AVector); }
+//*****************************************************************************
+INLINE
+CPoint2D CPoint2D::operator+(const CPoint2D& p) const
+{
+  return CPoint2D( x()+p.x(), y()+p.y() ); 
+}
+//*****************************************************************************
+INLINE
+CPoint2D CPoint2D::operator-(const CPoint2D& p) const
+{
+  return CPoint2D( x()-p.x(), y()-p.y() ); 
+}
+//*****************************************************************************
+INLINE
+bool operator < (CPoint2D u,CPoint2D v)
+{
+  return u.getY() <  v.getY() || ( u.getY() == v.getY() && ( u.getX()  < v.getX()  ) );
+}
+//*****************************************************************************
+//*****************************************************************************
+INLINE
+std::ostream & operator<<(std::ostream & AStream, const CPoint2D & AVector)
+{
+  AStream << "("<< AVector.getX() << ","<< AVector.getY() << ") ";
+  return AStream;
+}

@@ -1,0 +1,210 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
+ *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//*****************************************************************************
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include "region.hh"
+#include "topological-dart.hh"
+#include "topological-map.hh"
+#include "khalimsky.hh"
+#include "limited-stack.hh"
+#include "chrono.hh"
+//*****************************************************************************
+namespace Map2d
+{
+  extern CChrono chronoShiftEdges;
+  extern CChrono chronoIsEdgeToremove;
+  extern CChrono chronoVertexRemoval;
+  
+//*****************************************************************************
+INLINE
+CDart* CTopologicalMap::computeUpFromLast(CDart* ADart)
+{ 
+  CDart* res = beta0(ADart);
+  
+  while( !isFree2(res) )
+    res = beta20(res);    
+  
+  return (res);
+}
+//*****************************************************************************
+INLINE
+void CTopologicalMap::basicVertexRemoval( CDart* ADart, int AMarkNumber )
+{ 
+#ifdef DISPLAY_TIME_EXTRACT_IMAGE
+  chronoVertexRemoval.start();
+#endif
+  assert( beta21(ADart)==beta02(ADart) ); //sommet de degré deux
+  assert( beta0(ADart)!=beta2(ADart) );   //cas dégénéré
+  assert( beta1(ADart)!=ADart );          //cas d'une boucle
+
+  // Brin temporaire pour stocker le brin symétrique/sommet à Adart
+  CDart* tempDart=beta21(ADart);
+    
+#ifdef CONTOUR_SIMPLIFICATION
+  // On s'assure de conserver un seul attribut pour l'arête
+  // étant la fusion des 2 arêtes de départ. Cet attribut sera
+  // porté par beta2(tempDart), et ADart portera l'autre
+  // attribut afin de pouvoir le détruire.
+  assert( ADart->getEdgeAttribute()!=NULL );
+  assert( tempDart->getEdgeAttribute()!=NULL );
+
+  if ( ADart->FEdgeAttribute==NULL )
+    {
+      ADart->FEdgeAttribute=beta2(ADart)->FEdgeAttribute;
+      beta2(ADart)->FEdgeAttribute=NULL;
+    }
+  
+  if ( tempDart->FEdgeAttribute!=NULL )
+    {
+      beta2(tempDart)->FEdgeAttribute=tempDart->FEdgeAttribute;
+      tempDart->FEdgeAttribute=NULL;
+    }
+#endif // CONTOUR_SIMPLIFICATION
+  
+  // Coutures...
+  linkBeta2( beta0(ADart),beta2(ADart)       ); 
+  linkBeta1( beta0(ADart),beta1(ADart)       );
+  linkBeta1( beta0(tempDart),beta1(tempDart) ); 
+
+  // Suppressions
+  FKhalimsky->setPCell(getDoublet(ADart),false);
+
+  if ( AMarkNumber==-1 )
+    {
+      delMapDart(ADart);
+      delMapDart(tempDart);
+    }
+  else
+    {
+      setMark( ADart, AMarkNumber);
+      setMark( tempDart, AMarkNumber);
+    }
+  
+#ifdef DISPLAY_TIME_EXTRACT_IMAGE
+  chronoVertexRemoval.stop();
+#endif
+}
+//-----------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::vertexRemoval( CDart* ADart, int AMarkNumber )
+{
+   assert(ADart!=NULL);
+   
+   CDart* tempDart=beta21(ADart);
+     // On s'assure de conserver les brins représentants...
+   if ( isRepresentativeDart(ADart) )
+      setRepresentativeDart( getRegion(ADart), beta0(ADart) );
+  
+   if( isRepresentativeDart(tempDart) )
+      setRepresentativeDart(getRegion(tempDart),beta0(tempDart));  
+ 
+   basicVertexRemoval(ADart,AMarkNumber);
+} 
+//-----------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::vertexRemovalWithUnionFindRegions( CDart* ADart, 
+      int AMarkNumber )
+{
+   assert(ADart!=NULL);
+   
+   CDart* tempDart=beta21(ADart);
+     // On s'assure de conserver les brins représentants...
+   if ( findRegionRoot(getRegion(ADart))->getRepresentativeDart()==ADart )
+      setRepresentativeDart( findRegionRoot(getRegion(ADart)), beta0(ADart) );
+  
+   if( findRegionRoot(getRegion(tempDart))->getRepresentativeDart()==tempDart)
+      setRepresentativeDart(findRegionRoot(getRegion(tempDart)),
+                            beta0(tempDart));  
+ 
+   basicVertexRemoval(ADart,AMarkNumber);
+} 
+//*****************************************************************************
+INLINE
+void CTopologicalMap::topoEdgeRemoval( CDart* ADart )
+{
+  assert( ADart!=NULL     );
+  assert( !isFree2(ADart) ); 
+  assert( !isFree1(ADart) );
+  assert( !isFree0(ADart) );
+  
+  // La suppression effective.
+  linkBeta1( beta20 (ADart), beta1  (ADart) );
+  linkBeta1( beta0  (ADart), beta21 (ADart) );
+
+  assert(!isRepresentativeDart(beta2(ADart))); delMapDart(beta2(ADart));
+  assert(!isRepresentativeDart(ADart)); delMapDart(ADart);
+}
+//------------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::edgeRemoval( CDart* ADart )
+{
+   assert( ADart!=NULL );
+   
+   // 1) On efface les linels de l'arête dans la matrice interpixel
+   //doublet temporaire pour le parcours de l'arête
+   CDoublet doublet = getDoublet(ADart);
+   CDoublet tempDoublet(doublet);
+
+   do
+   {
+      // On efface le linel courant   
+      assert(isLCell(tempDoublet));
+      FKhalimsky->setLCell(tempDoublet,false);   
+   
+      // Autre pointel incident à l'arête
+      tempDoublet.setNextPointel();
+
+      // Passage au linel suivant seulement si le PCell n'est pas allumé
+      if (!isPCell(tempDoublet))
+         tempDoublet = getOtherLinel(tempDoublet);
+   }
+   // L'arête se termine par un pointel ou par le linel initial (boucle).
+   // Dans ce 2ème cas, on termine sur un doublet non LCell car il à été mis
+   // à faux. Dans le 1er cas aussi car on est sur un PCell et donc on n'a pas 
+   // fait le getOtherLinel
+   while ( isLCell(tempDoublet) );
+ 
+   // Il faut vérifier s'il faut effacer les pointels incident à ADart et
+   // à beta2(ADart) dans le cas ou on a supprimé toutes les arêtes incidentes.
+   if ( getPointelDegree(doublet)==0 )
+      FKhalimsky->setPCell(doublet,false);
+      
+   doublet=getDoublet(beta2(ADart));
+   if ( getPointelDegree(doublet)==0 )
+      FKhalimsky->setPCell(doublet,false);
+  
+   // 2) On supprime l'arête dans la carte.
+   topoEdgeRemoval(ADart);
+}
+//-----------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::setRegion(CDart* ADart,CRegion* ARegion) const
+{
+  assert( ADart!=NULL );
+  static_cast<CTopologicalDart*>(ADart)->setRegion(ARegion);
+}
+//*****************************************************************************
+} // namespace Map2d
+//*****************************************************************************

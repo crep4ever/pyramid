@@ -1,0 +1,74 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+//******************************************************************************
+#ifndef __TAB_CONTROLER_HH__
+#define __TAB_CONTROLER_HH__
+//******************************************************************************
+#include <QMdiArea>
+#include <QtGui>
+//******************************************************************************
+
+class QMdiSubWindow;
+class CControler;
+class CScene;
+class CView;
+
+/** \class CTabControler "tab-controler.hh"
+ * \brief CTabControler is used to display information associated with
+ * a tiled top-down pyramid controler
+ */
+
+class CTabControler : public QMdiArea
+{
+  Q_OBJECT
+  
+public:
+  /// Constructor 
+  CTabControler( CControler * controler );
+  
+  /// Destructor
+  ~CTabControler();
+
+  /// getter on the controler
+  CControler * controler() const;
+
+  /// getter on the main widget
+  QMdiArea * workspace() const;
+
+  /// getter on the main widget
+  CScene * scene() const;
+
+  /// getter on the main widget
+  CView * view() const;
+
+public slots:
+  /// add a new scene for the  controler
+  void addScene( );
+
+  /// add a new view for the last scene
+  QMdiSubWindow * addView( CScene* scene );
+
+private:
+  QMdiArea * m_workspace;
+  CControler * m_controler;
+  CScene * m_scene;
+  CView * m_view;
+};
+
+#endif  // __TAB_CONTROLER_HH__
