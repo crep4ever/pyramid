@@ -28,11 +28,13 @@
 CTabControler::CTabControler(CControler * AControler)
   : QMdiArea()
   , m_controler(AControler)
+  , m_scene(0)
+  , m_view(0)
 {
   setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  m_controler->extract();
-  addScene();
+  if(m_controler->extract())
+    addScene();
 }
 //------------------------------------------------------------------------------
 CTabControler::~CTabControler()

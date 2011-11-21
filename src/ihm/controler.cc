@@ -169,7 +169,7 @@ bool CControler::extract()
 
   if(m_imageName.isEmpty())
     {
-      m_imageName = QFileDialog::getOpenFileName(NULL,"Import file", 
+      m_imageName = QFileDialog::getOpenFileName(NULL,"Open tiff file",
 						 QDir::currentPath(),
 						 tr("Images TIFF (*.tif *.tiff)"));
     }

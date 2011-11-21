@@ -435,7 +435,8 @@ void CMainWindow::exportSvg()
 void CMainWindow::newTab()
 {
   CTabControler* tab = new CTabControler(new CControler(this));
-  centralWidget()->addTab(tab, tab->controler()->imageName());
+  if(tab->scene())
+    centralWidget()->addTab(tab, tab->controler()->imageName());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::addScene()
