@@ -21,6 +21,9 @@
 #include "tile.hh"
 #include "pyramidal-dart.hh"
 #include "pyramidal-region.hh"
+
+#define UNUSED(x) (void)x
+
 using namespace Map2d;
 //******************************************************************************
 bool CTile::readInt(const std::string& fileName, std::vector<uint>& dest)
@@ -445,27 +448,22 @@ void CTile::write()
   // dans les structures "old"
   if ( !FFirst )
     {
-      int sys = 0;
       FILE * file = NULL;
       file = fopen(FFilename.c_str(), "rb");
       assert(file!=NULL);
 
-      sys = fread(static_cast<void*>(header), sizeof(header), 1, file);
-      assert(sys == 1);
+      UNUSED(fread(static_cast<void*>(header), sizeof(header), 1, file));
 
       FOldProperties = new SProperties[1];
-      sys = fread( static_cast<void*>(FOldProperties), sizeof(SProperties), 1, file );
-      assert(sys == 1);
+      UNUSED(fread( static_cast<void*>(FOldProperties), sizeof(SProperties), 1, file ));
 
       FOldDarts = new SDart[header[1]/sizeof(SDart)];
       unsigned int offset = sizeof(header)+sizeof(SProperties)+header[0]; 
       fseek(file, offset, SEEK_SET);
-      sys = fread( static_cast<void*>(FOldDarts), header[1], 1, file );
-      assert(sys == 1);
+      UNUSED(fread( static_cast<void*>(FOldDarts), header[1], 1, file ));
 
       FOldRegions = new SRegion[header[2]/sizeof(SRegion)];
-      sys = fread( static_cast<void*>(FOldRegions), header[2], 1, file );
-      assert(sys == 1);
+      UNUSED(fread( static_cast<void*>(FOldRegions), header[2], 1, file ));
 
       fclose(file);
     }
@@ -485,18 +483,16 @@ void CTile::write()
       delete [] FOldProperties; FOldProperties=NULL;
     }
 
-  int sys = 0;
-  sys = remove ( FFilename.c_str() );
+  UNUSED(remove ( FFilename.c_str() ));
   FILE * pFile;
   pFile = fopen ( FFilename.c_str(), "wb" );
   assert(pFile!=NULL);
   
-  sys = fwrite( static_cast<void*>(header), sizeof(header), 1, pFile );
-  sys = fwrite( static_cast<void*>(FProperties), sizeof(SProperties), 1, pFile );
-  sys = fwrite( static_cast<void*>(FMatrix), header[0], 1, pFile );
-  sys = fwrite( static_cast<void*>(FDartFields), header[1], 1, pFile );
-  sys = fwrite( static_cast<void*>(FRegionFields), header[2], 1, pFile );
-  assert(sys == 1);
+  UNUSED(fwrite( static_cast<void*>(header), sizeof(header), 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(FProperties), sizeof(SProperties), 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(FMatrix), header[0], 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(FDartFields), header[1], 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(FRegionFields), header[2], 1, pFile ));
   fclose (pFile);
   
   delete [] FProperties;   FProperties=NULL;
@@ -514,18 +510,17 @@ void CTile::load(unsigned int Ai, unsigned int Aj, unsigned int Ak)
   setFilename(Ai,Aj,Ak);
 
   unsigned int header[3];
-  int sys = 0;
   FILE * file;
   file = fopen ( FFilename.c_str(), "rb" );
   if (file==NULL) {std::cout<<"CTile::load() : unable to open file "<<FFilename<<std::endl; assert(false);}
 
   // Lecture du header qui permet de récupérer les tailles
-  sys = fread( static_cast<void*>(header), sizeof(header), 1, file );
-  assert(sys == 1);
+  UNUSED(fread( static_cast<void*>(header), sizeof(header), 1, file ));
+
   // Lecture des propriétés
   FProperties = new SProperties[1];
-  sys = fread( static_cast<void*>(FProperties), sizeof(SProperties), 1, file );
-  assert(sys==1);
+  UNUSED(fread( static_cast<void*>(FProperties), sizeof(SProperties), 1, file ));
+
   loadProperties();
   //printPropertiesStruct(FProperties);
 
@@ -534,23 +529,22 @@ void CTile::load(unsigned int Ai, unsigned int Aj, unsigned int Ak)
   FMatrix = khalimsky->getMatrix();
   //on s'assure que la taille de la matrice est équivalente à celle lue sur le disque
   assert( (width()+1)*(height()+1)==header[0] );
-  sys = fread( static_cast<void*>(FMatrix), header[0], 1, file );
-  assert(sys == 1);
+  UNUSED(fread( static_cast<void*>(FMatrix), header[0], 1, file ));
+
   khalimsky->setMatrix(FMatrix);
   setKhalimsky(khalimsky);
   
   // Lecture des brins
   FDartFields = new SDart[FProperties->nbDarts];
-  sys = fread( static_cast<void*>(FDartFields), header[1], 1, file );
-  assert(sys == 1);
+  UNUSED(fread( static_cast<void*>(FDartFields), header[1], 1, file ));
+
   loadEmptyTopology();
 
   // Lecture des régions
   FRegionFields = new SRegion[FProperties->nbRegions];
-  sys = fread( static_cast<void*>(FRegionFields), header[2], 1, file );
-  assert(sys == 1);
-  loadEmptyTree();
+  UNUSED(fread( static_cast<void*>(FRegionFields), header[2], 1, file ));
 
+  loadEmptyTree();
 
   fclose(file);
 

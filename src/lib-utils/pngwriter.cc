@@ -3344,11 +3344,8 @@ void pngwriter::scale_wh(int finalwidth, int finalheight)
 	std::cerr << " PNGwriter::scale_wh - ERROR **: Negative or zero final width or height not allowed." << std::endl;
      }
 
-   double kx;
-   double ky;
-
-   kx = ((double)finalwidth)/((double)width_);
-   ky = ((double)finalheight)/((double)height_);
+   //double kx = ((double)finalwidth)/((double)width_);
+   //double ky = ((double)finalheight)/((double)height_);
 
    pngwriter temp(finalwidth, finalheight, 0, "temp");
 

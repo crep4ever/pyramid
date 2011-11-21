@@ -33,6 +33,9 @@
 #include <vector>
 #include <valarray>
 #include INCLUDE_NON_INLINE("imageTiff.icc")
+
+#define UNUSED(x) (void)x
+
 using namespace fogrimmi;
 using namespace cimg_library;
 //******************************************************************************
@@ -104,12 +107,11 @@ CImageTiff* CImageTiff::interpolatePagesWithMagick()
   assert(isSorted());
   
   int ratioX, ratioY;
-  int sys = 0;
 
   std::ostringstream stream;
   stream<<"convert "<<fileName.Fullname()<<"["<<FPages[0]<<"] page-0.tif;";
   std::string command = stream.str();
-  sys = system(command.c_str());
+  UNUSED(system(command.c_str()));
 
   float topWidth  = (float) getXSize(0);
   float topHeight = (float) getYSize(0);
@@ -125,9 +127,9 @@ CImageTiff* CImageTiff::interpolatePagesWithMagick()
       stream.clear();
       stream<<"convert "<<fileName.Fullname()<<"["<<FPages[k]<<"] -resize "<<width<<"x"<<height<<"! page-"<<FPages[k]<<".tif;";
       std::string command = stream.str();
-      sys = system(command.c_str());
+      UNUSED(system(command.c_str()));
     }
-  sys = system("convert page-*.tif -type TrueColor resized.tif ; rm -f page-*.tif ;");
+  UNUSED(system("convert page-*.tif -type TrueColor resized.tif ; rm -f page-*.tif ;"));
   CImageTiff* resized = new CImageTiff("resized.tif");
   delete this;
   
@@ -144,12 +146,11 @@ CImageTiff* CImageTiff::tilePages(uint ATileWidth, uint ATileHeight)
       {
 	std::cout<<" Tuilage du tif"<<std::endl;
 	
-	int sys = 0;
 	std::ostringstream stream;
 	stream<<"tiffcp -p contig -t -w "<<ATileWidth<<" -l "<<ATileHeight<<" "<<getStrFullname()<<" tiled.tif ;";
 	std::string command = stream.str();
 	std::cout<<"tiling command : "<<command<<std::endl;
-	sys = system(command.c_str());
+	UNUSED(system(command.c_str()));
 	
 	CImageTiff* tiled = new CImageTiff("tiled.tif");
 	delete this;

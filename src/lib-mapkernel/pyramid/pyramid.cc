@@ -27,6 +27,8 @@
 
 #include INCLUDE_NON_INLINE("pyramid.icc")
 
+#define UNUSED(x) (void)x
+
 using namespace Map2d;
 
 //******************************************************************************
@@ -203,9 +205,9 @@ void CPyramid::linkTilesUpDown()
 void CPyramid::open(const std::string & APath)
 {
   std::ostringstream command;
-  int sys = system("rm -rf output//* ;");
+  UNUSED(system("rm -rf output//* ;"));
   command<<"cp -R "<<APath<<" .//output ;";
-  sys = system(command.str().c_str());
+  UNUSED(system(command.str().c_str()));
 
   importImTiff(".//output//image.tif");
   loadAllTiles();
@@ -220,23 +222,19 @@ void CPyramid::copyImageInWorkingDirectory(const std::string & AImagePath, const
   std::ostringstream command;
   command<<"cp "<<AImagePath<<" .//output//image.tif ;";
 
-  int sys = 0;
-  sys = system(command.str().c_str());
+  UNUSED(system(command.str().c_str()));
 }
 //------------------------------------------------------------------------------
 void CPyramid::save(const std::string & APath)
 {
   std::ostringstream command;  
   command<<"cp .//output//* "<<APath<<" ;";
-
-  int sys = 0;
-  sys = system(command.str().c_str());
+  UNUSED(system(command.str().c_str()));
 }
 //------------------------------------------------------------------------------
 void CPyramid::clear()
 {
-  int sys = 0;
-  sys = system("rm -rf output//* ;");
+  UNUSED(system("rm -rf output//* ;"));
 }
 //------------------------------------------------------------------------------
 void CPyramid::init()
@@ -247,9 +245,8 @@ void CPyramid::init()
 //------------------------------------------------------------------------------
 void CPyramid::exportData()
 {
-  int sys = 0;
-  sys = system("rm -rf .//result//* ; ");
-  sys = system("mv .//output// .//result// ;");
+  UNUSED(system("rm -rf .//result//* ; "));
+  UNUSED(system("mv .//output// .//result// ;"));
 }
  
 

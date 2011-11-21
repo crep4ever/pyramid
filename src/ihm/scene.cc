@@ -899,7 +899,6 @@ QList< QAction* > CScene::actions() const
   return m_actions;
 }
 
-/*
 //------------------------------------------------------------------------------
 /*
 void CScene::drawTile(CTile* a_tile)

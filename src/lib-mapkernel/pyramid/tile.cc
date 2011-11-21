@@ -24,6 +24,9 @@
 #include "traversal-region-pixels.hh"
 #include <pngwriter.h>
 #include INCLUDE_NON_INLINE("tile.icc")
+
+#define UNUSED(x) (void)x
+
 using namespace Map2d;
 //******************************************************************************
 
@@ -390,10 +393,9 @@ void CTile::getRegionBoundingBox(CDart* ADart, std::vector<uint>& tab)
 void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADirname)
 {
   //std::cout<<" [start] CTile::exportRegionToPng "<<std::endl;
-  int sys = 0;
   ostringstream stream;
   stream << "mkdir -p "<<ADirname<<"/";
-  sys = system(stream.str().c_str());
+  UNUSED(system(stream.str().c_str()));
   
   ostringstream oss;
   oss << ADirname << "/region_" 
