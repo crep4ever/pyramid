@@ -403,7 +403,7 @@ void CMainWindow::resetSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::exportPng()
 {
-  if(!currentTab()->view())
+  if(!currentTab() || !currentTab()->view())
     {
       statusBar()->showMessage("No view to be exported");
       return;
@@ -419,7 +419,7 @@ void CMainWindow::exportPng()
 //------------------------------------------------------------------------------
 void CMainWindow::exportSvg()
 {
-  if(!currentTab()->controler())
+  if(!currentTab() || !currentTab()->controler())
     {
       statusBar()->showMessage("No scene to be exported");
       return;
