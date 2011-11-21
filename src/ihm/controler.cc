@@ -72,7 +72,7 @@ void CControler::readSettings()
 {
   QSettings settings;
   
-  settings.beginGroup(tr("Tiled top-down pyramid"));
+  settings.beginGroup("pyramid");
   m_imageName = settings.value("imageName",m_imageName).toString();
   m_nbLevels = settings.value("nbLevels",m_nbLevels).toUInt();
   m_tileWidth = settings.value("tileWidth",m_tileWidth).toUInt();
@@ -93,7 +93,7 @@ void CControler::writeSettings()
 {
   QSettings settings;
 
-  settings.beginGroup("CControler");
+  settings.beginGroup("pyramid");
   settings.setValue("imageName",imageName());
   settings.setValue("nbLevels",nbLevels());
   settings.setValue("tileWidth",tileWidth());
