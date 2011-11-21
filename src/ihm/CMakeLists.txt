@@ -14,6 +14,7 @@ set (IHM_SRCS
   variant-delegate.cc
   dart-path.cc
   file-chooser.cc
+  panel.cc
   )
 set (NEED_MOCS 
   main-window.hh
@@ -26,6 +27,7 @@ set (NEED_MOCS
   settings-tree.hh
   variant-delegate.hh
   file-chooser.hh
+  panel.hh
   )
 set (IHM_RCS
   pyramid.qrc

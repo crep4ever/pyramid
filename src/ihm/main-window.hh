@@ -31,6 +31,7 @@
 class CTabControler;
 class CControler;
 class CView;
+class CPanel;
 
 class CMainWindow : public QMainWindow
 {
@@ -142,6 +143,7 @@ private:
 
   QPushButton* m_buildButton;
   QDialog* m_preferences;
+  CPanel* m_panel;
 };
 
 #endif  // __MAIN_WINDOW_HH__

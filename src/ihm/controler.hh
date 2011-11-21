@@ -43,6 +43,7 @@ class QCheckBox;
 class QRadioButton;
 class QListWidget;
 class CMainWindow;
+class CFileChooser;
 
 /** 
  * \file pyramid.hh
@@ -105,16 +106,6 @@ class CControler : public QObject
   /// read settings of the scene
   virtual void readSettings();
 
-public slots:
-  /// write settings of the scene
-  virtual void writeSettings();
-
-  void sendStatus(const QString & str);
-
-  CMainWindow* parent() const;
-  void setParent(CMainWindow* AParent);
-
-public:
   /// getter on the controler's pyramid
   Map2d::CPyramid * pyramid();
 
@@ -137,9 +128,16 @@ public:
   int mergeThreshold(int pos);
   QList<QVariant> merge() const;
 
-  QWidget* panel();
-
 public slots:
+
+  /// write settings of the scene
+  virtual void writeSettings();
+
+  void sendStatus(const QString & str);
+
+  CMainWindow* parent() const;
+  void setParent(CMainWindow* AParent);
+
   /// setter on the nbLevels property
   void setNbLevels(int nbLevels);
 
@@ -185,8 +183,6 @@ public slots:
   /// setter on the image name property
   void setImageName(const QString & str);
  
-public slots:
-
   /// Nombre de régions dans un niveau de la pyramide
   /// @param ALevel: le niveau
   uint getNbRegions(int ALevel) const;
@@ -218,11 +214,10 @@ public slots:
   void resetSVG();
   void closeSVG();
 
+signals:
+  void wasModified();
 
-  void tiffInfo(const QString & filename);
-  QList<QString> imageProperties();
-
-protected:
+private:
   CMainWindow* m_parent;
   Map2d::CPyramid* m_pyramid;
 
@@ -247,7 +242,5 @@ protected:
   QCheckBox* m_geometry;
   QCheckBox* m_topology2;
   QCheckBox* m_geometry2;
-
-  QListWidget* m_imageProperties;
 };
 #endif  // __CONTROLER_HH__

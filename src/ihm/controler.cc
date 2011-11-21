@@ -42,8 +42,6 @@ CControler::CControler( CMainWindow* AParent )
   , m_projectionMode( DirectProjection )
   , m_focusAttentionMode( FocusHisto )
   , m_detectFictiveBordersMode( DetectionOff )
-  , m_imageName(QString())
-  , m_imageProperties(new QListWidget)
 {
   m_merge.push_back(0);
   m_merge.push_back(80);
@@ -52,24 +50,24 @@ CControler::CControler( CMainWindow* AParent )
   m_merge.push_back(10);
   m_merge.push_back(5);
 
-  m_imageProperties->setAlternatingRowColors(true);
-  
   readSettings();
 }
 //------------------------------------------------------------------------------
 CControler::~CControler()
 {
-  if( m_pyramid != NULL )
+  if( m_pyramid )
     {
       writeSettings();
       m_pyramid->image()->close();
       m_pyramid->image()->unload();
       delete m_pyramid;
+      m_pyramid = NULL;
     }
 }
 //------------------------------------------------------------------------------
 void CControler::readSettings()
 {
+  qDebug() << "CControler::readSettings";
   QSettings settings;
   
   settings.beginGroup("pyramid");
@@ -93,6 +91,7 @@ void CControler::writeSettings()
 {
   QSettings settings;
 
+  qDebug() << "CControler::writeSettings nb Levels : " << nbLevels();
   settings.beginGroup("pyramid");
   settings.setValue("imageName",imageName());
   settings.setValue("nbLevels",nbLevels());
@@ -120,10 +119,12 @@ CPyramid * CControler::pyramid()
 //------------------------------------------------------------------------------
 bool CControler::extract( const QString & filename )
 {
+  writeSettings();
   CPyramid * old = m_pyramid;
   m_pyramid = new CPyramid(filename.toStdString());
   m_imagePath = filename;
   m_imageName = filename.section('/', -1);
+  qDebug() << "extract " << m_nbLevels << " levels";
   m_pyramid->setNbLevels(m_nbLevels);
 
   std::vector<unsigned int> v;
@@ -160,13 +161,10 @@ bool CControler::extract( const QString & filename )
       m_pyramid = old;
       return false;
     }
-
 }
 //------------------------------------------------------------------------------
 bool CControler::extract()
 {
-  writeSettings();
-
   if(m_imageName.isEmpty())
     {
       m_imageName = QFileDialog::getOpenFileName(NULL,"Open tiff file",
@@ -176,6 +174,7 @@ bool CControler::extract()
 
   if (!m_imageName.isEmpty())
     {
+      setImageName( m_imageName );
       extract( m_imageName );
       return true;
     }
@@ -222,8 +221,11 @@ QString CControler::imageName() const
 //------------------------------------------------------------------------------
 void CControler::setImageName( const QString & str)
 {
-  m_imageName = str;
-  writeSettings();
+  if(str != m_imageName)
+    {
+      m_imageName = str;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 int CControler::nbLevels() const
@@ -279,73 +281,97 @@ QList<QVariant> CControler::merge() const
 //------------------------------------------------------------------------------
 void CControler::setNbLevels( int nbLevels )
 {
-  m_nbLevels = nbLevels;
-  writeSettings();
+  if(m_nbLevels != nbLevels)
+    {
+      m_nbLevels = nbLevels;
+      qDebug() << "CControler::setNbLevels " << m_nbLevels;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setTileWidth( int width )
 {
-  m_tileWidth = width;
-  writeSettings();
+  if(m_tileWidth != width)
+    {
+      m_tileWidth = width;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setTileHeight( int height )
 {
-  m_tileHeight = height;
-  writeSettings();
+  if(m_tileHeight != height)
+    {
+      m_tileHeight = height;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setExtractMode( int value )
 {
-  m_extractMode = value;
-  writeSettings();
+  if(m_extractMode != value)
+    {
+      m_extractMode = value;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setSegmentationMode( int value )
 {
-  qDebug() << "CControler::setSegmentation value " << value;
-  m_segmentationMode = value;
-  writeSettings();
+  if (m_segmentationMode != value)
+    {
+      m_segmentationMode = value;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setProjectionMode( int value )
 {
-  m_projectionMode = value;
-  writeSettings();
+  if(m_projectionMode != value)
+    {
+      m_projectionMode = value;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setFocusAttentionMode( int value )
 {
-  //qDebug() << "CControler::setFocus value " << value;
-  m_focusAttentionMode = value;
-  writeSettings();
+  if (m_focusAttentionMode != value)
+    {
+      m_focusAttentionMode = value;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setDetectFictiveBordersMode( int value )
 {
-  //qDebug() << "CControler::setDetectFictiveBordersMode value " << value;
   if(value>1) value=1;
-  m_detectFictiveBordersMode = value;
-  writeSettings();
+  if (m_detectFictiveBordersMode != value)
+    {
+      m_detectFictiveBordersMode = value;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setMergeThreshold(int pos, int value)
 {
-  m_merge[pos] = value;
-  writeSettings();
+  if (m_merge[pos] != value)
+    {
+      m_merge[pos] = value;
+      emit wasModified();
+    }
 }
 //------------------------------------------------------------------------------
 void CControler::setMerge(QList<QVariant>& values)
 {
   m_merge.clear();
   m_merge = values;
-  writeSettings();
+  emit wasModified();
 }
 //------------------------------------------------------------------------------
 void CControler::extractProgressBar()
 {
   CChrono chrono;
-  qDebug() <<"nb Tiles =" << m_pyramid->nbTiles() ;
   parent()->progressBar()->setRange(0, m_pyramid->nbTiles());
   parent()->progressBar()->setValue(0);
   parent()->progressBar()->show();
@@ -521,166 +547,6 @@ void CControler::closeSVG()
 {
   resetSVG();
   m_dialogSvg->close();
-}
-//------------------------------------------------------------------------------
-QWidget* CControler::panel()
-{
-  QWidget * widget = new QWidget;
-  QBoxLayout* layout = new QVBoxLayout;
-
-  //Pyramid
-  QGroupBox* pyramidGroup = new QGroupBox(tr("Tiled top-down pyramid"));
-  QFormLayout *pyramidLayout = new QFormLayout;
-
-  QSpinBox* levels = new QSpinBox;
-  levels->setRange(0,10);
-  levels->setValue(nbLevels());
-  connect(levels, SIGNAL(valueChanged(int)), 
-	  this, SLOT(setNbLevels(int)));
-  pyramidLayout->addRow(new QLabel(tr("Levels:")), levels);
-
-  QComboBox* build  = new QComboBox;
-  build->addItem(tr("Constant number"));
-  build->addItem(tr("Constant size"));
-  build->setCurrentIndex(extractMode());
-  connect(build, SIGNAL(currentIndexChanged(int)), 
-	  this, SLOT(setExtractMode(int)));
-  pyramidLayout->addRow(new QLabel(tr("Pyramid of tiles:")), build);
-
-  QComboBox* projection  = new QComboBox;
-  projection->addItem(tr("Direct"));
-  projection->addItem(tr("Dijkstra"));
-  projection->addItem(tr("None"));
-  projection->setCurrentIndex(projectionMode());
-  connect(projection, SIGNAL(currentIndexChanged(int)), 
-	  this, SLOT(setProjectionMode(int)));
-  pyramidLayout->addRow(new QLabel(tr("Projection:")), projection);
-
-  QComboBox* focus  = new QComboBox;
-  focus->addItem(tr("Size"));
-  focus->addItem(tr("Grey"));
-  focus->addItem(tr("Homogeneous"));
-  focus->addItem(tr("Histology"));
-  focus->addItem(tr("None"));
-  focus->addItem(tr("All"));
-  focus->addItem(tr("Red"));
-  focus->addItem(tr("Blue"));
-  focus->setCurrentIndex(focusAttentionMode());
-  connect(focus, SIGNAL(currentIndexChanged(int)), 
-	  this, SLOT(setFocusAttentionMode(int)));
-  pyramidLayout->addRow(new QLabel(tr("Focus of attention:")), focus);
-  
-  //Map
-  QGroupBox* mapGroup = new QGroupBox(tr("Tiled map"));
-  QFormLayout *mapLayout = new QFormLayout;
-
-  QCheckBox* fictive = new QCheckBox;
-  fictive->setChecked((bool)detectFictiveBordersMode());
-  connect(fictive,  SIGNAL(stateChanged(int)), 
-	  this, SLOT(setDetectFictiveBordersMode(int)));
-  mapLayout->addRow(new QLabel(tr("Detect fictive borders:")), fictive);
-
-  QComboBox* segmentation  = new QComboBox;
-  segmentation->addItem(tr("Grey value"));
-  segmentation->addItem(tr("Thresholds"));
-  segmentation->addItem(tr("Classif"));
-  segmentation->addItem(tr("Histology"));
-  segmentation->addItem(tr("None"));
-  segmentation->setCurrentIndex(segmentationMode());
-  connect(segmentation, SIGNAL(currentIndexChanged(int)), 
-	  this, SLOT(setSegmentationMode(int)));
-  mapLayout->addRow(new QLabel(tr("Segmentation oracle:")), segmentation);
-
-
-  //Tile
-  QGroupBox* tileGroup = new QGroupBox(tr("Topological tile"));
-  QFormLayout *tileLayout = new QFormLayout;
-
-  QSpinBox* width = new QSpinBox;
-  width->setRange(0,40000);
-  width->setValue(tileWidth());
-  connect(width, SIGNAL(valueChanged(int)), 
-	  this, SLOT(setTileWidth(int)));
-  tileLayout->addRow(new QLabel(tr("Width:")), width);
-
-  QSpinBox* height = new QSpinBox;
-  height->setRange(0,40000);
-  height->setValue(tileHeight());
-  connect(height, SIGNAL(valueChanged(int)), 
-	  this, SLOT(setTileHeight(int)));
-  tileLayout->addRow(new QLabel(tr("Height:")), height);
-
-
-  //Image
-  QGroupBox* imageGroup = new QGroupBox(tr("Image"));
-  QBoxLayout * imageLayout = new QVBoxLayout;
-
-  CFileChooser* filename = new CFileChooser();
-  filename->setType(CFileChooser::OpenFileChooser);
-  filename->setPath(imageName());
-  if(!imageName().isEmpty())  
-    tiffInfo(imageName());
-  filename->setCaption(tr("Image"));
-  filename->setFilter(tr("Images (*.tif)"));
-  connect(filename, SIGNAL(pathChanged(const QString&)),
-          this, SLOT(setImageName(const QString&)));
-  connect(filename, SIGNAL(pathChanged(const QString&)),
-          this, SLOT(tiffInfo(const QString&)));
-  imageLayout->addWidget(filename);
-  imageLayout->addWidget(m_imageProperties);
-
-  pyramidGroup->setLayout(pyramidLayout);
-  mapGroup->setLayout(mapLayout);
-  tileGroup->setLayout(tileLayout);
-  imageGroup->setLayout(imageLayout);
-
-  layout->addWidget(pyramidGroup);
-  layout->addWidget(mapGroup);
-  layout->addWidget(tileGroup);
-  layout->addWidget(imageGroup);
-
-  widget->setLayout(layout);
-  return widget;
-}
-//------------------------------------------------------------------------------
-void CControler::tiffInfo(const QString & filename)
-{
-  m_imageProperties->clear();
-  QList<QString> list = imageProperties();
-  for(int i=0; i<list.size();++i)
-    new QListWidgetItem(list[i], m_imageProperties);
-}
-//------------------------------------------------------------------------------
-QList<QString> CControler::imageProperties()
-{
-  if(m_imageName.isEmpty()) 
-    return QList<QString>();
-
-  CImageTiff* image = new CImageTiff(m_imageName.toStdString());
- 
-  fogrimmi::TIFF_Properties tiffP = image->getProperties();
-  QString name(name.fromStdString(image->fileName.Filename()));
-  
-  QList<QString> list;
-  list.append(QString(tr("Image name : %1")).arg(name));
-  list.append(QString(tr("Number of pages : %1")).arg(image->getNbPages()));
-  list.append(QString(tr("Image width : %1")).arg(tiffP.width));
-  list.append(QString(tr("Image height : %1")).arg(tiffP.height));
-  list.append(QString(tr("Component width : %1")).arg(tiffP.componentWidth));
-  list.append(QString(tr("Component height : %1")).arg(tiffP.componentHeight));
-  list.append(QString(tr("BPS : %1")).arg(tiffP.bps));
-  list.append(QString(tr("Color Mode : %1")).arg(tiffP.colorMode));
-  list.append(QString(tr("Compression : %1")).arg(tiffP.compression));
-  list.append(QString(tr("Jpeg quality : %1")).arg(tiffP.jpeg_q));
-  list.append(QString(tr("Jpeg cm : %1")).arg(tiffP.jpeg_cm));
-  list.append(QString(tr("Photomet : %1")).arg(tiffP.photomet));
-  list.append(QString(tr("Planar : %1")).arg(tiffP.planar));
-  list.append(QString(tr("Pixel organisation : %1")).arg(tiffP.pixOrganisation));
-  list.append(QString(tr("Horizontal resolution : %1")).arg(tiffP.xRes));
-  list.append(QString(tr("Vertical resolution : %1")).arg(tiffP.yRes));
-  list.append(QString(tr("Res unit : %1")).arg(tiffP.resUnit));
-
-  return list;
 }
 //------------------------------------------------------------------------------
 CMainWindow * CControler::parent() const

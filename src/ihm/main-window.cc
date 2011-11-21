@@ -26,6 +26,7 @@
 #include "file-chooser.hh"
 #include "settings-tree.hh"
 #include "tab-controler.hh"
+#include "panel.hh"
 //******************************************************************************
 
 CMainWindow::CMainWindow()
@@ -62,9 +63,10 @@ CMainWindow::CMainWindow()
 
   //panel
   CControler* controler = new CControler(this);
+  m_panel = new CPanel(controler);
   QDockWidget* dock = new QDockWidget(tr("Parameters"));
   QBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(controler->panel());
+  layout->addWidget(m_panel);
   m_buildButton = new QPushButton(tr("Construction"));
   layout->addWidget(m_buildButton);
   QWidget* widget = new QWidget;
@@ -434,7 +436,9 @@ void CMainWindow::exportSvg()
 //------------------------------------------------------------------------------
 void CMainWindow::newTab()
 {
-  CTabControler* tab = new CTabControler(new CControler(this));
+  CControler* controler = new CControler(this);
+  m_panel->setControler(controler);
+  CTabControler* tab = new CTabControler(controler);
   if(tab->scene())
     centralWidget()->addTab(tab, tab->controler()->imageName());
 }
@@ -476,6 +480,8 @@ void CMainWindow::changeTab(int index)
 
   connect( tab->view(), SIGNAL(positionChanged(QPoint)), 
 	   this, SLOT(updatePositionDisplay(QPoint)) );
+
+  m_panel->setControler(tab->controler());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateZoomDisplay( qreal zoom )
