@@ -80,20 +80,22 @@ CMainWindow::~CMainWindow()
 void CMainWindow::readSettings()
 {
   QSettings settings;
-  
-  settings.beginGroup("Window settings");
-  resize(settings.value("size", QSize(500, 400)).toSize());
+  settings.beginGroup("general");
+  resize(settings.value("size", QSize(800,600)).toSize());
   move(settings.value("pos", QPoint(200, 200)).toPoint());
+  setStatusBarDisplayed(settings.value("statusBar", true).toBool());
+  setToolBarDisplayed(settings.value("toolBar", true).toBool());
   settings.endGroup();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::writeSettings()
 {
   QSettings settings;
-  
-  settings.beginGroup("Window settings");
+  settings.beginGroup("general");
   settings.setValue("size", size());
   settings.setValue("pos", pos());
+  settings.setValue("statusBar", isStatusBarDisplayed());
+  settings.setValue("toolBar", isToolBarDisplayed());
   settings.endGroup();
 }
 //------------------------------------------------------------------------------
@@ -146,18 +148,20 @@ void CMainWindow::createActions()
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
+  QSettings settings;
+  settings.beginGroup("general");
   m_toolBarViewAct = new QAction(tr("ToolBar"),this);
   m_toolBarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
   m_toolBarViewAct->setCheckable(true);
-  m_toolBarViewAct->setChecked(m_isToolBarDisplayed);
+  m_toolBarViewAct->setChecked(settings.value("toolBar", true).toBool());
   connect(m_toolBarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolBarDisplayed(bool)));
 
   m_statusBarViewAct = new QAction(tr("StatusBar"),this);
-  m_statusBarViewAct->setStatusTip(tr("Show or hide the statusBar in the current window"));
+  m_statusBarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
   m_statusBarViewAct->setCheckable(true);
-  m_statusBarViewAct->setChecked(m_isStatusBarDisplayed);
+  m_statusBarViewAct->setChecked(settings.value("statusBar", true).toBool());
   connect(m_statusBarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusBarDisplayed(bool)));
-
+  settings.endGroup();
   
   m_scriptAct = new QAction(QIcon(":/icons/text-x-generic"), tr("Load script"), this);
   m_scriptAct->setIcon(QIcon::fromTheme("text-x-generic", QIcon(":/icons/text-x-generic")));
@@ -233,6 +237,7 @@ void CMainWindow::createToolBar()
   m_toolBar->addAction(m_saveAsAct);
 
   addToolBar(m_toolBar);
+  setUnifiedTitleAndToolBarOnMac(true);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent * AEvent)
