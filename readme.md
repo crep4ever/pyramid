@@ -1,25 +1,13 @@
-cmake >= 2.6.2
-qt >= 4.2
+# Description
+This application performs a segmentation of large multi-resolution images with a pyramid of tiled maps
 
-compilation de la lib-tiff:
+# Dependencies
+* required packages: cmake, libqt4-dev, libmagick++-dev, libxml++2.6-dev
+* recommended packages: doxygen
 
-cd tile/src/lib-ImTiff/tiff-4.0alpha
-./configure
-make && sudo make install
+# Build and run:
 
-compilation du programme:
-
-cd tile/
-make -> compilation en mode debug
-make release -> compilation en mode release
-
-exemples:
-
-./release/noqt  --> sans ihm et sans charger la couche qt
-./release/qTopoMap2D --> avec ihmQT
-./release/qTopoMap2D ./qscripts/iwcia-03.qs --> lancement via scripts
-
-
-attention:
- - images au format tif uniquement
- - les fichiers svg générés (exportSvg) sont rapidement trop volumineux pour inkscape
+>     git clone git://github.com/crep4ever/pyramid.git
+>     cd pyramid
+>     make release
+>     ./release/pyramid
