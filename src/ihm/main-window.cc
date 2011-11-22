@@ -64,7 +64,8 @@ CMainWindow::CMainWindow()
   //panel
   CControler* controler = new CControler(this);
   m_panel = new CPanel(controler);
-  QDockWidget* dock = new QDockWidget(tr("Parameters"));
+  QDockWidget* dock = new QDockWidget;
+  dock->setTitleBarWidget(new QWidget);
   QBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(m_panel);
   m_buildButton = new QPushButton(tr("Construction"));
