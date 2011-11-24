@@ -143,6 +143,7 @@ private:
   QPushButton* m_buildButton;
   QDialog* m_preferences;
   CPanel* m_panel;
+  CControler* m_controler; // pyramid controler pf the current tab
 };
 
 #endif  // __MAIN_WINDOW_HH__

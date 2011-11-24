@@ -62,8 +62,9 @@ CMainWindow::CMainWindow()
   setCentralWidget(m_centralWidget);
 
   //panel
-  CControler* controler = new CControler(this);
-  m_panel = new CPanel(controler);
+  m_controler = new CControler(this);
+  m_panel = new CPanel(m_controler);
+
   QDockWidget* dock = new QDockWidget;
   dock->setTitleBarWidget(new QWidget);
   QBoxLayout* layout = new QVBoxLayout;
@@ -432,11 +433,13 @@ void CMainWindow::exportSvg()
 //------------------------------------------------------------------------------
 void CMainWindow::newTab()
 {
-  CControler* controler = new CControler(this);
-  m_panel->setControler(controler);
-  CTabControler* tab = new CTabControler(controler);
+  if (centralWidget()->count() > 0)
+      m_controler = new CControler(this);
+      m_panel->changeControler(m_controler);
+
+  CTabControler* tab = new CTabControler(m_controler);
   if(tab->scene())
-      centralWidget()->addTab(tab, tab->controler()->imageFilename());
+      centralWidget()->addTab(tab, m_controler->imageFilename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::addScene()
@@ -477,7 +480,7 @@ void CMainWindow::changeTab(int index)
   connect( tab->view(), SIGNAL(positionChanged(QPoint)), 
 	   this, SLOT(updatePositionDisplay(QPoint)) );
 
-  m_panel->setControler(tab->controler());
+  m_panel->changeControler(tab->controler());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateZoomDisplay( qreal zoom )

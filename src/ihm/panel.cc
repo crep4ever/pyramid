@@ -49,43 +49,43 @@ QWidget* CPanel::createPyramidWidget()
   QGroupBox* pyramidGroup = new QGroupBox(tr("Tiled top-down pyramid"));
   QFormLayout *pyramidLayout = new QFormLayout;
 
-  QSpinBox* levels = new QSpinBox;
-  levels->setRange(0,10);
-  levels->setValue(controler()->nbLevels());
-  connect(levels, SIGNAL(valueChanged(int)), 
+  m_levels = new QSpinBox;
+  m_levels->setRange(0,10);
+  m_levels->setValue(controler()->nbLevels());
+  connect(m_levels, SIGNAL(valueChanged(int)),
 	  controler(), SLOT(setNbLevels(int)));
-  pyramidLayout->addRow(new QLabel(tr("Levels:")), levels);
+  pyramidLayout->addRow(new QLabel(tr("Levels:")), m_levels);
 
-  QComboBox* build  = new QComboBox;
-  build->addItem(tr("Constant number"));
-  build->addItem(tr("Constant size"));
-  build->setCurrentIndex(controler()->extractMode());
-  connect(build, SIGNAL(currentIndexChanged(int)), 
+  m_build  = new QComboBox;
+  m_build->addItem(tr("Constant number"));
+  m_build->addItem(tr("Constant size"));
+  m_build->setCurrentIndex(controler()->extractMode());
+  connect(m_build, SIGNAL(currentIndexChanged(int)),
 	  controler(), SLOT(setExtractMode(int)));
-  pyramidLayout->addRow(new QLabel(tr("Pyramid of tiles:")), build);
+  pyramidLayout->addRow(new QLabel(tr("Pyramid of tiles:")), m_build);
 
-  QComboBox* projection  = new QComboBox;
-  projection->addItem(tr("Direct"));
-  projection->addItem(tr("Dijkstra"));
-  projection->addItem(tr("None"));
-  projection->setCurrentIndex(controler()->projectionMode());
-  connect(projection, SIGNAL(currentIndexChanged(int)), 
+  m_projection  = new QComboBox;
+  m_projection->addItem(tr("Direct"));
+  m_projection->addItem(tr("Dijkstra"));
+  m_projection->addItem(tr("None"));
+  m_projection->setCurrentIndex(controler()->projectionMode());
+  connect(m_projection, SIGNAL(currentIndexChanged(int)),
 	  controler(), SLOT(setProjectionMode(int)));
-  pyramidLayout->addRow(new QLabel(tr("Projection:")), projection);
+  pyramidLayout->addRow(new QLabel(tr("Projection:")), m_projection);
 
-  QComboBox* focus  = new QComboBox;
-  focus->addItem(tr("Size"));
-  focus->addItem(tr("Grey"));
-  focus->addItem(tr("Homogeneous"));
-  focus->addItem(tr("Histology"));
-  focus->addItem(tr("None"));
-  focus->addItem(tr("All"));
-  focus->addItem(tr("Red"));
-  focus->addItem(tr("Blue"));
-  focus->setCurrentIndex(controler()->focusAttentionMode());
-  connect(focus, SIGNAL(currentIndexChanged(int)), 
+  m_focus  = new QComboBox;
+  m_focus->addItem(tr("Size"));
+  m_focus->addItem(tr("Grey"));
+  m_focus->addItem(tr("Homogeneous"));
+  m_focus->addItem(tr("Histology"));
+  m_focus->addItem(tr("None"));
+  m_focus->addItem(tr("All"));
+  m_focus->addItem(tr("Red"));
+  m_focus->addItem(tr("Blue"));
+  m_focus->setCurrentIndex(controler()->focusAttentionMode());
+  connect(m_focus, SIGNAL(currentIndexChanged(int)),
 	  controler(), SLOT(setFocusAttentionMode(int)));
-  pyramidLayout->addRow(new QLabel(tr("Focus of attention:")), focus);
+  pyramidLayout->addRow(new QLabel(tr("Focus of attention:")), m_focus);
   pyramidGroup->setLayout(pyramidLayout);
   return pyramidGroup;
 }
@@ -95,22 +95,22 @@ QWidget* CPanel::createMapWidget()
   QGroupBox* mapGroup = new QGroupBox(tr("Tiled map"));
   QFormLayout *mapLayout = new QFormLayout;
 
-  QCheckBox* fictive = new QCheckBox;
-  fictive->setChecked((bool)controler()->detectFictiveBordersMode());
-  connect(fictive,  SIGNAL(stateChanged(int)), 
+  m_fictive = new QCheckBox;
+  m_fictive->setChecked((bool)controler()->detectFictiveBordersMode());
+  connect(m_fictive,  SIGNAL(stateChanged(int)),
 	  controler(), SLOT(setDetectFictiveBordersMode(int)));
-  mapLayout->addRow(new QLabel(tr("Detect fictive borders:")), fictive);
+  mapLayout->addRow(new QLabel(tr("Detect fictive borders:")), m_fictive);
 
-  QComboBox* segmentation  = new QComboBox;
-  segmentation->addItem(tr("Grey value"));
-  segmentation->addItem(tr("Thresholds"));
-  segmentation->addItem(tr("Classif"));
-  segmentation->addItem(tr("Histology"));
-  segmentation->addItem(tr("None"));
-  segmentation->setCurrentIndex(controler()->segmentationMode());
-  connect(segmentation, SIGNAL(currentIndexChanged(int)), 
+  m_segmentation  = new QComboBox;
+  m_segmentation->addItem(tr("Grey value"));
+  m_segmentation->addItem(tr("Thresholds"));
+  m_segmentation->addItem(tr("Classif"));
+  m_segmentation->addItem(tr("Histology"));
+  m_segmentation->addItem(tr("None"));
+  m_segmentation->setCurrentIndex(controler()->segmentationMode());
+  connect(m_segmentation, SIGNAL(currentIndexChanged(int)),
 	  controler(), SLOT(setSegmentationMode(int)));
-  mapLayout->addRow(new QLabel(tr("Segmentation oracle:")), segmentation);
+  mapLayout->addRow(new QLabel(tr("Segmentation oracle:")), m_segmentation);
   mapGroup->setLayout(mapLayout);
   return mapGroup;
 }
@@ -120,19 +120,19 @@ QWidget* CPanel::createTileWidget()
   QGroupBox* tileGroup = new QGroupBox(tr("Topological tile"));
   QFormLayout *tileLayout = new QFormLayout;
 
-  QSpinBox* width = new QSpinBox;
-  width->setRange(0,40000);
-  width->setValue(controler()->tileWidth());
-  connect(width, SIGNAL(valueChanged(int)), 
+  m_width = new QSpinBox;
+  m_width->setRange(0,40000);
+  m_width->setValue(controler()->tileWidth());
+  connect(m_width, SIGNAL(valueChanged(int)),
 	  controler(), SLOT(setTileWidth(int)));
-  tileLayout->addRow(new QLabel(tr("Width:")), width);
+  tileLayout->addRow(new QLabel(tr("Width:")), m_width);
 
-  QSpinBox* height = new QSpinBox;
-  height->setRange(0,40000);
-  height->setValue(controler()->tileHeight());
-  connect(height, SIGNAL(valueChanged(int)), 
+  m_height = new QSpinBox;
+  m_height->setRange(0,40000);
+  m_height->setValue(controler()->tileHeight());
+  connect(m_height, SIGNAL(valueChanged(int)),
 	  controler(), SLOT(setTileHeight(int)));
-  tileLayout->addRow(new QLabel(tr("Height:")), height);
+  tileLayout->addRow(new QLabel(tr("Height:")), m_height);
   tileGroup->setLayout(tileLayout);
   return tileGroup;
 }
@@ -203,8 +203,20 @@ CControler* CPanel::controler() const
   return m_controler;
 }
 
-void CPanel::setControler(CControler* a_controler)
+void CPanel::changeControler(CControler* a_controler)
 {
   m_controler = a_controler;
+
+  controler()->setNbLevels(m_levels->value());
+  controler()->setExtractMode(m_build->currentIndex());
+  controler()->setProjectionMode(m_projection->currentIndex());
+  controler()->setFocusAttentionMode(m_focus->currentIndex());
+
+  controler()->setDetectFictiveBordersMode((int) m_fictive->isChecked());
+  controler()->setSegmentationMode(m_segmentation->currentIndex());
+
+  controler()->setTileWidth(m_width->value());
+  controler()->setTileHeight(m_height->value());
+
   update();
 }

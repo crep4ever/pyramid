@@ -32,6 +32,9 @@
 class CFileChooser;
 class CControler;
 class QListWidget;
+class QSpinBox;
+class QComboBox;
+class QCheckBox;
 
 class CPanel : public QWidget
 {
@@ -46,7 +49,7 @@ class CPanel : public QWidget
   
   void update();
   CControler* controler() const;
-  void setControler(CControler *a_controler);
+  void changeControler(CControler *a_controler);
 
 private slots:
   void tiffInfo(const QString & filename);
@@ -62,5 +65,20 @@ private:
   CControler* m_controler;  
   QListWidget* m_imageProperties;
   CFileChooser* m_imageFileChooser;
+
+  //pyramid
+  QSpinBox* m_levels;
+  QComboBox* m_build;
+  QComboBox* m_projection;
+  QComboBox* m_focus;
+
+  //map
+  QCheckBox* m_fictive;
+  QComboBox* m_segmentation;
+
+  //tile
+  QSpinBox* m_width;
+  QSpinBox* m_height;
+
 };
 #endif  // __PANEL_HH__
