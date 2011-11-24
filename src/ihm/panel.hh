@@ -57,7 +57,7 @@ private:
   QWidget* createTileWidget();
   QWidget* createImageWidget();
 
-  QList<QString> imageProperties();
+  QStringList imageProperties();
 
   CControler* m_controler;  
   QListWidget* m_imageProperties;

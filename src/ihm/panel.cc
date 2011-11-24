@@ -162,41 +162,40 @@ QWidget* CPanel::createImageWidget()
 void CPanel::tiffInfo(const QString & filename)
 {
   m_imageProperties->clear();
-  QList<QString> list = imageProperties();
-  for(int i=0; i<list.size();++i)
-    new QListWidgetItem(list[i], m_imageProperties);
+  QString property;
+  QStringList list = imageProperties();
+  foreach(property, list)
+    m_imageProperties->addItem(new QListWidgetItem(property));
 }
 
-QList<QString> CPanel::imageProperties()
+QStringList CPanel::imageProperties()
 {
   if(controler()->imageFilename().isEmpty()) 
-    return QList<QString>();
+    return QStringList();
 
   CImageTiff* image = new CImageTiff(controler()->imageFilename().toStdString());
  
   fogrimmi::TIFF_Properties tiffP = image->getProperties();
   QString name(name.fromStdString(image->fileName.Filename()));
   
-  QList<QString> list;
-  list.append(QString(tr("Image name : %1")).arg(name));
-  list.append(QString(tr("Number of pages : %1")).arg(image->getNbPages()));
-  list.append(QString(tr("Image width : %1")).arg(tiffP.width));
-  list.append(QString(tr("Image height : %1")).arg(tiffP.height));
-  list.append(QString(tr("Component width : %1")).arg(tiffP.componentWidth));
-  list.append(QString(tr("Component height : %1")).arg(tiffP.componentHeight));
-  list.append(QString(tr("BPS : %1")).arg(tiffP.bps));
-  list.append(QString(tr("Color Mode : %1")).arg(tiffP.colorMode));
-  list.append(QString(tr("Compression : %1")).arg(tiffP.compression));
-  list.append(QString(tr("Jpeg quality : %1")).arg(tiffP.jpeg_q));
-  list.append(QString(tr("Jpeg cm : %1")).arg(tiffP.jpeg_cm));
-  list.append(QString(tr("Photomet : %1")).arg(tiffP.photomet));
-  list.append(QString(tr("Planar : %1")).arg(tiffP.planar));
-  list.append(QString(tr("Pixel organisation : %1")).arg(tiffP.pixOrganisation));
-  list.append(QString(tr("Horizontal resolution : %1")).arg(tiffP.xRes));
-  list.append(QString(tr("Vertical resolution : %1")).arg(tiffP.yRes));
-  list.append(QString(tr("Res unit : %1")).arg(tiffP.resUnit));
-
-  return list;
+  return QStringList()
+    << QString(tr("Image name : %1")).arg(name)
+    << QString(tr("Number of pages : %1")).arg(image->getNbPages())
+    << QString(tr("Image width : %1")).arg(tiffP.width)
+    << QString(tr("Image height : %1")).arg(tiffP.height)
+    << QString(tr("Component width : %1")).arg(tiffP.componentWidth)
+    << QString(tr("Component height : %1")).arg(tiffP.componentHeight)
+    << QString(tr("BPS : %1")).arg(tiffP.bps)
+    << QString(tr("Color Mode : %1")).arg(tiffP.colorMode)
+    << QString(tr("Compression : %1")).arg(tiffP.compression)
+    << QString(tr("Jpeg quality : %1")).arg(tiffP.jpeg_q)
+    << QString(tr("Jpeg cm : %1")).arg(tiffP.jpeg_cm)
+    << QString(tr("Photomet : %1")).arg(tiffP.photomet)
+    << QString(tr("Planar : %1")).arg(tiffP.planar)
+    << QString(tr("Pixel organisation : %1")).arg(tiffP.pixOrganisation)
+    << QString(tr("Horizontal resolution : %1")).arg(tiffP.xRes)
+    << QString(tr("Vertical resolution : %1")).arg(tiffP.yRes)
+    << QString(tr("Res unit : %1")).arg(tiffP.resUnit);
 }
 
 CControler* CPanel::controler() const
