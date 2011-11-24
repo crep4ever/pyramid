@@ -56,7 +56,6 @@ class CMainWindow : public QMainWindow
 
 public slots:
 
-  void newPyramid();
   void open();
   void save();
   void saveAs();

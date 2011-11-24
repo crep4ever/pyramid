@@ -108,7 +108,7 @@ void CMainWindow::createActions()
   m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/folder-new")));
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new pyramid"));
-  connect(m_newAct, SIGNAL(triggered()), this, SLOT(newPyramid()));
+  connect(m_newAct, SIGNAL(triggered()), this, SLOT(newTab()));
 
   m_openAct = new QAction(tr("Open..."), this);
   m_openAct->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/document-open")));
@@ -247,11 +247,6 @@ void CMainWindow::closeEvent(QCloseEvent * AEvent)
 {
   writeSettings();
   AEvent->accept();
-}
-//------------------------------------------------------------------------------
-void CMainWindow::newPyramid()
-{
-  newTab();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::open()
@@ -441,7 +436,7 @@ void CMainWindow::newTab()
   m_panel->setControler(controler);
   CTabControler* tab = new CTabControler(controler);
   if(tab->scene())
-    centralWidget()->addTab(tab, tab->controler()->imageName());
+      centralWidget()->addTab(tab, tab->controler()->imageFilename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::addScene()

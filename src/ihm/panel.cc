@@ -25,15 +25,27 @@
 CPanel::CPanel( CControler *a_controler )
   : QWidget()
   , m_controler(a_controler)
-  , m_imageName(QString())
   , m_imageProperties(new QListWidget)
   , m_imageFileChooser(new CFileChooser())
 {
   m_imageProperties->setAlternatingRowColors(true);
 
   QBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(createPyramidWidget());
+  layout->addWidget(createMapWidget());
+  layout->addWidget(createTileWidget());
+  layout->addWidget(createImageWidget());
+  setLayout(layout);
+}
 
-  //Pyramid
+CPanel::~CPanel()
+{}
+
+void CPanel::update()
+{}
+
+QWidget* CPanel::createPyramidWidget()
+{
   QGroupBox* pyramidGroup = new QGroupBox(tr("Tiled top-down pyramid"));
   QFormLayout *pyramidLayout = new QFormLayout;
 
@@ -74,8 +86,12 @@ CPanel::CPanel( CControler *a_controler )
   connect(focus, SIGNAL(currentIndexChanged(int)), 
 	  controler(), SLOT(setFocusAttentionMode(int)));
   pyramidLayout->addRow(new QLabel(tr("Focus of attention:")), focus);
-  
-  //Map
+  pyramidGroup->setLayout(pyramidLayout);
+  return pyramidGroup;
+}
+
+QWidget* CPanel::createMapWidget()
+{
   QGroupBox* mapGroup = new QGroupBox(tr("Tiled map"));
   QFormLayout *mapLayout = new QFormLayout;
 
@@ -95,9 +111,12 @@ CPanel::CPanel( CControler *a_controler )
   connect(segmentation, SIGNAL(currentIndexChanged(int)), 
 	  controler(), SLOT(setSegmentationMode(int)));
   mapLayout->addRow(new QLabel(tr("Segmentation oracle:")), segmentation);
+  mapGroup->setLayout(mapLayout);
+  return mapGroup;
+}
 
-
-  //Tile
+QWidget* CPanel::createTileWidget()
+{
   QGroupBox* tileGroup = new QGroupBox(tr("Topological tile"));
   QFormLayout *tileLayout = new QFormLayout;
 
@@ -114,45 +133,30 @@ CPanel::CPanel( CControler *a_controler )
   connect(height, SIGNAL(valueChanged(int)), 
 	  controler(), SLOT(setTileHeight(int)));
   tileLayout->addRow(new QLabel(tr("Height:")), height);
+  tileGroup->setLayout(tileLayout);
+  return tileGroup;
+}
 
-
-  //Image
+QWidget* CPanel::createImageWidget()
+{
   QGroupBox* imageGroup = new QGroupBox(tr("Image"));
   QBoxLayout * imageLayout = new QVBoxLayout;
 
   m_imageFileChooser->setType(CFileChooser::OpenFileChooser);
-  m_imageFileChooser->setPath(controler()->imageName());
-  if(!controler()->imageName().isEmpty())  
-    tiffInfo(controler()->imageName());
+  m_imageFileChooser->setPath(controler()->imageFilename());
+  if(!controler()->imageFilename().isEmpty())  
+    tiffInfo(controler()->imageFilename());
   m_imageFileChooser->setCaption(tr("Image"));
   m_imageFileChooser->setFilter(tr("Images (*.tif)"));
   connect(m_imageFileChooser, SIGNAL(pathChanged(const QString&)),
-          controler(), SLOT(setImageName(const QString&)));
+          controler(), SLOT(setImageFilename(const QString&)));
   connect(m_imageFileChooser, SIGNAL(pathChanged(const QString&)),
           this, SLOT(tiffInfo(const QString&)));
 
   imageLayout->addWidget(m_imageFileChooser);
   imageLayout->addWidget(m_imageProperties);
-
-  pyramidGroup->setLayout(pyramidLayout);
-  mapGroup->setLayout(mapLayout);
-  tileGroup->setLayout(tileLayout);
   imageGroup->setLayout(imageLayout);
-
-  layout->addWidget(pyramidGroup);
-  layout->addWidget(mapGroup);
-  layout->addWidget(tileGroup);
-  layout->addWidget(imageGroup);
-
-  setLayout(layout);
-}
-
-CPanel::~CPanel()
-{}
-
-void CPanel::update()
-{
-  m_imageFileChooser->setPath(controler()->imageName());
+  return imageGroup;
 }
 
 void CPanel::tiffInfo(const QString & filename)
@@ -165,10 +169,10 @@ void CPanel::tiffInfo(const QString & filename)
 
 QList<QString> CPanel::imageProperties()
 {
-  if(m_imageName.isEmpty()) 
+  if(controler()->imageFilename().isEmpty()) 
     return QList<QString>();
 
-  CImageTiff* image = new CImageTiff(m_imageName.toStdString());
+  CImageTiff* image = new CImageTiff(controler()->imageFilename().toStdString());
  
   fogrimmi::TIFF_Properties tiffP = image->getProperties();
   QString name(name.fromStdString(image->fileName.Filename()));

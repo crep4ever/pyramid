@@ -56,9 +56,9 @@ class CControler : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY(QString imageName
-	     READ imageName
-	     WRITE setImageName)
+  Q_PROPERTY(QString imageFilename
+	     READ imageFilename
+	     WRITE setImageFilename)
 
     Q_PROPERTY(int nbLevels
 	       READ nbLevels
@@ -178,10 +178,10 @@ public slots:
   void extractProgressBar();
 
   /// getter on the image name property
-  QString imageName() const;
+  QString imageFilename() const;
 
   /// setter on the image name property
-  void setImageName(const QString & str);
+  void setImageFilename(const QString & str);
  
   /// Nombre de régions dans un niveau de la pyramide
   /// @param ALevel: le niveau
@@ -218,6 +218,8 @@ signals:
   void wasModified();
 
 private:
+  void infos() const;
+
   CMainWindow* m_parent;
   Map2d::CPyramid* m_pyramid;
 
@@ -229,8 +231,7 @@ private:
   int  m_projectionMode;
   int  m_focusAttentionMode;
   int  m_detectFictiveBordersMode;
-  QString m_imageName;
-  QString m_imagePath;
+  QString m_imageFilename;
   QList<QVariant> m_merge;
 
   QProgressBar* m_progressBar;

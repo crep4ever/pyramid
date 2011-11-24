@@ -52,10 +52,14 @@ private slots:
   void tiffInfo(const QString & filename);
 
 private:
+  QWidget* createPyramidWidget();
+  QWidget* createMapWidget();
+  QWidget* createTileWidget();
+  QWidget* createImageWidget();
+
   QList<QString> imageProperties();
 
   CControler* m_controler;  
-  QString m_imageName;
   QListWidget* m_imageProperties;
   CFileChooser* m_imageFileChooser;
 };
