@@ -468,7 +468,6 @@ void CMainWindow::changeTab(int index)
 {
   if (CTabControler* tab = (CTabControler*) centralWidget()->widget(index))
     {
-      qDebug() << "CMainWindow::changeTab(" << index << ") : controler found";
       disconnect(m_tileViewAct, SIGNAL(triggered()), 0, 0);
       disconnect(m_cascadeViewAct, SIGNAL(triggered()), 0, 0);
 
