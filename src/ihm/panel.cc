@@ -53,7 +53,7 @@ QWidget* CPanel::createPyramidWidget()
   QFormLayout *pyramidLayout = new QFormLayout;
 
   m_levels = new QSpinBox;
-  m_levels->setRange(0,10);
+  m_levels->setRange(2,10);
   m_levels->setValue(controler()->nbLevels());
   connect(m_levels, SIGNAL(valueChanged(int)),
 	  controler(), SLOT(setNbLevels(int)));
