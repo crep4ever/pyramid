@@ -222,6 +222,13 @@ void CControler::setImageFilename( const QString & str)
       m_imageFilename = str;
       //emit wasModified();
     }
+  if (CFileChooser *fc = qobject_cast<CFileChooser *>(sender()))
+    {
+      if (!QFile(str).exists())
+	fc->lineEdit()->setStyleSheet("border: 1px solid red;border-radius: 3px;");
+      else
+	fc->lineEdit()->setStyleSheet("border: 1px solid green;border-radius: 3px;");
+    }
 }
 //------------------------------------------------------------------------------
 int CControler::nbLevels() const

@@ -58,6 +58,8 @@ CMainWindow::CMainWindow()
   
   connect( m_centralWidget, SIGNAL(currentChanged(int)),
 	   SLOT(changeTab(int)) );
+  connect( m_centralWidget, SIGNAL(tabCloseRequested(int)),
+	   SLOT(closeTab(int)));
   
   setCentralWidget(m_centralWidget);
 
@@ -435,11 +437,15 @@ void CMainWindow::newTab()
 {
   if (centralWidget()->count() > 0)
       m_controler = new CControler(this);
-      m_panel->changeControler(m_controler);
+
+  m_panel->changeControler(m_controler);
 
   CTabControler* tab = new CTabControler(m_controler);
   if(tab->scene())
+    {
       centralWidget()->addTab(tab, m_controler->imageFilename());
+      centralWidget()->setCurrentWidget(tab);
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::addScene()
@@ -460,27 +466,33 @@ CTabControler* CMainWindow::currentTab() const
 //------------------------------------------------------------------------------
 void CMainWindow::changeTab(int index)
 {
-  CTabControler* tab = (CTabControler*) centralWidget()->widget(index);
+  if (CTabControler* tab = (CTabControler*) centralWidget()->widget(index))
+    {
+      qDebug() << "CMainWindow::changeTab(" << index << ") : controler found";
+      disconnect(m_tileViewAct, SIGNAL(triggered()), 0, 0);
+      disconnect(m_cascadeViewAct, SIGNAL(triggered()), 0, 0);
 
-  disconnect(m_tileViewAct, SIGNAL(triggered()), 0, 0);
-  disconnect(m_cascadeViewAct, SIGNAL(triggered()), 0, 0);
+      connect(m_tileViewAct, SIGNAL(triggered()),
+	      tab, SLOT(tileSubWindows()));
 
-  connect(m_tileViewAct, SIGNAL(triggered()), 
-	  tab, SLOT(tileSubWindows()));
+      connect(m_cascadeViewAct, SIGNAL(triggered()),
+	      tab, SLOT(cascadeSubWindows()));
+      
+      disconnect(tab->view(), SIGNAL(zoomChanged(qreal)), 0, 0);
+      disconnect(tab->view(), SIGNAL(positionChanged(QPoint)), 0, 0);
 
-  connect(m_cascadeViewAct, SIGNAL(triggered()), 
-	  tab, SLOT(cascadeSubWindows()));
+      connect( tab->view(), SIGNAL(zoomChanged(qreal)),
+	       this, SLOT(updateZoomDisplay(qreal)) );
 
-  disconnect(tab->view(), SIGNAL(zoomChanged(qreal)), 0, 0);
-  disconnect(tab->view(), SIGNAL(positionChanged(QPoint)), 0, 0);
+      connect( tab->view(), SIGNAL(positionChanged(QPoint)),
+	       this, SLOT(updatePositionDisplay(QPoint)) );
 
-  connect( tab->view(), SIGNAL(zoomChanged(qreal)),
-	   this, SLOT(updateZoomDisplay(qreal)) );
-
-  connect( tab->view(), SIGNAL(positionChanged(QPoint)), 
-	   this, SLOT(updatePositionDisplay(QPoint)) );
-
-  m_panel->changeControler(tab->controler());
+      m_panel->changeControler(tab->controler());
+    }
+  else
+    {
+      m_panel->changeControler(m_controler);
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateZoomDisplay( qreal zoom )
@@ -491,4 +503,13 @@ void CMainWindow::updateZoomDisplay( qreal zoom )
 void CMainWindow::updatePositionDisplay( QPoint position )
 {
   m_positionDisplay->setText( QString("%1x%2").arg(position.x()).arg(position.y()) );
+}
+//------------------------------------------------------------------------------
+void CMainWindow::closeTab(int index)
+{
+  if (CTabControler *tab = qobject_cast< CTabControler* >(m_centralWidget->widget(index)))
+    {
+      m_centralWidget->removeTab(index);
+      delete tab;
+    }
 }

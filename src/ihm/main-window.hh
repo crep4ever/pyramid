@@ -92,6 +92,9 @@ private slots:
   /// update conections when changing tab
   void changeTab(int index);
 
+  /// close a tab corresponding to a pyramid
+  void closeTab(int index);
+
   /// update zoom factor display
   void updateZoomDisplay( qreal zoom );
 

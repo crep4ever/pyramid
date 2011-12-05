@@ -39,7 +39,10 @@ CPanel::CPanel( CControler *a_controler )
 }
 
 CPanel::~CPanel()
-{}
+{
+  delete m_controler;
+  m_controler = 0;
+}
 
 void CPanel::update()
 {}
@@ -170,11 +173,18 @@ void CPanel::tiffInfo(const QString & filename)
 
 QStringList CPanel::imageProperties()
 {
-  if(controler()->imageFilename().isEmpty()) 
+  if(!controler()
+     || controler()->imageFilename().isEmpty()
+     || !QFile(controler()->imageFilename()).exists())
     return QStringList();
 
   CImageTiff* image = new CImageTiff(controler()->imageFilename().toStdString());
- 
+  if(!image)
+    {
+      qWarning() << "CPanel::imageProperties unable to open image " << controler()->imageFilename();
+      return QStringList();
+    }
+
   fogrimmi::TIFF_Properties tiffP = image->getProperties();
   QString name(name.fromStdString(image->fileName.Filename()));
   
@@ -217,6 +227,8 @@ void CPanel::changeControler(CControler* a_controler)
 
   controler()->setTileWidth(m_width->value());
   controler()->setTileHeight(m_height->value());
+
+  controler()->setImageFilename(m_imageFileChooser->path());
 
   update();
 }
