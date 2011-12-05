@@ -147,3 +147,8 @@ void CFileChooser::setPath(const QString &path)
 
   emit(pathChanged(path));
 }
+
+QLineEdit* CFileChooser::lineEdit() const
+{
+  return m_lineEdit;
+}

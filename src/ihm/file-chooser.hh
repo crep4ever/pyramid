@@ -61,6 +61,7 @@ public:
   void setDirectory(const QDir &directory);
 
   QString path() const;
+  QLineEdit* lineEdit() const;
 
 public slots:
   void setPath(const QString &path);
