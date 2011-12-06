@@ -285,7 +285,7 @@ namespace fogrimmi
     //----------------------------------------------------------
     /// Recompose une image à partir des lignels,
     //----------------------------------------------------------
-    void          cloneFromLignel   ( float width, float height, unsigned int maxSize, unsigned short int page = 0, char* fileOut = "cloneFromLignel.tif" );
+    void          cloneFromLignel   ( float width, float height, unsigned int maxSize, unsigned short int page = 0, std::string fileOut = "cloneFromLignel.tif" );
 
 
     //----------------------------------------------------------

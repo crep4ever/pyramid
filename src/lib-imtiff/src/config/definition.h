@@ -213,25 +213,14 @@ namespace fogrimmi
     /// true if tiff properties is valid
     bool isValid()
     {
-
       if(width<=0 || height <= 0 || componentWidth>=width || componentHeight>=height)
         return false;
-
-      if(compression == COMPRESSION_JPEG) {
-        if(jpeg_q<=0 || jpeg_cm<0)
-          return false;
-
-      }
 
       if(name == NULL)
         return false;
 
       return true;
-
-
     }
-
-
   };
 
 
