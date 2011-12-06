@@ -11,7 +11,7 @@
 //         Permet de manipuler des images TIFF indépendamment de l'organisation interne de l'image (tuile, ligne, compression)
 
 
-#if !defined(_IM_TIFF_H)
+#ifndef _IM_TIFF_H
 #define _IM_TIFF_H
 
 #include "export.h"
@@ -23,12 +23,11 @@
 #include "zoom.h"
 #include "image-memory.h"
 
+typedef unsigned int uint;
 
 namespace fogrimmi
 {
-
   /// Classe servant a manipuler les images de type tiff - specialisation de la classe Image
-  
   class IM_EXPORT IM_Tiff : public IM_Image
   {
   public:
@@ -88,7 +87,7 @@ namespace fogrimmi
     /// @return SUCCESS or FAIL
     bool getPixelValue(IM_Pixel &pix);
 
-    inline bool getPixelValue(IM_Pixel &pix, unsigned int APage)
+    inline bool getPixelValue(IM_Pixel &pix, uint APage)
     {
       return vPages[APage]->getPixelValue(pix);
     };
@@ -103,10 +102,10 @@ namespace fogrimmi
     /// @param row    : ligne
     /// @param col    : colonne
     /// @return  uint8* : buffer
-    uint8* getData(unsigned int page, unsigned int row, unsigned int col);
+    uint8* getData(uint page, uint row, uint col);
 
     /// Retourne toutes les donnees bruts des composants sous forme de tableau a une entree \n - conversion composants en tableau - \n attention à la capacite memoire
-    void getAllDataRGB32(unsigned int page, uint8* data);
+    void getAllDataRGB32(uint page, uint8* data);
 
     /// inutilise pour l'instant
     bool setPixelValue(IM_Pixel &pix);
@@ -161,7 +160,7 @@ namespace fogrimmi
     bool rescale(IM_Image* img, IM_Box sizeBox);
 
     /// Surcharge de l'operateur () - rends accessible les pixels par (col, row, page)
-    IM_Pixel operator()(unsigned int col, unsigned int row, unsigned short int page);
+    IM_Pixel operator()(uint col, uint row, unsigned short int page);
 
     // extraction des donnees selon une boîte
     /// extraire les informations contenu dans le cadre de lecture, flag permet de choisir sur quels pages executer les projections \n
@@ -188,7 +187,7 @@ namespace fogrimmi
     /// @param file : tiff a ajouter \n
     /// @param index : index de page \n
     /// @param mode : 0=ajout, 1=insert \n
-    void append(char *file, int index, unsigned int mode=0);
+    void append(char *file, int index, uint mode=0);
 
     /// Insert une image tiff a la page index. \n
     /// Note: La page index sera supprimée.
@@ -214,24 +213,24 @@ namespace fogrimmi
     inline unsigned short int  getCurrentPage() { return currentPage; };
 
     /// Retourne la largeur de la page specifie
-    unsigned int  getPageWidth(unsigned short int page);
+    uint  getPageWidth(unsigned short int page);
 
     /// Retourne la hauteur de la page specifie
-    unsigned int  getPageHeight(unsigned short int page);
+    uint  getPageHeight(unsigned short int page);
 
     /// Retourne vrai si les coordonnees specifie appartiennent aux dimensions de la page.
     /// @param row : coordonnee y \n
     /// @param col : coordonnee x \n
     /// @param page : page de reference \n
     /// @return SUCCESS or FAIL
-    bool holdPage(unsigned int row, unsigned int col, unsigned short int page);
+    bool holdPage(uint row, uint col, unsigned short int page);
 
     /// Retourne vrai si les coordonnes specifie appartiennent au cadre de lecture de la page.
     /// @param row : coordonnee y
     /// @param col : coordonnee x
     /// @param page : page de reference
     /// @return SUCCESS or FAIL
-    bool holdBoxPage(unsigned int row, unsigned int col, unsigned short int page);
+    bool holdBoxPage(uint row, uint col, unsigned short int page);
 
     /// Affiche les tags de la page
     /// @param page : index de page
@@ -247,7 +246,7 @@ namespace fogrimmi
     /// @param height   : hauteur de la nouvelle image
     /// @param maxSize  : critere de surface exprime en pixels
     /// @param fileOut  : nom de l'image de sortie
-    void cloneFromLignel(float width, float height, unsigned int maxSize, unsigned short int page = 0, std::string fileOut = "cloneFromLignel.tif" );
+    void cloneFromLignel(float width, float height, uint maxSize, unsigned short int page = 0, std::string fileOut = "cloneFromLignel.tif" );
 
     /// Renvoie le cadre referent de la page de destination d'un pixel d'une page source \n
     /// @param x        : coordonnee en X sur la page source
@@ -268,10 +267,10 @@ namespace fogrimmi
     void projectionLignel(unsigned short int lIndex, unsigned short int iGroupSrc, unsigned short int iGroupDest);
 
     /// Retourne la boite de lecture courante de la page
-    inline IM_Box getCurrentReadBox(unsigned int page){ return vPages[page]->getCurrentReadBox(); };
+    inline IM_Box getCurrentReadBox(uint page){ return vPages[page]->getCurrentReadBox(); };
 
     /// Definit la boite de lecture de la page
-    inline bool setCurrentReadBox(IM_Box box, unsigned int page){ vPages[page]->setCurrentReadBox(box); return true;};
+    inline bool setCurrentReadBox(IM_Box box, uint page){ vPages[page]->setCurrentReadBox(box); return true;};
 
     /// Si une page est une macro image ou un label alors renvoie faux \n
     /// Tips: isPage appel open(page)
@@ -301,7 +300,7 @@ namespace fogrimmi
     /// Retourne vrai si l'image est organisee en tuile
     /// @param page : index de la page \n
     /// @return Vrai sur page est organisee en tuile \n
-    bool isTiled(unsigned int page);
+    bool isTiled(uint page);
 
   private:
     /// Pointeur sur le TIFF en lecture de la librairie libtiff
@@ -325,31 +324,25 @@ namespace fogrimmi
   };
 
   inline
-    IM_Pixel IM_Tiff::operator()(unsigned int col, unsigned int row, unsigned short int page)
+    IM_Pixel IM_Tiff::operator()(uint col, uint row, unsigned short int page)
     {
-      IM_Pixel pix;
-      pix.x = col;
-      pix.y = row;
-
+      IM_Pixel pix(col, row);
       if(!vPages[page]->getPixelValue(pix))
-	{
-	  getForcedPixelValue(pix);
-	}
-
+	getForcedPixelValue(pix);
       return pix;
     }
 
   inline
-    unsigned int IM_Tiff::getPageWidth(unsigned short int page)
+    uint IM_Tiff::getPageWidth(unsigned short int page)
   {
     return vPages[page]->getWidth();
   }
 
   inline
-    unsigned int IM_Tiff::getPageHeight(unsigned short int page)
+    uint IM_Tiff::getPageHeight(unsigned short int page)
   {
     return vPages[page]->getHeight();
   }
-}//namespace Im
+}//namespace fogrimmi
 
 #endif  //_IM_TIFF_H
