@@ -34,7 +34,6 @@
 #include <valarray>
 
 //--- simple kmeans
-#include "kmeans.h"
 int _debug;
 //---
 

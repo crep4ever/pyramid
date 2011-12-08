@@ -66,7 +66,6 @@ endif (CMAKE_BUILD_TYPE STREQUAL  "Profile")
 #-------------------------------------------------------------------------------
 add_subdirectory (lib-utils)
 add_subdirectory (lib-kmlocal)
-add_subdirectory (lib-simplekmeans)
 add_subdirectory (lib-clustering)
 add_subdirectory (lib-imtiff)
 add_subdirectory (lib-image2D)

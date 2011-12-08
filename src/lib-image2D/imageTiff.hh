@@ -159,6 +159,10 @@ public:
   // classif de l'image en ANbClass classes.
   uint8* simplekmeans(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
 
+  float** omp_kmeans(int, float**, int, int, int, float, int*);
+
+  int find_nearest_cluster(int numClusters, int numCoords, float  *object, float **clusters);
+
   // Labelise à partir d'une classification
   // La classif donne le pixel représentatif d'une classe, que l'on convertit
   // en labels entiers
@@ -225,6 +229,7 @@ public:
 };
 
 #include INCLUDE_INLINE("imageTiff.icc")
+#include INCLUDE_INLINE("omp_kmeans.icc")
 
 //******************************************************************************
 //******************************************************************************

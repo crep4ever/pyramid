@@ -32,7 +32,6 @@ TARGET_LINK_LIBRARIES(image2D
 #  ${GLIB_LIBRARIES}
 #  ${GLIBMM_LIBRARY}
 #  ${XMLPP_LIBRARY}
-  simplekmeans
   imtiff
   utils
   kmlocal

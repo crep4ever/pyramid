@@ -344,3 +344,4 @@ void CImageTiff::setFilename(const std::string & AFilename)
 {
   FFilename = AFilename;
 }
+
