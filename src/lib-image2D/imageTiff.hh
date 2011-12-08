@@ -161,6 +161,8 @@ public:
 
   float** omp_kmeans(int, float**, int, int, int, float, int*);
 
+  float euclid_dist_2(int numdims, float *coord1, float *coord2);
+
   int find_nearest_cluster(int numClusters, int numCoords, float  *object, float **clusters);
 
   // Labelise à partir d'une classification

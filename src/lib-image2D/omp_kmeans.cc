@@ -24,7 +24,7 @@
 
 #include <omp.h>
 #include "imageTiff.hh"
-int _debug;
+
 
 /*----< kmeans_clustering() >------------------------------------------------*/
 /* return an array of cluster centers of size [numClusters][numCoords]       */
@@ -43,7 +43,6 @@ float** CImageTiff::omp_kmeans(int     is_perform_atomic, /* in: */
   float    delta;          /* % of objects change their clusters */
   float  **clusters;       /* out: [numClusters][numCoords] */
   float  **newClusters;    /* [numClusters][numCoords] */
-  double   timing;
 
   int      nthreads;             /* no. threads */
   int    **local_newClusterSize; /* [nthreads][numClusters] */
@@ -108,7 +107,6 @@ float** CImageTiff::omp_kmeans(int     is_perform_atomic, /* in: */
     }
   }
 
-  if (_debug) timing = omp_get_wtime();
   do {
     delta = 0.0;
 
@@ -192,11 +190,6 @@ float** CImageTiff::omp_kmeans(int     is_perform_atomic, /* in: */
             
     delta /= numObjs;
   } while (delta > threshold && loop++ < 500);
-
-  if (_debug) {
-    timing = omp_get_wtime() - timing;
-    printf("nloops = %2d (T = %7.4f)",loop,timing);
-  }
 
   if (!is_perform_atomic) {
     free(local_newClusterSize[0]);

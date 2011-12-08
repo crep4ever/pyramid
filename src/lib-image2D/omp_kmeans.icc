@@ -20,7 +20,7 @@
 
 /*----< euclid_dist_2() >----------------------------------------------------*/
 /* square of Euclid distance between two multi-dimensional points            */
-INLINE static
+INLINE
 float CImageTiff::euclid_dist_2(int    numdims,  /* no. dimensions */
                     float *coord1,   /* [numdims] */
                     float *coord2)   /* [numdims] */
@@ -35,7 +35,7 @@ float CImageTiff::euclid_dist_2(int    numdims,  /* no. dimensions */
 }
 
 /*----< find_nearest_cluster() >---------------------------------------------*/
-INLINE static
+INLINE
 int CImageTiff::find_nearest_cluster(int     numClusters, /* no. clusters */
                          int     numCoords,   /* no. coordinates */
                          float  *object,      /* [numCoords] */

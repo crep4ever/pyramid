@@ -33,11 +33,8 @@
 #include <vector>
 #include <valarray>
 
-//--- simple kmeans
-int _debug;
-//---
-
 #include INCLUDE_NON_INLINE("imageTiff.icc")
+#include INCLUDE_NON_INLINE("omp_kmeans.icc")
 
 #define UNUSED(x) (void)x
 
