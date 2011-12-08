@@ -187,12 +187,7 @@ inline
 void CMatrix< TElement >::fill( const TElement & AValue )
 {
   assert( FData != NULL );
-  //memset(FData, AValue, FSizeX * FSizeY);
-  unsigned int size = FSizeX * FSizeY;
-  //std::fill_n( FData, size, const_cast<TElement>(AValue) );
-  //#pragma omp parallel for
-  for( unsigned int i = 0 ; i < size ; ++i )
-    FData[i] = AValue;
+  memset(FData, (int)  AValue, FSizeX * FSizeY);
 }
 
 template< typename TElement >
