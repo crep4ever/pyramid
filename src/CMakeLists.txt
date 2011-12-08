@@ -1,9 +1,13 @@
 #-------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6.2)
-project (pyramidalMaps)
+project (pyramid)
+set(PROJECT_NAME pyramid)
 
-SET(DOCUMENTATION_DIR "${CMAKE_SOURCE_DIR}/../doc/")
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+set(DOCUMENTATION_DIR "${CMAKE_SOURCE_DIR}/../doc/")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+find_package(Magick++ REQUIRED)
 
 #-------------------------------------------------------------------------------
 # Des options de compilation que l'on peut activer avec ADD_DEFINITIONS(xxx).
@@ -15,35 +19,24 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # -DDISPLAY_TIME_EXTRACT_IMAGE pour afficher les temps de calcul;
 # -DIMTIFF pour utiliser la libImTIff plutot que ImageMagick (obligatoire pour les pyramides);
 
-ADD_DEFINITIONS("-DIMTIFF")
-ADD_DEFINITIONS("-Wall")
-ADD_DEFINITIONS("-DNO_FREETYPE")
+option(OPENMP "multithreading with openmp" ON)
+if (OPENMP)
+  add_definitions("-fopenmp")
+endif ()
+
+add_definitions("-DNO_FREETYPE")
 #-------------------------------------------------------------------------------
 # Types de distributions :
 # Debug       = non inline + assert 
 # Profile     = non inline + no-assert 
 # Release     = inline     + no-assert + O2
 
-SET(CMAKE_CXX_FLAGS_DEBUG "-g")
-SET(CMAKE_CXX_FLAGS_PROFILE "-g -DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize")
-SET(CMAKE_CXX_FLAGS_RELEASE "-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize")
-
-#multithread
-#SET(CMAKE_CXX_FLAGS_DEBUG " -fopenmp -g")
-#SET(CMAKE_LD_FLAGS_DEBUG "-fopenmp")
-#
-#SET(CMAKE_CXX_FLAGS_RELEASE "-DINLINE_FLAG -O2 -fopenmp -finline-functions -DNDEBUG -march=native")
-#SET(CMAKE_LD_FLAGS_RELEASE "-fopenmp")
-#
-#SET(CMAKE_CXX_FLAGS_PROFILE " -g -fopenmp -DNDEBUG")
-#SET(CMAKE_LD_FLAGS_PROFILE "-fopenmp")
-
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
+set(CMAKE_CXX_FLAGS_PROFILE "-g -DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize")
+set(CMAKE_CXX_FLAGS_RELEASE "-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize")
 
 #------------------------------------------------------------------------------
-# Pour savoir comment gérer les icc : ils sont soit inclus dans les
-# .hh en mode INLINE, soit dans les .cc en mode NONINLINE.
-
-FIND_PACKAGE(Magick++ REQUIRED)
+# manage inline functions from icc files
 
 #Mode debug
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
