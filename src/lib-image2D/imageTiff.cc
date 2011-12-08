@@ -32,6 +32,12 @@
 #include <algorithm>
 #include <vector>
 #include <valarray>
+
+//--- simple kmeans
+#include "kmeans.h"
+int _debug;
+//---
+
 #include INCLUDE_NON_INLINE("imageTiff.icc")
 
 #define UNUSED(x) (void)x
@@ -264,6 +270,77 @@ uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
 }
 
 //------------------------------------------------------------------------------
+uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
+{
+  //std::cout<<" [start] CImageTiff::simplekmeans"<<std::endl;
+  // 1. On crée une image et on retrouve les infos qui nous intéressent
+  read(ABox, ADepth);
+  regularization(ABox, ADepth, 10, 2, 0.1, 1);
+
+  uint xstart, ystart, xstop, ystop;
+  xstart = (uint) ABox.XTop;
+  ystart = (uint) ABox.YTop;
+  xstop  = (uint) ABox.XBtm;
+  ystop  = (uint) ABox.YBtm;
+
+  // 2. simplekmeans parameters
+  //omp_set_num_threads(4);
+  int numClusters = ANbClass;
+  double threshold = 0.001;
+
+  int dim = 3; // dimension 
+  int nPts = (xstop-xstart)*(ystop-ystart); // number of data points
+  float **objects;
+  objects = (float**) malloc(nPts * sizeof(float));
+  for(int i = 0; i<nPts; ++i)
+    objects[i] = (float*) malloc(3 * sizeof(float));
+
+  IM_Pixel pix; uint i = 0; uint j = 0;
+    for(uint y=ystart; y<ystop; ++y)
+      {
+	pix.y=y;
+	for(uint x=xstart; x<xstop; ++x)
+	  {
+	    pix.x = x;
+	    getPixel(pix, ADepth);
+	    objects[i][0] = (float) pix.value[0];
+	    objects[i][1] = (float) pix.value[1];
+	    objects[i][2] = (float) pix.value[2];
+	    ++i;
+	  }
+      }
+  
+    // 3. Quantification avec simplekmeans
+    int * membership = (int*) malloc(nPts * sizeof(int));
+    float **clusters = omp_kmeans(0, objects, dim, nPts,
+				  numClusters, threshold, membership);
+    
+    free(objects[0]); free(objects);
+
+    //    std::cout << "numClusters = " << numClusters
+    //	      << "nPts = " << nPts
+    //	      << "dim = " << dim
+    //	      << "cluster 1 = " << clusters[0][0] << " " << clusters[0][1] << " " << clusters[0][2] << "\n"
+    //	      << "cluster 2 = " << clusters[1][0] << " " << clusters[1][1] << " " << clusters[1][2] << "\n"
+    //	      << "cluster 3 = " << clusters[2][0] << " " << clusters[2][1] << " " << clusters[2][2] << "\n"
+    //	      << "membership = " << membership[0] << " " << membership[1] << " " << membership[2] << "\n"
+    //	      << std::endl;;
+
+    // 4. On crée l'image de label à partir de la quantification
+    uint8* result = new uint8[nPts];
+    i = 0; j = 0;
+    for(uint y=ystart; y<ystop; ++y)
+      for(uint x=xstart; x<xstop; ++x)
+	{
+	  result[i++] = membership[j++];
+	}
+    free(membership);
+    free(clusters[0]); free(clusters);
+    //std::cout<<" [end] CImageTiff::simplekmeans"<<std::endl;
+    return result;
+}
+
+//------------------------------------------------------------------------------
 uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeansMitosis"<<std::endl;
@@ -375,7 +452,7 @@ void CImageTiff::colorRegularization(const IM_Box & ABox, uint ADepth,
 				     int nb_iteration, int pp, double lambda, 
 				     int voisinage)
 {
-  std::cout<<"[start] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
+  //std::cout<<"[start] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
   IM_Pixel p, q;
   int k,l;
   double X,Y,Z,sum;
@@ -444,7 +521,7 @@ void CImageTiff::colorRegularization(const IM_Box & ABox, uint ADepth,
 	end=true;
       nb_iteration--;
     }
-  std::cout<<"[end] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
+  //std::cout<<"[end] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
 }
 
 //------------------------------------------------------------------------------

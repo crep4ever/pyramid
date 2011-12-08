@@ -156,6 +156,9 @@ public:
 
   void kmeansHistogram(CImg<float>* histo, CImg<char>* assignement);
 
+  // classif de l'image en ANbClass classes.
+  uint8* simplekmeans(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
+
   // Labelise à partir d'une classification
   // La classif donne le pixel représentatif d'une classe, que l'on convertit
   // en labels entiers

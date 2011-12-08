@@ -16,6 +16,7 @@ include_directories(${Magick++_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
 include_directories(${CMAKE_SOURCE_DIR}/lib-kmlocal)
+include_directories(${CMAKE_SOURCE_DIR}/lib-simplekmeans)
 
 include_directories(
   ${GLIB2_INCLUDE_DIRS}
@@ -31,6 +32,7 @@ TARGET_LINK_LIBRARIES(image2D
 #  ${GLIB_LIBRARIES}
 #  ${GLIBMM_LIBRARY}
 #  ${XMLPP_LIBRARY}
+  simplekmeans
   imtiff
   utils
   kmlocal

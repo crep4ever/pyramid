@@ -305,13 +305,13 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
     {
     case Classif:
       //classif sur l'ensemble des tuiles filles
-      FClassif = image()->kmeans(box, depth()+1, 2);
+      FClassif = image()->simplekmeans(box, depth()+1, 2);
       break;
 
     case SegmentationOff:
       if(depth()==0)
 	//classif sur l'ensemble des tuiles filles
-	FClassif = image()->kmeans(box, depth()+1, 3);
+	FClassif = image()->simplekmeans(box, depth()+1, 3);
       break;
       
     case Histology:
