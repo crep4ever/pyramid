@@ -1,57 +1,44 @@
-.PHONY: debug
-debug:
-ifeq ($(wildcard debug),)
-	mkdir debug
+builddir=.build-$(shell hostname)-$(shell gcc -dumpmachine)-$(shell gcc -dumpversion)
+
+ifeq (,$(VERBOSE))
+    MAKEFLAGS:=$(MAKEFLAGS)s
+    ECHO=echo
+else
+    ECHO=@:
 endif
-	(cd debug; cmake -G KDevelop3 ../src -DCMAKE_BUILD_TYPE=Debug)
-	(cd debug; make -j 3)
 
-.PHONY: release
-release:
-ifeq ($(wildcard release),)
-	mkdir release
-endif
-	(cd release; cmake -G KDevelop3 ../src -DCMAKE_BUILD_TYPE=Release)
-	(cd release; make)
+TARGETS=pyramid
+BUILDLN=build
 
-.PHONY: doc
-doc:
-ifeq ($(wildcard doc),)
-	mkdir doc
-endif
-	(cd doc; doxygen Doxyfile;)
+all: $(TARGETS) $(BUILDLN) ;
 
+$(TARGETS): cmake-build
+	ln -s -f ${builddir}/$@ $@
 
-.PHONY: profile
-profile:
-ifeq ($(wildcard profile),)
-	mkdir profile
-endif
-	(cd profile; cmake -G KDevelop3 ../src -DCMAKE_BUILD_TYPE=Profile)
-	(cd profile; make -j 3)
+$(BUILDLN):
+	test -e $(BUILDLN) || ln -s -f ${builddir} $(BUILDLN)
 
-.PHONY: interactive
-interactive: 
-	(cd interactive; ccmake ../ -DCMAKE_BUILD_TYPE=Interactive)
-	(cd interactive; make)
+cmake ${builddir}/CMakeCache.txt:
+	mkdir -p ${builddir}
+	$(ECHO) "Running cmake "
+	cd ${builddir} && cmake $(CMAKE_ARGS) "$(@D)" ..
 
-.PHONY: all
-all: debug release 
+cmake-build: ${builddir}/CMakeCache.txt
+	$(ECHO) "Building "
+	$(MAKE) -C ${builddir}
 
-.PHONY: clean
-clean: 
-	@rm -f Memory_leaks.log
-	@rm -Rf debug
-	@rm -Rf release
-	@rm -Rf profile
-	@rm -Rf interactive
-	@mkdir debug
-	@mkdir release
-	@mkdir profile
-	@mkdir interactive
+install:
+	$(ECHO) "Installing "
+	$(MAKE) -C ${builddir} install
 
-.PHONY: cleanall
-cleanall: clean 
-	@rm -rf doc/html doc/latex doc/man
-	@rm -rf output/ result/ *.tif
-	@rm -f callgrind.out.*
+distclean:
+	$(ECHO) -n "Cleaning up build directory "
+	$(RM) -r ${builddir} $(BUILDLN) $(TARGETS)
+	$(ECHO) " done"
+
+%: cmake
+	$(ECHO) "Running make $@ "
+	$(MAKE) -C ${builddir} $@
+	$(and $(filter clean,$@),$(RM) $(BUILDLN) $(TARGETS))
+
+.PHONY: cmake-build cmake install $(BUILDLN)

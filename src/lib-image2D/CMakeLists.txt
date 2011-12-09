@@ -5,6 +5,8 @@ file(
   ./*
   )
 
+find_package(Magick++ REQUIRED)
+
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/topological-map)
 include_directories(${IMTIFF_SOURCE_DIR}/src/config)
 include_directories(${IMTIFF_SOURCE_DIR}/src/core)
