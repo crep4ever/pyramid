@@ -14,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include "export.h"
+#include <stdarg.h>
 
 namespace fogrimmi
 {
@@ -38,7 +39,7 @@ namespace fogrimmi
     /// Log un message (façon C)
     //----------------------------------------------------------
     static void Log(const char* Format, ...);
-
+    
     //----------------------------------------------------------
     /// Log un message (façon C++)
     //----------------------------------------------------------

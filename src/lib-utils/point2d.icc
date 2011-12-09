@@ -65,14 +65,14 @@ unsigned int CPoint2D::y() const
 INLINE
 unsigned int CPoint2D::getCoord(unsigned int ADim) const
 {
-  assert(0<=ADim && ADim<=1);
+  assert(ADim<=1);
   return FCoord[ADim];
 }
 //-----------------------------------------------------------------------------
 INLINE
 unsigned int CPoint2D::coord(unsigned int ADim) const
 {
-  assert(0<=ADim && ADim<=1);
+  assert(ADim<=1);
   return FCoord[ADim];
 }
 //*****************************************************************************
@@ -95,7 +95,7 @@ void CPoint2D::incY(unsigned int AIncY)
 INLINE
 void CPoint2D::setCoord(unsigned int ADim, unsigned int ANewCoord)
 {
-  assert(0<=ADim && ADim<=1);
+  assert(ADim<=1);
   FCoord[ADim] = ANewCoord;
 }
 //-----------------------------------------------------------------------------

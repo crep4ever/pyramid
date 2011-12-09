@@ -883,7 +883,7 @@ void pngwriter::pngwriter_rename(long unsigned int index)
 
    //   %[flags][width][.precision][modifiers]type
    //
-   if((index > 999999999)||(index < 0))
+   if( index > 999999999 )
      {
 	std::cerr << " PNGwriter::pngwriter_rename - ERROR **: Numerical name is out of 0 - 999 999 999 range (" << index <<")." << std::endl;
 	return;

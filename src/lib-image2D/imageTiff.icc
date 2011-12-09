@@ -125,15 +125,13 @@ uint CImageTiff::getNumberOfByte() const
 INLINE
 bool CImageTiff::isPixelInImage(uint Ax, uint Ay, uint ADepth) 
 {
-  return Ax>=0 && Ay>=0 && Ax<width(ADepth) && Ay<height(ADepth); 
+  return Ax<width(ADepth) && Ay<height(ADepth); 
 }
 //------------------------------------------------------------------------------
 INLINE
 bool CImageTiff::isPixelInImage(const IM_Pixel & APixel, uint ADepth) 
 {
-  return 
-    APixel.x>=0 && APixel.y>=0 && 
-    APixel.x<width(ADepth) && APixel.y<height(ADepth); 
+  return APixel.x<width(ADepth) && APixel.y<height(ADepth); 
 }
 
 //------------------------------------------------------------------------------
