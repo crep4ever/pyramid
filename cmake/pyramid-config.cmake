@@ -25,11 +25,14 @@ if (RELEASE)
     IMPLICIT_DEPENDS_INCLUDE_TRANSFORM 
     "INCLUDE_INLINE(%)=%")
 else ()
-  add_definitions(-ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
+  add_definitions(
+    -ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
     -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
-    -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
-    -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
-    -Wmissing-format-attribute)
+    -Wsign-compare -Wunused -Wno-unused-parameter 
+    -Wuninitialized -Winit-self -Wpointer-arith 
+
+    #-Wformat-nonliteral -Wredundant-decls -Wmissing-format-attribute
+    )
   set_property(DIRECTORY PROPERTY
     IMPLICIT_DEPENDS_INCLUDE_TRANSFORM 
     "INCLUDE_NON_INLINE(%)=%;INCLUDE_HEADER(%)=%")
@@ -63,6 +66,8 @@ macro(a_find_program var prg req)
     message(STATUS "${prg} -> ${${var}}")
   endif()
 endmacro()
+
+find_package(Magick++ REQUIRED)
 
 a_find_program(HOSTNAME_EXECUTABLE hostname FALSE)
 # programs needed for man pages
