@@ -145,11 +145,13 @@ void CLevel::extract(const ExtractMode & AExtractMode,
   levelChrono.display("extraction du niveau");
   print();
 
-  FILE* fd = fopen("./qscripts/raffinement.dat","a");
-  std::ostringstream res;
-  res << "\n" << nbHeight*nbWidth << "  " << levelChrono.realTime() << "  " << FMemory/1000000.0 << "\n";
-  fputs(res.str().c_str(),fd);
-  fclose(fd);
+  if(FILE* fd = fopen("./qscripts/raffinement.dat","a"))
+    {
+      std::ostringstream res;
+      res << "\n" << nbHeight*nbWidth << "  " << levelChrono.realTime() << "  " << FMemory/1000000.0 << "\n";
+      fputs(res.str().c_str(),fd);
+      fclose(fd);
+    }
   std::cout<<"[end] CPyramid::extract level \n";
 }
 
