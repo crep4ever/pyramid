@@ -34,7 +34,7 @@ set (IHM_RCS
   )
 
 #-------------------------------------------------------------------------------
-
+include_directories (${BUILD_DIR}) #for config.hh
 include_directories (${CMAKE_SOURCE_DIR}/lib-utils)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map-generic)
@@ -61,9 +61,27 @@ include_directories (${QT_QTSCRIPT_INCLUDE_DIR})
 QT4_WRAP_CPP(MOC_SRCS ${NEED_MOCS})
 QT4_ADD_RESOURCES( IHM_RC_RCS ${IHM_RCS} )
 
+# {{{ Internationalization
+set (TRANSLATIONS ${SOURCE_DIR}/lang/pyramid_fr.ts)
+
+set (COMPILED_TRANSLATIONS ${SOURCE_DIR}/lang/pyramid_fr.qm)
+
+add_custom_target(
+  translations_target
+  COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
+  DEPENDS ${TRANSLATIONS}
+  COMMENT "Updating translations"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#uncomment and run `make translations_target` to update translations ts files from sources
+#warning, if uncommented, running make clean will remove ts files
+#qt4_create_translation(COMPILED_TRANSLATIONS ${IHM_SRCS} ${TRANSLATIONS} )
+# }}}
+
 #-------------------------------------------------------------------------------
-add_executable(../../${PYRAMID_APPLICATION_NAME} ${IHM_SRCS} ${MOC_SRCS} ${IHM_RC_RCS})
+add_executable(../../${PYRAMID_APPLICATION_NAME} ${IHM_SRCS} ${MOC_SRCS} ${IHM_RC_RCS} ${TRANSLATIONS})
 target_link_libraries(../../${PYRAMID_APPLICATION_NAME} mapkernel)
 target_link_libraries(../../${PYRAMID_APPLICATION_NAME} ${QT_LIBRARIES})
 target_link_libraries(../../${PYRAMID_APPLICATION_NAME} ${QT_QTSCRIPT_LIBRARY})
 #-------------------------------------------------------------------------------
+
+install(TARGETS ../../${PYRAMID_APPLICATION_NAME} RUNTIME DESTINATION bin)

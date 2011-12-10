@@ -26,3 +26,5 @@ include_directories (${CMAKE_SOURCE_DIR}/lib-utils)
 add_executable(../../noqt ${NOQT_SRCS} )
 target_link_libraries(../../noqt mapkernel)
 #-------------------------------------------------------------------------------
+
+install(TARGETS ../../noqt RUNTIME DESTINATION bin)

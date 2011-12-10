@@ -99,3 +99,16 @@ if(GENERATE_MANPAGES)
   add_custom_target(man ALL DEPENDS ${MAN_FILES})
 endif()
 # }}}
+
+if(GENERATE_MANPAGES)
+  if(COMPRESS_MANPAGES)
+    set(regex "\\.(xml|txt|[0-9])$")
+  else()
+    set(regex "\\.(xml|txt|gz)$")
+  endif()
+  install(DIRECTORY ${BUILD_DIR}/${relpath}/ DESTINATION ${PYRAMID_MAN_PATH}
+    REGEX ${regex} EXCLUDE)
+endif()
+install(FILES ${PYRAMID_APPLICATION_NAME}.desktop DESTINATION share/applications)
+install(FILES src/ihm/icons/pyramid.png DESTINATION share/icons)
+#install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${PYRAMID_DATA_PATH}/lang)

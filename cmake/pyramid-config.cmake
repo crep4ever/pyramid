@@ -159,9 +159,7 @@ set(PYRAMID_DATA_PATH        ${PREFIX}/share/${PYRAMID_APPLICATION_NAME})
 # }}}
 
 # {{{ Configure files
-set(PYRAMID_CONFIGURE_FILES 
-  config.hh.in
-  )
+set(PYRAMID_CONFIGURE_FILES config.hh.in)
 
 macro(a_configure_file file)
   string(REGEX REPLACE ".in\$" "" outfile ${file})

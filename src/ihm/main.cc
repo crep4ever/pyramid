@@ -20,6 +20,7 @@
 #include <QApplication>
 #include "script-engine.hh"
 #include "main-window.hh"
+#include "config.hh"
 //******************************************************************************
 void usage( const char * )
 {}
@@ -27,14 +28,13 @@ void usage( const char * )
 int main( int argc, char * argv[] )
 {
   QApplication app(argc, argv);
-  Q_INIT_RESOURCE(pyramid);
 
-  QString version = QString("0.1 (%1)")
-    .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
-  QCoreApplication::setApplicationVersion(version);
-  QCoreApplication::setOrganizationName("XLIM-SIC");
-  QCoreApplication::setOrganizationDomain("univ-poitiers.fr");
-  QCoreApplication::setApplicationName("pyramid");
+  QApplication::setOrganizationName("XLIM-SIC");
+  QApplication::setOrganizationDomain("univ-poitiers.fr");
+  QApplication::setApplicationName(PYRAMID_APPLICATION_NAME);
+  QApplication::setApplicationVersion(PYRAMID_VERSION);
+
+  Q_INIT_RESOURCE(pyramid);
 
   bool isGui = true;
   bool isScript = false;
@@ -78,20 +78,18 @@ int main( int argc, char * argv[] )
   
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
-  QString locale = QLocale::system().name().section('_', 0, 0);
-  QString translation = QString("pyramid_%1").arg(locale) + ".qm";
-  QString dir;
-  const QDir systemDir("/usr/share/pyramid/translations", "*.qm");
-  const QDir userDir("/usr/local/share/pyramid/translations", "*.qm");
-  if (systemDir.entryList(QDir::Files | QDir::Readable).contains(translation))
-    dir = systemDir.absolutePath();
-  else if (userDir.entryList(QDir::Files | QDir::Readable).contains(translation))
-    dir = userDir.absolutePath();
+  QDir translationDirectory;
+  QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name());
+  QString directory;
+
+  translationDirectory = QDir(PYRAMID_DATA_PATH);
+  if (translationDirectory.exists())
+    directory = translationDirectory.absoluteFilePath("lang");
   else
-    dir = QString("%1%2lang").arg(QDir::currentPath()).arg(QDir::separator());
+    directory = QDir::current().absoluteFilePath("lang");
 
   QTranslator translator;
-  translator.load(QString("pyramid_%1").arg(locale), dir);
+  translator.load(translationFilename, directory);
   app.installTranslator(&translator);
   
   CMainWindow mainWindow;

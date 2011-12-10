@@ -17,6 +17,7 @@
  */
 
 //******************************************************************************
+#include "config.hh"
 #include "main-window.hh"
 #include "controler.hh"
 #include "scene.hh"
@@ -37,7 +38,7 @@ CMainWindow::CMainWindow()
   , m_positionDisplay(new QLabel)
 {
   setWindowTitle(tr("Tiled Top-Down Pyramid"));
-  setWindowIcon(QIcon(":/icons/pyramid"));
+  setWindowIcon(QIcon(":/icons/pyramid.png"));
   
   createActions();
   createMenus();
