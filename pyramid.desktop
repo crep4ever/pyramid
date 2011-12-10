@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=0.2
+Type=Application
+Name=Pyramid
+Comment=Tiled top-down pyramids for large images segmentation
+TryExec=pyramid
+Exec=pyramid
+Icon=pyramid.png
+Terminal=false
+Categories=Graphics;
