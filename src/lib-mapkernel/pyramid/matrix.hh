@@ -187,7 +187,7 @@ inline
 void CMatrix< TElement >::fill( const TElement & AValue )
 {
   assert( FData != NULL );
-  memset(FData, (int)  AValue, FSizeX * FSizeY);
+  memset(FData, (intptr_t) AValue, FSizeX * FSizeY);
 }
 
 template< typename TElement >
