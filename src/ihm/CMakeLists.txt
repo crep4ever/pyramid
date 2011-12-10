@@ -62,8 +62,8 @@ QT4_WRAP_CPP(MOC_SRCS ${NEED_MOCS})
 QT4_ADD_RESOURCES( IHM_RC_RCS ${IHM_RCS} )
 
 #-------------------------------------------------------------------------------
-add_executable(../pyramid ${IHM_SRCS} ${MOC_SRCS} ${IHM_RC_RCS})
-target_link_libraries(../pyramid mapkernel)
-target_link_libraries(../pyramid ${QT_LIBRARIES})
-target_link_libraries(../pyramid ${QT_QTSCRIPT_LIBRARY})
+add_executable(../../${PYRAMID_APPLICATION_NAME} ${IHM_SRCS} ${MOC_SRCS} ${IHM_RC_RCS})
+target_link_libraries(../../${PYRAMID_APPLICATION_NAME} mapkernel)
+target_link_libraries(../../${PYRAMID_APPLICATION_NAME} ${QT_LIBRARIES})
+target_link_libraries(../../${PYRAMID_APPLICATION_NAME} ${QT_QTSCRIPT_LIBRARY})
 #-------------------------------------------------------------------------------

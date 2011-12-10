@@ -23,6 +23,6 @@ include_directories (${PANDORE_INCLUDE_DIR})
 include_directories (${CMAKE_SOURCE_DIR}/lib-utils)
 
 #-------------------------------------------------------------------------------
-add_executable(../noqt ${NOQT_SRCS} )
-target_link_libraries(../noqt mapkernel)
+add_executable(../../noqt ${NOQT_SRCS} )
+target_link_libraries(../../noqt mapkernel)
 #-------------------------------------------------------------------------------

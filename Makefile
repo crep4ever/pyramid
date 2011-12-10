@@ -7,7 +7,7 @@ else
     ECHO=@:
 endif
 
-TARGETS=pyramid
+TARGETS=pyramid noqt
 BUILDLN=build
 
 all: $(TARGETS) $(BUILDLN) ;
