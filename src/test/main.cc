@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
     m_merge.push_back(5);
     m_merge.push_back(5);
   
-  CPyramid* m_pyramid = new CPyramid("./img/pyramid.tif");
+  CPyramid* m_pyramid = new CPyramid("./img/lena-color.tif");
   m_pyramid->setNbLevels(5);
   m_pyramid->setMergeThresholds(m_merge);
 
