@@ -26,12 +26,11 @@ if (RELEASE)
     "INCLUDE_INLINE(%)=%")
 else ()
   add_definitions(
-    -ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
+    -ggdb3 -fno-strict-aliasing -Wall -Wextra
     -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
-    -Wsign-compare -Wunused -Wno-unused-parameter 
+    -Wunused -Wno-unused-parameter 
     -Wuninitialized -Winit-self -Wpointer-arith 
-
-    #-Wformat-nonliteral -Wredundant-decls -Wmissing-format-attribute
+    #-Wformat-nonliteral -Wsign-compare -Wredundant-decls -Wmissing-format-attribute
     )
   set_property(DIRECTORY PROPERTY
     IMPLICIT_DEPENDS_INCLUDE_TRANSFORM 
@@ -41,11 +40,6 @@ endif ()
 if (PROFILE)
   add_definitions(-DNDEBUG)
 endif ()
-
-if (OPENMP)
-  add_definitions(-fopenmp)
-endif ()
-  # }}}
 
 #------------------------------------------------------------------------------
 # manage inline functions from icc files
@@ -68,6 +62,15 @@ macro(a_find_program var prg req)
 endmacro()
 
 find_package(Magick++ REQUIRED)
+
+if (OPENMP)
+  find_package(OpenMP)
+  if(OPENMP_FOUND)
+    add_definitions(-fopenmp)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lgomp")
+  endif()
+endif ()
+# }}}
 
 a_find_program(HOSTNAME_EXECUTABLE hostname FALSE)
 # programs needed for man pages
