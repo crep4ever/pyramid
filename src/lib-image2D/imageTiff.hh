@@ -26,7 +26,6 @@
 #include "image2D.hh"
 #include "kernel-types.hh"
 #include "inline-macro.hh"
-#include "KMdata.h"
 #include "CImg.h"
 using namespace cimg_library;
 //******************************************************************************
@@ -43,6 +42,8 @@ const CPoint2D v8[]= {CPoint2D(0,-1), CPoint2D(-1,-1),
 
 static const double epsilon = 1e-6;
 static const double JND=sqrt(3);
+
+class KMdata;
 
 class CImageTiff : public CImage2D, public fogrimmi::IM_Tiff
 {
@@ -219,19 +220,24 @@ public:
   
   /// Read pixel data from a box and stores it in a structure
   /// that may be used by km-local
+  /// @param data : the data structure where pixel data is storedw
   /// @param ABox : the box of the image where pixels are read from 
-  /// @param data : the data structure where pixel data is stored
-  void getKmeansData(const fogrimmi::IM_Box & ABox, KMdata& data);
+  /// @param ADepth : the level in the multi-page tiff image
+  void getKmeansData(KMdata& data, 
+		     const fogrimmi::IM_Box & ABox, 
+		     const uint ADepth);
     
   /// Read pixel value supposing that pixels are stored as (24bits) RGB values
-  /// @param ABox : the box of the image where pixels are read from 
   /// @param data : the data structure where pixel data is stored
-  void getKmeansDataRGB(const fogrimmi::IM_Box & ABox, KMdata& data);
+  void getKmeansDataRGB(KMdata& data, const uint ADepth,
+			const uint xstart, const uint xstop,
+			const uint ystart, const uint ystop);
 
   /// Read pixel value supposing that pixels are stored as (8bits) grey values
-  /// @param ABox : the box of the image where pixels are read from 
   /// @param data : the data structure where pixel data is stored
-  void getKmeansDataGrey(const fogrimmi::IM_Box & ABox, KMdata& data);
+  void getKmeansDataGrey(KMdata& data, const uint ADepth,
+			const uint xstart, const uint xstop,
+			const uint ystart, const uint ystop);
 
   /// Vérifie que la profondeur demandée n'excède pas le nombre de pages dans le tif
   /// si c'est le cas, on retourne la résolution la plus importante

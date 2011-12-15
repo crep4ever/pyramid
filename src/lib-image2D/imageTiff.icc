@@ -346,9 +346,10 @@ void CImageTiff::setFilename(const std::string & AFilename)
 
 
 INLINE
-void CImageTiff::getKmeansData(const IM_Box & ABox, KMdata& data)
+void CImageTiff::getKmeansData(KMdata& data, 
+			       const IM_Box & ABox,
+			       const uint ADepth)
 {
-  IM_Pixel pix; uint i = 0; uint j = 0;
   uint xstart, ystart, xstop, ystop;
   xstart = (uint) ABox.XTop;
   ystart = (uint) ABox.YTop;
@@ -356,18 +357,20 @@ void CImageTiff::getKmeansData(const IM_Box & ABox, KMdata& data)
   ystop  = (uint) ABox.YBtm;
 
   if(colorMode() == RGB)
-    getKmeansDataRGB(KMdata& data, xstart, xstop, ystart, ystop);
+    getKmeansDataRGB(data, ADepth, xstart, xstop, ystart, ystop);
   else if(colorMode() == Grey)
-    getKmeansDataRGB(KMdata& data, xstart, xstop, ystart, ystop);
+    getKmeansDataRGB(data, ADepth, xstart, xstop, ystart, ystop);
   else
     std::cout<<"CImageTiff::kmeans image encoding not supported"<<std::endl;
 }
 
 INLINE
-void CImageTiff::getKmeansDataGrey(KMdata& data, 
+void CImageTiff::getKmeansDataGrey(KMdata& data, const uint ADepth,
 				   const uint xstart, const uint xstop,
 				   const uint ystart, const uint ystop)
 {
+  IM_Pixel pix; 
+  uint i = 0;
   for(uint y=ystart; y<ystop; ++y)
     {
       pix.y = y;
@@ -375,19 +378,21 @@ void CImageTiff::getKmeansDataGrey(KMdata& data,
 	{
 	  pix.x = x;
 	  getPixel(pix, ADepth);
-	  dataPts[i][0] = pix.value[0];
-	  dataPts[i][1] = pix.value[0];
-	  dataPts[i][2] = pix.value[0];
+	  data[i][0] = pix.value[0];
+	  data[i][1] = pix.value[0];
+	  data[i][2] = pix.value[0];
 	  ++i;
 	}
     }
 }
 
 INLINE
-void CImageTiff::getKmeansDataRGB(KMdata& data,
+void CImageTiff::getKmeansDataRGB(KMdata& data, const uint ADepth,
 				  const uint xstart, const uint xstop,
 				  const uint ystart, const uint ystop)
 {
+  IM_Pixel pix; 
+  uint i = 0;
   for(uint y=ystart; y<ystop; ++y)
     {
       pix.y=y;
@@ -395,9 +400,9 @@ void CImageTiff::getKmeansDataRGB(KMdata& data,
 	{
 	  pix.x = x;
 	  getPixel(pix, ADepth);
-	  dataPts[i][0] = pix.value[0];
-	  dataPts[i][1] = pix.value[1];
-	  dataPts[i][2] = pix.value[2];
+	  data[i][0] = pix.value[0];
+	  data[i][1] = pix.value[1];
+	  data[i][2] = pix.value[2];
 	  ++i;
 	}
     }

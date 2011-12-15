@@ -106,7 +106,7 @@ uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
 	      0.10, 0.10, 3, // other typical parameter values
 	      0.60, 10, 0.95);
 
-  getKmeansDataRGB(dataPts, xstart, xstop, ystart, ystop);
+  getKmeansDataRGB(dataPts, ADepth, xstart, xstop, ystart, ystop);
   
   // 3. Quantification avec kmlocal
   dataPts.buildKcTree();
@@ -182,7 +182,7 @@ uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, const uint ANb
   for(int i = 0; i<nPts; ++i)
     objects[i] = (float*) malloc(3 * sizeof(float));
 
-  IM_Pixel pix; uint i = 0; uint j = 0;
+  IM_Pixel pix; uint i = 0; //uint j = 0;
     for(uint y=ystart; y<ystop; ++y)
       {
 	pix.y=y;
@@ -215,7 +215,7 @@ uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, const uint ANb
 //    free(membership);
     free(clusters[0]); free(clusters);
     //std::cout<<" [end] CImageTiff::simplekmeans"<<std::endl;
-    return membership;
+    return (uint8*) membership;
 }
 
 //------------------------------------------------------------------------------
