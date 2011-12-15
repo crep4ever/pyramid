@@ -637,7 +637,7 @@ void pngwriter::plot(int x, int y, int red, int green, int blue)
 	blue = 0;
      }
 
-   if((bit_depth_ == 16))
+   if (bit_depth_ == 16)
      {
 	//	if( (height_-y >-1) && (height_-y <height_) && (6*(x-1) >-1) && (6*(x-1)+5<6*width_) )
 	if( (y<=height_) && (y>0) && (x>0) && (x<=width_) )
@@ -660,7 +660,7 @@ void pngwriter::plot(int x, int y, int red, int green, int blue)
 	 */
      }
 
-   if((bit_depth_ == 8))
+   if (bit_depth_ == 8)
      {
 	//	 if( (height_-y >-1) && (height_-y <height_) && (3*(x-1) >-1) && (3*(x-1)+5<3*width_) )
 	if( (y<height_+1) && (y>0) && (x>0) && (x<width_+1) )
