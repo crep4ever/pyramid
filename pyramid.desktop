@@ -5,6 +5,6 @@ Name=Pyramid
 Comment=Tiled top-down pyramids for large images segmentation
 TryExec=pyramid
 Exec=pyramid
-Icon=pyramid.png
+Icon=src/ihm/icons/pyramid.png
 Terminal=false
 Categories=Graphics;
