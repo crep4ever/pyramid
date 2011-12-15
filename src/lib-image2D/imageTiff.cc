@@ -84,7 +84,7 @@ CImageTiff::~CImageTiff()
 }
 
 //------------------------------------------------------------------------------
-uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
+uint8* CImageTiff::kmeansKMLocal(const IM_Box & ABox, uint ADepth, uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeans"<<std::endl;
   // 1. On crée une image et on retrouve les infos qui nous intéressent

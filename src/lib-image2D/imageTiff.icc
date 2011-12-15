@@ -407,6 +407,17 @@ void CImageTiff::getKmeansDataRGB(KMdata& data, const uint ADepth,
 	}
     }
 }
+
+INLINE
+uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
+{
+#ifdef OPENMP
+  return kmeansKMLocal(ABox, ADepth, ANbClass);
+#else
+  return simplekmeans(ABox, ADepth, ANbClass);
+#endif
+}
+
 /*
 void CImageTiff::getData(const IM_Box& a_Box, 
 			 CMatrix* data,

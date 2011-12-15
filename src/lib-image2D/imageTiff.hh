@@ -154,10 +154,22 @@ public:
   /// @return le tif multipages tuilé
   CImageTiff* tilePages(uint ATileWidth=240, uint ATileHeight=240);
 
-  // classif de l'image en ANbClass classes.
+  /// k-means algorithm on a part of image
+  /// uses SimpleKmeans if openmp is supported and falls back on KMLocal if not
+  /// @param ABox : the pixels to be clustered
+  /// @param ADepth : the level in the multipage tiff to read the pixels from
+  /// @param ANbClass : the number of clusters
+  /// @return a table with the clustering result
   uint8* kmeans(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
 
   void kmeansHistogram(CImg<float>* histo, CImg<char>* assignement);
+
+  /// k-means algorithm on a part of image with KMLocal library
+  /// @param ABox : the pixels to be clustered
+  /// @param ADepth : the level in the multipage tiff to read the pixels from
+  /// @param ANbClass : the number of clusters
+  /// @return a table with the clustering result
+  uint8* kmeansKMLocal(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
 
   // classif de l'image en ANbClass classes.
   uint8* simplekmeans(const fogrimmi::IM_Box & ABox, uint ADepth, 
