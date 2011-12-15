@@ -21,6 +21,7 @@
 #include <cmath>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "KMdata.h"
 using namespace fogrimmi;
 //******************************************************************************
 
@@ -343,3 +344,112 @@ void CImageTiff::setFilename(const std::string & AFilename)
   FFilename = AFilename;
 }
 
+
+INLINE
+void CImageTiff::getKmeansData(const IM_Box & ABox, KMdata& data)
+{
+  IM_Pixel pix; uint i = 0; uint j = 0;
+  uint xstart, ystart, xstop, ystop;
+  xstart = (uint) ABox.XTop;
+  ystart = (uint) ABox.YTop;
+  xstop  = (uint) ABox.XBtm;
+  ystop  = (uint) ABox.YBtm;
+
+  if(colorMode() == RGB)
+    getKmeansDataRGB(KMdata& data, xstart, xstop, ystart, ystop);
+  else if(colorMode() == Grey)
+    getKmeansDataRGB(KMdata& data, xstart, xstop, ystart, ystop);
+  else
+    std::cout<<"CImageTiff::kmeans image encoding not supported"<<std::endl;
+}
+
+INLINE
+void CImageTiff::getKmeansDataGrey(KMdata& data, 
+				   const uint xstart, const uint xstop,
+				   const uint ystart, const uint ystop)
+{
+  for(uint y=ystart; y<ystop; ++y)
+    {
+      pix.y = y;
+      for(uint x=xstart; x<xstop; ++x)
+	{
+	  pix.x = x;
+	  getPixel(pix, ADepth);
+	  dataPts[i][0] = pix.value[0];
+	  dataPts[i][1] = pix.value[0];
+	  dataPts[i][2] = pix.value[0];
+	  ++i;
+	}
+    }
+}
+
+INLINE
+void CImageTiff::getKmeansDataRGB(KMdata& data,
+				  const uint xstart, const uint xstop,
+				  const uint ystart, const uint ystop)
+{
+  for(uint y=ystart; y<ystop; ++y)
+    {
+      pix.y=y;
+      for(uint x=xstart; x<xstop; ++x)
+	{
+	  pix.x = x;
+	  getPixel(pix, ADepth);
+	  dataPts[i][0] = pix.value[0];
+	  dataPts[i][1] = pix.value[1];
+	  dataPts[i][2] = pix.value[2];
+	  ++i;
+	}
+    }
+}
+/*
+void CImageTiff::getData(const IM_Box& a_Box, 
+			 CMatrix* data,
+			 const uint a_Depth, 
+			 const DataReadMode & a_mode)
+{
+  IM_Pixel pix;
+  unsigned long int n = 0;
+  uint xstart, ystart, xstop, ystop;
+  xstart = (uint) ABox.XTop;
+  ystart = (uint) ABox.YTop;
+  xstop  = (uint) ABox.XBtm;
+  ystop  = (uint) ABox.YBtm;
+  
+  uint8* data = new uint8[(xstop-xstart+1)*(ystop-ystart+1)*4*sizeof(uint8)];
+  
+  if(colorMode()==RGB)
+    for( uint y = ystart; y < ystop; ++y)
+      {
+	pix.y = y;
+	for( uint x = xstart; x < xstop; ++x)
+	  {
+	    pix.x = x;
+	    getPixel(pix, ADepth);
+	    data[n++] = pix.value[0];
+	    data[n++] = pix.value[1];
+	    data[n++] = pix.value[2];
+	    data[n++] = 255;
+	  }
+      }
+  else if(colorMode()==Grey)
+    for( uint y = ystart; y < ystop; ++y)
+      {
+	pix.y = y;
+	for( uint x = xstart; x < xstop; ++x)
+	  {
+	    pix.x = x;
+	    getPixel(pix, ADepth);
+	    data[n++] = pix.value[0]*(0.66);
+	    data[n++] = pix.value[0]*(0.66);
+	    data[n++] = pix.value[0]*(0.66);
+	    data[n++] = 255;
+	  }
+      }
+  else
+    std::cout<<"CImageTiff::getAllDataFromModeQT error: unrecognized image mode"<<std::endl;
+  
+  return data;
+}
+
+*/

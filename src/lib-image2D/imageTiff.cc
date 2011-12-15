@@ -41,10 +41,11 @@
 using namespace fogrimmi;
 using namespace cimg_library;
 //******************************************************************************
-CImageTiff::CImageTiff(const std::string & AFilename) :
-  CImage2D(), IM_Tiff( AFilename ), FNbPages(0)
+CImageTiff::CImageTiff(const std::string & AFilename) : 
+  CImage2D()
+  , IM_Tiff(AFilename)
+  , FNbPages(0)
 {
-  //im_tiff = this;
   FNbPages = getNbPages();
   assert(FNbPages>0);
 
@@ -63,7 +64,8 @@ CImageTiff::CImageTiff(const std::string & AFilename) :
       FColorMode = RGB;
       break;
     default: 
-      std::cout<<"CImageTiff: Warning color encoding not supported : " << getProperties().colorMode << std::endl;
+      std::cout<<"CImageTiff: Warning color encoding not supported : " 
+	       << getProperties().colorMode << std::endl;
       break;
     }
 
@@ -79,86 +81,6 @@ CImageTiff::CImageTiff( IM_ImageMemory& imgMem, const CFile& _fileName ):
 CImageTiff::~CImageTiff()
 { 
   delete[] FPages;
-}
-
-//------------------------------------------------------------------------------
-void CImageTiff::sortPages()
-{
-  if(!isSorted())
-    {
-      uint k,l,tmp;
-      for(l=0; l<FNbPages; ++l)
-	for(k=FNbPages-1; k>l; --k)
-	  if( getXSize(k)*getYSize(k) < getXSize(k-1)*getYSize(k-1) )
-	    {
-	      tmp=FPages[k-1];
-	      FPages[k-1]=FPages[k];
-	      FPages[k]=tmp;
-	    }
-    }
-  assert(isSorted());
-}
-
-//------------------------------------------------------------------------------
-CImageTiff* CImageTiff::interpolatePagesWithMagick()
-{
-  //std::cout<<" [start] interpolatePages()"<<std::endl;  
-  
-  if(FNbPages==1) return this;
-
-  assert(isSorted());
-  
-  int ratioX, ratioY;
-
-  std::ostringstream stream;
-  stream<<"convert "<<fileName.Fullname()<<"["<<FPages[0]<<"] page-0.tif;";
-  std::string command = stream.str();
-  UNUSED(system(command.c_str()));
-
-  float topWidth  = (float) getXSize(0);
-  float topHeight = (float) getYSize(0);
-  
-  for(uint k=1; k<FNbPages; ++k)
-    {
-      ratioX = (( (float)(getXSize(k)) / topWidth  )*10 + 5)/10; //round to closest integer
-      ratioY = (( (float)(getYSize(k)) / topHeight )*10 + 5)/10; //round to closest integer
-
-      uint width  = topWidth  * ratioX;
-      uint height = topHeight * ratioY;
-      
-      stream.clear();
-      stream<<"convert "<<fileName.Fullname()<<"["<<FPages[k]<<"] -resize "<<width<<"x"<<height<<"! page-"<<FPages[k]<<".tif;";
-      std::string command = stream.str();
-      UNUSED(system(command.c_str()));
-    }
-  UNUSED(system("convert page-*.tif -type TrueColor resized.tif ; rm -f page-*.tif ;"));
-  CImageTiff* resized = new CImageTiff("resized.tif");
-  delete this;
-  
-  //std::cout<<" [end] interpolatePages()"<<std::endl;
-  
-  return resized;
-}
-
-//------------------------------------------------------------------------------
-CImageTiff* CImageTiff::tilePages(uint ATileWidth, uint ATileHeight)
-{
-  for(uint k=0; k<FNbPages; ++k)
-    if(!isTiled(k) && getXSize(k)*getYSize(k) <= 16000*16000)
-      {
-	std::cout<<" Tuilage du tif"<<std::endl;
-	
-	std::ostringstream stream;
-	stream<<"tiffcp -p contig -t -w "<<ATileWidth<<" -l "<<ATileHeight<<" "<<getStrFullname()<<" tiled.tif ;";
-	std::string command = stream.str();
-	std::cout<<"tiling command : "<<command<<std::endl;
-	UNUSED(system(command.c_str()));
-	
-	CImageTiff* tiled = new CImageTiff("tiled.tif");
-	delete this;
-	return tiled;
-      }
-  return this;
 }
 
 //------------------------------------------------------------------------------
@@ -183,38 +105,8 @@ uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
   KMterm term(50, 0, 0, 0, // run for 10 stages
 	      0.10, 0.10, 3, // other typical parameter values
 	      0.60, 10, 0.95);
-  
-  IM_Pixel pix; uint i = 0; uint j = 0;
-  if(colorMode() == RGB)
-    for(uint y=ystart; y<ystop; ++y)
-      {
-	pix.y=y;
-	for(uint x=xstart; x<xstop; ++x)
-	  {
-	    pix.x = x;
-	    getPixel(pix, ADepth);
-	    dataPts[i][0] = pix.value[0];
-	    dataPts[i][1] = pix.value[1];
-	    dataPts[i][2] = pix.value[2];
-	    ++i;
-	  }
-      }
-  else if(colorMode() == Grey)
-    for(uint y=ystart; y<ystop; ++y)
-      {
-	pix.y = y;
-	for(uint x=xstart; x<xstop; ++x)
-	  {
-	    pix.x = x;
-	    getPixel(pix, ADepth);
-	    dataPts[i][0] = pix.value[0];
-	    dataPts[i][1] = pix.value[0];
-	    dataPts[i][2] = pix.value[0];
-	    ++i;
-	  }
-      }
-  else
-    std::cout<<"CImageTiff::kmeans image encoding not supported"<<std::endl;
+
+  getKmeansDataRGB(dataPts, xstart, xstop, ystart, ystop);
   
   // 3. Quantification avec kmlocal
   dataPts.buildKcTree();
@@ -245,7 +137,7 @@ uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
   // 4. On crée l'image de label à partir de la quantification
   //uint8* result = new uint8[(xstop-xstart)*(ystop-ystart)*3];
   uint8* result = new uint8[(xstop-xstart)*(ystop-ystart)];
-  i = 0; j = 0;
+  uint i = 0; uint j = 0;
   for(uint y=ystart; y<ystop; ++y)
     for(uint x=xstart; x<xstop; ++x)
       {
@@ -266,7 +158,7 @@ uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
 }
 
 //------------------------------------------------------------------------------
-uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
+uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, const uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::simplekmeans"<<std::endl;
   // 1. On crée une image et on retrouve les infos qui nous intéressent
@@ -281,7 +173,6 @@ uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
 
   // 2. simplekmeans parameters
   //omp_set_num_threads(4);
-  int numClusters = ANbClass;
   double threshold = 0.001;
 
   int dim = 3; // dimension 
@@ -309,31 +200,22 @@ uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
     // 3. Quantification avec simplekmeans
     int * membership = (int*) malloc(nPts * sizeof(int));
     float **clusters = omp_kmeans(0, objects, dim, nPts,
-				  numClusters, threshold, membership);
+				  ANbClass, threshold, membership);
     
     free(objects[0]); free(objects);
 
-    //    std::cout << "numClusters = " << numClusters
-    //	      << "nPts = " << nPts
-    //	      << "dim = " << dim
-    //	      << "cluster 1 = " << clusters[0][0] << " " << clusters[0][1] << " " << clusters[0][2] << "\n"
-    //	      << "cluster 2 = " << clusters[1][0] << " " << clusters[1][1] << " " << clusters[1][2] << "\n"
-    //	      << "cluster 3 = " << clusters[2][0] << " " << clusters[2][1] << " " << clusters[2][2] << "\n"
-    //	      << "membership = " << membership[0] << " " << membership[1] << " " << membership[2] << "\n"
-    //	      << std::endl;;
-
-    // 4. On crée l'image de label à partir de la quantification
-    uint8* result = new uint8[nPts];
-    i = 0; j = 0;
-    for(uint y=ystart; y<ystop; ++y)
-      for(uint x=xstart; x<xstop; ++x)
-	{
-	  result[i++] = membership[j++];
-	}
-    free(membership);
+//    // 4. On crée l'image de label à partir de la quantification
+//    uint8* result = new uint8[nPts];
+//    i = 0; j = 0;
+//    for(uint y=ystart; y<ystop; ++y)
+//      for(uint x=xstart; x<xstop; ++x)
+//	{
+//	  result[i++] = membership[j++];
+//	}
+//    free(membership);
     free(clusters[0]); free(clusters);
     //std::cout<<" [end] CImageTiff::simplekmeans"<<std::endl;
-    return result;
+    return membership;
 }
 
 //------------------------------------------------------------------------------
@@ -532,38 +414,13 @@ void CImageTiff::greyRegularization(const IM_Box & ABox, uint ADepth,
 //------------------------------------------------------------------------------
 void CImageTiff::kmeansHistogram(CImg<float>* histo, CImg<char>* assignement)
 {
-  std::cout<<"[start] CImageTiff::kmeansHistogram \n";
+  //std::cout<<"[start] CImageTiff::kmeansHistogram \n";
   int dim = 3; // dimension
   int nPts = histo->sum(); // number of data points
   if(nPts==0) 
     return;
-  
-  //std::cout << " CImageTiff::kmeansHistogram save in " << filename("pan") << std::endl;
-  //const CImg<unsigned char> colors = histo->get_normalize(0,255);
-  //colors.save_pandore(filename("pan").c_str());
-  //std::cout << " CImageTiff::kmeansHistogram save end " << std::endl;
 
-  //  // Create CImg3d object.
-  //  const CImg<unsigned char> colors = histo->get_normalize(0,255);
-  //  CImgList<float> pts3d ;
-  //  CImgList<unsigned int> prims3d;
-  //  CImgList<unsigned char> colors3d;
-  //  unsigned int index = 0;
-  //  cimg_forXYZ(*histo,x,y,z) 
-  //    if ((*histo)(x,y,z)) 
-  //      {
-  //	CImg<float>::vector(x,y,z).move_to(pts3d);
-  //	CImg<unsigned int>::vector(index).move_to(prims3d);
-  //	const unsigned char col = colors(x,y,z);
-  //	CImg<unsigned char>::vector(x,y,z ).move_to(colors3d);
-  //	++index;
-  //      }
-  //  const CImg<float> _pts3d = pts3d.get_append('x');
-  //  std::fprintf(stderr,"nbpts = %d",_pts3d.width()); 
-  //  CImg<unsigned char>(800,600,1,3,128).display_object3d("CImg3d",_pts3d,prims3d,colors3d);
-  
-
-  std::cout<<"[start] CImageTiff::kmeansHistogram computing kmeans on " << nPts <<" data points \n";
+  //std::cout<<"[start] CImageTiff::kmeansHistogram computing kmeans on " << nPts <<" data points \n";
   KMdata* dataPts = new KMdata(dim, nPts);//stockage des points
   KMterm term(20, 0, 0, 0, // run for 50 stages  // diminuer le nombre de passe (100 aller jusqu a 10)
 	      0.10, 0.10, 3, // other typical parameter values
@@ -601,7 +458,7 @@ void CImageTiff::kmeansHistogram(CImg<float>* histo, CImg<char>* assignement)
   }
   std::sort(d2.begin(), d2.end());
 
-  std::cout << " == D2 == " << std::endl; 
+  //std::cout << " == D2 == " << std::endl; 
   for (int b=0 ; b < 3 ; b++)
     std::cout << d2[b] << " ";
   std::cout << std::endl;
@@ -610,7 +467,7 @@ void CImageTiff::kmeansHistogram(CImg<float>* histo, CImg<char>* assignement)
   for (int b=0 ; b < 3 ; b++)
     d1[b] = find(d2.begin(), d2.end(),d1[b]) - d2.begin();
   
-  std::cout << " == D1 == " << std::endl;
+  //std::cout << " == D1 == " << std::endl;
   for (int b=0 ; b < 3 ; b++)
     std::cout << d1[b] << " ";
   std::cout << std::endl;
@@ -632,115 +489,10 @@ void CImageTiff::kmeansHistogram(CImg<float>* histo, CImg<char>* assignement)
   delete[] sqDist;
   delete[] closeCtr;
 
-  std::cout<<"[end] CImageTiff::kmeansHistogram \n";
+  //std::cout<<"[end] CImageTiff::kmeansHistogram \n";
 }
-/*
-//------------------------------------------------------------------------------
-void CImageTiff::kmeansHistogram2(CImg<float>* histo, CImg<char>* assignement)
-{
-  std::cout<<"[start] CImageTiff::kmeansHistogram \n";
-  int dim = 3; // dimension
-  int nPts = histo->sum(); // number of data points
-  if(nPts==0) 
-    return;
-  
-  //  std::cout << " CImageTiff::kmeansHistogram save in " << filename("pan") << std::endl;
-  //  const CImg<unsigned char> colors = histo->get_normalize(0,255);
-  //  colors.save_pandore(filename("pan").c_str());
-  //  std::cout << " CImageTiff::kmeansHistogram save end " << std::endl;
 
-  //  // Create CImg3d object.
-  //  const CImg<unsigned char> colors = histo->get_normalize(0,255);
-  //  CImgList<float> pts3d ;
-  //  CImgList<unsigned int> prims3d;
-  //  CImgList<unsigned char> colors3d;
-  //  unsigned int index = 0;
-  //  cimg_forXYZ(*histo,x,y,z) 
-  //    if ((*histo)(x,y,z)) 
-  //      {
-  //	CImg<float>::vector(x,y,z).move_to(pts3d);
-  //	CImg<unsigned int>::vector(index).move_to(prims3d);
-  //	const unsigned char col = colors(x,y,z);
-  //	CImg<unsigned char>::vector(x,y,z ).move_to(colors3d);
-  //	++index;
-  //      }
-  //  const CImg<float> _pts3d = pts3d.get_append('x');
-  //  std::fprintf(stderr,"nbpts = %d",_pts3d.width()); 
-  //  CImg<unsigned char>(800,600,1,3,128).display_object3d("CImg3d",_pts3d,prims3d,colors3d);
-  
 
-  std::cout<<"[start] CImageTiff::kmeansHistogram computing kmeans on " << nPts <<" data points \n";
-  KMdata* dataPts = new KMdata(dim, nPts);//stockage des points
-  KMterm term(10, 0, 0, 0, // run for 50 stages  // diminuer le nombre de passe (100 aller jusqu a 10)
-	      0.10, 0.10, 3, // other typical parameter values
-	      0.50, 10, 0.95);		
-  uint n=0;
-  cimg_forXYZ(*histo,r,g,b)
-    {
-      int nb = (*histo)(r,g,b);
-      for (int kk=0 ; kk < nb ; ++kk)
-	{
-	  (*dataPts)[n][0]=r;
-	  (*dataPts)[n][1]=g;
-	  (*dataPts)[n][2]=b;
-	  ++n;
-	}
-    }
-  delete histo; histo=NULL;
-  dataPts->buildKcTree(); 
-  
-  KMfilterCenters ctrs(dim, *dataPts);
-  KMlocalSwap kmAlg(ctrs, term);
-  ctrs = kmAlg.execute();		
-  KMctrIdxArray closeCtr = new KMctrIdx[nPts];
-  double* sqDist = new double[nPts];
-  ctrs.getAssignments(closeCtr, sqDist);
-  KMcenterArray centers = ctrs.getCtrPts();
-  
-  vector<valarray<double> > v;
-  vector <double> d1, d2;
-  d1.resize(3); d2.resize(3);
-  
-  for (int b=0 ; b < 3 ; b++){
-    v.push_back(valarray < double> (centers[b], dim));
-    d1[b]= d2[b]= ((v[v.size()-1]*v[v.size()-1]).sum());
-  }
-  std::sort(d2.begin(), d2.end());
-
-  std::cout << " == D2 == " << std::endl; 
-  for (int b=0 ; b < 3 ; b++)
-    std::cout << d2[b] << " ";
-  std::cout << std::endl;
-
-  
-  for (int b=0 ; b < 3 ; b++)
-    d1[b] = find(d2.begin(), d2.end(),d1[b]) - d2.begin();
-  
-  std::cout << " == D1 == " << std::endl;
-  for (int b=0 ; b < 3 ; b++)
-    std::cout << d1[b] << " ";
-  std::cout << std::endl;
-
-  int i, r,g,b;
-#pragma omp parallel for shared(r,g,b) private(i)
-  for ( i = 0 ; i < nPts; ++i)
-    {
-      r =  (*dataPts)[i][0];
-      g =  (*dataPts)[i][1];
-      b =  (*dataPts)[i][2];
-      //move+merge classes
-      //std::cout<< " d1[closeCtr["<<i<<"]] " << d1[closeCtr[i]] << std::endl;
-      (*assignement)(r,g,b)= (d1[closeCtr[i]]==0) ? 1 : d1[closeCtr[i]];
-      //std::cout<< " assign("<<r<<","<<g<<","<<b<<") ="<< (int)(*assignement)(r,g,b) << std::endl;
-    }
-  
-  delete dataPts;
-  delete[] sqDist;
-  delete[] closeCtr;
-
-  std::cout<<"[end] CImageTiff::kmeansHistogram \n";
-}
-*/
 //------------------------------------------------------------------------------
 bool CImageTiff::isSorted()
 {

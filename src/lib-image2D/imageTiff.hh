@@ -26,6 +26,7 @@
 #include "image2D.hh"
 #include "kernel-types.hh"
 #include "inline-macro.hh"
+#include "KMdata.h"
 #include "CImg.h"
 using namespace cimg_library;
 //******************************************************************************
@@ -58,6 +59,7 @@ public:
 
   unsigned short current_page;
   std::string FFilename;
+
 
   /// Constructeur d'une image ImTiff à partir d'un fichier tif.
   // @param AFilename: le nom du fichier
@@ -157,7 +159,8 @@ public:
   void kmeansHistogram(CImg<float>* histo, CImg<char>* assignement);
 
   // classif de l'image en ANbClass classes.
-  uint8* simplekmeans(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
+  uint8* simplekmeans(const fogrimmi::IM_Box & ABox, uint ADepth, 
+		      const uint ANbClass);
 
   float** omp_kmeans(int, float**, int, int, int, float, int*);
 
@@ -214,6 +217,22 @@ public:
   // ajout d'un canal alpha artificiel pour qt
   uint8* getDataQT(const fogrimmi::IM_Box& ABox, uint ADepth);
   
+  /// Read pixel data from a box and stores it in a structure
+  /// that may be used by km-local
+  /// @param ABox : the box of the image where pixels are read from 
+  /// @param data : the data structure where pixel data is stored
+  void getKmeansData(const fogrimmi::IM_Box & ABox, KMdata& data);
+    
+  /// Read pixel value supposing that pixels are stored as (24bits) RGB values
+  /// @param ABox : the box of the image where pixels are read from 
+  /// @param data : the data structure where pixel data is stored
+  void getKmeansDataRGB(const fogrimmi::IM_Box & ABox, KMdata& data);
+
+  /// Read pixel value supposing that pixels are stored as (8bits) grey values
+  /// @param ABox : the box of the image where pixels are read from 
+  /// @param data : the data structure where pixel data is stored
+  void getKmeansDataGrey(const fogrimmi::IM_Box & ABox, KMdata& data);
+
   /// Vérifie que la profondeur demandée n'excède pas le nombre de pages dans le tif
   /// si c'est le cas, on retourne la résolution la plus importante
   /// @param ADepth un niveau de la pyramide
