@@ -22,9 +22,8 @@
 //******************************************************************************
 #include "tiff.h"
 #include <string>
-#include "point2d.hh"
 #include "image2D.hh"
-#include "kernel-types.hh"
+#include "macros.hh"
 #include "inline-macro.hh"
 #include "CImg.h"
 using namespace cimg_library;
@@ -33,12 +32,6 @@ using namespace cimg_library;
 /// Type pour stocker la valeur d'un pixel. 
 /// Utiliser forcément un non-signé sous peine de problèmes.
 typedef uint16_t TLabel;
-
-const CPoint2D v8[]= {CPoint2D(0,-1), CPoint2D(-1,-1),
-		      CPoint2D(-1,0), CPoint2D(-1,1),
-		      CPoint2D(0,1),  CPoint2D(1,1),
-		      CPoint2D(1,0),  CPoint2D(1,-1),
-		      CPoint2D(0,-1)};
 
 static const double epsilon = 1e-6;
 static const double JND=sqrt(3);
