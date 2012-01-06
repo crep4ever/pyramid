@@ -539,13 +539,15 @@ namespace Map2d
   {
     //std::cout<<" [start] CLevel::regularization\n";
     assert(false);
+    image()->setDepth(depth());
     IM_Box box;
     for(uint j=0; j<nbTilesHeight(); ++j)
       for(uint i=0; i<nbTilesWidth(); ++i)
 	{
 	  box.XTop = i*tileWidth();      box.YTop = j*tileHeight();
 	  box.XBtm = (i+1)*tileWidth();  box.YBtm = (j+1)*tileHeight();
-	  image()->regularization(box, depth(), nb_iteration, pp, lambda, voisinage);
+	  image()->setCurrentBox(box);
+	  image()->regularization(nb_iteration, pp, lambda, voisinage);
 	}
     //std::cout<<" [end] CLevel::regularization\n";
   }

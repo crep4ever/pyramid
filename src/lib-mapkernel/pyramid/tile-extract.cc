@@ -295,8 +295,11 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
   IM_Box box;
   box.XTop = xmin()*ratiox;  box.YTop = ymin()*ratioy;
   box.XBtm = xmax()*ratiox;  box.YBtm = ymax()*ratioy;
-  image()->read(box, depth()+1);
 
+  image()->setDepth(depth()+1);
+  image()->setCurrentBox(box);
+
+  
   //uint8* data;
   //uint size = width()*ratiox*height()*ratioy*3;
 
@@ -305,13 +308,13 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
     {
     case Classif:
       //classif sur l'ensemble des tuiles filles
-      FClassif = image()->simplekmeans(box, depth()+1, 2);
+      FClassif = image()->kmeans(2);
       break;
 
     case SegmentationOff:
       if(depth()==0)
 	//classif sur l'ensemble des tuiles filles
-	FClassif = image()->simplekmeans(box, depth()+1, 3);
+	FClassif = image()->kmeans(3);
       break;
       
     case Histology:

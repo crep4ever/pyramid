@@ -131,8 +131,9 @@ void CTile::traversePixelsSingleRegion()
 {
   assert(getNbRegions()==2);
   FPixIndex=0;
-  image()->read(boundingBox(), 0);
-  uint8* data = image()->getData(boundingBox(), index(2));
+  image()->setDepth(0);
+  image()->setCurrentBox(boundingBox());
+  uint8* data = image()->getData();
   CRegion* region = getInclusionTreeRoot()->getFirstSon();
 
   if(image()->colorMode()==CImageTiff::Grey)

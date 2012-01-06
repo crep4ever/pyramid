@@ -68,8 +68,9 @@ CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)
 	  IM_Box box;
 	  box.XTop = xmin()*ratiox;  box.YTop = ymin()*ratioy;
 	  box.XBtm = xmax()*ratiox;  box.YBtm = ymax()*ratioy;
-	  image()->read(box, depth()+1);
-	  FClassif = image()->kmeans(box, depth()+1, 3);
+	  image()->setDepth(depth()+1);
+	  image()->setCurrentBox(box);
+	  FClassif = image()->kmeans(3);
 	}
 
       FMatrixPixelRegion = createPixelRegionMatrix();

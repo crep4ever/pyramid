@@ -147,25 +147,20 @@ void CImageTiff::unload()
 }
 //------------------------------------------------------------------------------
 INLINE
-uint8* CImageTiff::getData(const IM_Box& ABox, uint ADepth)
+uint8* CImageTiff::getData()
 {
   uint mode = colorMode() == RGB ? 3 : 1;
   IM_Pixel pix;
   unsigned long int n = 0;
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
 
-  uint8* data = new uint8[(xstop-xstart)*(ystop-ystart)*mode*sizeof(uint8)];
-  for( uint y = ystart; y < ystop; ++y)
+  uint8* data = new uint8[nbCurrentBoxPixels()*mode*sizeof(uint8)];
+  for( uint y = ystart(); y < ystop(); ++y)
     {
       pix.y = y;
-      for( uint x = xstart; x < xstop; ++x)
+      for( uint x = xstart(); x < xstop(); ++x)
 	{
 	  pix.x = x;
-	  getPixel(pix, ADepth);
+	  getPixel(pix, depth());
 
 	  for(uint i=0; i<mode; ++i)
 	      data[n++] = pix.value[i];
@@ -177,26 +172,21 @@ uint8* CImageTiff::getData(const IM_Box& ABox, uint ADepth)
 
 //------------------------------------------------------------------------------
 INLINE
-uint8* CImageTiff::getDataQT(const IM_Box& ABox, uint ADepth)
+uint8* CImageTiff::getDataQT()
 {
   IM_Pixel pix;
   unsigned long int n = 0;
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
   
-  uint8* data = new uint8[(xstop-xstart+1)*(ystop-ystart+1)*4*sizeof(uint8)];
-  
+  uint8* data = new uint8[ nbCurrentBoxPixels() * 4 * sizeof(uint8) ];
+  //uint8* data = new uint8[(xstop-xstart+1)*(ystop-ystart+1)*4*sizeof(uint8)];
   if(colorMode()==RGB)
-    for( uint y = ystart; y < ystop; ++y)
+    for( uint y = ystart(); y < ystop(); ++y)
       {
 	pix.y = y;
-	for( uint x = xstart; x < xstop; ++x)
+	for( uint x = xstart(); x < xstop(); ++x)
 	  {
 	    pix.x = x;
-	    getPixel(pix, ADepth);
+	    getPixel(pix, depth());
 	    data[n++] = pix.value[0];
 	    data[n++] = pix.value[1];
 	    data[n++] = pix.value[2];
@@ -204,13 +194,13 @@ uint8* CImageTiff::getDataQT(const IM_Box& ABox, uint ADepth)
 	  }
       }
   else if(colorMode()==Grey)
-    for( uint y = ystart; y < ystop; ++y)
+    for( uint y = ystart(); y < ystop(); ++y)
       {
 	pix.y = y;
-	for( uint x = xstart; x < xstop; ++x)
+	for( uint x = xstart(); x < xstop(); ++x)
 	  {
 	    pix.x = x;
-	    getPixel(pix, ADepth);
+	    getPixel(pix, depth());
 	    data[n++] = pix.value[0]*(0.66);
 	    data[n++] = pix.value[0]*(0.66);
 	    data[n++] = pix.value[0]*(0.66);
@@ -310,18 +300,18 @@ void CImageTiff::mergeClasses(int cl1, int cl2, uint8* data, uint ASize)
 
 //------------------------------------------------------------------------------
 INLINE
-void CImageTiff::regularization(const IM_Box & ABox, uint ADepth, 
-				int nb_iteration, int pp, double lambda, 
+void CImageTiff::regularization(int nb_iteration, 
+				int pp, 
+				double lambda, 
 				int voisinage)
 {
-  setDepth(ADepth);
   switch(colorMode())
     {
     case RGB:
-      colorRegularization(ABox, ADepth, nb_iteration, pp, lambda, voisinage);
+      colorRegularization(nb_iteration, pp, lambda, voisinage);
       break;
     case Grey:
-      greyRegularization(ABox, ADepth, nb_iteration, pp, lambda, voisinage);
+      greyRegularization(nb_iteration, pp, lambda, voisinage);
       break;
     default:
       std::cout<<"CImageTiff::regularization color encoding not supported : "<< colorMode() <<std::endl;
@@ -346,38 +336,28 @@ void CImageTiff::setFilename(const std::string & AFilename)
 
 
 INLINE
-void CImageTiff::getKmeansData(KMdata& data, 
-			       const IM_Box & ABox,
-			       const uint ADepth)
+void CImageTiff::getKmeansData(KMdata& data)
 {
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
-
   if(colorMode() == RGB)
-    getKmeansDataRGB(data, ADepth, xstart, xstop, ystart, ystop);
+    getKmeansDataRGB(data);
   else if(colorMode() == Grey)
-    getKmeansDataRGB(data, ADepth, xstart, xstop, ystart, ystop);
+    getKmeansDataRGB(data);
   else
     std::cout<<"CImageTiff::kmeans image encoding not supported"<<std::endl;
 }
 
 INLINE
-void CImageTiff::getKmeansDataGrey(KMdata& data, const uint ADepth,
-				   const uint xstart, const uint xstop,
-				   const uint ystart, const uint ystop)
+void CImageTiff::getKmeansDataGrey(KMdata& data)
 {
   IM_Pixel pix; 
   uint i = 0;
-  for(uint y=ystart; y<ystop; ++y)
+  for(uint y=ystart(); y<ystop(); ++y)
     {
       pix.y = y;
-      for(uint x=xstart; x<xstop; ++x)
+      for(uint x=xstart(); x<xstop(); ++x)
 	{
 	  pix.x = x;
-	  getPixel(pix, ADepth);
+	  getPixel(pix, depth());
 	  data[i][0] = pix.value[0];
 	  data[i][1] = pix.value[0];
 	  data[i][2] = pix.value[0];
@@ -387,19 +367,17 @@ void CImageTiff::getKmeansDataGrey(KMdata& data, const uint ADepth,
 }
 
 INLINE
-void CImageTiff::getKmeansDataRGB(KMdata& data, const uint ADepth,
-				  const uint xstart, const uint xstop,
-				  const uint ystart, const uint ystop)
+void CImageTiff::getKmeansDataRGB(KMdata& data)
 {
   IM_Pixel pix; 
   uint i = 0;
-  for(uint y=ystart; y<ystop; ++y)
+  for(uint y=ystart(); y<ystop(); ++y)
     {
       pix.y=y;
-      for(uint x=xstart; x<xstop; ++x)
+      for(uint x=xstart(); x<xstop(); ++x)
 	{
 	  pix.x = x;
-	  getPixel(pix, ADepth);
+	  getPixel(pix, depth());
 	  data[i][0] = pix.value[0];
 	  data[i][1] = pix.value[1];
 	  data[i][2] = pix.value[2];
@@ -409,13 +387,62 @@ void CImageTiff::getKmeansDataRGB(KMdata& data, const uint ADepth,
 }
 
 INLINE
-uint8* CImageTiff::kmeans(const IM_Box & ABox, uint ADepth, uint ANbClass)
+uint8* CImageTiff::kmeans(uint ANbClass)
 {
 #ifdef OPENMP
-  return kmeansKMLocal(ABox, ADepth, ANbClass);
+  return kmeansKMLocal(ANbClass);
 #else
-  return simplekmeans(ABox, ADepth, ANbClass);
+  return simplekmeans(ANbClass);
 #endif
+}
+
+INLINE
+uint CImageTiff::xstart() const
+{
+  return (uint) currentBox().XTop;
+}
+
+INLINE
+uint CImageTiff::xstop() const
+{
+  return (uint) currentBox().XBtm;
+}
+
+INLINE
+uint CImageTiff::ystart() const
+{
+  return (uint) currentBox().YTop;
+}
+
+INLINE
+uint CImageTiff::ystop() const
+{
+  return (uint) currentBox().YBtm;
+}
+
+INLINE
+fogrimmi::IM_Box CImageTiff::currentBox() const
+{
+  return m_currentBox;
+}
+
+INLINE
+void CImageTiff::setCurrentBox(const IM_Box & box)
+{
+  if( xstart() != box.XTop || xstop()  != box.XBtm ||
+      ystart() != box.YTop || ystop()  != box.YBtm )
+    {
+      m_currentBox = box;
+      read( currentBox() );
+    }
+}
+
+INLINE
+uint CImageTiff::nbCurrentBoxPixels() const
+{
+  assert( xstop() >= xstart() );
+  assert( ystop() >= ystart() );
+  return ( xstop() - xstart() )*( ystop() - ystart() );
 }
 
 /*

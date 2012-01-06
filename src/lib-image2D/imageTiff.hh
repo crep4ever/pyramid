@@ -58,7 +58,6 @@ public:
   uint FColorMode;
   uint FDepth; //current depth
 
-  unsigned short current_page;
   std::string FFilename;
 
 
@@ -154,26 +153,23 @@ public:
   /// @return le tif multipages tuilé
   CImageTiff* tilePages(uint ATileWidth=240, uint ATileHeight=240);
 
-  /// k-means algorithm on a part of image
+  /// k-means algorithm on current image's box
   /// uses SimpleKmeans if openmp is supported and falls back on KMLocal if not
-  /// @param ABox : the pixels to be clustered
-  /// @param ADepth : the level in the multipage tiff to read the pixels from
   /// @param ANbClass : the number of clusters
   /// @return a table with the clustering result
-  uint8* kmeans(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
+  uint8* kmeans(uint ANbClass);
 
   void kmeansHistogram(CImg<float>* histo, CImg<char>* assignement);
 
-  /// k-means algorithm on a part of image with KMLocal library
-  /// @param ABox : the pixels to be clustered
-  /// @param ADepth : the level in the multipage tiff to read the pixels from
+  /// k-means algorithm with KMLocal library
   /// @param ANbClass : the number of clusters
   /// @return a table with the clustering result
-  uint8* kmeansKMLocal(const fogrimmi::IM_Box & ABox, uint ADepth, uint ANbClass);
+  uint8* kmeansKMLocal(uint ANbClass);
 
-  // classif de l'image en ANbClass classes.
-  uint8* simplekmeans(const fogrimmi::IM_Box & ABox, uint ADepth, 
-		      const uint ANbClass);
+  /// k-means algorithm on a part of image with simplekmeans library
+  /// @param ANbClass : the number of clusters
+  /// @return a table with the clustering result
+  uint8* simplekmeans(const uint ANbClass);
 
   float** omp_kmeans(int, float**, int, int, int, float, int*);
 
@@ -225,31 +221,23 @@ public:
   void unload();
 
   // Récupère tous les pixels de la box de la page dans le tableau data
-  uint8* getData(const fogrimmi::IM_Box& ABox, uint ADepth);
+  uint8* getData();
   
   // ajout d'un canal alpha artificiel pour qt
-  uint8* getDataQT(const fogrimmi::IM_Box& ABox, uint ADepth);
+  uint8* getDataQT();
   
   /// Read pixel data from a box and stores it in a structure
   /// that may be used by km-local
   /// @param data : the data structure where pixel data is storedw
-  /// @param ABox : the box of the image where pixels are read from 
-  /// @param ADepth : the level in the multi-page tiff image
-  void getKmeansData(KMdata& data, 
-		     const fogrimmi::IM_Box & ABox, 
-		     const uint ADepth);
+  void getKmeansData(KMdata& data);
     
   /// Read pixel value supposing that pixels are stored as (24bits) RGB values
   /// @param data : the data structure where pixel data is stored
-  void getKmeansDataRGB(KMdata& data, const uint ADepth,
-			const uint xstart, const uint xstop,
-			const uint ystart, const uint ystop);
+  void getKmeansDataRGB(KMdata& data);
 
   /// Read pixel value supposing that pixels are stored as (8bits) grey values
   /// @param data : the data structure where pixel data is stored
-  void getKmeansDataGrey(KMdata& data, const uint ADepth,
-			const uint xstart, const uint xstop,
-			const uint ystart, const uint ystop);
+  void getKmeansDataGrey(KMdata& data);
 
   /// Vérifie que la profondeur demandée n'excède pas le nombre de pages dans le tif
   /// si c'est le cas, on retourne la résolution la plus importante
@@ -262,9 +250,25 @@ public:
 
   double distance(const fogrimmi::IM_Pixel & p, const fogrimmi::IM_Pixel & q);
   double poids(const fogrimmi::IM_Pixel & p, const fogrimmi::IM_Pixel & r);
-  void regularization(const fogrimmi::IM_Box & ABox, uint ADepth, int nb_iteration, int pp,double lambda, int voisinage);
-  void colorRegularization(const fogrimmi::IM_Box & ABox, uint ADepth, int nb_iteration, int pp,double lambda, int voisinage);
-  void greyRegularization(const fogrimmi::IM_Box & ABox, uint ADepth, int nb_iteration, int pp,double lambda, int voisinage);
+  void regularization(int nb_iteration, int pp,double lambda, int voisinage);
+  void colorRegularization(int nb_iteration, int pp,double lambda, int voisinage);
+  void greyRegularization(int nb_iteration, int pp,double lambda, int voisinage);
+
+public:
+  
+  // Cadre de lecture
+  uint xstart() const;
+  uint xstop() const;
+  uint ystart() const;
+  uint ystop() const;
+  fogrimmi::IM_Box currentBox() const;
+  void setCurrentBox(const fogrimmi::IM_Box & box);
+
+  ///@return the number of pixels contained in the current box
+  uint nbCurrentBoxPixels() const;
+
+private:
+  fogrimmi::IM_Box m_currentBox;
 };
 
 #include INCLUDE_INLINE("imageTiff.icc")

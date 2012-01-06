@@ -186,7 +186,9 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   IM_Box box;
   box.XTop = xmin(newTile);  box.YTop = ymin(newTile);
   box.XBtm = xmax(newTile);  box.YBtm = ymax(newTile);
-  newTile->FClassif = image()->kmeans(box, FDepth, 3);
+  image()->setDepth(FDepth);
+  image()->setCurrentBox(box);
+  newTile->FClassif = image()->kmeans(3);
   
   // Split de la tuile par burst/merge
   newTile->burstAndMerge(AFocusAttentionMode, ASegmentationMode);
@@ -750,6 +752,9 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
   IM_Box box;
   box.XTop = 0;  box.YTop = 0;
   box.XBtm = imageWidth();  box.YBtm = imageHeight();
+  image()->setDepth(depth());
+  image()->setCurrentBox(box);
+
   //uint size = imageWidth() * imageHeight() * 3;
   uint size = imageWidth() * imageHeight();
 
@@ -766,7 +771,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	{
 	case 1:
 	  std::cout<<" CLevel::preprocessing level 1 \n"<<std::endl;
-	  FClassif = image()->kmeans(box, depth(), 3);
+	  FClassif = image()->kmeans(3);
       	  //image()->moveClasses(FClassif, size);
       	  image()->mergeClasses(1,0, FClassif, size);
 	  break;
@@ -776,7 +781,6 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  histogram();
 	  FAssignment = new CImg<char>;
 	  FAssignment->assign(256,256,256,1);
-	  image()->setDepth(depth());
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
 	  
@@ -785,7 +789,6 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  histogram();
 	  FAssignment = new CImg<char>;
 	  FAssignment->assign(256,256,256,1);
-	  image()->setDepth(depth());
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
 	  
@@ -794,7 +797,6 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  histogram();
 	  FAssignment = new CImg<char>;
 	  FAssignment->assign(256,256,256,1);
-	  image()->setDepth(depth());
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
 	  

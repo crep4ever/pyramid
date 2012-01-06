@@ -84,29 +84,22 @@ CImageTiff::~CImageTiff()
 }
 
 //------------------------------------------------------------------------------
-uint8* CImageTiff::kmeansKMLocal(const IM_Box & ABox, uint ADepth, uint ANbClass)
+uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeans"<<std::endl;
   // 1. On crée une image et on retrouve les infos qui nous intéressent
-  read(ABox, ADepth);
-  regularization(ABox, ADepth, 10, 2, 0.1, 1);
-
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
+  regularization(10, 2, 0.1, 1);
 
   // 2. On convertit les données pour la quantif
   //todo: pour niveau de gris, faire dim = 1 et pas mettre 3x la même valeur
   int dim = 3; // dimension 
-  int nPts = (xstop-xstart)*(ystop-ystart); // number of data points
+  int nPts = nbCurrentBoxPixels(); // number of data points
   KMdata dataPts(dim, nPts);//stockage des points
   KMterm term(50, 0, 0, 0, // run for 10 stages
 	      0.10, 0.10, 3, // other typical parameter values
 	      0.60, 10, 0.95);
 
-  getKmeansDataRGB(dataPts, ADepth, xstart, xstop, ystart, ystop);
+  getKmeansDataRGB(dataPts);
   
   // 3. Quantification avec kmlocal
   dataPts.buildKcTree();
@@ -136,10 +129,10 @@ uint8* CImageTiff::kmeansKMLocal(const IM_Box & ABox, uint ADepth, uint ANbClass
 
   // 4. On crée l'image de label à partir de la quantification
   //uint8* result = new uint8[(xstop-xstart)*(ystop-ystart)*3];
-  uint8* result = new uint8[(xstop-xstart)*(ystop-ystart)];
+  uint8* result = new uint8[nPts];
   uint i = 0; uint j = 0;
-  for(uint y=ystart; y<ystop; ++y)
-    for(uint x=xstart; x<xstop; ++x)
+  for(uint y=ystart(); y<ystop(); ++y)
+    for(uint x=xstart(); x<xstop(); ++x)
       {
 	//result[i++] = centers[closeCtr[j]][0];
 	//result[i++] = centers[closeCtr[j]][1];
@@ -158,38 +151,32 @@ uint8* CImageTiff::kmeansKMLocal(const IM_Box & ABox, uint ADepth, uint ANbClass
 }
 
 //------------------------------------------------------------------------------
-uint8* CImageTiff::simplekmeans(const IM_Box & ABox, uint ADepth, const uint ANbClass)
+uint8* CImageTiff::simplekmeans(const uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::simplekmeans"<<std::endl;
   // 1. On crée une image et on retrouve les infos qui nous intéressent
-  read(ABox, ADepth);
-  regularization(ABox, ADepth, 10, 2, 0.1, 1);
-
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
+  //read(ABox, ADepth);
+  regularization(10, 2, 0.1, 1);
 
   // 2. simplekmeans parameters
   //omp_set_num_threads(4);
   double threshold = 0.001;
 
   int dim = 3; // dimension 
-  int nPts = (xstop-xstart)*(ystop-ystart); // number of data points
+  int nPts = nbCurrentBoxPixels();
   float **objects;
   objects = (float**) malloc(nPts * sizeof(float));
   for(int i = 0; i<nPts; ++i)
     objects[i] = (float*) malloc(3 * sizeof(float));
 
   IM_Pixel pix; uint i = 0; //uint j = 0;
-    for(uint y=ystart; y<ystop; ++y)
+  for(uint y=ystart(); y<ystop(); ++y)
       {
 	pix.y=y;
-	for(uint x=xstart; x<xstop; ++x)
+	for(uint x=xstart(); x<xstop(); ++x)
 	  {
 	    pix.x = x;
-	    getPixel(pix, ADepth);
+	    getPixel(pix, depth());
 	    objects[i][0] = (float) pix.value[0];
 	    objects[i][1] = (float) pix.value[1];
 	    objects[i][2] = (float) pix.value[2];
@@ -326,8 +313,9 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
 }
 
 //------------------------------------------------------------------------------
-void CImageTiff::colorRegularization(const IM_Box & ABox, uint ADepth, 
-				     int nb_iteration, int pp, double lambda, 
+void CImageTiff::colorRegularization(int nb_iteration, 
+				     int pp, 
+				     double lambda, 
 				     int voisinage)
 {
   //std::cout<<"[start] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
@@ -340,22 +328,15 @@ void CImageTiff::colorRegularization(const IM_Box & ABox, uint ADepth,
   double sumChange=0.,sumK=0.;	
   valarray<double> sums=valarray<double>(0.,6);
 	
-  read(ABox, ADepth);
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
-
   while (nb_iteration > 0 && !end)
     {
-      for (uint y = ystart; y < ystop ; ++y) 
+      for (uint y = ystart(); y < ystop() ; ++y) 
 	{
 	  p.y = y;
-	  for (uint x = xstart; x <xstop; ++x) 
+	  for (uint x = xstart(); x <xstop(); ++x) 
 	    {
 	      p.x = x;
-	      getPixel(p, ADepth);
+	      getPixel(p, depth());
 	      sums[0]+=p.value[0];
 	      sums[1]+=p.value[1];
 	      sums[2]+=p.value[2];
@@ -368,9 +349,9 @@ void CImageTiff::colorRegularization(const IM_Box & ABox, uint ADepth,
 		  {						
 		    q.x=p.x+l;
 		    q.y=p.y+k;
-		    if (isPixelInImage(q, ADepth) && p!=q) 
+		    if (isPixelInImage(q, depth()) && p!=q) 
 		      {
-			getPixel(q, ADepth);
+			getPixel(q, depth());
 			_value=poids(p,q);
 			sum  += _value;
 			X += _value*q.value[0];
@@ -399,15 +380,16 @@ void CImageTiff::colorRegularization(const IM_Box & ABox, uint ADepth,
 	end=true;
       nb_iteration--;
     }
-  //std::cout<<"[end] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
+  //std::cout<<"[end] CImageTiff::colorRegularization in level  "<< depth() <<std::endl;
 }
 
 //------------------------------------------------------------------------------
-void CImageTiff::greyRegularization(const IM_Box & ABox, uint ADepth, 
-				    int nb_iteration, int pp, double lambda, 
+void CImageTiff::greyRegularization(int nb_iteration, 
+				    int pp, 
+				    double lambda, 
 				    int voisinage)
 {
-  std::cout<<"CImageTiff::greyRegularization in level  "<< ADepth <<std::endl;
+  std::cout<<"CImageTiff::greyRegularization in level  "<< depth() <<std::endl;
   assert(false);
 }
 

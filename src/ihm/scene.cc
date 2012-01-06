@@ -429,9 +429,10 @@ void CScene::drawImage()
       
       box.XTop = 0; box.YTop = 0;
       box.XBtm = width; box.YBtm = height;
-      image->read(box, depth);
+      image->setDepth(depth);
+      image->setCurrentBox(box);
       
-      uint8* data = image->getDataQT(box, depth);
+      uint8* data = image->getDataQT();
       qImage = QImage(data, width, height, QImage::Format_RGB32).rgbSwapped();
       assert(!qImage.isNull());
       m_pixmap = new QPixmap(QPixmap::fromImage(qImage));
