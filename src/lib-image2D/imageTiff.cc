@@ -164,8 +164,9 @@ uint8* CImageTiff::simplekmeans(const uint ANbClass)
 
   int dim = 3; // dimension 
   int nPts = nbCurrentBoxPixels();
+
   float **objects;
-  objects = (float**) malloc(nPts * sizeof(float));
+  objects = (float**) malloc(nPts * sizeof(float*));
   for(int i = 0; i<nPts; ++i)
     objects[i] = (float*) malloc(3 * sizeof(float));
 

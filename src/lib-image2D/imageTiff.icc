@@ -390,9 +390,9 @@ INLINE
 uint8* CImageTiff::kmeans(uint ANbClass)
 {
 #ifdef OPENMP
-  return kmeansKMLocal(ANbClass);
-#else
   return simplekmeans(ANbClass);
+#else
+  return kmeansKMLocal(ANbClass);
 #endif
 }
 
