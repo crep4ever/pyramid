@@ -21,8 +21,9 @@
 #define POINT3D_HH
 //*****************************************************************************
 #include "inline-macro.hh"
-#include "doublet.hh"
+//#include "doublet.hh"
 #include "macros.hh"
+#include <iostream>
 //*****************************************************************************
 
 /**

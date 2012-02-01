@@ -23,7 +23,6 @@
 //******************************************************************************
 #include "math-extension.hh"
 #include "inline-macro.hh"
-#include "doublet.hh"
 
 #include <iostream>
 //******************************************************************************
@@ -96,7 +95,7 @@ public:
    *
    * @param ADoublet le doublet à "copier"
    */
-  CVertex(const CDoublet& ADoublet);
+  //CVertex(const CDoublet& ADoublet);
 
   /**
    * Destructeur

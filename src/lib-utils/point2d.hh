@@ -22,7 +22,7 @@
 //*****************************************************************************
 #include <iostream>
 #include "inline-macro.hh"
-#include "doublet.hh"
+//#include "doublet.hh"
 #include "macros.hh"
 //*****************************************************************************
 
@@ -84,7 +84,7 @@ public:
    *
    * @param ADoublet le doublet à "copier"
    */
-  CPoint2D(const CDoublet& ADoublet);
+  //  CPoint2D(const CDoublet& ADoublet);
 
   /**
    * Destructeur

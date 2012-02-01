@@ -310,7 +310,7 @@ CTopologicalMap::getPixelFromDoublet(const CDoublet & ADoublet) const
 INLINE
 CPoint2D CTopologicalMap::getPixelIn( const CDoublet & ADoublet ) const
 {
-  CPoint2D AVertex(ADoublet);
+  CPoint2D AVertex(ADoublet.getX(), ADoublet.getY());
   switch ( ADoublet.getLinel() )
     {
     case YPOS:
@@ -330,7 +330,7 @@ CPoint2D CTopologicalMap::getPixelIn( const CDoublet & ADoublet ) const
 INLINE
 CPoint2D CTopologicalMap::getPixelOut( const CDoublet & ADoublet ) const
 {
-  CPoint2D AVertex(ADoublet);
+  CPoint2D AVertex(ADoublet.getX(), ADoublet.getY());
   switch ( ADoublet.getLinel() )
     {
     case XPOS:
@@ -521,7 +521,7 @@ CVertex CTopologicalMap::barycenter(CDart * ADart, TOrbit AOrbit)
     for (; cov->cont(); ++(*cov))
         if (!isMarked(**cov, treated))
         {
-            bary += getDoublet(**cov);
+	  bary += CVertex(getDoublet(**cov).getX(), getDoublet(**cov).getY());
             ++n;
             markOrbit(**cov, ORBIT_VERTEX, treated);
         }

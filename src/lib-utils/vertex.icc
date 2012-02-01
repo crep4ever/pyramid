@@ -53,12 +53,12 @@ CVertex::CVertex(const CVertex& AVertex)
  
 }
 //------------------------------------------------------------------------------
-INLINE
-CVertex::CVertex(const CDoublet& ADoublet)
-{
-  FCoord[0] = ADoublet.getX();
-  FCoord[1] = ADoublet.getY();
-}
+//INLINE
+//CVertex::CVertex(const CDoublet& ADoublet)
+//{
+//  FCoord[0] = ADoublet.getX();
+//  FCoord[1] = ADoublet.getY();
+//}
 //******************************************************************************
 INLINE
 TCoordinate CVertex::getX() const

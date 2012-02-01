@@ -210,14 +210,15 @@ void CTopologicalMap::displayMapCharacteristics()
    double std_dev=0;
    for(CDynamicCoverageAll it(this) ; it.cont() ; it++)
    {
-      sum_length += (CVertex(getDoublet(*it)) - getDoublet(beta0(*it))).norm();
+     CVertex v1(getDoublet(*it).getX(), getDoublet(*it).getY());
+     CVertex v2(getDoublet(beta0(*it)).getX(), getDoublet(beta0(*it)).getY());
+     sum_length += (v1 - v2).norm();
    }
    for(CDynamicCoverageAll it(this) ; it.cont() ; it++)
    {
-      std_dev += ((CVertex(getDoublet(*it)) - 
-            getDoublet(beta0(*it))).norm() - sum_length/nbD) *
-            ((CVertex(getDoublet(*it)) - 
-            getDoublet(beta0(*it))).norm() - sum_length/nbD);
+     CVertex v1(getDoublet(*it).getX(), getDoublet(*it).getY());
+     CVertex v2(getDoublet(beta0(*it)).getX(), getDoublet(beta0(*it)).getY());
+     std_dev += ((v1 - v2).norm() - sum_length/nbD) * ((v1 - v2).norm() - sum_length/nbD);
    }
    cout << " Longueur moyenne : "<<sum_length/nbD
    << " Std Dev : "<<std_dev/nbD<<endl;
@@ -757,14 +758,14 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
    CDoublet doublet(getDoublet(ADart));
    CDoublet tempDoublet(doublet);
 
-   res = distancePointToLine(tempDoublet, AV1, AV2);
+   res = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
 
    do
    {
       /*doublet suivant*/
       tempDoublet.setNextPointel();
 
-      temp = distancePointToLine(tempDoublet, AV1, AV2);
+      temp = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
       if (temp > res) res = temp;
 
       /*on récupère le linel du doublet suivant de l'arête*/
@@ -787,7 +788,7 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
    CDoublet doublet(getDoublet(ADart));
    CDoublet tempDoublet(doublet);
 
-   res = distancePointToLine(tempDoublet, AV1, AV2);
+   res = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
    if (temp > res) res = temp;
    if (res>=AThreshold) return res;
    
@@ -796,7 +797,8 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
       /*doublet suivant*/
       tempDoublet.setNextPointel();
 
-      temp = distancePointToLine(tempDoublet, AV1, AV2);
+      temp = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
+
       if (temp > res) 
       {
          res = temp;

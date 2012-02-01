@@ -34,13 +34,13 @@ CPoint2D::CPoint2D(const CPoint2D& AVertex)
  
 }
 //-----------------------------------------------------------------------------
-INLINE
-CPoint2D::CPoint2D(const CDoublet& ADoublet)
-{
-  FCoord[0] = ADoublet.getX();
-  FCoord[1] = ADoublet.getY();
- 
-}
+//INLINE
+//CPoint2D::CPoint2D(const CDoublet& ADoublet)
+//{
+//  FCoord[0] = ADoublet.getX();
+//  FCoord[1] = ADoublet.getY();
+// 
+//}
 //-----------------------------------------------------------------------------
 INLINE
 CPoint2D::~CPoint2D()
