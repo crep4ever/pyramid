@@ -24,7 +24,7 @@
 #include "point2d.hh"
 #include "string.h"
 //*****************************************************************************
-/** 
+/**
  * Volume template class used to represent a 3D matrix.
  */
 template< typename TElement >
@@ -36,7 +36,7 @@ public:
    * @param ASizeZ depth of the volume
    */
   CVolume( uint32_t ASizeX, uint32_t ASizeY, uint32_t ASizeZ );
-  
+
   /** Copy constructor
    */
   CVolume( const CVolume< TElement > & AVolume );
@@ -120,7 +120,7 @@ private:
    * @return index of the (Ax,Ay,Az) cell in the data array
    */
   unsigned long indexOf( uint32_t Ax, uint32_t Ay, uint32_t Az ) const;
-  
+
   // Size of the current volume.
   uint32_t FSizeX, FSizeY, FSizeZ;
 
@@ -139,8 +139,8 @@ CVolume< TElement >::CVolume()
 
 template< typename TElement >
 inline
-CVolume< TElement >::CVolume( uint32_t ASizeX, 
-			      uint32_t ASizeY, 
+CVolume< TElement >::CVolume( uint32_t ASizeX,
+			      uint32_t ASizeY,
 			      uint32_t ASizeZ ) :
   FSizeX( ASizeX ),
   FSizeY( ASizeY ),
@@ -150,7 +150,7 @@ CVolume< TElement >::CVolume( uint32_t ASizeX,
   assert( FSizeX != 0 );
   assert( FSizeY != 0 );
   assert( FSizeZ != 0 );
-  FData = new TElement[FSizeX*FSizeY*FSizeZ]; 
+  FData = new TElement[FSizeX*FSizeY*FSizeZ];
 }
 
 template< typename TElement >
@@ -159,7 +159,7 @@ CVolume< TElement >::CVolume( const CVolume< TElement > & AVolume ) :
   FSizeX( AVolume.FSizeX ),
   FSizeY( AVolume.FSizeY ),
   FSizeZ( AVolume.FSizeZ ),
-  FData( NULL )  
+  FData( NULL )
 {
   FData = new TElement[ FSizeX * FSizeY * FSizeZ ];
   //for( int i = 0 ; i <  FSizeX * FSizeY * FSizeZ ; ++i )
@@ -193,10 +193,10 @@ uint32_t CVolume< TElement >::getSizeZ() const
 
 template< typename TElement >
 inline
-unsigned long CVolume< TElement >::indexOf( uint32_t Ax, 
-					    uint32_t Ay, 
+unsigned long CVolume< TElement >::indexOf( uint32_t Ax,
+					    uint32_t Ay,
 					    uint32_t Az ) const
-{   
+{
   assert( Ax < FSizeX );
   assert( Ay < FSizeY );
   assert( Az < FSizeZ );
@@ -224,8 +224,8 @@ void CVolume< TElement >::fill( )
 
 template< typename TElement >
 inline
-TElement CVolume< TElement >::getValue( uint32_t Ax, 
-					uint32_t Ay, 
+TElement CVolume< TElement >::getValue( uint32_t Ax,
+					uint32_t Ay,
 					uint32_t Az ) const
 {
   assert( FData != NULL );
@@ -234,9 +234,9 @@ TElement CVolume< TElement >::getValue( uint32_t Ax,
 
 template< typename TElement >
 inline
-void CVolume< TElement >::setValue( uint32_t Ax, 
-				    uint32_t Ay, 
-				    uint32_t Az, 
+void CVolume< TElement >::setValue( uint32_t Ax,
+				    uint32_t Ay,
+				    uint32_t Az,
 				    const TElement & AVal )
 {
   assert( FData != NULL );
@@ -255,7 +255,7 @@ void CVolume< TElement >::setValue( uint32_t Ax,
 
   template< typename TElement >
   inline
-  void CVolume< TElement >::setValue( const CPoint2D & ACoordinate, 
+  void CVolume< TElement >::setValue( const CPoint2D & ACoordinate,
   const TElement & AVal )
   {
   setValue( ACoordinate.getX(),

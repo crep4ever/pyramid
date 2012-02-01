@@ -7,10 +7,10 @@
 namespace Map2d
 {
   //class CSplitGrey;
-  /** 
+  /**
    * Détermine si l'on doit éclater une région d'après les seuils de merge
    * utilisés ensuite pour la fusion:
-   * si gris max - gris min < seuil de merge , on n'éclate pas la région 
+   * si gris max - gris min < seuil de merge , on n'éclate pas la région
    */
 
   class CRegion;
@@ -22,10 +22,10 @@ namespace Map2d
     // Constructeurs
     CSplitHisto(); //par défaut
     CSplitHisto(CRegion* ARegion, uint ADepth);
-  
+
     // Destructeur
     ~CSplitHisto();
-  
+
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
   };

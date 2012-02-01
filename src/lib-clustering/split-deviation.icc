@@ -45,34 +45,34 @@ namespace Map2d
   {
     //CPyramidalRegion* father = static_cast<CPyramidalRegion*>(FRegion)->getRegionUp();
     //CPyramidalRegion* father2 = static_cast<CPyramidalRegion*>(FRegion2)->getRegionUp();
-  
+
     // Les deux région doivent être issues du même père
     // pour garder la causalité top-down
     //if( father1 != father2)
     //return false;
-  
+
     //int color1 = (int) static_cast<CPyramidalRegion*>(FRegion1)->getAverageGrey(); //couleur de la région 1
     //int color2 = (int) static_cast<CPyramidalRegion*>(FRegion2)->getAverageGrey(); //couleur de la région 2
     //unsigned int diff = (unsigned int ) abs(color1-color2);
-  
+
     //Calcul de l'écart type de la région mère
     float deviation = 0;
     CPyramidalRegion* region = static_cast<CPyramidalRegion*>(FRegion);
-    
+
     if(region->getNbPixels() == 0)
       {
 	std::cout << "CSplitDeviation::isRegionToSplit nb pix = 0" << std::endl;
 	region->print();
 	return false;
-      } 
+      }
 
-    deviation = sqrt(region->getGreySquareSum()/region->getNbPixels() - 
+    deviation = sqrt(region->getGreySquareSum()/region->getNbPixels() -
 		     (region->getGreySum()/region->getNbPixels())
 		     *(region->getGreySum()/region->getNbPixels()));
-    
+
     //std::cout<<"Merge deviation entre "<<FRegion1->getId()<<" et "<<FRegion2->getId()<<std::endl;
     //std::cout<<"Ecart-type région mère = "<<deviation<<" diff = "<<diff<<std::endl;
-    
+
     return FMergeThreshold < (unsigned int) deviation  +1 ;
   }
   //******************************************************************************

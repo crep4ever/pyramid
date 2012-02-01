@@ -38,7 +38,7 @@ TCoordinate getAngle(const CVertex& AV1, const CVertex& AV2, const CVertex& AV3)
 {
   CVertex v1(AV2-AV1); // Vecteur (AV1,AV2)
   CVertex v2(AV3-AV2); // Vecteur (AV2,AV3)
-  
+
   // Formule:  v1.v2 = Norm(v1) * Norm(v2) * Cos ( Angle(v1,v2) )
 
   if (!v1.isNull()) v1 /= v1.norm();

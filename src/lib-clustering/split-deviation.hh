@@ -26,7 +26,7 @@
 namespace Map2d
 {
   //class CMergeDeviation;
-  /** 
+  /**
    * Fusionne deux régions adjacentes si l'écart-type de leur région mère
    * est inférieur à un seuil défini.
    * Critère top-down: plus la région mère est homogène, plus on va adapter
@@ -34,31 +34,31 @@ namespace Map2d
    * le critère merge-grey sauf que le seuil n'est pas définit par l'utilisateur
    * mais par l'écart-type de la région mère.
    */
-  
+
   class CRegion;
 
   class CSplitDeviation : public CCriterionSplit
   {
   public:
-    
+
     // Constructeurs
     CSplitDeviation(); //par défaut
     CSplitDeviation(CRegion* ARegion, unsigned int AMergeThreshold);
-    
+
     // Destructeur
     virtual ~CSplitDeviation();
-    
-    //******************************************************************************	  
+
+    //******************************************************************************
     //Méthodes
-    //******************************************************************************    
-    
+    //******************************************************************************
+
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
 
   protected:
     unsigned int FMergeThreshold; //Le seuil de merge
 
-    
+
   };
 } // namespace Map2d
 //******************************************************************************

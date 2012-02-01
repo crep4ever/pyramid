@@ -24,7 +24,7 @@
 using namespace Map2d;
 //******************************************************************************
 //class CMergeGrey;
-/** 
+/**
  * Fusionne deux régions adjacentes si la différence de leurs moyennes
  * de niveaux de gris est inférieure à un seuil défini
  */
@@ -36,21 +36,21 @@ namespace Map2d
 
   protected:
     unsigned int FMergeThreshold; //Le seuil de merge
-  
+
   public:
     // Constructeurs
     CMergeGrey(); //par défaut
     CMergeGrey(CRegion* ARegion1, CRegion* ARegion2, unsigned int AMergeThreshold);
-  
+
     // Destructeur
     ~CMergeGrey();
-  
+
     unsigned int getMergeThreshold() const;
     void setMergeThreshold(unsigned int AMergeThreshold);
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Méthodes
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToMerge();

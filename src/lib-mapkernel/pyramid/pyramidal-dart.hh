@@ -26,19 +26,19 @@
 
 namespace Map2d{
 
-  /** 
+  /**
    * \file pyramidal-dart.hh
    * \class CPyramidalDart "pyramidal-dart.hh"
    * \author Romain Goffe
-   * \brief CPyramidalDart is a dart within a pyramid with 
+   * \brief CPyramidalDart is a dart within a pyramid with
    *  up/down relationships
    */
-  
+
   class CRegion;
 
   class CPyramidalDart: public CTopologicalDart
   {
-	
+
   protected :
     TDartId FId;
     CPyramidalDart* FDartUp;
@@ -52,17 +52,17 @@ namespace Map2d{
 
     /// Constructeur par recopie
     CPyramidalDart(const CPyramidalDart& ADart);
-	
-    /// Constructeur à partir d'un CTopologicalDart.   
+
+    /// Constructeur à partir d'un CTopologicalDart.
     CPyramidalDart(const CTopologicalDart& ADart);
-	  
+
     /** Constructeur avec initialisation des marques
      *
      *  @param AMarks Les marques telles qu'elles doivent être positionnées
      *  @return Une instance de la classe
      */
     CPyramidalDart(const std::bitset<NB_MARKS> & AMarks);
-    	  
+
     /** Constructeur avec initialisation des marques
      *
      *  @param  ADoublet Un sommet
@@ -72,10 +72,10 @@ namespace Map2d{
      */
     CPyramidalDart(const CDoublet & ADoublet, CRegion* ARegion,
 		   const std::bitset<NB_MARKS> & AMarks);
-	  
+
     /// Destructeur
     virtual ~CPyramidalDart();
-	
+
     /// Accesseurs
     TDartId getId() const;
     void setId(TDartId AId);
@@ -108,7 +108,7 @@ namespace Map2d{
     void print( std::ostream& AOs = std::cout ) const;
     friend std::ostream& operator<<(std::ostream&, const CPyramidalDart &);
   };
-    
+
 } // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("pyramidal-dart.icc")

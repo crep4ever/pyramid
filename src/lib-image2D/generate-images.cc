@@ -26,10 +26,10 @@
 void generateSquares(CImage2D & AImage, unsigned int AWidth)
 {
    if (!AImage.isOk()) return;
-   
+
    //TLabel val = 0;
    unsigned x,y;
-   for (y=0;y<AImage.getYSize();++y)   
+   for (y=0;y<AImage.getYSize();++y)
       for (x=0;x<AImage.getXSize();++x)
       {
       }
@@ -38,16 +38,16 @@ void generateSquares(CImage2D & AImage, unsigned int AWidth)
 void generateLines(CImage2D & AImage, unsigned int AWidth)
 {
    if (!AImage.isOk()) return;
-   
+
    TLabel val = 0;
    unsigned x,y;
-   for (y=0;y<AImage.getYSize();++y)   
-   {   
+   for (y=0;y<AImage.getYSize();++y)
+   {
       for (x=0;x<AImage.getXSize();++x)
       {
          AImage.setPixel(x,y,y/val);
       }
-   }   
+   }
 }
 //******************************************************************************
 

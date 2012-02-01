@@ -42,7 +42,7 @@ CVertex::CVertex(TCoordinate ATab[2])
 {
   FCoord[0] = ATab[0];
   FCoord[1] = ATab[1];
- 
+
 }
 //------------------------------------------------------------------------------
 INLINE
@@ -50,7 +50,7 @@ CVertex::CVertex(const CVertex& AVertex)
 {
   FCoord[0] = AVertex.FCoord[0];
   FCoord[1] = AVertex.FCoord[1];
- 
+
 }
 //------------------------------------------------------------------------------
 //INLINE
@@ -166,7 +166,7 @@ CVertex CVertex::divide(const CVertex& AVector) const
 {
   assert(!isZero(AVector.getX()));
   assert(!isZero(AVector.getY()));
- 
+
 
   return CVertex(getX()/AVector.getX(),
 		 getY()/AVector.getY());

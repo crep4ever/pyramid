@@ -44,7 +44,7 @@ namespace Map2d
     // todo: ne pas faire une quantif à chaque fois !!
     FData = AImage->quantization(ANbClasses);
   }
-  
+
   //******************************************************************************
   //Accesseurs
   //******************************************************************************
@@ -55,7 +55,7 @@ namespace Map2d
   {
     CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(FRegion1);
     CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(FRegion2);
-    
+
     unsigned int pos1 = region1->getFirstPixel().getX() * region1->getFirstPixel().getY() * 3;
     unsigned int pos2 = region2->getFirstPixel().getX() * region2->getFirstPixel().getY() * 3;
 

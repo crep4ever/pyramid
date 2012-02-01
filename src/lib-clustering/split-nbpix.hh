@@ -24,7 +24,7 @@
 //******************************************************************************
 namespace Map2d{
 
-  /** 
+  /**
    * Split une région suivant sa taille en pixels
    */
 
@@ -33,21 +33,21 @@ namespace Map2d{
   {
   protected:
     unsigned int FThreshold; //Le seuil (en nombre de pixels)
-    
+
   public:
     // Constructeurs
     CSplitNbPix(); //par défaut
     CSplitNbPix(CRegion* ARegion, unsigned int ANbPix);
-  
+
     // Destructeur
     virtual ~CSplitNbPix();
-  
+
     unsigned int getThreshold() const;
     void setThreshold(unsigned int AThreshold);
 
-//******************************************************************************	  
+//******************************************************************************
 //Méthodes
-//******************************************************************************    
+//******************************************************************************
 
   /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();

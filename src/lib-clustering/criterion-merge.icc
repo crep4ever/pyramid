@@ -11,7 +11,7 @@ namespace Map2d
     FRegion1 ( NULL),
     FRegion2 ( NULL )
   {}
-  
+
   //------------------------------------------------------------------------------
   INLINE
   CCriterionMerge::~CCriterionMerge(){}
@@ -22,11 +22,11 @@ namespace Map2d
     FRegion1 = ARegion1;
     FRegion2 = ARegion2;
   }
-  
+
   //******************************************************************************
   //Accesseurs
   //******************************************************************************
-  
+
   INLINE
   CRegion* CCriterionMerge::getRegion1() const
   { return FRegion1; }

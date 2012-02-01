@@ -45,9 +45,9 @@ class QListWidget;
 class CMainWindow;
 class CFileChooser;
 
-/** 
+/**
  * \file pyramid.hh
- * \class CControler "controler.hh"  
+ * \class CControler "controler.hh"
  * \author Romain Goffe
  * \brief CControlerPyramid is a controler for tiled top-down pyramids
  */
@@ -63,7 +63,7 @@ class CControler : public QObject
     Q_PROPERTY(int nbLevels
 	       READ nbLevels
 	       WRITE setNbLevels)
-    
+
     Q_PROPERTY(QList<QVariant> merge
 	       READ merge
 	       WRITE setMerge)
@@ -71,7 +71,7 @@ class CControler : public QObject
     Q_PROPERTY(int tileWidth
 	       READ tileWidth
 	       WRITE setTileWidth)
-  
+
     Q_PROPERTY(int tileHeight
 	       READ tileHeight
 	       WRITE setTileHeight)
@@ -95,14 +95,14 @@ class CControler : public QObject
     Q_PROPERTY(int detectFictiveBordersMode
 	       READ detectFictiveBordersMode
 	       WRITE setDetectFictiveBordersMode)
-  
+
     public:
-  /// Constructor 
+  /// Constructor
     CControler( CMainWindow * parent );
 
   /// Destructor
   virtual ~CControler();
-  
+
   /// read settings of the scene
   virtual void readSettings();
 
@@ -182,7 +182,7 @@ public slots:
 
   /// setter on the image name property
   void setImageFilename(const QString & str);
- 
+
   /// Nombre de régions dans un niveau de la pyramide
   /// @param ALevel: le niveau
   uint getNbRegions(int ALevel) const;
@@ -204,7 +204,7 @@ public slots:
   void save(const QString & path);
 
   /// Draw a pyramid for svg export
-  //void drawImage();  
+  //void drawImage();
 
 
   /// svg export of the pyramid

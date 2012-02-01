@@ -28,7 +28,7 @@ using namespace __gnu_pbds;
 //******************************************************************************
 
 template< typename TElement >
-class EdgeComp 
+class EdgeComp
 {
 public:
   bool operator()(const TElement e1, const TElement e2) const;
@@ -50,18 +50,18 @@ struct HeapIndex
 };
 
 template< typename TElement >
-class Heap 
+class Heap
 {
 public:
   /**
-   * @brief Push an edge in the heap 
+   * @brief Push an edge in the heap
    * If the edge is already in, this is a no-op.
    * @param _edge the edge to push
    */
   void push(TElement _edge);
-    
+
   /**
-   * @brief Returns the top of the heap 
+   * @brief Returns the top of the heap
    * @return the edge with the minimum weight
    */
   inline TElement top() const {
@@ -131,7 +131,7 @@ void Heap<TElement>::push(TElement _edge)
 
   // Push the int into the priority queue, and store a point_iterator to it.
   typename ThinHeap<TElement>::Type::point_iterator it = heap.push(_edge);
-  
+
   try
     {
       // Now make the map associate the int to the point_iterator.
@@ -170,7 +170,7 @@ inline
 bool Heap<TElement>::modify(TElement _edge)
 {
   typename HeapIndex<TElement>::Type::point_iterator it = index.find(_edge);
-    
+
   // If the edge is not in the map, this is a no-op.
   if (it == index.end())
     return false;
@@ -183,16 +183,16 @@ bool Heap<TElement>::modify(TElement _edge)
 
 template< typename TElement >
 inline
-bool Heap<TElement>::empty() const 
+bool Heap<TElement>::empty() const
 {
-  return heap.empty(); 
+  return heap.empty();
 }
 
 template< typename TElement >
 inline
-size_t Heap<TElement>::size() const 
+size_t Heap<TElement>::size() const
 {
-  return heap.size(); 
+  return heap.size();
 }
 
 template< typename TElement >

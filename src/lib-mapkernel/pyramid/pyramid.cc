@@ -76,7 +76,7 @@ CPyramid::CPyramid(const std::string & AFilename):
 
 //******************************************************************************
 CPyramid::~CPyramid()
-{ 
+{
   //std::cout<<"[destructeur] CPyramid \n";
   //for(uint i=0; i<nbLevels(); ++i)
   //  level(i)->unloadAllTiles();
@@ -98,31 +98,31 @@ void CPyramid::build()
   //std::cout<<"[start] CPyramid::buildPyramid \n";
   print();
   FImage->open();
-  
+
   for(uint k=0; k<nbLevels(); ++k)
     addLevel();
-  
+
   level(0)->createTopLevel();
   for(uint k=1; k<nbLevels(); ++k)
-    level(k)->extract((ExtractMode) extractMode(), 
+    level(k)->extract((ExtractMode) extractMode(),
 		      (SegmentationMode) segmentationMode(),
 		      (ProjectionMode) projectionMode(),
 		      (FocusAttentionMode) focusAttentionMode(),
 		      (DetectFictiveBordersMode) detectFictiveBordersMode());
-      
+
   FImage->unload();
   std::cout<<std::endl<<"success"<<std::endl;
   //std::cout<<"[end] CPyramid::buildPyramid \n";
 }
 //------------------------------------------------------------------------------
-void CPyramid::addLevel() 
+void CPyramid::addLevel()
 {
   //std::cout<<" [start] CPyramid::addLevel"<<std::endl;
   CLevel* lvl = new CLevel();
-  CLevel* last = NULL;    
+  CLevel* last = NULL;
   if(!levels().empty())
     last = level(levels().size()-1);
-    
+
   lvl->setImage(image());
   lvl->setDepth(levels().size());
   lvl->setMergeThreshold( mergeThresholds()[lvl->depth()] );
@@ -172,7 +172,7 @@ void CPyramid::linkTilesUpDown()
 	{
 	  CTile* res =  level(k)->loadTile( CPoint2D(i,j) );
 	  std::deque<CTile*>::iterator it2;
-	    
+
 	  //si la tuile est chargée, on les relie, sinon, on fait rien
 	  //TileUp
 	  if(res->FProperties->up != 0)
@@ -182,7 +182,7 @@ void CPyramid::linkTilesUpDown()
 		  linkTileUpDown(*it2,res);
 		  break;
 		}
-	    
+
 	  //TileDown
 	  if(res->FProperties->down != 0)
 	    for(it2=level(k+1)->tiles().begin(); it2!=level(k+1)->tiles().end(); ++it2)
@@ -211,7 +211,7 @@ void CPyramid::open(const std::string & APath)
 
   importImTiff(".//output//image.tif");
   loadAllTiles();
-  
+
   //std::cout<<" taille de la pyramide ouverte = "<<FTiles.size()<<" tuiles."<<std::endl;
 }
 //------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ void CPyramid::copyImageInWorkingDirectory(const std::string & AImagePath, const
 //------------------------------------------------------------------------------
 void CPyramid::save(const std::string & APath)
 {
-  std::ostringstream command;  
+  std::ostringstream command;
   command<<"cp .//output//* "<<APath<<" ;";
   UNUSED(system(command.str().c_str()));
 }
@@ -248,7 +248,7 @@ void CPyramid::exportData()
   UNUSED(system("rm -rf .//result//* ; "));
   UNUSED(system("mv .//output// .//result// ;"));
 }
- 
+
 
 //******************************************************************************
 // Opérations de contrôle et vérification
@@ -263,11 +263,11 @@ unsigned long int CPyramid::getMemoryForPyramid() const
 
 //------------------------------------------------------------------------------
 void CPyramid::printInfosMemory() const
-{  
+{
   /*
     std::cout<<" ************************************************************* \n";
     std::cout<<"\n Memory: \n"<<" Pyramide: "<<getMemoryForPyramid()<<"\n";
-  
+
     // On parcours toutes les tuiles chargées en mémoire
     //std::vector<CTile*>::iterator it;
     std::deque<CTile*>::iterator it;
@@ -275,12 +275,12 @@ void CPyramid::printInfosMemory() const
     for( it = FTiles.begin(); it != FTiles.end(); ++it )
     {
     (*it)->printInfosMemory();
-    total = total + (*it)->getMemoryForTile() + 
+    total = total + (*it)->getMemoryForTile() +
     (*it)->getMemoryForMap() +
-    (*it)->getMemoryForInclusionTree() + 
+    (*it)->getMemoryForInclusionTree() +
     (*it)->getMemoryForKhalimsky();
     }
-  
+
     std::cout<<"\n Total : "<<total;
     std::cout<<"\n ************************************************************* \n";
   */
@@ -296,12 +296,12 @@ uint CPyramid::getMemoryForLocalPyramid() const
 
   for( it = FTiles.begin(); it != FTiles.end(); ++it )
   {
-  total = total + (*it)->getMemoryForTile() + 
+  total = total + (*it)->getMemoryForTile() +
   (*it)->getMemoryForMap() +
-  (*it)->getMemoryForInclusionTree() + 
+  (*it)->getMemoryForInclusionTree() +
   (*it)->getMemoryForKhalimsky();
   }
-  
+
   //std::cout<<" Nb de tuiles en mémoire: "<<FTiles.size()<<" Memory: "<<total<<"\n";
   return total;
   */
@@ -330,7 +330,7 @@ uint CPyramid::nbRegions()
 
 //------------------------------------------------------------------------------
 void CPyramid::totalMemoryRequired() const
-{ 
+{
   /*
   //std::cout<<" ************************************************************* \n";
   uint total = 0;
@@ -344,11 +344,11 @@ void CPyramid::totalMemoryRequired() const
   ++count;
   tmpTile = loadTile(i,j,k);
   assert(tmpTile!=NULL);
-  total = total + (tmpTile)->getMemoryForTile() + 
+  total = total + (tmpTile)->getMemoryForTile() +
   (tmpTile)->getMemoryForMap() +
-  (tmpTile)->getMemoryForInclusionTree() + 
+  (tmpTile)->getMemoryForInclusionTree() +
   (tmpTile)->getMemoryForKhalimsky();
-  unloadTile(i,j,k);	  
+  unloadTile(i,j,k);
   }
   std::cout<<" Nb de tuiles dans la pyramide: "<<count<<" Memory: "<<total<<"\n";
   //std::cout<<" ************************************************************* \n";

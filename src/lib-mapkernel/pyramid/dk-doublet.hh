@@ -33,12 +33,12 @@
    */
   class CDkDoublet : public CDoublet
   {
-   
+
   protected:
     float FWeight;
     CDkDoublet*  FPrev;
 
-  public:    
+  public:
     /// Constructeur
     CDkDoublet(const CDkDoublet & ADkDoublet);
     CDkDoublet(const CDoublet & ADoublet);
@@ -50,7 +50,7 @@
     float weight() const;
     void setWeight(float AWeight);
     void updateWeight(float AValue, Heap<CDkDoublet*> & AHeap);
-    
+
     CDkDoublet* prev() const;
     void setPrev(CDkDoublet* APrev);
 
@@ -58,7 +58,7 @@
     bool operator == (const CDkDoublet & ADoublet) const;
     bool operator != (const CDkDoublet & ADoublet) const;
     bool operator < (const CDkDoublet & ADoublet) const;
-    
+
     friend std::ostream& operator<<(std::ostream& AStream,
 				    const CDkDoublet& ADoublet);
   };

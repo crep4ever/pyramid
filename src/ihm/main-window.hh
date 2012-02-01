@@ -23,7 +23,7 @@
 #include <QtGui>
 //******************************************************************************
 
-/** 
+/**
  * \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
  */
@@ -36,11 +36,11 @@ class CPanel;
 class CMainWindow : public QMainWindow
 {
   Q_OBJECT
-  
+
   public:
-  /// Constructor 
+  /// Constructor
   CMainWindow();
-  
+
   /// Destructor
   ~CMainWindow();
 
@@ -108,7 +108,7 @@ private:
   void createMenus();
   void createToolBar();
 
-  QTabWidget* m_centralWidget;  
+  QTabWidget* m_centralWidget;
   QToolBar* m_toolBar;
   QProgressBar* m_progressBar;
   QLabel * m_zoomDisplay;
@@ -126,8 +126,8 @@ private:
   QAction *m_aboutAct;
   QAction *m_exitAct;
   QAction *m_addViewAct;
-  QAction *m_tileViewAct; 
-  QAction *m_cascadeViewAct; 
+  QAction *m_tileViewAct;
+  QAction *m_cascadeViewAct;
 
   // Pyramid actions
   QAction *m_newAct;

@@ -49,7 +49,7 @@ CCoveragePixelsRegion::~CCoveragePixelsRegion()
 void CCoveragePixelsRegion::operator++()
 {
     assert(cont());
-    
+
     // On commence par empiler les pixels voisin du pixel courant non
     // encore traités.
     CPixel next, findPixel;
@@ -168,7 +168,7 @@ void CCoverageAllPixels::operator++()
                 std::cerr << "Problème d'allocation mémoire "
                 << "dans CCoverageAllPixels" << std::endl;
             }
-               
+
             FNewRegion = true;
         }
     }

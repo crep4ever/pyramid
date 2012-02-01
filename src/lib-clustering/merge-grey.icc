@@ -27,7 +27,7 @@ namespace Map2d
 {
   INLINE
   CMergeGrey::CMergeGrey() :
-    CCriterionMerge (),  
+    CCriterionMerge (),
     FMergeThreshold  ( 0 ) // On ne merge pas les régions
   {}
   //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ namespace Map2d
     CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(FRegion2);
     //désactivé pour les bords fictifs
     //assert( region1->getRegionUp() ==region2->getRegionUp() );
-  
+
     int color1 = (int) region1->getAverageGrey(); //couleur de la région 1
     int color2 = (int) region2->getAverageGrey(); //couleur de la région 2
     unsigned int diff = (unsigned int ) abs(color1-color2);

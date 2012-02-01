@@ -26,7 +26,7 @@
 namespace Map2d
 {
   //class CSplitGrey;
-  /** 
+  /**
    * Détermine si l'on doit éclater une région d'après le critère topologique suivant:
    * on split la région si sa région mère a un trou (ie, il existe un first son)
    */
@@ -40,11 +40,11 @@ namespace Map2d
     CSplitHole(CRegion* ARegion);
     // Destructeur
     ~CSplitHole();
-    
-    //******************************************************************************	  
+
+    //******************************************************************************
     //Méthodes
-    //******************************************************************************    
-    
+    //******************************************************************************
+
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
   };

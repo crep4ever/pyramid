@@ -93,17 +93,17 @@ CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)
       downTile->toSVG();
       if(FClassif)
 	delete [] FClassif;
-      
+
       delete FMatrixPixelRegion;
       delete FMatrixLignelDart;
     }
-    
-  
+
+
   //  assert( downTile->isOk() );
   //  assert( downTile->checkGeometry() );
   //  assert( downTile->checkDarts() );
   //  assert( downTile->checkDartLinks() );
- 
+
   //std::cout<<"[end] CTile::copyLinkTile\n"<<std::endl;
 
   return downTile;
@@ -116,7 +116,7 @@ void CTile::copyRegions(CTile* ATileUp)
   uint ratioy = upRatioY();
 
   CPyramidalDart* upDart = NULL;
-  CPyramidalRegion* upRegion = NULL; 
+  CPyramidalRegion* upRegion = NULL;
   CPyramidalRegion* downRegion = NULL;
 
   // La région infinie
@@ -131,7 +131,7 @@ void CTile::copyRegions(CTile* ATileUp)
     {
       upDart = static_cast<CPyramidalDart*>( *it );
       upRegion = ATileUp->getRegion(upDart);
-      
+
       if(!upRegion->existRegionDown())
 	{
 	  downRegion = addMapRegion(upRegion);
@@ -139,10 +139,10 @@ void CTile::copyRegions(CTile* ATileUp)
 	}
       else
 	downRegion = upRegion->getRegionDown();
-      
+
       ATileUp->getDartDown(upDart)->setRegion(downRegion);
     }
-  
+
   // L'arbre d'inclusion
   for( CDynamicCoverageAllRegions it( ATileUp ); it.cont();++it )
     {
@@ -182,13 +182,13 @@ void CTile::copyDarts(CTile* ATileUp)
     {
       upDart = static_cast<CPyramidalDart*>( *it );
       downDart = static_cast<CPyramidalDart*>(addMapDart());
-      
+
       CDoublet up = upDart->doublet();
       CDoublet down( (up.getX())*ratiox, (up.getY())*ratioy, up.getLinel());
       setDoublet(downDart, down);
       ATileUp->linkDartUpDown(upDart, downDart);
     }
-    
+
   // Les coutures
   for( CDynamicCoverageAll it( ATileUp ); it.cont(); ++it )
     {
@@ -207,7 +207,7 @@ void CTile::copyKhalimsky(CTile* ATileUp)
 
   // Si la taille de la tuile est la même, on duplique
   if( ratiox==1 && ratioy==1 )
-    {  
+    {
       CKhalimsky* downKhalimsky = new CKhalimsky(*(ATileUp->getKhalimsky()));
       setKhalimsky(downKhalimsky);
     }
@@ -215,17 +215,17 @@ void CTile::copyKhalimsky(CTile* ATileUp)
     {
       CKhalimsky* khalimsky = new CKhalimsky(width(), height());
       CDoublet temp; CDoublet down;
-      
-      uint width = ATileUp->getKhalimsky()->getSizeX(); 
+
+      uint width = ATileUp->getKhalimsky()->getSizeX();
       uint height = ATileUp->getKhalimsky()->getSizeY();
-      
+
 
       for(uint y=0; y<height; ++y)
 	{
 	  temp.setY(y);
 	  for(uint x=0; x<width; ++x)
 	    {
-	      temp.setX(x); 
+	      temp.setX(x);
 	      if( ATileUp->isPCell(temp) )
 		{
 		  down.setX(x*ratiox); down.setY(y*ratioy);
@@ -266,16 +266,16 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
   CDart*    currentDart   = NULL;
   CRegion*  currentRegion = NULL;
   CPyramidalRegion*  tempRegion    = NULL;
-   
+
   std::deque<CPyramidalRegion*> initialRegions; // liste de toutes les régions du niveau avant le split
   std::deque<CPyramidalRegion*> newRegions;     // liste actualisée des régions du niveau
-  std::deque<CPyramidalRegion*> allRegions;     // liste finale des régions       
+  std::deque<CPyramidalRegion*> allRegions;     // liste finale des régions
   std::deque<CDart*> newDarts;         // liste des brins correspondant aux arêtes insérées
-  std::stack<CRegion*> toDelete;       // liste des régions qui ont été splittées/refusionnées à supprimer   
-   
+  std::stack<CRegion*> toDelete;       // liste des régions qui ont été splittées/refusionnées à supprimer
+
   std::deque<CPyramidalRegion*>::iterator it;
   std::deque<CPyramidalRegion*>::iterator it2;
-  
+
   //On récupère toutes les régions du niveau
   for( CDynamicCoverageAllRegions it( this ); it.cont();++it )
     {
@@ -284,21 +284,21 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
     }
 
   createChainRegionList(initialRegions);
-  
+
   for(it=initialRegions.begin(); it!=initialRegions.end(); ++it)
     {
       currentRegion = *it;
       currentDart = currentRegion->getRepresentativeDart();
-      
+
       if( isRegionToSplit(currentRegion, AFocusAttentionMode) )
 	{
 	  newDarts.clear();
 	  splitRegion(currentDart, newDarts);
-	  
+
 	  if(!newDarts.empty())
 	    {
 	      createNewRegions(currentRegion, newDarts, newRegions);
-	      
+
 	      it2= newRegions.begin();
 	      tempRegion = *it2;
 	      for( ++it2 ; it2!=newRegions.end(); ++it2 )
@@ -309,8 +309,8 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
 	      updateRegionList(currentRegion, newRegions);
 	      static_cast<CPyramidalRegion*>(currentRegion)->getRegionUp()
 		->setRegionDown(tempRegion);
-	      
-	      //On indique que la région a été traitée et qu'il faudra la supprimer        
+
+	      //On indique que la région a été traitée et qu'il faudra la supprimer
 	      toDelete.push(currentRegion);
 
 	      // On merge
@@ -326,48 +326,48 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
   while( region != NULL )
     {
       region->setFather( NULL );
-      allRegions.push_back(static_cast<CPyramidalRegion*>(region));     
+      allRegions.push_back(static_cast<CPyramidalRegion*>(region));
       region = region->getFirstSon();
     }
 
-  std::sort<std::deque<CPyramidalRegion*>::iterator>( allRegions.begin(), 
+  std::sort<std::deque<CPyramidalRegion*>::iterator>( allRegions.begin(),
 						      allRegions.end(),
-						      CLessRegionFirstPixel() );    
+						      CLessRegionFirstPixel() );
   allRegions.insert(allRegions.begin(), getInclusionTreeRoot());
   createChainRegionList(allRegions);
-  
+
   //Suppression des régions qui ont été traitées
   while( !toDelete.empty() )
     {
       region = toDelete.top();
       toDelete.pop();
-      
-      region->setFirstSon(NULL);  
+
+      region->setFirstSon(NULL);
       region->setBrother(NULL);
       region->setNextSameCC(NULL);
       delRegion(region);
     }
   relabelDarts();
-  
+
   //std::cout<<" end split"<<std::endl;
 }
 
 
-//******************************************************************************	  
+//******************************************************************************
 // Opérations de split
-//******************************************************************************  
+//******************************************************************************
 
 void CTile::splitEdge( CDart* ADart )
 {
   //std::cout<<"[start] splitEdge"<<std::endl;
   assert( ADart != NULL );
-  
+
   CDart*   dart = ADart;
   CDoublet doublet = getDoublet( dart );
-  
+
   if( isEdgeLoop( dart ) )
     FKhalimsky->setPCell( doublet, true );
-  
+
   // On suit le plongement de l'arête. Tant que le prochain pointel n'est pas
   // actif (i.e. il n'y a pas de sommet), on poursuit la division.
   // Si le beta2 était représentant, on s'assure de sa position après le split
@@ -380,15 +380,15 @@ void CTile::splitEdge( CDart* ADart )
       CDoublet min = getDoublet(rep);
       uint minY = min.getY();
       CDoublet tmp;
-      
+
       while( !isPCell( doublet.getNextPointel() ) )
 	{
 	  dart = insertVertexOnEdge( dart );
 	  doublet = getDoublet(dart);
 	  tmp = getDoublet(beta21(dart));
-	  uint tmpY = tmp.getY(); 
-	  
-	  if( (tmpY < minY) || 
+	  uint tmpY = tmp.getY();
+
+	  if( (tmpY < minY) ||
 	      (tmpY == minY && tmp.getX() < min.getX()) )
 	    {
 	      min = tmp;
@@ -417,7 +417,7 @@ CDart* CTile::insertEdge( CDart* ADart )
   CDart* b  = ADart;
   CDart* b0 = beta0(ADart);
   CDoublet t  = getDoublet(b);
-  
+
   t.setPrevLinel();
   assert(!isLCell(t));
   CDoublet t1 = t.getNextPointel();
@@ -425,11 +425,11 @@ CDart* CTile::insertEdge( CDart* ADart )
   // On allume le pointel/lignel de l'arête pendante que l'on insère.
   FKhalimsky->setLCell(t1,true);
   FKhalimsky->setPCell(t1,true);
-  
+
   // Création des nouveaux brins de l'arête.
   CDart* j1 = addMapDart( t, getRegion(b) );
   CDart* j  = addMapDart( t1,getRegion(b) );
-  
+
   // Couture de l'arête elle même.
   linkBeta1( j1 , j  );
   linkBeta2( j , j1  );
@@ -444,19 +444,19 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
 {
   //std::cout<<"[start] insertVertexOnEdge"<<std::endl;
   assert( ADart != NULL );
-   
+
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(ADart);
   CPyramidalDart* upDart = dart->getDartUp();
 
   CDart* i   = ADart;
   CDart* i1  = NULL;
-  
+
   CDart* i2  = NULL;
   CDart* i21 = NULL;
 
   CDoublet t1 = ADoublet1;
   CDoublet t2 = ADoublet2;
-  
+
   // Mise en place des nouveaux brins.
   i1  = beta1(i);
   i2  = beta2(i);
@@ -471,7 +471,7 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
       j ->setDartUp(upDart);
       j2->setDartUp(upDart->getBeta2());
     }
-  
+
   linkBeta1(i , j ); linkBeta1(j , i1 );
   linkBeta1(i2, j2); linkBeta1(j2, i21);
   linkBeta2(i , j2); linkBeta2(j , i2);
@@ -498,7 +498,7 @@ void CTile::splitAllEdges()
 	// Empile toutes les arêtes.
 	toTreat.push(*it);
       }
-    
+
   while( !toTreat.empty() )
     {
       unmarkOrbit( toTreat.top(), ORBIT_EDGE, mTreated );
@@ -506,7 +506,7 @@ void CTile::splitAllEdges()
       splitEdge( toTreat.top() );
       toTreat.pop();
     }
-   
+
   freeMark(mTreated);
   //std::cout<<"[end] splitAllEdges"<<std::endl;
 }
@@ -517,23 +517,23 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
 
   CPyramidalRegion* current = static_cast<CPyramidalRegion*>(ARegion);
   std::stack<CDart*> dStack; //La pile des brins correspondant aux arêtes de la région
-   
+
   // On récupère l'ensemble des brins appartenant aux bords externe/internes de la région
   // en utilisant les relations d'inclusion du niveau supérieur
   // bord externe
   for( CDynamicCoverage1 it( this, current->getRepresentativeDart() ) ; it.cont() ; ++it )
     dStack.push(*it);
-  
+
   // bords internes
   current = current->getRegionUp();
-   
+
   if( current->existSon())
     {
       CPyramidalRegion* son = current->getFirstSon();
       CDart* dart = beta2(son->getRegionDown()->getRepresentativeDart());
       for(CDynamicCoverage1 it(this, dart); it.cont(); ++it)
 	dStack.push(*it);
-      
+
       current = son;
 
       while( current->existBrother() )
@@ -542,12 +542,12 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
 	  CDart* dart2 = beta2(brother->getRegionDown()->getRepresentativeDart());
 	  for(CDynamicCoverage1 it(this, dart2); it.cont(); ++it )
 	    dStack.push(*it);
-	  
+
 	  current = brother;
 	}
     }
 
-  // Division de l'arête  
+  // Division de l'arête
   while(!dStack.empty())
     {
       splitEdge( dStack.top() );
@@ -567,29 +567,29 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
   assert( isRepresentativeDart(ADart) );
   assert( !getRegion(ADart)->isInfiniteRegion() );
   assert(toLabel.empty());
-  
+
   std::vector<uint> tab;
   getRegionBoundingBox(ADart, tab);
-  
+
   CArray* array = new CArray(tab[0], tab[1], tab[2]-tab[0]+1, tab[3]-tab[1]+1);
   std::stack< CDart* > toTreat;
 
   // Initialisation du tableau de sommets :
   // On remplit le tableau avec tous les brins du bord de la face à diviser.
-  
+
   // bord externe
   for(CDynamicCoverage1 it(this, ADart); it.cont(); ++it)
     {
       array->setDart(*it);
       toTreat.push(*it);
     }
-  
+
   // bords internes
   CPyramidalRegion* region = static_cast<CPyramidalRegion*>(getRegion(ADart))->getRegionUp();
   CPyramidalRegion* firstSon = NULL;
   CPyramidalRegion* brother = NULL;
   assert( region != NULL );
-  
+
   if(region->existSon())
     {
       firstSon = region->getFirstSon();
@@ -608,47 +608,47 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
 	    {
 	      array->setDart(*it);
 	      toTreat.push(*it);
-	    } 
+	    }
 	  region = brother;
 	}
     }
-  
+
   // Traitement des brins désignant les arêtes à insérer :
-  // On cherche à déterminer l'existence d'une arête perpendiculaire au brin 
+  // On cherche à déterminer l'existence d'une arête perpendiculaire au brin
   // actuellement traité.
   CDart* currentDart = NULL;
   CDart* newDart = NULL;
   CDoublet currentDoublet;
   CDoublet testDoublet;
-  
+
   assert(!toTreat.empty());
   while(!toTreat.empty())
     {
       currentDart = toTreat.top();
-      toTreat.pop();    
+      toTreat.pop();
       currentDoublet = getDoublet( currentDart );
       //assert(isLCell(currentDoublet));
-    
+
       // Calcul du doublet correspondant à l'arête que l'on va essayer d'ajouter
       testDoublet = currentDoublet.getPrevLinel();
-    
+
       if(!isLCell(testDoublet))
 	{
 	  // Insertion de l'arête incidente au sommet traité
 	  newDart = insertEdge( currentDart );
-	
+
 	  // Ajout des couples brins/doublet dans le tableau
 	  array->setDart(newDart);
 	  array->setDart(beta2(newDart));
-      	      	  
+
 	  // Ajout des brins de l'arête nouvellement insérée dans la pile
 	  // des brins à traiter.
 	  assert( newDart != NULL );
 	  assert( beta2(newDart) != NULL );
-	
+
 	  toTreat.push( newDart );
 	  toTreat.push( beta2(newDart) );
-	
+
 	  // On ajoute un des brins de l'arête à la pile des brins à traiter
 	  // lorsque nous allons étiqueter les faces.
 	  toLabel.push_front( newDart );
@@ -657,9 +657,9 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
 	{
 	  CDart* tmp = array->getDart( testDoublet.getNextPointel() );
 	  assert(tmp != NULL);
-	
+
 	  linkBeta1( beta2(currentDart), beta1(tmp) );
-	  linkBeta1( tmp, currentDart );     
+	  linkBeta1( tmp, currentDart );
 	}
     }
 
@@ -667,13 +667,13 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
   for( i=toLabel.begin(); i != toLabel.end(); ++i )
     {
       CDart* b1 = *i;
-      CDart* b2 = beta2(b1);        	  
+      CDart* b2 = beta2(b1);
 
       if( !(getRegion(b2)->getFather() == getRegion(b1)) )
 	{
 	  CDoublet d1 = getDoublet(b1);
 	  CDoublet d2 = d1.getNextPointel();
-	    
+
 	  if( b1!=NULL )
 	    {
 	      CDoublet d3 = d1.getPrevLinel().getNextPointel();
@@ -684,24 +684,24 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
 	      linkBeta1(b3, b1);
 	      linkBeta1(b1, b5);
 	    }
-	  
+
 	  if( b2!=NULL )
 	    {
 	      CDoublet d4 = d1.getNextLinel();
 	      CDoublet d6 = d2.getPrevLinel().getNextPointel();
 	      CDart* b4 = array->getDart(d4);
-	      CDart* b6 = array->getDart(d6); 
+	      CDart* b6 = array->getDart(d6);
 	      linkBeta1(b2, b4);
 	      linkBeta1(b6, b2);
 	    }
 	}
     }
-    
+
   delete array;
 
   // Vérification de la topologie de la carte produite
   //assert(checkTopology()); //assert très couteux
-  
+
   //std::cout<<"[end] CTile::splitRegion"<<std::endl;
 }
 
@@ -715,13 +715,13 @@ void CTile::createNewRegions(CRegion* ARegion,
   assert(! ADartList.empty() );
   ARegionList.clear();
 
-  std::deque<CDart*>::iterator it;  
-  
+  std::deque<CDart*>::iterator it;
+
   // Reconstruction du marquage des faces
   CPyramidalRegion* region = NULL;
   CPyramidalRegion* tmp = static_cast<CPyramidalRegion*>(ARegion);
   CDart* currentDart = NULL;
- 
+
   IM_Pixel pix;
   for(it=ADartList.begin(); it != ADartList.end(); ++it)
     {
@@ -760,7 +760,7 @@ void CTile::createChainRegionList(std::deque<CPyramidalRegion*>& AList)
 {
   //std::cout<<"[start] CTile::createChainRegionList"<<std::endl;
 
-  // On crée la liste chainée des régions : 
+  // On crée la liste chainée des régions :
   // - 1er élément :   région infinie
   // - getFirstSon() : région suivante
   // - getBrother() :  région précédente
@@ -772,22 +772,22 @@ void CTile::createChainRegionList(std::deque<CPyramidalRegion*>& AList)
   prev = *it;
   prev->setNextSameCC(prev);
   ++it;
-    
+
   for( ; it != AList.end(); ++it)
     {
       //Initialisation de toutes les régions en les faisant pointer sur elles-même
       (*it)->setNextSameCC(*it);
-      
+
       //On chaine la liste
       (*it)->setBrother(prev);
       prev->setFirstSon(*it);
       prev = *it;
     }
-    
+
   //Par défaut; l'élément précédent du 1er élément est le dernier de la liste
   (*AList.begin())->setBrother(prev);
   prev->setFirstSon(NULL);
-  
+
   //std::cout<<"[end] CTile::createChainRegionList"<<std::endl;
 }
 //------------------------------------------------------------------------------
@@ -796,29 +796,29 @@ void CTile::updateRegionList(CRegion* ARegion,
 {
   //std::cout<<"[start] CTile::updateRegionList"<<std::endl;
   createChainRegionList(ANewRegionList);
-    
+
   CRegion* begin = *ANewRegionList.begin();
-  CRegion* end   = begin->getBrother();    
-      
+  CRegion* end   = begin->getBrother();
+
   ARegion->getBrother()->setFirstSon(begin);
   begin->setBrother( ARegion->getBrother() );
   end->setFirstSon( ARegion->getFirstSon() );
-    
+
   if( end->getFirstSon() != NULL )
     end->getFirstSon()->setBrother(end);
   else
     FInclusionTreeRoot->setBrother(end);
-  
+
   //std::cout<<"[end] CTile::updateRegionList"<<std::endl;
 }
 
 
-//******************************************************************************	  
+//******************************************************************************
 //Opérations de merge
-//******************************************************************************  
+//******************************************************************************
 
 
-void CTile::merge(std::deque<CDart*>& toMerge, 
+void CTile::merge(std::deque<CDart*>& toMerge,
 		  const SegmentationMode & ASegmentationMode)
 {
   //std::cout<<"\n[start] CTile::merge"<<std::endl;
@@ -836,7 +836,7 @@ void CTile::merge(std::deque<CDart*>& toMerge,
       if( !isMarked(dart, toDelete ) && getDartUp(dart)==NULL )
 	{
 	  assert( getDartUp(beta2(dart))==NULL );
-	  
+
 	  parent1  = findRegionRoot(getRegion(dart));
 	  parent2  = findRegionRoot(getRegion(beta2(dart)));
 
@@ -848,7 +848,7 @@ void CTile::merge(std::deque<CDart*>& toMerge,
 	    }
 	}
     }
-  
+
   // Les fusions de multi-adjacence
   for( it=toMerge.begin(); it!=toMerge.end(); ++it)
     {
@@ -857,7 +857,7 @@ void CTile::merge(std::deque<CDart*>& toMerge,
  	{
  	  parent1  = findRegionRoot(getRegion(dart));
  	  parent2  = findRegionRoot(getRegion(beta2(dart)));
-	  
+
  	  if( parent1 == parent2 )
 	    {
 	      mergeEdgeRemoval( dart, toDelete );
@@ -865,12 +865,12 @@ void CTile::merge(std::deque<CDart*>& toMerge,
 	    }
  	}
     }
-  
+
   // La suppression des brins
   CDart * actu = NULL;
   for( it=toMerge.begin(); it!=toMerge.end(); )
     {
-      actu = *it; 
+      actu = *it;
       ++it;
 
       if ( isMarked(beta2(actu), toDelete) )
@@ -885,7 +885,7 @@ void CTile::merge(std::deque<CDart*>& toMerge,
 	  delMapDart(actu);
 	}
     }
-  
+
   freeMark(toDelete);
 
   //Controle des modifications
@@ -901,9 +901,9 @@ void CTile::merge()
   CDart* dart       = NULL;
   CRegion* parent1  = NULL;
   CRegion* parent2  = NULL;
-  int toDelete = getNewMark();   
+  int toDelete = getNewMark();
 
-  
+
   // Les fusions d'après le critère
   for( CDynamicCoverageAll it( this ); it.cont(); ++it )
     {
@@ -911,10 +911,10 @@ void CTile::merge()
       if( !isMarked(dart, toDelete ) && getDartUp(dart)==NULL )
 	{
 	  assert( getDartUp(beta2(dart))==NULL );
-	  
+
 	  parent1  = findRegionRoot(getRegion(dart));
 	  parent2  = findRegionRoot(getRegion(beta2(dart)));
-	  
+
 	  if( isRegionToMerge(parent1, parent2) )
 	    {
 	      unionRegionRoot(parent1, parent2);
@@ -923,7 +923,7 @@ void CTile::merge()
 	    }
 	}
     }
-  
+
   // Les fusions de multi-adjacence
   for( CDynamicCoverageAll it( this ); it.cont(); ++it )
     {
@@ -932,7 +932,7 @@ void CTile::merge()
  	{
  	  parent1  = findRegionRoot(getRegion(dart));
  	  parent2  = findRegionRoot(getRegion(beta2(dart)));
-	  
+
  	  if( parent1 == parent2 )
 	    {
  	      mergeEdgeRemoval( dart, toDelete );
@@ -940,12 +940,12 @@ void CTile::merge()
 	    }
  	}
     }
-  
+
   // La suppression des brins
   CDart * actu = NULL;
   for( CDynamicCoverageAll it( this ); it.cont();  )
     {
-      actu = *it; 
+      actu = *it;
       ++it;
       if ( isMarked(actu, toDelete) )
 	{
@@ -953,9 +953,9 @@ void CTile::merge()
 	  delMapDart(actu);
 	}
     }
-  
+
   freeMark(toDelete);
-  
+
   //Controle des modifications
   //assert( isMapOk() );
 
@@ -971,18 +971,18 @@ void CTile::mergeEdgeRemoval( CDart* ADart, int AMarkNumber )
   assert( !isFree0(ADart) );
 
   // Extinction du lignel
-  // Spécifique à la méthode du burst: 
-  // comme on a fait une région par pixel, 
+  // Spécifique à la méthode du burst:
+  // comme on a fait une région par pixel,
   // toutes les arêtes ont un plongement d'un seul linel
   FKhalimsky->setLCell(getDoublet(ADart),false);
-    
+
   // Extinction des pointels
   if( beta0(ADart)==beta2(ADart) )
     FKhalimsky->setPCell(getDoublet(ADart),false);
 
   if( beta1(ADart)==beta2(ADart) )
     FKhalimsky->setPCell(getDoublet(beta1(ADart)),false);
-      
+
   // La suppression effective.
   linkBeta1( beta20 (ADart), beta1  (ADart) );
   linkBeta1( beta0  (ADart), beta21 (ADart) );
@@ -996,7 +996,7 @@ void CTile::mergeEdgeRemoval( CDart* ADart, int AMarkNumber )
 }
 //------------------------------------------------------------------------------
 void CTile::extractVertexRemoval( CDart* ADart )
-{ 
+{
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(ADart);
   CPyramidalDart* tempDart  = static_cast<CPyramidalDart*>(beta21(ADart));
 

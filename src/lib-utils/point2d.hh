@@ -106,7 +106,7 @@ public:
    */
   uint getY() const;
   uint y() const;
-  
+
   /**
    * Accès en lecture à une composante du sommet.
    *
@@ -141,7 +141,7 @@ public:
    */
   void incY(uint AIncY);
 
- 
+
   /**
    * Change la valeur de la composante ADim du sommet.
    *
@@ -186,29 +186,29 @@ public:
 // @}
 // @name Constantes
 // @{
-  
+
 /**
  * Le sommet de cordonnées (0,0).
  */
 static const CPoint2D COORDINATE_ORIGIN(0,0);
-  
+
 /**
  * Le vecteur de composantes (1,0).
  */
 static const CPoint2D COORDINATE_OX(1,0);
-  
+
 /**
  * Le vecteur de composantes (0,1).
  */
 static const CPoint2D COORDINATE_OY(0,1);
-  
-  
+
+
 /** BASE
  * Les trois vecteurs de base OX et OY placés dans un tableau.
  */
-static const CPoint2D COORDINATE_BASE[2] = { COORDINATE_OX, 
+static const CPoint2D COORDINATE_BASE[2] = { COORDINATE_OX,
 					     COORDINATE_OY };
-  
+
 // @}
 
 //******************************************************************************

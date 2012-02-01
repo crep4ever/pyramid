@@ -31,7 +31,7 @@
 
 namespace Map2d
 {
-  /** 
+  /**
    * \file level.hh
    * \class CLevel "level.hh"
    * \author Romain Goffe
@@ -74,13 +74,13 @@ namespace Map2d
   private:
     // Iterateur pour le parcours des tuiles
     std::deque<CTile*>::iterator it;
-    
+
   public:
-    // Constructeurs    
+    // Constructeurs
     CLevel(); //par défaut
     // Destructeur
     virtual ~CLevel();
-    
+
     // Accesseurs
     std::deque<CTile*> tiles() const;
     void setTiles( std::deque<CTile*>& ATiles );
@@ -123,19 +123,19 @@ namespace Map2d
     CDart* delta2(CDart* ADart) const;
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Extraction
-    //******************************************************************************	    
+    //******************************************************************************
 
     void createTopLevel();
-    void extract(const ExtractMode & AExtractMode, 
-		 const SegmentationMode & ASegmentationMode, 
+    void extract(const ExtractMode & AExtractMode,
+		 const SegmentationMode & ASegmentationMode,
 		 const ProjectionMode & AProjectionMode,
 		 const FocusAttentionMode & AFocusAttentionMode,
 		 const DetectFictiveBordersMode & ADetectFictiveBordersMode);
 
     ///@return : memory
-    uint extractTile( const CPoint2D & APos, 
+    uint extractTile( const CPoint2D & APos,
 		      const SegmentationMode & ASegmentationMode,
 		      const ProjectionMode & AProjectionMode,
 		      const FocusAttentionMode & AFocusAttentionMode,
@@ -146,9 +146,9 @@ namespace Map2d
 
     //redéfinir le critère de split suivant la profondeur dans la pyramide
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Méthodes sur l'image
-    //******************************************************************************	    
+    //******************************************************************************
 
     /// Renseigne les données image d'une tuile en lisant l'image globale
     /// de la pyramide
@@ -185,9 +185,9 @@ namespace Map2d
     /// @return ratio en x,y entre le niveau suivant et ce niveau
     CPoint2D downRatios() const;
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Système de coordonnées pour les tuiles
-    //******************************************************************************	    
+    //******************************************************************************
 
     /// Abscisse maximum d'une tuile
     /// @param ATile: la tuile
@@ -220,7 +220,7 @@ namespace Map2d
 
     /// @return le point bas-droite
     CPoint2D tileBottomRight(CTile* ATile) const;
-    
+
     /// @return le point haut-droite
     CPoint2D tileTopRight(CTile* ATile) const;
 
@@ -250,15 +250,15 @@ namespace Map2d
     bool existTileTop (CTile* ATile) const;
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Extraction
-    //******************************************************************************	    
+    //******************************************************************************
 
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Opérations sur les tuiles
-    //******************************************************************************	    
+    //******************************************************************************
 
 
     /// Split d'une tuile par burst and merge
@@ -266,11 +266,11 @@ namespace Map2d
     /// Puis passe de fusion d'après merging_criterion
     /// @param ATile : la tuile
     ///@return : memory
-    uint burstAndMergeTile( const CPoint2D & APos, 
+    uint burstAndMergeTile( const CPoint2D & APos,
 			    const SegmentationMode & ASegmentationMode,
 			    const ProjectionMode & AProjectionMode,
 			    const FocusAttentionMode & AFocusAttentionMode,
-			    const DetectFictiveBordersMode & ADetectFictiveBordersMode );    
+			    const DetectFictiveBordersMode & ADetectFictiveBordersMode );
 
     /// Eclate tout le contour d'une tuile en brins unitaires
     /// @param ATile : la tuile
@@ -309,7 +309,7 @@ namespace Map2d
 
     /// Eclate les régions d'une tuile suivant le critère sélectionné
     /// @param Ai, Aj, Ak : les coordonnées de la tuile
-    void splitTile(const CPoint2D & APos, 
+    void splitTile(const CPoint2D & APos,
 		   const FocusAttentionMode & AFocusAttentionMode,
 		   const SegmentationMode & ASegmentationMode);
 
@@ -325,9 +325,9 @@ namespace Map2d
 
     void delTile(CTile* ATile);
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Swap/Load des tuiles
-    //******************************************************************************	    
+    //******************************************************************************
 
     /// Retourne la tuile de coordonnées (i,j)
     /// directement depuis le vecteur FTiles si elle est en mémoire ou
@@ -353,7 +353,7 @@ namespace Map2d
 
     /// Charge les propriétés de la tuile
     /// @param ATile : la tuile
-    /// @param Ai, Aj, Ak : les coordonnées de la tuile    
+    /// @param Ai, Aj, Ak : les coordonnées de la tuile
     void loadTileUpDown(CTile* ATile);
 
     /// Charge toutes les tuiles en mémoire
@@ -370,7 +370,7 @@ namespace Map2d
     /// unload the whole level
     void unload();
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Opérations de contrôle et de vérification
     //******************************************************************************
 
@@ -394,7 +394,7 @@ namespace Map2d
 
     void print();
   };
-  
+
 } // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("level.icc")

@@ -51,18 +51,18 @@ uint CImageTiff::depth() const
 }
 //------------------------------------------------------------------------------
 INLINE
-void CImageTiff::setDepth(uint ADepth) 
+void CImageTiff::setDepth(uint ADepth)
 {
    FDepth = ADepth;
 }
 //------------------------------------------------------------------------------
 INLINE
 TLabel CImageTiff::getPixelGreyValue(const IM_Pixel & APixel, GreyConvertMode AMethod) const
-{ 
+{
   switch(AMethod)
     {
     case Basic:
-      // conversion basique 
+      // conversion basique
       return 0.33*APixel.value[0] + 0.33*APixel.value[1] + 0.33*APixel.value[2];
 
     case Gamma:
@@ -70,7 +70,7 @@ TLabel CImageTiff::getPixelGreyValue(const IM_Pixel & APixel, GreyConvertMode AM
       return 0.299*APixel.value[0] + 0.587*APixel.value[1] + 0.114*APixel.value[2];
 
     case Natural:
-      // conversion vers niveaux de gris recommandation 709: couleurs naturelles 
+      // conversion vers niveaux de gris recommandation 709: couleurs naturelles
       return 0.2125*APixel.value[0] + 0.7154*APixel.value[1] + 0.0721*APixel.value[2];
 
     default:
@@ -86,8 +86,8 @@ void CImageTiff::getPixel(IM_Pixel & APixel, uint ADepth)
 }
 //------------------------------------------------------------------------------
 INLINE
-uint CImageTiff::getXSize(uint ADepth) 
-{  
+uint CImageTiff::getXSize(uint ADepth)
+{
   uint page = pageFromDepth(ADepth);
   return getPageWidth(page);
 }
@@ -124,15 +124,15 @@ uint CImageTiff::getNumberOfByte() const
 }
 //------------------------------------------------------------------------------
 INLINE
-bool CImageTiff::isPixelInImage(uint Ax, uint Ay, uint ADepth) 
+bool CImageTiff::isPixelInImage(uint Ax, uint Ay, uint ADepth)
 {
-  return Ax<width(ADepth) && Ay<height(ADepth); 
+  return Ax<width(ADepth) && Ay<height(ADepth);
 }
 //------------------------------------------------------------------------------
 INLINE
-bool CImageTiff::isPixelInImage(const IM_Pixel & APixel, uint ADepth) 
+bool CImageTiff::isPixelInImage(const IM_Pixel & APixel, uint ADepth)
 {
-  return APixel.x<width(ADepth) && APixel.y<height(ADepth); 
+  return APixel.x<width(ADepth) && APixel.y<height(ADepth);
 }
 
 //------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ void CImageTiff::unload()
 {
   for(unsigned short int i = 0; i<FNbPages; ++i)
     unLoad(i);
-  
+
   if(this!=NULL)
     close();
 }
@@ -176,7 +176,7 @@ uint8* CImageTiff::getDataQT()
 {
   IM_Pixel pix;
   unsigned long int n = 0;
-  
+
   uint8* data = new uint8[ nbCurrentBoxPixels() * 4 * sizeof(uint8) ];
   //uint8* data = new uint8[(xstop-xstart+1)*(ystop-ystart+1)*4*sizeof(uint8)];
   if(colorMode()==RGB)
@@ -209,12 +209,12 @@ uint8* CImageTiff::getDataQT()
       }
   else
     std::cout<<"CImageTiff::getAllDataFromModeQT error: unrecognized image mode"<<std::endl;
-  
+
   return data;
 }
 //------------------------------------------------------------------------------
 INLINE
-void CImageTiff::openPage(uint ADepth) 
+void CImageTiff::openPage(uint ADepth)
 {
   uint page = pageFromDepth(ADepth);
   open(page);
@@ -237,8 +237,8 @@ uint CImageTiff::getNbTilesHeight(uint ATileHeight, uint ADepth)
 }
 //------------------------------------------------------------------------------
 INLINE
-double CImageTiff::distance(const IM_Pixel & p, const IM_Pixel & q) 
-{ 
+double CImageTiff::distance(const IM_Pixel & p, const IM_Pixel & q)
+{
   if(colorMode()==RGB)
     return (double) sqrt( SQR(p.value[0]-q.value[0]) + SQR(p.value[1]-q.value[1]) + SQR(p.value[2]-q.value[2]) );
   else if(colorMode()==Grey)
@@ -248,7 +248,7 @@ double CImageTiff::distance(const IM_Pixel & p, const IM_Pixel & q)
 //------------------------------------------------------------------------------
 INLINE
 double CImageTiff::poids(const IM_Pixel & p, const IM_Pixel & q)
-{ 
+{
   if(colorMode()==RGB)
     {
       double pds,val;
@@ -256,14 +256,14 @@ double CImageTiff::poids(const IM_Pixel & p, const IM_Pixel & q)
       if (val<JND)
 	pds=1;
       else
-	// sqrt(3)*255 = distance MAX entre deux intensités 
+	// sqrt(3)*255 = distance MAX entre deux intensités
 	//de pixel sqrt(255*255+255*255+255*255)
 	pds=MAX(0,1-val/(sqrt(3)*255));
       return pds;
     }
   else if(colorMode()==Grey)
     return 1/(distance(p,q) + epsilon);
-  
+
   assert(false); return 0;
 }
 
@@ -281,7 +281,7 @@ void CImageTiff::moveClasses(uint8* data, uint ASize, uint dim)
 
       if(labels.find( key ) == labels.end())
 	labels[key] = ++value;
-      
+
       if(labels[key]>dim)
 	labels[key]=dim;
 
@@ -294,15 +294,15 @@ INLINE
 void CImageTiff::mergeClasses(int cl1, int cl2, uint8* data, uint ASize)
 {
   for(uint i=0; i<ASize; ++i)
-    if (data[i] == cl2) 
+    if (data[i] == cl2)
       data[i] = cl1;
 }
 
 //------------------------------------------------------------------------------
 INLINE
-void CImageTiff::regularization(int nb_iteration, 
-				int pp, 
-				double lambda, 
+void CImageTiff::regularization(int nb_iteration,
+				int pp,
+				double lambda,
 				int voisinage)
 {
   switch(colorMode())
@@ -349,7 +349,7 @@ void CImageTiff::getKmeansData(KMdata& data)
 INLINE
 void CImageTiff::getKmeansDataGrey(KMdata& data)
 {
-  IM_Pixel pix; 
+  IM_Pixel pix;
   uint i = 0;
   for(uint y=ystart(); y<ystop(); ++y)
     {
@@ -369,7 +369,7 @@ void CImageTiff::getKmeansDataGrey(KMdata& data)
 INLINE
 void CImageTiff::getKmeansDataRGB(KMdata& data)
 {
-  IM_Pixel pix; 
+  IM_Pixel pix;
   uint i = 0;
   for(uint y=ystart(); y<ystop(); ++y)
     {
@@ -446,9 +446,9 @@ uint CImageTiff::nbCurrentBoxPixels() const
 }
 
 /*
-void CImageTiff::getData(const IM_Box& a_Box, 
+void CImageTiff::getData(const IM_Box& a_Box,
 			 CMatrix* data,
-			 const uint a_Depth, 
+			 const uint a_Depth,
 			 const DataReadMode & a_mode)
 {
   IM_Pixel pix;
@@ -458,9 +458,9 @@ void CImageTiff::getData(const IM_Box& a_Box,
   ystart = (uint) ABox.YTop;
   xstop  = (uint) ABox.XBtm;
   ystop  = (uint) ABox.YBtm;
-  
+
   uint8* data = new uint8[(xstop-xstart+1)*(ystop-ystart+1)*4*sizeof(uint8)];
-  
+
   if(colorMode()==RGB)
     for( uint y = ystart; y < ystop; ++y)
       {
@@ -491,7 +491,7 @@ void CImageTiff::getData(const IM_Box& a_Box,
       }
   else
     std::cout<<"CImageTiff::getAllDataFromModeQT error: unrecognized image mode"<<std::endl;
-  
+
   return data;
 }
 

@@ -26,14 +26,14 @@
 Q_DECLARE_METATYPE(CControler*)
 
 /// Helper function that converts type to script value
-QScriptValue controlerToScriptValue( QScriptEngine * engine, 
+QScriptValue controlerToScriptValue( QScriptEngine * engine,
 				     CControler * const & in )
-{ 
-  return engine->newQObject(in); 
+{
+  return engine->newQObject(in);
 }
 void controlerFromScriptValue( const QScriptValue & object,
 			       CControler * & out )
-{ 
+{
   out = qobject_cast<CControler*>(object.toQObject());
 }
 //-----------------------------------------------------------------------------
@@ -44,12 +44,12 @@ CScriptEngine::CScriptEngine( QObject * AParent )
 {
   QScriptValue pyramid = newQObject( new CControler(NULL) );
   globalObject().setProperty("pyramid", pyramid );
-  
+
   // Register CControler * as a type for the script engine
-  qScriptRegisterMetaType( this, 
-			   controlerToScriptValue, 
+  qScriptRegisterMetaType( this,
+			   controlerToScriptValue,
 			   controlerFromScriptValue );
-  
+
 }
 //-----------------------------------------------------------------------------
 CScriptEngine::~CScriptEngine()
@@ -69,7 +69,7 @@ void CScriptEngine::execute( QTextStream & stream, const QString & filename )
   if( hasUncaughtException() )
     {
       int line = uncaughtExceptionLineNumber();
-      qDebug() << "error at " << filename << ":"<< line << ": " 
+      qDebug() << "error at " << filename << ":"<< line << ": "
 	       << result.toString();
     }
 }

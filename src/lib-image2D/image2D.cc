@@ -207,7 +207,7 @@ TLabel CImage2D::getMinLabel() const
 { return FMinLevel; }
 //------------------------------------------------------------------------------
 TLabel CImage2D::getMaxLabel() const
-{ return FMaxLevel; }   
+{ return FMaxLevel; }
 //------------------------------------------------------------------------------
 TLabel CImage2D::getDisplayMin() const
 { return FDisplayMin; }

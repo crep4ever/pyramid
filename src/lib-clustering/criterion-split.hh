@@ -39,16 +39,16 @@ namespace Map2d
 
   public :
     // Constructeurs
-    CCriterionSplit(); //par défaut  
+    CCriterionSplit(); //par défaut
     CCriterionSplit(CRegion* ARegion);
-      
+
     // Destructeur
     virtual ~CCriterionSplit() = 0;
 
     CRegion* getRegion() const;
     void setRegion(CRegion* ARegion);
-  
-    //******************************************************************************  
+
+    //******************************************************************************
     //Méthodes
     //******************************************************************************
 

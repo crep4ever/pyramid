@@ -25,7 +25,7 @@ include_directories(
 
 add_library(image2D ${sources_image2D})
 
-TARGET_LINK_LIBRARIES(image2D 
+TARGET_LINK_LIBRARIES(image2D
 #  ${GLIB_LIBRARIES}
 #  ${GLIBMM_LIBRARY}
 #  ${XMLPP_LIBRARY}
@@ -33,5 +33,5 @@ TARGET_LINK_LIBRARIES(image2D
   utils
   kmlocal
   ${Magick++_LIBRARIES}
-  ) 
+  )
 #-------------------------------------------------------------------------------

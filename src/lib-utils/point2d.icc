@@ -23,7 +23,7 @@ CPoint2D::CPoint2D(unsigned int ATab[2])
 {
   FCoord[0] = ATab[0];
   FCoord[1] = ATab[1];
- 
+
 }
 //-----------------------------------------------------------------------------
 INLINE
@@ -31,7 +31,7 @@ CPoint2D::CPoint2D(const CPoint2D& AVertex)
 {
   FCoord[0] = AVertex.FCoord[0];
   FCoord[1] = AVertex.FCoord[1];
- 
+
 }
 //-----------------------------------------------------------------------------
 //INLINE
@@ -39,7 +39,7 @@ CPoint2D::CPoint2D(const CPoint2D& AVertex)
 //{
 //  FCoord[0] = ADoublet.getX();
 //  FCoord[1] = ADoublet.getY();
-// 
+//
 //}
 //-----------------------------------------------------------------------------
 INLINE
@@ -118,7 +118,7 @@ bool CPoint2D::operator==(const CPoint2D& AVector) const
 {
   return
    ( this->getX() == AVector.getX() &&
-    this->getY() == AVector.getY()) ;    
+    this->getY() == AVector.getY()) ;
 }
 //*****************************************************************************
 INLINE
@@ -128,13 +128,13 @@ bool CPoint2D::operator!=(const CPoint2D& AVector) const
 INLINE
 CPoint2D CPoint2D::operator+(const CPoint2D& p) const
 {
-  return CPoint2D( x()+p.x(), y()+p.y() ); 
+  return CPoint2D( x()+p.x(), y()+p.y() );
 }
 //*****************************************************************************
 INLINE
 CPoint2D CPoint2D::operator-(const CPoint2D& p) const
 {
-  return CPoint2D( x()-p.x(), y()-p.y() ); 
+  return CPoint2D( x()-p.x(), y()-p.y() );
 }
 //*****************************************************************************
 INLINE

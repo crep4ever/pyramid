@@ -26,7 +26,7 @@
 //******************************************************************************
 namespace Map2d
 {
-  /** 
+  /**
    * \file array.hh
    * \class CArray "array.hh"
    * \author Romain Goffe
@@ -36,7 +36,7 @@ namespace Map2d
 
   class CArray
   {
-  protected:    
+  protected:
     CVolume<CDart*>* FArray;
     unsigned int FXmin;
     unsigned int FYmin;
@@ -57,7 +57,7 @@ namespace Map2d
     /// @return le brin correspondant
     CDart* getDart(const CDoublet& ADoublet) const;
 
-    /// Ajouter un brin à la structure de façon à pouvoir le 
+    /// Ajouter un brin à la structure de façon à pouvoir le
     /// récupérer par la suite en donnant son doublet
     /// @param ADart: le brin
     void setDart(CDart* ADart);

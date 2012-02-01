@@ -27,7 +27,7 @@
 //******************************************************************************
 namespace Map2d
 {
-  /** 
+  /**
    * \file dp-maxrow.hh
    * \class CMaxRow "dp-maxrow.hh"
    * \author Romain Goffe
@@ -35,7 +35,7 @@ namespace Map2d
    * This class provides a matrix structure where:
    * - column 1 is a set of doublets that correspond to the possible positions
    * for a pointel xi+1 when projected from a level to another
-   * - column 2 is a set of value that correspond to the max 
+   * - column 2 is a set of value that correspond to the max
    * - column 3 are the doublets among the possible positions
    * for a pointel xi corresponding to the maximum value of column2 depending on the matrix hi
    *
@@ -48,7 +48,7 @@ namespace Map2d
     uint FValue;
     CDoublet FDoublet2;
 
-  public:    
+  public:
     /// Constructeur
     CMaxRow(const CDoublet & ADoublet1,
 	    uint AValue,
@@ -68,7 +68,7 @@ namespace Map2d
 
     CDoublet doublet2() const;
     void setDoublet2(const CDoublet & ADoublet2);
-    
+
   };
 } // namespace Map2d
 //******************************************************************************

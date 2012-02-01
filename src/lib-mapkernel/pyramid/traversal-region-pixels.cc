@@ -21,7 +21,7 @@
 #include "tile.hh"
 using namespace Map2d;
 //*****************************************************************************
-CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile, 
+CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
 					       CPyramidalRegion* ARegion):
   FTile(ATile),
   FRegion(ARegion),
@@ -59,7 +59,7 @@ void CTraversalRegionPixels::operator++()
       FStop = true;
       return;
     }
-  
+
   FCurrentPixel = FPixelsStack.top();
   FPixelsStack.pop();
 
@@ -74,8 +74,8 @@ void CTraversalRegionPixels::operator++()
 	  FTile->markPixel(n.getX(),n.getY());
 	  FPixelsStack.push(n);
 	}
-    }   
-  
+    }
+
   t.setLinel(YPOS);
   if( !FTile->isLCell(t) )
     {
@@ -87,7 +87,7 @@ void CTraversalRegionPixels::operator++()
 	  FPixelsStack.push(n);
 	}
     }
-      
+
  t = CDoublet(FCurrentPixel.getX()+1,FCurrentPixel.getY()+1);
  t.setLinel(XNEG);
   if( !FTile->isLCell(t) )
@@ -99,8 +99,8 @@ void CTraversalRegionPixels::operator++()
 	  FTile->markPixel(n.getX(),n.getY());
 	  FPixelsStack.push(n);
 	}
-    }   
-  
+    }
+
   t.setLinel(YNEG);
   if( !FTile->isLCell(t) )
     {
@@ -111,7 +111,7 @@ void CTraversalRegionPixels::operator++()
 	  FTile->markPixel(n.getX(),n.getY());
 	  FPixelsStack.push(n);
 	}
-    } 
+    }
 }
 //*****************************************************************************
 const CPoint2D & CTraversalRegionPixels::operator++(int)

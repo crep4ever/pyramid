@@ -35,16 +35,16 @@ void CTile::createTopTile()
 {
   createSingleRegion( width(), height() );
   splitSingleRegion ( width(), height() );
-    
+
   CRegion* infRegion = getInclusionTreeRoot();
   CRegion* region = infRegion->getFirstSon();
-  
+
   FMapRegions[infRegion->getId()] = infRegion;
   FMapRegions[region->getId()] = region;
-  
+
   CPyramidalDart* inf  = static_cast<CPyramidalDart*>(infRegion->getRepresentativeDart());
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(region->getRepresentativeDart());
-  
+
   FMapDarts[inf->getId()]  = inf;
   FMapDarts[dart->getId()] = dart;
 
@@ -82,7 +82,7 @@ void CTile::createSingleRegion(uint AWidth, uint AHeight)
       doublet.setDoublet(x, AHeight, XPOS);
       getKhalimsky()->setLCell(doublet, true);
     }
-  
+
   for(uint y=0; y<AHeight; ++y)
     {
       doublet.setDoublet(0,y,YPOS);
@@ -174,7 +174,7 @@ int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
   //si les deux régions racines sont égales on sort de la fonction
   if(ARegion1==ARegion2)
     return 0;
-  
+
   // sinon on les fusionne en mettant la région d'identifiant le + petit
   // racine de l'arbre (cad la première pour notre ordre de parcours)
   CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
@@ -189,18 +189,18 @@ int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
     {
       region1->setNextSameCC(region2);
       region1->setRepresentativeDart( NULL );
-      region2->mergeWith( region1 );//maj des paramètres des régions      
+      region2->mergeWith( region1 );//maj des paramètres des régions
     }
-  
-  assert(ARegion1->getRepresentativeDart()!=NULL || 
+
+  assert(ARegion1->getRepresentativeDart()!=NULL ||
 	 ARegion2->getRepresentativeDart() != NULL);
- 
+
   return 1;
 }
 //------------------------------------------------------------------------------
 void CTile::simplifyMap()
 {
-  //std::cout<<"[start] CTile::simplifyTile"<<std::endl;   
+  //std::cout<<"[start] CTile::simplifyTile"<<std::endl;
 
   // TODO: voir si on peut supprimer la marque
   // à première vue, ça pose pas de problèmes mais en fait,
@@ -223,12 +223,12 @@ void CTile::simplifyMap()
 	    getKhalimsky()->setPCell(dart->doublet(), false);
 	}
     }
-  
+
   //On supprime tous les brins qui ont été marqués lors du vertex removal
   CDart* actu = NULL;
   for( CDynamicCoverageAll it( this ); it.cont();  )
     {
-      actu = *it; 
+      actu = *it;
       ++it;
       if ( isMarked(actu, toDelete) )
 	{
@@ -237,7 +237,7 @@ void CTile::simplifyMap()
 	}
     }
   freeMark(toDelete);
-    
+
   //std::cout<<"[end] CTile::simplifyTile"<<std::endl;
 }
 //------------------------------------------------------------------------------
@@ -246,11 +246,11 @@ void CTile::deleteRegionList(std::deque<CRegion*>& AList)
   CRegion* currentRegion = NULL;
   std::deque<CRegion*>::iterator it;
   for(it=AList.begin(); it != AList.end(); )
-    {  
+    {
       currentRegion = *it;
       ++it;
       //Suppression de la région
-      currentRegion->setFirstSon(NULL);  
+      currentRegion->setFirstSon(NULL);
       currentRegion->setBrother(NULL);
       currentRegion->setNextSameCC(NULL);
       delRegion(currentRegion);
@@ -270,7 +270,7 @@ void CTile::relabelDarts()
 	  assert(getRegion(*it)->getNextSameCC() != NULL);
 	  // dans les cartes tuilées, on utilise le first pixel pour la comparaison des régions
 	  //assert(findRegionRoot(getRegion(*it))->getId() <= getRegion(*it)->getId());
-	 
+
 	  //Conservation des up/down
 	  CPyramidalRegion* region = getRegion(*it);
 	  if( region->existRegionUp() && region->getRegionUp()->getRegionDown()==region)
@@ -293,7 +293,7 @@ void CTile::relabelDarts()
   while (currentRegion != NULL)
     {
       assert(currentRegion->getNextSameCC()!=NULL);
-      
+
       //si la région ne pointe pas sur elle même elle doit être supprimée
       //car elle ne correspond pas à une racine d'un arbre
       if (currentRegion->getNextSameCC() != currentRegion)
@@ -330,7 +330,7 @@ void CTile::relabelDarts()
 
 	  assert( !static_cast<CPyramidalRegion*>(TempRegion)->existRegionUp() ||
 		  !(static_cast<CPyramidalRegion*>(TempRegion)->getRegionUp()->getRegionDown()==TempRegion));
-	 
+
 	  delete TempRegion;
 	  //on décrémente le nombre de régions de la carte
 	  --FNbRegions;
@@ -349,44 +349,44 @@ void CTile::delRegion(CRegion* ARegion)
   assert( ARegion!=NULL );
   assert( !static_cast<CPyramidalRegion*>(ARegion)->existRegionUp() ||
 	  !(static_cast<CPyramidalRegion*>(ARegion)->getRegionUp()->getRegionDown()==ARegion));
-    
+
   setNbRegions(getNbRegions()-1);
-    
+
   if( ARegion->existSon() )
     delRegion( ARegion->getFirstSon() );
-    
+
   if( ARegion->existBrother() )
     delRegion( ARegion->getBrother() );
-    
-  if( ARegion->existNextSameCC() ) 
+
+  if( ARegion->existNextSameCC() )
     delRegion( ARegion->getNextSameCC() );
-    
+
   delete ARegion;
 }
 //------------------------------------------------------------------------------
 void CTile::getRegionBoundingBox(CDart* ADart, std::vector<uint>& tab)
-{ 
-  CDoublet tmp; 
+{
+  CDoublet tmp;
   tab.push_back(getDoublet(ADart).getX()); //xmin
   tab.push_back(getDoublet(ADart).getY()); //ymin
   tab.push_back(0);                      //xmax
   tab.push_back(0);                      //ymax
-    
+
   // On récupère les dimensions de la région
   for( CDynamicCoverage1 it( this, ADart ) ; it.cont() ; ++it )
     {
       tmp = getDoublet(*it);
       uint x = tmp.getX();
       uint y = tmp.getY();
-	
-      if( x > tab[2] ) 
+
+      if( x > tab[2] )
 	tab[2] = x;
-      else if( x < tab[0] ) 
+      else if( x < tab[0] )
 	tab[0] = x;
-	
-      if( y > tab[3] ) 
+
+      if( y > tab[3] )
 	tab[3] = y;
-      else if( y < tab[1] ) 
+      else if( y < tab[1] )
 	tab[1] = y;
     }
 }
@@ -398,17 +398,17 @@ void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADi
   std::ostringstream stream;
   stream << "mkdir -p "<<ADirname<<"/";
   UNUSED(system(stream.str().c_str()));
-  
+
   std::ostringstream oss;
-  oss << ADirname << "/region_" 
-      << index(0) << "-"<< index(1) << "-" << index(2) 
+  oss << ADirname << "/region_"
+      << index(0) << "-"<< index(1) << "-" << index(2)
       << "_" << FCount++ << ".png";
-  
+
   std::vector<uint> tab;
   getRegionBoundingBox(ARegion->getRepresentativeDart(), tab);
   uint width =  tab[2] - tab[0] + 1;
   uint height = tab[3] - tab[1] + 1;
-  
+
   IM_Pixel pix;
   pngwriter png(width, height, 0, oss.str().c_str());
   for(uint j = 0 ; j < height; ++j)
@@ -418,7 +418,7 @@ void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADi
 	{
 	  pix.x = i + xmin();
 	  image()->getPixel(pix, depth());
-	  png.plot(i, height-j-1, 
+	  png.plot(i, height-j-1,
 		   pix.value[0]/255.0, pix.value[1]/255.0, pix.value[2]/255.0);
 	}
     }
@@ -440,7 +440,7 @@ void CTile::saveMitosis()
 	  int sum=0, count=0;
 	  IM_Pixel pix;
 	  for( CTraversalRegionPixels it2(this, region); it2.cont(); ++it2)
-	    {	
+	    {
 	      pix.x = (*it2).x() + xmin();
 	      pix.y = (*it2).y() + ymin();
 	      image()->getPixel( pix, depth() );

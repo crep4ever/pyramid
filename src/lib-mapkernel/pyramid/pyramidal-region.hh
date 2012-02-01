@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 //******************************************************************************
 #ifndef PYRAMIDAL_REGION_HH
 #define PYRAMIDAL_REGION_HH
@@ -26,11 +26,11 @@
 
 namespace Map2d
 {
-  /** 
+  /**
    * \file pyramidal-region.hh
    * \class CPyramidalRegion "pyramidal-region.hh"
    * \author Romain Goffe
-   * \brief CPyramidalRegion is a region within a pyramid with 
+   * \brief CPyramidalRegion is a region within a pyramid with
    *  up/down relationships
    */
 
@@ -41,13 +41,13 @@ namespace Map2d
 
   public:
     enum Label {Background, Tissue, DarkTissue, BrightTissue, Lesion, Cancer, Stroma, Mitosis, InSitu, Invalid};
-    
+
   protected:
     CPyramidalRegion* FRegionUp; // pointeur sur la région ascendante
     CPyramidalRegion* FRegionDown; // pointeur sur la région descendante dont le brin représentant est l'image down du représentant de sa région up
-    
+
     int FLabel;
-    
+
     /// Coordonnées du premier pixel de la région (haut/gauche)
     CPoint2D  FFirstPixel;
 
@@ -59,34 +59,34 @@ namespace Map2d
 
     virtual CDart* getRepresentativeDart() const;
     virtual void setRepresentativeDart(CDart* ADart);
-    
+
     // Accesseurs
     CPyramidalRegion* getRegionUp()   const;
     CPyramidalRegion* regionUp()   const;
     CPyramidalRegion* getRegionDown() const;
     CPyramidalRegion* regionDown() const;
-	
+
     void setRegionUp    (CPyramidalRegion* ARegion);
     void setRegionDown  (CPyramidalRegion* ARegion);
 
     int label() const;
     void setLabel(const Label & ALabel);
-    
+
     CPyramidalRegion* getBrother()    const;
     CPyramidalRegion* getFather()     const;
     CPyramidalRegion* getFirstSon()   const;
     CPyramidalRegion* getNextSameCC() const;
-  
+
     TRegionId         getGreyMin()   const;
     void setGreyMin    (TRegionId AColorMin);
 
     TRegionId         getGreyMax()   const;
-    void setGreyMax    (TRegionId AColorMax);  
+    void setGreyMax    (TRegionId AColorMax);
 
     TRegionId getGreySum() const;
     void setGreySum (TRegionId AGrey);
 
-    unsigned int getGreySquareSum() const; 
+    unsigned int getGreySquareSum() const;
     void setGreySquareSum (unsigned int ASum);
 
     unsigned int getNbPixels() const;
@@ -99,22 +99,22 @@ namespace Map2d
     CPoint2D lastPixel() const;
     void setLastPixel(const CPoint2D& APixel);
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Opérations sur la région
-    //******************************************************************************    
+    //******************************************************************************
     virtual CRegion* addSon( TRegionId );
     virtual CRegion* addBrother( TRegionId );
     virtual CRegion* addSameCC( TRegionId );
     virtual void     addPixels(CRegion* ARegion);
     virtual void addPixel( TRegionId ACoul, CDart* ADart=NULL );
     void addGrey(TRegionId AGrey);
-    TRegionId getAverageGrey() const;  
-    
+    TRegionId getAverageGrey() const;
+
     void mergeWith(CPyramidalRegion* ARegion);
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Opérations de contrôle et de vérification
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Teste l'existence d'une région up
     /// @return true si la région a une up
@@ -130,13 +130,13 @@ namespace Map2d
     /// Vérifie des contraintes sur la région
     /// @return true si la région est valide
     bool isOk();
-	
+
   };
 
   /// La classe région infinie. La seule différence concerne la méthode
   /// isInfiniteRegion qui va désormais retourner vrai.
   class CInfinitePyramidalRegion : public CPyramidalRegion{
-  
+
   public:
     CInfinitePyramidalRegion();
     virtual ~CInfinitePyramidalRegion();
@@ -150,11 +150,11 @@ namespace Map2d
   class CLessRegionFirstPixel : public std::binary_function<CPyramidalRegion*, CPyramidalRegion*, bool>
   {
     public :
-      bool operator()( CPyramidalRegion* region1, CPyramidalRegion* region2 ) 
-        {  
-          return region1->getFirstPixel() < region2->getFirstPixel(); 
+      bool operator()( CPyramidalRegion* region1, CPyramidalRegion* region2 )
+        {
+          return region1->getFirstPixel() < region2->getFirstPixel();
         }
-   }; 
+   };
 
 } // namespace Map2d
 //******************************************************************************

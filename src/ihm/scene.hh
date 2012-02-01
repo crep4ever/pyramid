@@ -43,9 +43,9 @@ class CView;
 class CControler;
 class CDoublet;
 
-/** 
+/**
  * \file scene.hh
- * \class CScene: "scenePyramid.hh" 
+ * \class CScene: "scenePyramid.hh"
  * \author Romain Goffe
  * \brief CScene is a scene used to represent a hierachy of 2d partitions
  */
@@ -54,7 +54,7 @@ class CScene : public QGraphicsScene
 {
   Q_OBJECT
 
- 
+
   public:
   /// constructor
   CScene( CControler * controler, uint ALevel=1 );
@@ -112,7 +112,7 @@ public slots:
 
   /// setter on the image drawn property
   void setImageToDisplay( bool value );
-  
+
   /// setter on the frame drawn property
   //void setFrameToDisplay( bool value );
 
@@ -146,7 +146,7 @@ public slots:
   void autoHideOnZoom( qreal zoom );
 
   virtual void initialize( CView* view );
-  
+
   void sliderChanged(int ALevel);
 
 protected:
@@ -206,7 +206,7 @@ protected:
   //QGraphicsRectItem * m_frameItem;
   /// item for the interpixel
   QGraphicsItemGroup * m_interpixelItem;
-  /// item for the map 
+  /// item for the map
   QGraphicsItemGroup * m_mapItem;
   /// item for the borders
   QGraphicsItemGroup * m_bordersItem;
@@ -269,13 +269,13 @@ public:
   QList< QAction* > actions() const;
 
   QWidget* drawToolBar();
-  
+
 private:
   /// add an arrow at the end of the path according to the direction
   void addArrow(QPainterPath* APath, const CDoublet& ADirection );
-  
+
   /// compute the gap to have a cool representation of the map
-  QPointF calculateGap( const QPointF & point, 
+  QPointF calculateGap( const QPointF & point,
 			const CDoublet & current, const CDoublet & next );
 
 };

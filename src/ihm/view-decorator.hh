@@ -40,17 +40,17 @@ class QBoxLayout;
 class CViewDecorator : public QWidget
 {
   Q_OBJECT
-  
+
 public:
-  /// Constructor 
+  /// Constructor
   CViewDecorator( QWidget * parent = 0 );
-  
+
   /// Destructor
   virtual ~CViewDecorator();
 
   /// getter on the central widget
   QWidget * widget() const;
-  
+
   /// setter on the central widget
   void setWidget( QWidget * widget );
 

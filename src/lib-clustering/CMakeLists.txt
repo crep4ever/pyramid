@@ -1,13 +1,13 @@
 #-------------------------------------------------------------------------------
-add_library (clustering 
+add_library (clustering
   SHARED
-  criterion-split.cc 
+  criterion-split.cc
   split-nbpix.cc
-  split-grey.cc 
+  split-grey.cc
   split-hole.cc
   split-deviation.cc
 #  split-histo.cc
-  criterion-merge.cc 
+  criterion-merge.cc
   merge-grey.cc
 #  merge-kmeans.cc
   )

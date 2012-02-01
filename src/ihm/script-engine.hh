@@ -32,8 +32,8 @@
  * \author Alexandre Dupas
  * \version 0.1
  * \date 13 June 2009
- * \class CScriptEngine "script-engine.hh" 
- * \brief CScriptEngine is a scripting engine allowing one to script 
+ * \class CScriptEngine "script-engine.hh"
+ * \brief CScriptEngine is a scripting engine allowing one to script
  *  some part of the application
  */
 class CScriptEngine : public QScriptEngine
@@ -62,7 +62,7 @@ public slots:
 protected:
 
 private:
-  /// Constructor 
+  /// Constructor
   CScriptEngine( QObject * parent = 0 );
 
   static CScriptEngine * m_engine;

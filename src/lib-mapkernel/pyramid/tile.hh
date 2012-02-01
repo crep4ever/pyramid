@@ -55,7 +55,7 @@ class CDkDoublet;
 
 namespace Map2d
 {
-  /** 
+  /**
    * \class CTile "tile.hh"
    * \brief CTile is a local topological map which corresponds
    * to a subdivision of an image
@@ -114,7 +114,7 @@ namespace Map2d
   class CRegion;
   class CPyramidalDart;
   class CTopologicalDart;
-  
+
   class CTile: public CTopologicalMap
   {
 
@@ -142,7 +142,7 @@ namespace Map2d
     // Hiérachie
     CTile* FTileUp;
     CTile* FTileDown;
-    
+
     // Swap
   public:
     struct SProperties* FProperties;
@@ -165,7 +165,7 @@ namespace Map2d
     std::map<TRegionId, CRegion*> FMapRegions; // Association id/region
     std::map<TDartId, TDartId> FMapBeta2; // Connaitre les beta2 des brins du bord (beta2')
     uint FIndex[3]; //coordonnées i,j,k
-     
+
     // Constructeurs
     CTile(uint AWidth, uint AHeight);
 
@@ -173,9 +173,9 @@ namespace Map2d
     virtual ~CTile();
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Accesseurs
-    //******************************************************************************    
+    //******************************************************************************
 
 
     uint id() const;
@@ -192,7 +192,7 @@ namespace Map2d
 
     CTile* tileDown() const;
     void setTileDown(CTile* ATile);
-    
+
     uint upRatioX() const;
     uint upRatioY() const;
     CPoint2D upRatio() const;
@@ -247,10 +247,10 @@ namespace Map2d
     CPoint2D  bottomLeft() const;
     CPoint2D  topRight() const;
     CPoint2D  topLeft() const;
-    
-    //******************************************************************************	  
+
+    //******************************************************************************
     // Méthodes utilitaires
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Supprime une région
     virtual void delRegion(CRegion* ARegion);
@@ -332,8 +332,8 @@ namespace Map2d
     /// @param APix1: le premier pixel incident
     /// @param APix2: le second pixel incident
     /// @param ASystemMode: référentiel (enum SystemMode)
-    void incidentPixelsForLinel(const CDoublet & ADoublet, 
-				IM_Pixel& APixel1, IM_Pixel& APixel2, 
+    void incidentPixelsForLinel(const CDoublet & ADoublet,
+				IM_Pixel& APixel1, IM_Pixel& APixel2,
 				const SystemMode & ASystemMode);
 
     ///Conversion des coordonnees de la tuile fille vers la tuile mere
@@ -345,17 +345,17 @@ namespace Map2d
     CPoint2D coordinateFromParent(const CPoint2D& APoint, SystemMode ASystemMode) const;
     CPoint2D coordinateFromParent(const CDoublet& ADoublet, SystemMode ASystemMode) const;
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Méthodes sur la carte de la tuile
-    //******************************************************************************    
+    //******************************************************************************
 
-    /// Active/désactive un pointel 
+    /// Active/désactive un pointel
     /// dans la matrice de Khalimsky de la carte
     /// @param ABool: allume/éteint
     /// @param ADoublet: désigne le pointel
     void setPCell(const CDoublet& ADoublet, bool ABool = true);
 
-    /// Marque/démarque un pointel 
+    /// Marque/démarque un pointel
     /// dans la matrice de Khalimsky de la carte
     /// @param ABool: allume/éteint
     /// @param ADoublet: désigne le pointel
@@ -393,20 +393,20 @@ namespace Map2d
     /// @return true si le lignel est marqué
     bool isFictiveLCell(const CDoublet& ADoublet) const;
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Méthodes pour le split des tuiles
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Eclatement en brins unitaires du bord de la tuile
     void splitBorder();
-    
+
     /// Création d'une grille de lignels d'après les ratios de changement de niveau
     /// Si la tuile est 4x plus grande que sa up, on la découpe en 4 avec 2 arêtes
     /// @return l'ensemble des lignels formant le motif de division
     void createMask(std::vector<CDoublet>& AMask);
 
     /// Applique un ensemble de lignels sur la géométrie d'une tuile.
-    /// Les lignels/pointels du masque ne sont pas allumés, 
+    /// Les lignels/pointels du masque ne sont pas allumés,
     /// ils sont simplement marqués comme fictifs
     /// @param AMask: l'ensemble des doublets désignant les éléments fictifs
     void applyMask(std::vector<CDoublet>& AMask);
@@ -427,7 +427,7 @@ namespace Map2d
     /// Opérations de coutures des brins autour d'un sommet
     /// @param APointel: le sommet
     /// @param AArray: un tableau de correspondance brins/doublets pour les brins à traiter
-    /// @param AMark: la marque qui désignera les brins à supprimer (sommets de d°2)   
+    /// @param AMark: la marque qui désignera les brins à supprimer (sommets de d°2)
     void sewAroundPointel(const CDoublet& APointel, const CArray* AArray, int AMark);
 
     /// todo
@@ -438,46 +438,46 @@ namespace Map2d
     /// La tuile fille reçoit les brins qui correspondent à son espace géométrique dans la tuile mère
     ///@param ASon: la tuile qui reçoit les brins
     void shareDartsWithSon(CTile* ASon);
-    
 
-    //******************************************************************************	  
+
+    //******************************************************************************
     // Méthodes pour la construction par extraction
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Construit une nouvelle tuile avec une segementation plus fine d'après
     /// les critères définis dans les régions de la tuile parente
     ///@return la tuile créée
-    void extractChildren(std::deque<CTile*>& AChildren, 
+    void extractChildren(std::deque<CTile*>& AChildren,
 			 const SegmentationMode & ASegmentationMode,
 			 const ProjectionMode & AProjectionMode,
 			 const FocusAttentionMode & AFocusAttentionMode,
 			 CChrono & AChrono);
-    
+
     CDart* makeTileBorder();
-    
+
     /// Chaîne de traitement principale de l'extraction
     /// @param ALast: dernier brin crée lors de la construction du bord
-    void extractMapMainLoop( CDart* ALast, 
+    void extractMapMainLoop( CDart* ALast,
 			     const SegmentationMode & ASegmentationMode,
 			     const FocusAttentionMode & AFocusAttentionMode);
 
     /// Extraction de la carte topologique de la tuile fille en prenant d'après
     /// les critères définis dans les régions de la tuile parente
     /// @param ATileUp: la tuile parente
-    /// @param AMatrix: une matrice permettant de connaitre la région d'appartenance 
+    /// @param AMatrix: une matrice permettant de connaitre la région d'appartenance
     /// des pixels de l'image
-    void extractMap(CTile* ATileUp, 
+    void extractMap(CTile* ATileUp,
 		    const SegmentationMode & ASegmentationMode,
 		    const FocusAttentionMode & AFocusAttentionMode);
 
     bool samePixelActuLeft(IM_Pixel & APixel,
 			   const SegmentationMode & ASegmentationMode,
 			   const FocusAttentionMode & AFocusAttentionMode);
-   
-    bool samePixelActuUp(IM_Pixel & APixel, 
-			 const SegmentationMode & ASegmentationMode, 
+
+    bool samePixelActuUp(IM_Pixel & APixel,
+			 const SegmentationMode & ASegmentationMode,
 			 const FocusAttentionMode & AFocusAttentionMode);
-    
+
     // détermine si le pixel2 doit être intégré à la région du pixel 1
     bool sameRegions(IM_Pixel & APix1, IM_Pixel & APix2, const CDoublet & ADoublet,
 		     const SegmentationMode & ASegmentationMode,
@@ -489,9 +489,9 @@ namespace Map2d
     CMatrix<CRegion*>* createPixelRegionMatrix();
 
     CArray* createLignelDartMatrix();
-  
+
     //void retrieveUpDownDartsFromRegion(CTile* ATileUp);
-    
+
     CDart* createSquareFace(CDart* Alast, CDart* Aup,
 			    CDoublet& ADoublet,
 			    CRegion* ARegion);
@@ -502,10 +502,10 @@ namespace Map2d
 
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Construction par copy/burst/merge
-    //******************************************************************************    
-  
+    //******************************************************************************
+
 
     /// Crée une tuile composée d'une seule région
     void createTopTile();
@@ -513,22 +513,22 @@ namespace Map2d
     /// Construit la matrice de Khalimsky d'après celle de la tuile up
     /// en dilatant si nécessaire
     /// @param: ATileUp: la tuile up
-    void copyKhalimsky(CTile* ATileUp);    
+    void copyKhalimsky(CTile* ATileUp);
 
     void copyDarts(CTile* ATileUp);
 
     void copyRegions(CTile* ATileUp);
-    
+
     void traversePixels();
     void traversePixelsSingleRegion();
 
     /// Copie une tuile et relie les brins et les régions (up/down)
     CTile* createChildByCopy(const ProjectionMode & AProjectionMode);
-  
+
     CTile* createChildrenBySplit();
 
-    /// Division des régions d'une tuile par burst & merge. 
-    /// Le critère de split indique si une 
+    /// Division des régions d'une tuile par burst & merge.
+    /// Le critère de split indique si une
     /// région doit être éclatée (1 région/pixel). Le critère de merge indique
     /// si les nouvelles régions créées doivent être fusionnées.
     void burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
@@ -544,27 +544,27 @@ namespace Map2d
 
     /// Regarde si un brin appartient au contour géométrique de la tuile
     /// @param ADart: le brin
-    /// @param AMethod: 0: topologiquement (beta2 dans la region infinie); 
+    /// @param AMethod: 0: topologiquement (beta2 dans la region infinie);
     /// 1: géométriquement (doublet sur le bord)
     /// @return true si le brin est sur le bord
     bool isDartOnBorder(CTopologicalDart* ADart, int AMethod);
-    
+
     /// Relie 2 tuiles (up/down)
     void linkTileUpDown(CTile* ATileUp, CTile* ATileDown);
-        
-    //******************************************************************************	  
+
+    //******************************************************************************
     // Swap des tuiles sur disque dur
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Retourne un nom de fichier sous la forme header-Ai-Aj-Ak
     void setFilename(uint Ai, uint Aj, uint Ak);
-    
+
     /// Parse et stocke les entiers d'un fichier texte dans un vecteur
     /// @param fileName: le nom du fichier
     /// @param dest: le vecteur qui contiendra les entiers
     /// @return true si le fichier est parcouru en entier sans erreurs
     bool readInt(const std::string& fileName, std::vector<uint>& dest);
-    
+
     /** Enregistre les brins de la tuile de coordonnées (Ai,Aj,Ak)
      *  nom du fichier: topology-Ai-Aj-Ak
      *  champs:
@@ -572,11 +572,11 @@ namespace Map2d
      *  rq: (x,y,pos) est le plongement du brin
      */
     void saveTopology();
-    
+
     /** Enregistre les régions de la tuile de coordonnées (Ai,Aj,Ak)
      *  nom du fichier: tree-Ai-Aj-Ak
      *  champs:
-     *  regionId x y nbPixels colorSum sum regionUpId regionDownId 
+     *  regionId x y nbPixels colorSum sum regionUpId regionDownId
      *  colMin colMax fatherId sonId brotherId NextSameCCId representativeId infinite
      *  rq:
      *   - (x,y) est le first pixel de la région
@@ -604,8 +604,8 @@ namespace Map2d
 
     /// Renseigne les champs des brins
     void loadTopology();
-    
-    /// Renseigne les champs des régions    
+
+    /// Renseigne les champs des régions
     void loadTree();
 
     /// Enregistre la tuile courante dans ./output/tile-i-j-k
@@ -614,10 +614,10 @@ namespace Map2d
     /// Charge une tuile en mémoire depuis un fichier présent dans ./output/tile-i-j-k
     void load(uint Ai, uint Aj, uint Ak);
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Méthodes sur les brins
-    //******************************************************************************    
-    
+    //******************************************************************************
+
     /**
      *  Crée un tableau de FSizeDartArray CDart.
      *  Cette méthode doit être redéfinie à chaque fois que l'on
@@ -631,20 +631,20 @@ namespace Map2d
      *  surcharge la classe brin.
      */
     virtual void deleteTabDarts(CDart* ATabDart);
-    
+
     /// Récupère le Aj ème brin du Ai ème tableau
     virtual CDart* getDart(uint Ai, uint Aj) const;
-    
+
     /**
      *  Crée une nouvelle instance de CPyramidalDart sans plongement.
      *  @return Un nouveau brin de type CPyramidalDart
       */
     virtual CDart* addMapDart();
- 
+
 
     // Copie le contenu du brin ADartSrc dans le brin ADartDest
     virtual void copyDart(CDart* ADartDest, CDart* ADartSrc);
-    
+
     /// Crée une nouvelle instance de CPyramidalDart, dont le plongement est
     /// donné par ADoublet.
     /// @param  ADoublet Un sommet
@@ -656,22 +656,22 @@ namespace Map2d
     /// @param ADart le brin
     /// @return le brin up
     CPyramidalDart* getDartUp(CDart* ADart) const;
-  
+
     /// Accesseur sur le brin du niveau supérieur
     /// @param ADart le brin
     /// @param le brin up
     void setDartUp(CDart* ADart, CDart* ADartUp);
-  
+
     /// Accesseur sur le brin du niveau inférieur
     /// @param ADart le brin
     /// @return le brin down
     CPyramidalDart* getDartDown(CDart* ADart) const;
-  
+
     /// Accesseur sur le brin du niveau inférieur
     /// @param ADart le brin
     /// @param le brin down
     void setDartDown(CDart* ADart, CDart* ADartDown);
-  
+
     /// Relie 2 brins dans les 2 sens.
     void linkDartUpDown(CDart* ADartUp, CDart* ADartDown);
 
@@ -687,7 +687,7 @@ namespace Map2d
     void setDoublet(CDart* ADart, const CDoublet& ADoublet);
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Opérations sur les régions
     //******************************************************************************
 
@@ -702,22 +702,22 @@ namespace Map2d
     /// Crée une nouvelle instance de la classe CPyramidalRegion
     /// @return Un nouvelle région, de type CPyramidalRegion
     virtual CRegion* newRegion();
-  	
+
     /// Supprime toutes les régions de la carte
     void removeAllRegions();
 
     /// Ajoute une région sur la carte
-    /// @return la région insérée  	        
+    /// @return la région insérée
     CPyramidalRegion* addMapRegion();
-    
+
     /// Crée une nouvelle instance de CPyramidalRegion, en utilisant les
     /// propriétés d'une région
     /// @param ARegion: la région
-    /// @return Une nouvelle région de type CPyramidalRegion    
+    /// @return Une nouvelle région de type CPyramidalRegion
     CPyramidalRegion* addMapRegion(CRegion* ARegion);
 
     /// Ajoute la région infinie à la carte
-    /// @return la région infinie  	        
+    /// @return la région infinie
     CInfinitePyramidalRegion* addMapInfiniteRegion();
 
     /// Accesseur sur la région d'un brin
@@ -729,69 +729,69 @@ namespace Map2d
     /// @param ARegion la région
     /// @return la région up
     CPyramidalRegion* getRegionUp(CRegion* ARegion) const;
-  	
+
     /// Accesseur sur la région du niveau supérieur
     /// @param ARegion la région
     /// @param la région up
     void setRegionUp(CRegion* ARegion, CRegion* ARegionUp);
-    
+
     /// Accesseur sur la région du niveau inférieur
     /// @param ARegion la région
     /// @return la région down
     CPyramidalRegion* getRegionDown(CRegion* ARegion) const;
-  	
+
     /// Accesseur sur la région du niveau inférieur
     /// @param ARegion la région
     /// @param la région down
     void setRegionDown(CRegion* ARegion, CRegion* ARegionDown);
-   
+
     /// Relie 2 régions dans les 2 sens.
     /// @param ARegion la région up
     /// @param ARegion la région down
     void linkRegionUpDown(CRegion* ARegionUp, CRegion* ARegionDown);
-  	
+
     /// Accesseur sur le nombre de régions de la carte
     /// @param ANbRegion: le nombre de régions
     void setNbRegions(uint ANbRegions);
 
     void setNbDarts(uint ANbDarts);
-  	
+
     /// Supprime une liste de régions
     /// @param AList: la liste des régions
     void deleteRegionList(std::deque<CRegion*>& AList);
-    
+
     /// Ajoute un pixel à la région
     /// @param ARegion: la région
     /// @param x,y: les coordonnées image du pixel à ajouter
     virtual void addPixel( IM_Pixel& APixel, CRegion* ARegion);
     //void addPixel2( uint8* AData, CRegion* ARegion );
-    
+
     /// Retourne les coordonnées de la boite englobante d'une région
     /// @param ARegion: la région
     /// @param tableau de 4 entiers (xmin,ymin,xmax,ymax)
     void getRegionBoundingBox(CDart* ADart, std::vector<uint>& ATab);
 
-  	
-    //******************************************************************************	  
+
+    //******************************************************************************
     //Opérations sur la carte
-    //******************************************************************************   	
+    //******************************************************************************
 
 
     /// @return true si la carte dispose d'un niveau supérieur
     bool existMapUp();
- 	  
-    /// @return true si la carte dispose d'un niveau inférieur 	  
+
+    /// @return true si la carte dispose d'un niveau inférieur
     bool existMapDown();
-    
-    /// @return l'espace mémoire occupé par la carte    
+
+    /// @return l'espace mémoire occupé par la carte
     unsigned long int getMemoryForMap() const;
-    
-    /// @return l'espace mémoire occupé par l'arbre d'inclusion de la carte    
+
+    /// @return l'espace mémoire occupé par l'arbre d'inclusion de la carte
     unsigned long int getMemoryForInclusionTree() const;
 
     /// @return l'espace mémoire occupé par la tuile d'image chargée
     unsigned long int getMemoryForImageTile() const;
-    
+
 
     /**
      *  Méthode permettant de vider la carte ainsi que de détruire les
@@ -801,9 +801,9 @@ namespace Map2d
      */
     virtual void empty();
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Opérations de split
-    //******************************************************************************    
+    //******************************************************************************
 
 
     /// Return true si la région doit être éclatée
@@ -829,7 +829,7 @@ namespace Map2d
 
     /// Insère une arête pendante au niveau d'un brin
     /// @param ADart: le brin
-    CDart* insertEdge(CDart* ADart);    
+    CDart* insertEdge(CDart* ADart);
 
     /// Découpe l'arête correspondant d'un brin de façon unitaire
     /// en suivant son plongement
@@ -842,13 +842,13 @@ namespace Map2d
     /// Découpe toutes les arêtes d'une région en arêtes unitaires
     /// @param ADart: le brin désignant la région à découper
     void splitAllEdgesRegion(CRegion* ARegion);
-  
+
     /// Découpe une région en régions unitaires d'un pixel en insérant toutes les arêtes
     /// @param ADart: le brin désignant la région
     /// @param AList enqueue les brins désignant les arêtes ajoutées
     void splitRegion(CDart* ADart, std::deque<CDart*>& AList);
     void splitRegion2(CDart* ADart, std::deque<CDart*>& AList);
-  
+
     /// Crée les nouvelles régions après un splitRegion()
     /// @param AList: la liste des brins correspondant à toutes les arêtes
     /// insérées lors du splitRegion
@@ -857,21 +857,21 @@ namespace Map2d
     void createNewRegions(CRegion* ARegion,
 			  std::deque< CDart* >& ADartList,
 			  std::deque< CPyramidalRegion* >& ARegionList);
-    
+
     /// Chaîne une liste de régions pour le calcul de l'arbre d'inclusion
     /// @param AList: une liste de régions
     void createChainRegionList(std::deque<CPyramidalRegion*>& AList);
-  
+
     /// Prépare la liste une liste de régions avant un relabel
     /// @param ARegion la région à partir de laquelle on doit insérer
     /// @param ANewRegionList la liste des régions
     void updateRegionList(CRegion* ARegion,
 			  std::deque<CPyramidalRegion*>& ANewRegionList);
- 
-   
-    //******************************************************************************	  
+
+
+    //******************************************************************************
     //Opérations de merge
-    //******************************************************************************        
+    //******************************************************************************
 
 
     /// Critère de merge entre deux régions issues du même parent
@@ -879,34 +879,34 @@ namespace Map2d
     /// @param ARegion2: région 2
     /// @param ASegmentationMode: critère de segmentation
     /// @return true si les 2 régions doivent être fusionnées
-    bool isRegionToMerge(CRegion* ARegion1, CRegion* ARegion2, 
+    bool isRegionToMerge(CRegion* ARegion1, CRegion* ARegion2,
 			 const SegmentationMode & ASegmentationMode=Thresholds);
 
-    /// Parcours tous les brins de la carte pour voir pour chaque brin d s'il 
+    /// Parcours tous les brins de la carte pour voir pour chaque brin d s'il
     /// faut fusionner region(d) avec region(beta2(d)).
     void merge();
 
-    /// Parcours une liste de brins pour voir pour chaque brin d s'il 
+    /// Parcours une liste de brins pour voir pour chaque brin d s'il
     /// faut fusionner region(d) avec region(beta2(d)).
     void merge(std::deque<CDart*>& toMerge,
  	       const SegmentationMode & ASegmentationMode);
-      
+
     /// Suppression d'un sommet lors d'un merge
     void mergeVertexRemoval( CDart* ADart, int AMarkNumber );
     void extractVertexRemoval( CDart* ADart );
-  
+
     /// Suppression d'une arête lors d'un merge
     void mergeEdgeRemoval( CDart* ADart, int AMarkNumber );
 
 
-   //******************************************************************************	  
+   //******************************************************************************
     //Opérations de contrôle et de vérification
     //******************************************************************************
 
 
     /// Vérifie que tous les brins de la carte ont un plongement géométrique
     bool checkGeometry();
-	  
+
     /// Vérifie que la région de @param ADart est carrée et unitaire
     /// (géométrie + topologie)
     bool checkSquareRegion(CDart* ADart) const;
@@ -919,7 +919,7 @@ namespace Map2d
     /// au niveau précédent.
     bool checkRegionLinks();
 
-    /// @return true si tous les brins parcourus dans la carte appartiennent bien 
+    /// @return true si tous les brins parcourus dans la carte appartiennent bien
     /// à cette carte (algo en n2, couteux)
     bool checkDarts();
 
@@ -930,14 +930,14 @@ namespace Map2d
     /// @return true si le nombre de régions présentes dans la liste chainée des régions
     /// est égal au compteur du nombre de régions créées
     bool checkNbChainRegions();
-  
+
     /// Vérifie la liste chaînée des régions avant le calcul de l'arbre d'inclusion
     // TODO: à reprendre
     bool isChainRegionListOk();
-  
+
     /// Affiche la liste chaînée des régions
     void printChainRegionList();
-  
+
     /// Affiche l'identifiant des régions contenues dans @param AList
     void printRegionList(std::deque<CPyramidalRegion*>& AList);
 
@@ -946,13 +946,13 @@ namespace Map2d
 
     /// Affiche les caractéristiques de tous les brins d'un niveau
     void printInfosAllDarts();
-	
+
     /// Affiche quelques caractéristiques d'un niveau
     void printInfosMap();
-	
-    /// Affiche l'arbre d'inclusion des régions 
+
+    /// Affiche l'arbre d'inclusion des régions
     void printInclusionTree();
-	
+
     /// Affiche les propriétés d'une tuile
     void print();
 
@@ -970,7 +970,7 @@ namespace Map2d
 
     /// Vérifie que la tuile ATile est correcte
     bool isOk();
-    
+
     /// Vérifie la causalité depuis la tuile up
     /// @return true si la contrainte est respectée
     bool checkHierarchy();
@@ -1009,10 +1009,10 @@ namespace Map2d
     // on est obligé de redéfinir le relabelDarts pour les
     //relations up/down
     void relabelDarts();
-    
+
     void toSVG();
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Dijkstra (DK)
     //******************************************************************************
 
@@ -1028,7 +1028,7 @@ namespace Map2d
     float gradientInverse(const CDoublet & ADoublet, const SystemMode & ASystem);
 
     /// calcule l'ensemble des positions potentielles d'un pointel
-    /// du niveau k lorsqu'il est projeté dans k+1. 
+    /// du niveau k lorsqu'il est projeté dans k+1.
     /// @param APointel : le pointel du niveau k
     /// @return le vecteur des posisitions potentielles au niveau k+1
     std::vector<CDoublet> reductionWindow(const CDoublet & APointel);
@@ -1036,28 +1036,28 @@ namespace Map2d
     /// DK: affectation d'un poids à tous les noeuds (doublets) entre ADoublet1 et ADoublet2
     /// @param ADoublet1 : point de départ
     /// @param ADoublet2 : point d'arrivée
-    /// @param AHeap : le tas contenant tous les noeuds 
+    /// @param AHeap : le tas contenant tous les noeuds
     /// @return last node
     CDkDoublet* findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap);
-    
+
     ///Récupère les voisins d'un doublet étant à une distance d'un lignel
     ///@param ADoublet : le doublet
     ///@return les voisins
     std::vector<CDkDoublet*> findNeighbors(CDkDoublet* ADoublet, const Heap<CDkDoublet*> & AHeap);
-    
+
     ///On met à jour la distance entre le noeud initial et ANode2
     ///en regardant s'il faut passer par ANode1
     ///@param ANode1 : le point de passage
     ///@param ANode2 : le noeud à considérer
     void updateDistance(CDkDoublet* ANode1, CDkDoublet* ANode2);
-    
+
     ///Donne le noeud précédent
     ///@param ANode : le noeud
     ///@return le noeud précédent
     CDkDoublet* findPrev(CDkDoublet* ANode);
-      
+
     float weight(CDkDoublet* ANode1, CDkDoublet* ANode2);
-    
+
     uint projectPath(const CEdge & AEdge);
 
     void removeDanglingEdges();
@@ -1081,13 +1081,13 @@ namespace Map2d
 
     //fait un tableau de la taille de l'ensemble des tuiles filles
     //comportant les valeurs des pixels au niveau k+1
-    //des pixels appartenant à des régions d'intérêt au niveau k    
+    //des pixels appartenant à des régions d'intérêt au niveau k
     uint8* regionsData();
-    
+
     /// enregistre la bounding box d'une region sous forme d'une image png
     void exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADirname);
 
-    /// selectionne plus finement quelles sont les régions correspondant 
+    /// selectionne plus finement quelles sont les régions correspondant
     /// à des figures de mitoses parmis
     /// les régions dont le label est CPyramidalRegion::Mitosis
     /// et les enregistre en png dans output
@@ -1098,7 +1098,7 @@ namespace Map2d
 
     void projectionDijkstraConstant();
 
-    bool oracle(const IM_Pixel & APixel1, const IM_Pixel & APixel2, 
+    bool oracle(const IM_Pixel & APixel1, const IM_Pixel & APixel2,
 		const SegmentationMode & ASegmentationMode);
 
   };

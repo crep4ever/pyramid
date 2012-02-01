@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
 #include <map>
@@ -31,7 +31,7 @@ namespace Map2d
   CTile::~CTile()
   {
     //std::cout<<"\n[start] CTile::destructeur() tile "<<getId()<<std::endl;
-    removeAllRegions();    
+    removeAllRegions();
     empty();
     delete FMark;
     FMark = NULL;
@@ -73,7 +73,7 @@ namespace Map2d
     //coordonnées de la tuile
     for(int i=0;i<3;++i)
       FIndex[i]=0;
-  
+
     assert(getNbRegions()==0);
   }
 
@@ -200,7 +200,7 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalRegion* CTile::getInclusionTreeRoot() const
-  { 
+  {
     assert(static_cast<CPyramidalRegion*>(FInclusionTreeRoot)->isInfiniteRegion());
     return static_cast<CPyramidalRegion*>(FInclusionTreeRoot);
   }
@@ -280,9 +280,9 @@ namespace Map2d
     FIndex[APos] = AValue;
   }
 
-  //******************************************************************************	  
+  //******************************************************************************
   // Méthodes utilitaires
-  //******************************************************************************       
+  //******************************************************************************
 
   INLINE
   void CTile::setFilename(uint Ai, uint Aj, uint Ak)
@@ -291,7 +291,7 @@ namespace Map2d
     filename<<".//output//tile-"<<Ai<<"-"<<Aj<<"-"<<Ak;
     FFilename =  filename.str();
   }
-  //------------------------------------------------------------------------------  
+  //------------------------------------------------------------------------------
   INLINE
   bool CTile::fileExist(const char* AFilename)
   {
@@ -417,18 +417,18 @@ namespace Map2d
     ABox.XTop = xmin(ASystem); ABox.YTop = ymin(ASystem);
     ABox.XBtm = xmax(ASystem); ABox.YBtm = ymax(ASystem);
     return ABox;
-  }  
+  }
   //------------------------------------------------------------------------------
   INLINE
   bool CTile::isPointelInTile(const CDoublet & ADoublet, bool AStrict, const SystemMode & ASystem) const
   {
     if(AStrict)
-      return 
-	ADoublet.getX()>xmin(ASystem) && ADoublet.getY()>ymin(ASystem) && 
+      return
+	ADoublet.getX()>xmin(ASystem) && ADoublet.getY()>ymin(ASystem) &&
 	ADoublet.getX()<xmax(ASystem) && ADoublet.getY()<ymax(ASystem) ;
     else
-      return 
-	ADoublet.getX()>=xmin(ASystem) && ADoublet.getY()>=ymin(ASystem) && 
+      return
+	ADoublet.getX()>=xmin(ASystem) && ADoublet.getY()>=ymin(ASystem) &&
 	ADoublet.getX()<=xmax(ASystem) && ADoublet.getY()<=ymax(ASystem) ;
   }
   //------------------------------------------------------------------------------
@@ -454,7 +454,7 @@ namespace Map2d
 	else if(ADoublet.getY()==ymax(ASystem))
 	  return ADoublet.getLinel()==YNEG;
       }
-    
+
     return isPointelInTile(ADoublet, true, ASystem) || isLinelOnBorder(ADoublet, ASystem);
   }
   //------------------------------------------------------------------------------
@@ -477,7 +477,7 @@ namespace Map2d
        ADoublet.getY()<ymin(ASystem) || ADoublet.getY()>ymax(ASystem))
       return false;
 
-    return 
+    return
       ADoublet.getX()==xmin(ASystem) || ADoublet.getX()==xmax(ASystem) ||
       ADoublet.getY()==ymin(ASystem) || ADoublet.getY()==ymax(ASystem) ;
   }
@@ -485,7 +485,7 @@ namespace Map2d
   INLINE
   bool CTile::isPointelACorner(const CDoublet & ADoublet, const SystemMode & ASystem) const
   {
-    return 
+    return
       (ADoublet.getX()==xmin(ASystem) || ADoublet.getX()==xmax(ASystem)) &&
       (ADoublet.getY()==ymin(ASystem) || ADoublet.getY()==ymax(ASystem)) ;
   }
@@ -505,42 +505,42 @@ namespace Map2d
 
     if(ADoublet.getX()==xmin(ASystem) && ADoublet.getY()==ymax(ASystem))
       return ADoublet.getLinel()==XPOS || ADoublet.getLinel()==YNEG;
-      
+
     if(ADoublet.getX()==xmax(ASystem) && ADoublet.getY()==ymin(ASystem))
       return ADoublet.getLinel()==XNEG || ADoublet.getLinel()==YPOS;
-    
-    //Cas du pointel sur le bord (coins exclus)	  
+
+    //Cas du pointel sur le bord (coins exclus)
     if(ADoublet.getX()==xmin(ASystem) || ADoublet.getX()==xmax(ASystem))
 	return ADoublet.isY(ADoublet.getLinel());
-    
+
     if(ADoublet.getY()==ymin(ASystem) || ADoublet.getY()==ymax(ASystem))
 	return ADoublet.isX(ADoublet.getLinel());
-    
+
     assert(false); return false;
   }
   //------------------------------------------------------------------------------
   INLINE
-  void CTile::incidentPixelsForLinel(const CDoublet & ADoublet, 
-				     IM_Pixel& pix1, IM_Pixel& pix2, 
+  void CTile::incidentPixelsForLinel(const CDoublet & ADoublet,
+				     IM_Pixel& pix1, IM_Pixel& pix2,
 				     const SystemMode & ASystemMode)
   {
     assert(!isLinelOnBorder(ADoublet, ASystemMode));
     CDoublet doublet(ADoublet);
 
-    if(doublet.isNeg(doublet.getLinel())) 
+    if(doublet.isNeg(doublet.getLinel()))
       doublet = doublet.getNextPointel();
 
-    pix1.x = doublet.getX(); 
+    pix1.x = doublet.getX();
     pix1.y = doublet.getY();
-    
+
     if(doublet.isX(doublet.getLinel()))
       {
-	pix2.x = doublet.getX(); 
+	pix2.x = doublet.getX();
 	pix2.y = doublet.getY()-1;
       }
     else
       {
-	pix2.x = doublet.getX()-1; 
+	pix2.x = doublet.getX()-1;
 	pix2.y = doublet.getY();
       }
   }
@@ -549,16 +549,16 @@ namespace Map2d
   INLINE
   uint CTile::gradient(const CDoublet & ADoublet, const SystemMode & ASystem)
   {
-    //std::cout<<"[start] CTile::gradient on linel "<<ADoublet<<std::endl;  
+    //std::cout<<"[start] CTile::gradient on linel "<<ADoublet<<std::endl;
     if(isLinelOnBorder(ADoublet, ASystem))
       return 255;
-    
+
     IM_Pixel pix1, pix2;
     incidentPixelsForLinel(ADoublet, pix1, pix2, ASystem);
-    
+
     image()->getPixel( pix1, index(2) );
     image()->getPixel( pix2, index(2) );
-    
+
     //cout<<"[end] CTile::gradient = "<<abs(image()->getPixelGreyValue(pix1)-image()->getPixelGreyValue(pix2))<<endl;
     return (uint) abs(image()->getPixelGreyValue(pix1) - image()->getPixelGreyValue(pix2));
   }
@@ -598,16 +598,16 @@ namespace Map2d
     return coordinateFromParent(ADoublet.getX(), ADoublet.getY(), ASystem);
   }
 
-  //******************************************************************************	  
+  //******************************************************************************
   // Méthodes sur la carte
-  //******************************************************************************       
+  //******************************************************************************
 
   //------------------------------------------------------------------------------
   INLINE
   void CTile::emptyMap()
   {
     //removeAllDarts();
-    removeAllRegions();    
+    removeAllRegions();
     empty();
     assert( getNbRegions() == 0 && getNbDarts() == 0 );
   }
@@ -631,9 +631,9 @@ namespace Map2d
   bool CTile::isDartOnBorder(CTopologicalDart* ADart, int AMethod)
   {
     if(AMethod==0)
-      return getRegion(beta2(ADart))->isInfiniteRegion() || 
-	getRegion(ADart)->isInfiniteRegion();    
-    const uint x = ADart->doublet().getX(); 
+      return getRegion(beta2(ADart))->isInfiniteRegion() ||
+	getRegion(ADart)->isInfiniteRegion();
+    const uint x = ADart->doublet().getX();
     const uint y = ADart->doublet().getY();
     return (x == 0 || x == width() || y == 0 || y == height());
   }
@@ -648,7 +648,7 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   unsigned long int CTile::getMemoryForMap() const
-  { 
+  {
     //std::cout<<"size of CTile : "<<sizeof(CTile)<<std::endl;
     //std::cout<<"size of CPyramidalDart : "<<sizeof(CPyramidalDart)<<std::endl;
     //std::cout<<"nombre de brins : "<<getNbDarts()<<std::endl;
@@ -664,11 +664,11 @@ namespace Map2d
     return getNbRegions()*sizeof(CPyramidalRegion)+sizeof(CInfinitePyramidalRegion);
   }
 
-  
 
-  //******************************************************************************	  
+
+  //******************************************************************************
   //Opérations sur les pixels et leurs marques
-  //******************************************************************************   	
+  //******************************************************************************
 
   //------------------------------------------------------------------------------
   INLINE
@@ -718,16 +718,16 @@ namespace Map2d
     FMark->fill();
   }
 
-  //******************************************************************************	  
+  //******************************************************************************
   //Opérations sur les brins
-  //******************************************************************************   	
+  //******************************************************************************
 
   INLINE
   CDart* CTile::addMapDart()
   {
     CPyramidalDart* result = static_cast<CPyramidalDart*>(CMapBasic::addMapDart());
     result->setId(++FCount);
-    result->setDartUp(NULL);    
+    result->setDartUp(NULL);
     result->setDartDown(NULL);
     return result;
   }
@@ -744,7 +744,7 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   CDart* CTile::newTabDarts()
-  { 
+  {
     return new CPyramidalDart[FSizeDartArray];
   }
   //------------------------------------------------------------------------------
@@ -771,14 +771,14 @@ namespace Map2d
       (CTopologicalMap::addMapDart(ADoublet, ARegion));
     ++FCount;
     result->setId(FCount);
-    result->setDartUp(NULL);    
+    result->setDartUp(NULL);
     result->setDartDown(NULL);
     return result;
   }
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalDart* CTile::getDartUp(CDart* ADart) const
-  { 
+  {
     assert( ADart!=NULL );
     return static_cast<CPyramidalDart*>(ADart)->getDartUp();
   }
@@ -801,7 +801,7 @@ namespace Map2d
   void CTile::setDartDown(CDart* ADart, CDart* ADartDown)
   {
     assert( ADart!=NULL && ADartDown!=NULL);
-    static_cast<CPyramidalDart*>(ADart)->setDartDown(static_cast<CPyramidalDart*>(ADartDown)); 
+    static_cast<CPyramidalDart*>(ADart)->setDartDown(static_cast<CPyramidalDart*>(ADartDown));
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -831,11 +831,11 @@ namespace Map2d
     assert( ADart!=NULL );
     static_cast<CTopologicalDart*>(ADart)->setDoublet(ADoublet);
   }
-  
 
-  //******************************************************************************	  
+
+  //******************************************************************************
   //Opérations sur les régions
-  //******************************************************************************   	
+  //******************************************************************************
 
   //------------------------------------------------------------------------------
   INLINE
@@ -862,13 +862,13 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalRegion* CTile::getRegion(CDart* ADart) const
-  { 
+  {
     return static_cast<CPyramidalRegion*>(static_cast<CPyramidalDart*>(ADart)->getRegion());
   }
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalRegion* CTile::getRegionUp(CRegion* ARegion) const
-  { 
+  {
     assert( ARegion!=NULL );
     return static_cast<CPyramidalRegion*>(ARegion)->getRegionUp();
   }
@@ -882,7 +882,7 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalRegion* CTile::getRegionDown(CRegion* ARegion) const
-  { 
+  {
     assert( ARegion!=NULL );
     return static_cast<CPyramidalRegion*>(ARegion)->getRegionDown();
   }
@@ -891,7 +891,7 @@ namespace Map2d
   void CTile::setRegionDown(CRegion* ARegion, CRegion* ARegionDown)
   {
     assert( ARegion!=NULL && ARegionDown!=NULL);
-    static_cast<CPyramidalRegion*>(ARegion)->setRegionDown(static_cast<CPyramidalRegion*>(ARegionDown)); 
+    static_cast<CPyramidalRegion*>(ARegion)->setRegionDown(static_cast<CPyramidalRegion*>(ARegionDown));
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -918,7 +918,7 @@ namespace Map2d
   CInfinitePyramidalRegion* CTile::addMapInfiniteRegion()
   {
     assert(FInclusionTreeRoot == NULL );
-    ++FNbRegions; 
+    ++FNbRegions;
     CInfinitePyramidalRegion* result = new CInfinitePyramidalRegion();
     result->setId(++FRegionCount);
     return result;
@@ -945,21 +945,21 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   void CTile::addPixel( IM_Pixel & APixel, CRegion* ARegion)
-  { 
+  {
     image()->getPixel( APixel, index(2));
     ARegion->addPixel( image()->getPixelGreyValue(APixel) & 0xFF ); // Le & 0xFF fait un modulo 256
   }
   //  //------------------------------------------------------------------------------
   //  INLINE
   //  void CTile::addPixel2(uint8* data, CRegion* ARegion)
-  //  { 
+  //  {
   //    if( image()->colorMode() == CImageTiff::RGB )
   //      ARegion->addPixel( (data[FPixIndex++] + data[FPixIndex++] + data[FPixIndex++])/3 );
   //    else if(image()->colorMode() == CImageTiff::Grey)
   //      ARegion->addPixel( data[FPixIndex++] );
   //  }
 
-  //******************************************************************************	  
+  //******************************************************************************
   //Opérations sur la géométrie
   //******************************************************************************
 
@@ -991,7 +991,7 @@ namespace Map2d
       {
 	CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);
 
-	if(region->isInfiniteRegion()) 
+	if(region->isInfiniteRegion())
 	  {
 	    region->setLabel(CPyramidalRegion::Invalid);
 	  }
@@ -1022,7 +1022,7 @@ namespace Map2d
 		    //std::cout<<"value = " << value << std::endl;
 		  }
 		break;
-		
+
 	      default:
 		if(region->regionUp()->regionDown()==region)
 		  region->setLabel( (CPyramidalRegion::Label) (region->regionUp()->label()+2) );
@@ -1050,7 +1050,7 @@ namespace Map2d
 	if(label==1)
 	  return CPyramidalRegion::DarkTissue;
 	return CPyramidalRegion::BrightTissue;
-	
+
       case 3:
 	if(label==1)
 	  return CPyramidalRegion::Lesion;
@@ -1062,7 +1062,7 @@ namespace Map2d
 	//	if(label==2)
 	//	  return CPyramidalRegion::Cancer;
 	//	return CPyramidalRegion::Stroma;
-	
+
       case 4:
 	if(label==1)
 	  return CPyramidalRegion::Mitosis;
@@ -1090,7 +1090,7 @@ namespace Map2d
 	    for(uint j=0; j<ratioy; ++j)
 	      for(uint i=0; i<ratiox; ++i)
 		{
-		  pix.x = ((*it2).x() + xmin())*ratiox + i;  
+		  pix.x = ((*it2).x() + xmin())*ratiox + i;
 		  pix.y = ((*it2).y() + ymin())*ratioy + j;
 		  image()->getPixel(pix, depth()+1);
 		  histo->setValue(pix.value[0], pix.value[1], pix.value[2],
@@ -1098,7 +1098,7 @@ namespace Map2d
 		}
 	}
   }
-  
+
   //------------------------------------------------------------------------------
   INLINE
   uint8* CTile::regionsData()
@@ -1125,7 +1125,7 @@ namespace Map2d
 	    for(uint j=0; j<ratioy; ++j)
 	      for(uint i=0; i<ratiox; ++i)
 		{
-		  pix.x = ((*it2).x() + xmin())*ratiox + i;  
+		  pix.x = ((*it2).x() + xmin())*ratiox + i;
 		  pix.y = ((*it2).y() + ymin())*ratioy + j;
 		  image()->getPixel(pix, depth()+1);
 		  //std::cout<<" pix ("<<(uint)pix.value[0]<<","<<(uint)pix.value[1]<<","<<(uint)pix.value[2]<<")"<<std::endl;
@@ -1137,8 +1137,8 @@ namespace Map2d
 	}
     return data;
   }
-  
-  
+
+
   //******************************************************************************
 } // namespace Map2d
 //******************************************************************************

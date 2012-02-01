@@ -22,7 +22,7 @@ CPoint3D::CPoint3D(uint ATab[3])
 {
   FCoord[0] = ATab[0];
   FCoord[1] = ATab[1];
-  FCoord[2] = ATab[2]; 
+  FCoord[2] = ATab[2];
 }
 //-----------------------------------------------------------------------------
 INLINE
@@ -30,7 +30,7 @@ CPoint3D::CPoint3D(const CPoint3D& AVertex)
 {
   FCoord[0] = AVertex.FCoord[0];
   FCoord[1] = AVertex.FCoord[1];
-  FCoord[2] = AVertex.FCoord[2]; 
+  FCoord[2] = AVertex.FCoord[2];
 }
 //-----------------------------------------------------------------------------
 INLINE
@@ -91,7 +91,7 @@ CPoint3D& CPoint3D::operator=(const CPoint3D& AVector)
 INLINE
 bool CPoint3D::operator==(const CPoint3D& AVector) const
 {
-  return( x()==AVector.x() && y()==AVector.y() && z()==AVector.z());    
+  return( x()==AVector.x() && y()==AVector.y() && z()==AVector.z());
 }
 //*****************************************************************************
 INLINE
@@ -101,7 +101,7 @@ bool CPoint3D::operator!=(const CPoint3D& AVector) const
 INLINE
 bool operator < (CPoint3D u,CPoint3D v)
 {
-  return( u.x()<v.x() || 
+  return( u.x()<v.x() ||
 	  ( u.x()==v.x() && u.y()<v.y() ) ||
 	  ( u.x()==v.x() && u.y()==v.y() && u.z()<v.z() ) );
 }

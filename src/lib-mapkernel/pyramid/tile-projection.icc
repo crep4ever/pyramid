@@ -69,7 +69,7 @@ namespace Map2d
       std::cout<<"CTile::weight : Warning Anode2 is not a neighbor of ANode1"<<std::endl;
 
     //std::cout<<"[end] CTile::weight"<<std::endl;
-    return gradientInverse(*ANode1, Relative); 
+    return gradientInverse(*ANode1, Relative);
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -84,14 +84,14 @@ namespace Map2d
   {
     //std::cout<<"[start] CTile::reductionWindow for pointel "<< APointel <<std::endl;
 
-    // Lorsqu'un pointel doit être plongé dans le niveau inférieur, 
+    // Lorsqu'un pointel doit être plongé dans le niveau inférieur,
     // il peut prendre ratiox*ratioy positions, sauf pour les bords
     uint ratiox = upRatioX(); uint ratioy = upRatioY();
-    CEdge result; 
-  
+    CEdge result;
+
     //projection de la tuile mère vers la tuile fille
     CPoint2D son = coordinateFromParent(APointel, Relative); //projeté direct
-    CDoublet ref; 
+    CDoublet ref;
     ref.setDoublet(son.x(), son.y(), APointel.getLinel());
     CDoublet current(ref);
 
@@ -100,7 +100,7 @@ namespace Map2d
 	{
 	  current.setX(ref.getX()+i);
 	  current.setY(ref.getY()+j);
-	  
+
 	  //la projection directe du pointel est toujours candidate
 	  //on exclue les candidats sur le bord des tuiles
 	  if( (i==0 && j==0) || isPointelInTile(current, false, Relative) )
@@ -115,8 +115,8 @@ namespace Map2d
   {
     //std::cout<<"[start] CTile::findNeighbors of "<<ANode<<std::endl;
     // todo: faire un parcours sur l'index. Et même mieux, faire une multimap
-    // pour coder l'adjacence des pointels 
-    
+    // pour coder l'adjacence des pointels
+
     std::vector<CDkDoublet*> result;
     typedef __gnu_pbds::priority_queue<CDkDoublet*, EdgeComp<CDkDoublet*>, rc_binomial_heap_tag> ThinHeap;
     const ThinHeap nodes = AHeap.heap;
@@ -133,7 +133,7 @@ namespace Map2d
     //std::cout<<"[end] CTile::findNeighbors nb ="<<result.size()<<std::endl;
     return result;
   }
-  
+
   //------------------------------------------------------------------------------
   INLINE
   void CTile::addNewEdge(std::vector<CEdge> & AVector)

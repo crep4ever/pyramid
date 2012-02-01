@@ -25,33 +25,33 @@
 //******************************************************************************
 
 //class CMergeKMeans;
-/** 
+/**
  * Fusionne deux régions adjacentes si elles appartiennent à une même classe
  * après la calssification opérée par la lib kmlocal
  */
 namespace Map2d
 {
-  class CRegion;  
+  class CRegion;
   class CMergeKMeans : public CCriterionMerge
   {
- 
+
   protected:
     uint8* FData;
-    
+
   public:
     // Constructeurs
     CMergeKMeans(); //par défaut
     CMergeKMeans(CImage2D* AImage, unsigned int ANbClasses, CRegion* ARegion1, CRegion* ARegion2);
-  
+
     // Destructeur
     ~CMergeKMeans();
-  
+
     // unsigned int getMergeThreshold() const;
     // void setMergeThreshold(unsigned int AMergeThreshold);
-    
-    //******************************************************************************	  
+
+    //******************************************************************************
     //Méthodes
-    //******************************************************************************    
+    //******************************************************************************
 
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToMerge();

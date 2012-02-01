@@ -34,7 +34,7 @@ class CPoint3D
 {
 private:
   uint FCoord[3];
-  
+
 public:
   // @name Constructeurs et destructeur
   // @{
@@ -111,32 +111,32 @@ public:
 // @}
 // @name Constantes
 // @{
-  
+
 /**
  * Le sommet de cordonnées (0,0).
  */
 static const CPoint3D POINT3D_ORIGIN(0,0,0);
-  
+
 /**
  * Le vecteur de composantes (1,0).
  */
 static const CPoint3D POINT3D_OX(1,0,0);
-  
+
 /**
  * Le vecteur de composantes (0,1).
  */
 static const CPoint3D POINT3D_OY(0,1,0);
-  
+
 /**
  * Le vecteur de composantes (0,1).
  */
 static const CPoint3D POINT3D_OZ(0,0,1);
-  
-  
+
+
 /** BASE
  * Les trois vecteurs de base OX et OY placés dans un tableau.
  */
-static const CPoint3D POINT3D_BASE[3] = { POINT3D_OX, 
+static const CPoint3D POINT3D_BASE[3] = { POINT3D_OX,
 					  POINT3D_OY,
 					  POINT3D_OZ};
 

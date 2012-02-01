@@ -187,7 +187,7 @@ float** CImageTiff::omp_kmeans(int     is_perform_atomic, /* in: */
       }
       newClusterSize[i] = 0;   /* set back to 0 */
     }
-            
+
     delta /= numObjs;
   } while (delta > threshold && loop++ < 500);
 

@@ -57,7 +57,7 @@ public:
   ~CLimitedStack();
 
   // @}
-  
+
   // @name Accesseurs
   // @{
 
@@ -78,10 +78,10 @@ public:
 
   /// Enleve l'element en tête de pile.
   void pop();
-  
+
   /// Vide la pile.
   void clear();
-  
+
   // @}
 };
 

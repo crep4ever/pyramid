@@ -147,7 +147,7 @@ QWidget* CPanel::createImageWidget()
 
   m_imageFileChooser->setType(CFileChooser::OpenFileChooser);
   m_imageFileChooser->setPath(controler()->imageFilename());
-  if(!controler()->imageFilename().isEmpty())  
+  if(!controler()->imageFilename().isEmpty())
     tiffInfo(controler()->imageFilename());
   m_imageFileChooser->setCaption(tr("Image"));
   m_imageFileChooser->setFilter(tr("Images (*.tif)"));
@@ -187,7 +187,7 @@ QStringList CPanel::imageProperties()
 
   fogrimmi::TIFF_Properties tiffP = image->getProperties();
   QString name(name.fromStdString(image->fileName.Filename()));
-  
+
   return QStringList()
     << QString(tr("Image name : %1")).arg(name)
     << QString(tr("Number of pages : %1")).arg(image->getNbPages())

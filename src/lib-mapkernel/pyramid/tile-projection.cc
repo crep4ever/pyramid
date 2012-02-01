@@ -91,7 +91,7 @@ void CTile::projectionDijkstraConstant()
   std::vector< CEdge > edges;
   CPoint2D son;
   CDoublet down;
-  uint ratiox = upRatioX();  uint ratioy = upRatioY(); 
+  uint ratiox = upRatioX();  uint ratioy = upRatioY();
   for(CDynamicCoverageAll it(up); it.cont(); ++it)
     {
       CPyramidalDart* dart = static_cast<CPyramidalDart*>(*it);
@@ -101,9 +101,9 @@ void CTile::projectionDijkstraConstant()
       addNewEdge(edges);
       if( !up->isMarked(dart,done) && !getRegion(dart)->isInfiniteRegion() && !getRegion(beta2(dart))->isInfiniteRegion() )
 	{
-	  CDoublet next(init); 
+	  CDoublet next(init);
 	  addDoublet(edges, next);
-	  	  
+
 	  //parcours de l'arête parente
 	  do{
 	    next.setNextPointel();
@@ -111,7 +111,7 @@ void CTile::projectionDijkstraConstant()
 	      next.setNextLinel();
 	    while(!up->isLCell(next));
 	    addDoublet(edges, next);
-	    
+
 	    if(up->isPCell(next) || next == init)
 	      break;
 
@@ -128,7 +128,7 @@ void CTile::projectionDijkstraConstant()
     }
   up->negateMaskMark(done);
   up->freeMark(done);
-  
+
   setId(++(up->FCount));
   //std::cout<<"\n[end] CTile::projectionDijkstraConstant"<<std::endl;
 }
@@ -155,10 +155,10 @@ void CTile::projectionDijkstra()
       addNewEdge(edges);
       if( !up->isMarked(dart,done) && !isLinelOnBorder(down,Relative))
 	{
-	  CDoublet next(init); 
+	  CDoublet next(init);
 	  if(isDoubletInTile(down, true, Relative))
 	    addDoublet(edges, next);
-	  
+
 	  //parcours de l'arête parente
 	  do{
 	    next.setNextPointel();
@@ -169,10 +169,10 @@ void CTile::projectionDijkstra()
 	    down.setDoublet(son.x(), son.y(), next.getLinel());
 	    if(isDoubletInTile(down, false, Relative))
 	      addDoublet(edges, next);
-	    
+
 	    if(up->isPCell(next) || next == init)
 	      break;
-	    
+
 	    if(isDoubletInTile(down, false, Relative))
 	      {
 		if(isPointelOnBorder(down, Relative))
@@ -198,7 +198,7 @@ void CTile::projectionDijkstra()
     }
   up->negateMaskMark(done);
   up->freeMark(done);
-  
+
   setId(++(up->FCount));
   //std::cout<<"\n[end] CTile::projectionDijkstra"<<std::endl;
 }
@@ -261,13 +261,13 @@ uint CTile::projectPath(const CEdge & AEdge)
 	node->setLinel(YNEG);
       else
 	std::cout<<"CTile::projectPath : Warning node is not a neighbor of next"<<std::endl;
-      
+
       setLCell(*node, true);
     }
   setPCell(*node, true);
 
   //std::cout<<"[end] CTile::projectPath"<<std::endl;
-  return 0;  
+  return 0;
 }
 //------------------------------------------------------------------------------
 CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
@@ -280,9 +280,9 @@ CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
       if(isLinelOnBorder(tmp,Relative))
 	return 0;
     }
-  
+
   //std::cout<<"[start] CTile::findNodes"<<std::endl;
-  
+
   //std::cout<<" arête = ";
   //for(uint i=0; i<AEdge.size(); ++i)
   //  std::cout<<AEdge[i] << " ";
@@ -298,7 +298,7 @@ CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
   //sauf que le premier et le dernier pointel ne doivent pas être déplacés
   //on ne calcule pas le chemin depuis le premier mais depuis le deuxieme pointel
   //car il faut conserver la direction imposée par le premier lignel
-  
+
   //on impose le premier pointel et le premier lignel
   CDoublet start, end;
   CPoint2D son = coordinateFromParent( AEdge[0], Relative );
@@ -307,8 +307,8 @@ CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
   setLCell(start, true);
 
   //on impose le dernier pointel et le dernier lignel
-  son = coordinateFromParent( AEdge[AEdge.size()-1], Relative );  
-    
+  son = coordinateFromParent( AEdge[AEdge.size()-1], Relative );
+
   end.setDoublet(son.x(), son.y(), AEdge[AEdge.size()-1].getLinel());
   setPCell(end, true);
 
@@ -320,7 +320,7 @@ CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
     beforelast.setLinel( CDoublet::getOppositeLinel( AEdge[AEdge.size()-2].getLinel() ) );
   setLCell(beforelast, true);
 
-  
+
   bool loop = start.samePointel(end);
   uint size = (loop)?AEdge.size()-1:AEdge.size();
   bool firstNodeSet = false;

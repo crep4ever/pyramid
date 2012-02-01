@@ -37,11 +37,11 @@ class CView;
 class CTabControler : public QMdiArea
 {
   Q_OBJECT
-  
+
 public:
-  /// Constructor 
+  /// Constructor
   CTabControler( CControler * controler );
-  
+
   /// Destructor
   ~CTabControler();
 

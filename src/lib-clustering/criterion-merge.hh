@@ -31,20 +31,20 @@ namespace Map2d
    *
    * \author Romain Goffe
    */
- 
+
   class CRegion;
- 
+
   class CCriterionMerge
   {
   public :
-  
-    CRegion* FRegion1; 
-    CRegion* FRegion2; 
+
+    CRegion* FRegion1;
+    CRegion* FRegion2;
 
     // Constructeurs
-    CCriterionMerge(); //par défaut  
+    CCriterionMerge(); //par défaut
     CCriterionMerge(CRegion* ARegion1, CRegion* ARegion2);
-      
+
     // Destructeur
     virtual ~CCriterionMerge() = 0;
 
@@ -54,8 +54,8 @@ namespace Map2d
 
     CRegion* getRegion2() const;
     void setRegion2(CRegion* ARegion);
- 
-    //******************************************************************************  
+
+    //******************************************************************************
     //Méthodes
     //******************************************************************************
 

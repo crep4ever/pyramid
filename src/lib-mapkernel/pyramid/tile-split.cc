@@ -41,7 +41,7 @@ void CTile::createMask(std::vector<CDoublet>& AMask)
 	  AMask.push_back(CDoublet(doublet));
 	}
     }
-  
+
   // les aretes horizontales
   for(unsigned int j=0; j<FRatioY-1; ++j)
     {
@@ -52,7 +52,7 @@ void CTile::createMask(std::vector<CDoublet>& AMask)
 	  AMask.push_back(CDoublet(doublet));
 	}
     }
-  
+
   assert(!AMask.empty());
   //std::cout<<"[end] CTile::createMask"<<std::endl;
 }
@@ -65,18 +65,18 @@ void CTile::applyMask(std::vector<CDoublet>& AMask)
   std::vector<CDoublet>::iterator it;
   for(it=AMask.begin(); it!=AMask.end(); ++it)
     {
-      
+
       if(!isLCell(*it))
 	{
 	  if( !isPCell(*it) )
 	    setFictivePCell(*it);
-	
+
 	  if( !isPCell((*it).getNextPointel()) )
 	    setFictivePCell((*it).getNextPointel());
-	
+
 	  setFictiveLCell(*it, true);
 	}
-      
+
       //std::cout<<"mask = "<<*it<<std::endl;
     }
   //std::cout<<"[end] CTile::applyMask"<<std::endl;
@@ -101,7 +101,7 @@ void CTile::insertVertexOnFictivePointels()
 	      next = next.getNextLinel();
 	    }
 	  while(!isLCell(next));
-	  
+
 	  // On insère le sommet si le pointel est fictif
 	  if( isFictivePCell(next) )
 	    {
@@ -132,7 +132,7 @@ void CTile::createMaskUnitEdges(std::vector<CDoublet>& AMask)
 
       // attention, ça marche bien dans le cas ou le masque est une grille
       // marche pas si les chemins de lignels sont quelconques
-      if( isFictiveLCell((*it).getNextLinel()) || 
+      if( isFictiveLCell((*it).getNextLinel()) ||
 	  isFictiveLCell((*it).getPrevLinel()) )
 	setPCell(*it);
 
@@ -145,7 +145,7 @@ void CTile::createMaskUnitEdges(std::vector<CDoublet>& AMask)
 
       linkBeta1(dart2, dart1);
       dart2->setDoublet((*it).getNextPointel());
-      
+
       linkBeta2(dart1,dart2);
 
       ++debug;
@@ -164,7 +164,7 @@ void CTile::sewAroundPointel(const CDoublet& APointel, const CArray* AArray, int
 
   CDoublet d(APointel);
   setFictivePCell(d, false);
-  
+
   CDart* tab[4];
   unsigned int degree = 0;
   for( unsigned int j = 0 ; j < 4 ; ++j )
@@ -173,19 +173,19 @@ void CTile::sewAroundPointel(const CDoublet& APointel, const CArray* AArray, int
       tab[degree] = AArray->getDart(d);
       if(tab[degree]!=NULL && !isMarked(tab[degree],toDelete))
 	++degree;
-      
+
       //if(tab[degree] == NULL)
       //std::cout<<" pas de brin trouvé dans le tableau"<<std::endl;
       //if(tab[degree] != NULL && isMarked(tab[degree], toDelete))
       //std::cout<<" brin "<<getDoublet(tab[degree])<<" marqué toDelete"<<std::endl;
-      
+
       d.setPrevLinel();
     }
 
   assert(d==APointel);
   assert(degree>1);
   assert(degree<5);
-  
+
   if(degree == 2)
     {
       // sommets de degré 2
@@ -196,7 +196,7 @@ void CTile::sewAroundPointel(const CDoublet& APointel, const CArray* AArray, int
       linkBeta1(beta2(tab[0]), beta1(tab[1]));
       //std::cout<<"linkBeta2 de "<<getDoublet(beta2(tab[0]))<<" avec "<<getDoublet(beta2(tab[1]))<<std::endl;
       linkBeta2(beta2(tab[0]), beta2(tab[1]));
-         
+
       setMark(tab[0],toDelete);
       setMark(tab[1],toDelete);
 
@@ -224,7 +224,7 @@ void CTile::sewMapWithMask(std::vector<CDoublet>& AMask)
 
   // on crée la structure associative brin/doublet
   CArray* array = new CArray(0, 0, getWidth(), getHeight());
-  
+
   for(CDynamicCoverageAll it( this ); it.cont(); ++it)
     {
       //std::cout<<" remplissage = "<<getDoublet(*it)<<std::endl;
@@ -252,7 +252,7 @@ void CTile::sewMapWithMask(std::vector<CDoublet>& AMask)
   int debug;
   for( CDynamicCoverageAll it( this ); it.cont(); )
     {
-      actu = *it; 
+      actu = *it;
       ++it;
       debug = 0;
       if ( isMarked(actu, toDelete) )
@@ -283,13 +283,13 @@ void CTile::createSons()
 	CTile* son = new CTile(getWidth(), getHeight());
 	son->setMergeThresholds(FMergeThresholds);
 	son->setOrigine(getX()*(i+1), getY()*(j+1));
-	son->setRatioX(FRatioX); 
+	son->setRatioX(FRatioX);
 	son->setRatioY(FRatioY);
 	son->setIndex(2, getIndex(2));
-	
+
 	// La matrice
 	//son->copyKhalimsky2(count++, this);
-	
+
 	//son->createTopTile();
 
 	// on met les bords droite et bas
@@ -300,7 +300,7 @@ void CTile::createSons()
 	    doublet.setY(i);
 	    son->setLCell(doublet);
 	  }
-	
+
 	doublet.setX(0);
 	doublet.setY(getHeight());
 	doublet.setLinel(XPOS);
@@ -311,40 +311,40 @@ void CTile::createSons()
 	    son->setLCell(doublet);
 	  }
 	son->setPCell(doublet.getNextPointel());
-		
+
 	std::cout<<"export svg matrice"<<std::endl;
 
 	//affichage matrice
 	std::ostringstream filename;
 	std::string sep = "-";
-	
+
 	filename<<".//output//geom"<<sep<<"tile"<<sep<<son->getId()<<".svg";
 	ofstream ofs( filename.str().c_str() );
-	
+
 	CSvgCreator svg( ofs );
 	svg.svgBegin( son->getHeight(), son->getWidth() );
-	
+
 	// Parcours de la matrice de Khalimsky
 	// Affichage des pointels et des lignels allumés
 	CDoublet temp;
 	unsigned int width  = getWidth();
 	unsigned int height = getHeight();
-	
+
 	for(unsigned int x=0; x<width+1; ++x)
 	  for(unsigned int y=0; y<height+1; ++y)
 	    {
 	      temp.setX(x);
 	      temp.setY(y);
-	      
+
 	      // Affichage des pointels
 	      if( son->isPCell(temp) )
 		svg.circle(x,y,0.05, "class=\"pointel\" " );
-	      
+
 	      // Affichage des lignels
 	      temp.setLinel(XPOS);
 	      if( son->isLCell(temp) )
 		svg.line(x+0.2,y, x+0.8,y,"class=\"linel\" " );
-	      
+
 	      temp.setLinel(YPOS);
 	      if( son->isLCell(temp) )
 		svg.line(x,y+0.2, x,y+0.8, "class=\"linel\" ");
@@ -361,20 +361,20 @@ void CTile::createSons()
 void CTile::shareDartsWithSon(CTile* ASon)
 {
   std::cout<<"[start] CTile::shareDartsWithSon"<<std::endl;
-    
+
   // On retrouve géométriquement les brins de la copie splitée
   // qui appartiennent à la subdivision
-  
+
   std::cout<<" récupération des brins"<<std::endl;
   assert(isMapOk());
   std::cout<<" ratio X = "<<FRatioX<<std::endl;
   std::cout<<" ratio Y = "<<FRatioY<<std::endl;
-  
+
   std::cout<<" xmin = "<<ASon->getXmin()<<std::endl;
   std::cout<<" xmax = "<<ASon->getXmax()<<std::endl;
   std::cout<<" ymin = "<<ASon->getYmin()<<std::endl;
   std::cout<<" ymax = "<<ASon->getYmax()<<std::endl;
-  
+
   // !! interdit de garder ça
   for(CDynamicCoverageAll it(this); it.cont(); ++it)
     {
@@ -386,7 +386,7 @@ void CTile::shareDartsWithSon(CTile* ASon)
 	  if( doublet.getX()*FRatioX > ASon->getXmin() && doublet.getX()*FRatioX < ASon->getXmax() &&
 	      doublet.getY()*FRatioY > ASon->getYmin() && doublet.getY()*FRatioY < ASon->getYmax() )
 	    {
-		    
+
 	      std::cout<<"bah"<<std::endl;
 	      CPyramidalDart* dart = static_cast<CPyramidalDart*>(ASon->addMapDart());
 	      CDoublet tmp = doublet;
@@ -395,18 +395,18 @@ void CTile::shareDartsWithSon(CTile* ASon)
 	      ASon->setDoublet(dart, tmp);
 	      ASon->linkDartUpDown(static_cast<CPyramidalDart*>(*it), dart);
 	    }
-	  
-	  if( (doublet.getX()*FRatioX==ASon->getXmin() && 
-	       doublet.getY()*FRatioY==ASon->getYmin() && 
+
+	  if( (doublet.getX()*FRatioX==ASon->getXmin() &&
+	       doublet.getY()*FRatioY==ASon->getYmin() &&
 	       (doublet.getLinel()==XPOS || doublet.getLinel()==YPOS)) ||
-	      (doublet.getX()*FRatioX==ASon->getXmax() && 
-	       doublet.getY()*FRatioY==ASon->getYmin() && 
+	      (doublet.getX()*FRatioX==ASon->getXmax() &&
+	       doublet.getY()*FRatioY==ASon->getYmin() &&
 	       (doublet.getLinel()==XNEG || doublet.getLinel()==YPOS)) ||
-	      (doublet.getY()*FRatioY==ASon->getYmax() && 
-	       doublet.getX()*FRatioX==ASon->getXmin() && 
+	      (doublet.getY()*FRatioY==ASon->getYmax() &&
+	       doublet.getX()*FRatioX==ASon->getXmin() &&
 	       (doublet.getLinel()==XPOS || doublet.getLinel()==YNEG)) ||
-	      (doublet.getY()*FRatioY==ASon->getYmax() && 
-	       doublet.getX()*FRatioX==ASon->getXmax() && 
+	      (doublet.getY()*FRatioY==ASon->getYmax() &&
+	       doublet.getX()*FRatioX==ASon->getXmax() &&
 	       (doublet.getLinel()==XNEG || doublet.getLinel()==YNEG)) )
 	    {
 	      std::cout<<"bih: "<<doublet<<std::endl;
@@ -415,7 +415,7 @@ void CTile::shareDartsWithSon(CTile* ASon)
 	      tmp.setX(doublet.getX()*FRatioX);
 	      tmp.setY(doublet.getY()*FRatioY);
 	      ASon->setDoublet(dart, tmp);
-	      ASon->linkDartUpDown(static_cast<CPyramidalDart*>(*it), dart);	
+	      ASon->linkDartUpDown(static_cast<CPyramidalDart*>(*it), dart);
 	    }
 	}
     }
@@ -430,7 +430,7 @@ void CTile::shareDartsWithSon(CTile* ASon)
       downDart->setBeta1(upDart->getBeta1()->getDartDown());
       downDart->setBeta2(upDart->getBeta2()->getDartDown());
     }
-	
+
   CDoublet ref(0,0,XPOS);
   for( CDynamicCoverageAll it( ASon ); it.cont(); ++it )
     {
@@ -446,14 +446,14 @@ void CTile::shareDartsWithSon(CTile* ASon)
       CPyramidalDart* downDart = static_cast<CPyramidalDart*>(*it);
       downDart->printInfos();
 
-    }	
+    }
 
   std::cout<<" carte du bas"<<std::endl;
   for( CDynamicCoverageAll it( ASon ); it.cont(); ++it )
     {
       CPyramidalDart* downDart = static_cast<CPyramidalDart*>(*it);
       downDart->printInfos();
-    }	
+    }
 
   //assert(ASon->isMapOk());
   assert(ASon->checkDarts());
@@ -476,7 +476,7 @@ CTile* CTile::createChildrenBySplit()
   tile->insertVertexOnFictivePointels();
   tile->createMaskUnitEdges(mask);
   tile->sewMapWithMask(mask);
- 
+
   //assert(tile->isMapOk());
   assert(tile->checkDarts());
 
@@ -494,10 +494,10 @@ CTile* CTile::createChildrenBySplit()
     //affichage de la carte produite
     std::ostringstream filename;
     std::string sep = "-";
-	
+
     filename<<".//output//svg"<<sep<<"tile"<<sep<<dTile->getId()<<".svg";
     ofstream ofs( filename.str().c_str() );
-	
+
     CSvgCreator svg( ofs );
     svg.svgBegin( dTile->getHeight(), dTile->getWidth() );
     for( CDynamicCoverageAll it(dMap); it.cont(); ++it)
@@ -521,7 +521,7 @@ CTile* CTile::createChildrenBySplit()
     //CCoordinate startPoint = calculateGap(CCoordinate(current.getX(), current.getY()), prev, current);
     CCoordinate startPoint = CCoordinate(current.getX(), current.getY());
     x1 = startPoint.getX(); y1 = startPoint.getY();
-    
+
     //    if( dMap->isRepresentativeDart(*it) )
     //svg.pathBegin(x1,y1,"class=\"representativeDart\" marker-end=\"url(#arrow)\" ");
     //else
@@ -529,17 +529,17 @@ CTile* CTile::createChildrenBySplit()
 
     // Parcours de l'arête
     do{
-    
+
     x1 = current.getX();
     y1 = current.getY();
-    
+
     // Calcul du doublet suivant
     next.setNextPointel();
     do{
     next = next.getNextLinel();
     }
     while(!dMap->isLCell(next));
-    
+
     //CCoordinate endPoint = calculateGap(CCoordinate(next.getX(),next.getY()),current, next);
     CCoordinate endPoint = CCoordinate(next.getX(),next.getY());
     x2 = endPoint.getX(); y2 = endPoint.getY();
@@ -551,11 +551,11 @@ CTile* CTile::createChildrenBySplit()
     current.setNextPointel();
     if (dMap->isDegreTwoPointel(current))
     current = dMap->getOtherLinel(current);
-    
+
     }
     // L'arête se termine par un pointel ou par le linel initial (boucle).
     while ( !dMap->isPCell(current) && current != init );
-  
+
     svg.pathEnd();
     }
 
@@ -564,41 +564,41 @@ CTile* CTile::createChildrenBySplit()
     CDoublet temp;
     unsigned int width  = getWidth();
     unsigned int height = getHeight();
-	
+
     for(unsigned int x=0; x<width+1; ++x)
     for(unsigned int y=0; y<height+1; ++y)
     {
     temp.setX(x);
     temp.setY(y);
-	
+
     // Affichage des pointels
     if( dMap->isPCell(temp) )
     svg.circle(x,y,0.05, "class=\"pointel\" " );
-	      
+
     // Affichage des lignels
     temp.setLinel(XPOS);
     if( dMap->isLCell(temp) )
     svg.line(x+0.2,y, x+0.8,y,"class=\"linel\" " );
-	      
+
     temp.setLinel(YPOS);
     if( dMap->isLCell(temp) )
     svg.line(x,y+0.2, x,y+0.8, "class=\"linel\" ");
     }
-	
-	    
+
+
     svg.svgEnd();
     ofs.close();
     std::cout<<" export carte ok"<<std::endl;
-	
-  */      
+
+  */
 
   // 2. retrouver les régions de chaque tuile
   // et reconstruire leur arbre d'inclusion
 
 
-  
+
   std::cout<<"[end] CTile::copySplitLinkTile\n"<<std::endl;
-  
+
   assert(false);
 
   return tile;

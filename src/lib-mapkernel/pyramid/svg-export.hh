@@ -27,11 +27,11 @@
 namespace Map2d
 {
   class CDart;
-  class CRegion; 
+  class CRegion;
   class CTile;
   class CPyramid;
-  
-  /** 
+
+  /**
    * \file svg-export.hh
    * \class CSvgExporter "svg-export.hh"
    * \author Romain Goffe
@@ -61,7 +61,7 @@ namespace Map2d
     /// vers ./output/map-topology-id.svg
     void drawTileTopology(CTile* ATile);
 
-    /// Export svg des informations géométriques de la carte 
+    /// Export svg des informations géométriques de la carte
     /// vers ./output/map-geometry-id.svg
     void drawTileGeometry(CTile* ATile);
 
@@ -109,10 +109,10 @@ namespace Map2d
     void addSvgDart(CTile* AMap, CDart* ADart, CSvgCreator& ASvg);
 
     /// Colorise les régions d'une carte d'après leur niveau de gris moyen
-    /// @param AMap: la carte    
+    /// @param AMap: la carte
     void fillRegions(CTile* AMap, CSvgCreator& svg);
 
-    /// Calcule le décalage des points de passage des paths pour "séparer" les 
+    /// Calcule le décalage des points de passage des paths pour "séparer" les
     /// brins lors du rendu svg
     /// @param x1,y1: les coordonnées du point de départ
     /// @param current: le doublet partant de x1,y1 et indiquant la direction à suivre

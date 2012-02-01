@@ -80,7 +80,7 @@ namespace Map2d
   INLINE
   void CPyramid::setTileWidth(uint ATileWidth)
   {
-    if(ATileWidth>imageWidth(0)) 
+    if(ATileWidth>imageWidth(0))
       FTileWidth = imageWidth(0);
     else
       FTileWidth = ATileWidth;
@@ -95,7 +95,7 @@ namespace Map2d
   INLINE
   void CPyramid::setTileHeight(uint ATileHeight)
   {
-    if(ATileHeight>imageHeight(0)) 
+    if(ATileHeight>imageHeight(0))
       FTileHeight = imageHeight(0);
     else
       FTileHeight = ATileHeight;
@@ -144,15 +144,15 @@ namespace Map2d
   }
   //------------------------------------------------------------------------------
   INLINE
-  CLevel* CPyramid::level(uint ALevel) const 
+  CLevel* CPyramid::level(uint ALevel) const
   {
     return levels()[ALevel];
   }
 
 
-  //******************************************************************************	  
+  //******************************************************************************
   // Méthodes sur l'image
-  //******************************************************************************	    
+  //******************************************************************************
 
   //------------------------------------------------------------------------------
   INLINE

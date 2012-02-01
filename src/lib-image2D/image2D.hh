@@ -99,11 +99,11 @@ public:
 
   /// @return la taille mémoire occupée en octets
   unsigned int getNumberOfBytes() const;
-    
-  /// @return vrai ssi le pixel Ax,Ay est dans l'image.   
+
+  /// @return vrai ssi le pixel Ax,Ay est dans l'image.
   bool isPixelInImage(int Ax, int Ay) const;
   bool isPixelInImage(const CPixel& APixel) const;
-      
+
   /// Pour tester si le voisin d'un pixel donné existe dans l'image courante.
   /// Cette fonction est la seule fonctionnant sur le 18-voisinage.
   bool existNeighboorPixel(const CPixel&, int ADir) const;
@@ -118,7 +118,7 @@ public:
 
   /// Retourne si le pixel donné est au bord de la région donnée ou non.
   bool isBoundaryPixel(const CPixel&, TLabel) const;
-    
+
   /// @return la valeur du pixel (Ax,Ay).
   TLabel getPixel( unsigned int Ax, unsigned int Ay ) const;
   TLabel getPixel( const CPixel& APixel ) const;
@@ -146,17 +146,17 @@ public:
 
   /// Démarque tout les pixels de l'image.
   void unmarkAll();
-    
-  /// @return vrai ssi le pixel (Ax,Ay) à le même label 
+
+  /// @return vrai ssi le pixel (Ax,Ay) à le même label
   /// que son voisin gauche (en tenant compte d'uné région infinie
-  /// tout autour de l'image)  
+  /// tout autour de l'image)
   bool samePixelActuLeft(unsigned int Ax,unsigned int Ay) const;
-            
-  /// @return vrai ssi le pixel (Ax,Ay) à le même label 
+
+  /// @return vrai ssi le pixel (Ax,Ay) à le même label
   /// que son voisin du dessus (en tenant compte d'uné région infinie
-  /// tout autour de l'image)  
+  /// tout autour de l'image)
   bool samePixelActuUp(unsigned int Ax,unsigned int Ay) const;
-            
+
   /// Remplit toute l'image avec la valeur AIdRegion
   void fillImage( TLabel AIdRegion );
 
@@ -288,11 +288,11 @@ public:
 				   unsigned int Ay ) const;
   void setPixelColor( unsigned int Ax, unsigned int Ay,
 		      const Magick::ColorGray & );
-  
+
   /// Accesseurs pour les valeurs min et max des labels présent dans l'image
   TLabel getMinLabel() const;
   TLabel getMaxLabel() const;
-    
+
   /// Accesseurs pour les valeurs min et max des labels à afficher
   /// utilisées uniquement pour l'affichage ou import/export
   TLabel getDisplayMin() const;

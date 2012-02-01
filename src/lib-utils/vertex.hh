@@ -34,7 +34,7 @@
  * Conventions:
  *
  * alpha.b signifie  produit scalaire  entre alpha et b
- *     résultat: ax*bx + ay*by 
+ *     résultat: ax*bx + ay*by
  *
  *Inutile en 2D:
  * alpha*b signifie  produit vectoriel entre alpha et b
@@ -150,7 +150,7 @@ public:
    *
    * @param ANewX Une valeur quelconque
    * @param ANewY Une valeur quelconque
-  
+
    */
   void setXY(TCoordinate ANewX, TCoordinate ANewY);
 

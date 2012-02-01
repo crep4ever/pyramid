@@ -22,9 +22,9 @@
 //******************************************************************************
 #include <QWidget>
 
-/** 
+/**
  * \file panel.hh
- * \class CPanel "panel.hh"  
+ * \class CPanel "panel.hh"
  * \author Romain Goffe
  * \brief CPanel is a widget panel for tiled top-down pyramids preferences
  */
@@ -39,14 +39,14 @@ class QCheckBox;
 class CPanel : public QWidget
 {
   Q_OBJECT
-  
+
   public:
-  /// Constructor 
+  /// Constructor
   CPanel(CControler* controler);
-  
+
   /// Destructor
   virtual ~CPanel();
-  
+
   void update();
   CControler* controler() const;
   void changeControler(CControler *a_controler);
@@ -62,7 +62,7 @@ private:
 
   QStringList imageProperties();
 
-  CControler* m_controler;  
+  CControler* m_controler;
   QListWidget* m_imageProperties;
   CFileChooser* m_imageFileChooser;
 

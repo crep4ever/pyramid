@@ -30,9 +30,9 @@ namespace Map2d
 
 class CDoublet;
 
-/** 
+/**
  * \file dart-path.hh
- * \class CDartPath "dart-path.hh" 
+ * \class CDartPath "dart-path.hh"
  * \author Romain Goffe
  * \brief CDartPath draw a dart as a QGraphicsItem
  */
@@ -41,12 +41,12 @@ class CDartPath : public QPainterPath
 {
 
 public:
-  /// Constructor 
+  /// Constructor
   CDartPath();
 
   /// Destructor
   virtual ~CDartPath();
-  
+
   Map2d::CDart* dart();
 
   void setDart(Map2d::CDart* dart);

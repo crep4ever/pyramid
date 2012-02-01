@@ -34,7 +34,7 @@ public:
    * @param ASizeY height of the matrix
    */
   CMatrix( uint32_t ASizeX, uint32_t ASizeY );
-  
+
   /** Copy constructor
    */
   CMatrix( const CMatrix< TElement > & AMatrix );
@@ -109,7 +109,7 @@ public :
    * @return index of the (Ax,Ay,Az) cell in the data array
    */
   unsigned long indexOf( uint32_t Ax, uint32_t Ay ) const;
-  
+
   // Size of the current matrix.
   uint32_t FSizeX, FSizeY;
 
@@ -128,7 +128,7 @@ CMatrix< TElement >::CMatrix()
 
 template< typename TElement >
 inline
-CMatrix< TElement >::CMatrix( uint32_t ASizeX, 
+CMatrix< TElement >::CMatrix( uint32_t ASizeX,
 			      uint32_t ASizeY ) :
   FSizeX( ASizeX ),
   FSizeY( ASizeY ),
@@ -136,7 +136,7 @@ CMatrix< TElement >::CMatrix( uint32_t ASizeX,
 {
   assert( FSizeX != 0 );
   assert( FSizeY != 0 );
-  FData = new TElement[FSizeX*FSizeY]; 
+  FData = new TElement[FSizeX*FSizeY];
 }
 
 template< typename TElement >
@@ -144,14 +144,14 @@ inline
 CMatrix< TElement >::CMatrix( const CMatrix< TElement > & AMatrix ) :
   FSizeX( AMatrix.FSizeX ),
   FSizeY( AMatrix.FSizeY ),
-  FData( NULL )  
+  FData( NULL )
 {
   FData = new TElement[ FSizeX * FSizeY ];
   //for( int i = 0 ; i <  FSizeX * FSizeY ; ++i )
   //  FData[i] = AMatrix.FData[i];
   std::cout<<"memcpy pas testé"<<std::endl;
   memcpy(FData, AMatrix.FData, FSizeX * FSizeY);
-  
+
 }
 
 template< typename TElement >
@@ -174,9 +174,9 @@ uint32_t CMatrix< TElement >::getSizeY() const
 
 template< typename TElement >
 inline
-unsigned long CMatrix< TElement >::indexOf( uint32_t Ax, 
+unsigned long CMatrix< TElement >::indexOf( uint32_t Ax,
 					    uint32_t Ay ) const
-{   
+{
   assert( Ax <= FSizeX );
   assert( Ay <= FSizeY );
   return Ay * FSizeX + Ax;
@@ -201,7 +201,7 @@ void CMatrix< TElement >::fill( )
 
 template< typename TElement >
 inline
-TElement CMatrix< TElement >::getValue( uint32_t Ax, 
+TElement CMatrix< TElement >::getValue( uint32_t Ax,
 					uint32_t Ay ) const
 {
   assert( FData != NULL );
@@ -210,8 +210,8 @@ TElement CMatrix< TElement >::getValue( uint32_t Ax,
 
 template< typename TElement >
 inline
-void CMatrix< TElement >::setValue( uint32_t Ax, 
-				    uint32_t Ay, 
+void CMatrix< TElement >::setValue( uint32_t Ax,
+				    uint32_t Ay,
 				    const TElement & AVal )
 {
   assert( FData != NULL );
@@ -228,7 +228,7 @@ TElement CMatrix< TElement >::getValue( const CPoint2D & ACoordinate ) const
 
 template< typename TElement >
 inline
-void CMatrix< TElement >::setValue( const CPoint2D & ACoordinate, 
+void CMatrix< TElement >::setValue( const CPoint2D & ACoordinate,
 				    const TElement & AVal )
 {
   setValue( ACoordinate.getX(),

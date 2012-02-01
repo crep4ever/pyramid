@@ -30,11 +30,11 @@ namespace Map2d
   {
     CMatrix<CRegion*>* matrix = new CMatrix< CRegion* >(width()+1, height()+1);
     matrix->fill(NULL);
-    
+
     for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
       for( CTraversalRegionPixels it2( this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
 	matrix->setValue( (*it2).getX(), (*it2).getY(), (*it) );
-    
+
     return matrix;
   }
   //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ namespace Map2d
     CArray* array = new CArray(0, 0, width()+1, height()+1);
     for(CDynamicCoverageAll it( this); it.cont(); ++it)
       array->setDart(*it); //todo, changer le plongement des brins
-    
+
     return array;
   }
 
@@ -54,10 +54,10 @@ namespace Map2d
 				const SegmentationMode & ASegmentationMode,
 				const FocusAttentionMode & AFocusAttentionMode)
   {
-    uint x = APixel.x; uint y = APixel.y; 
+    uint x = APixel.x; uint y = APixel.y;
     if( y>=ymax() ) return true;
     if( x==xmin() || x>=xmax() ) return false;
-    
+
     IM_Pixel pix2(x-1,y);
     CDoublet doublet(x-xmin(),y-ymin(),YPOS);
 
@@ -65,17 +65,17 @@ namespace Map2d
   }
   //-----------------------------------------------------------------------------
   INLINE
-  bool CTile::samePixelActuUp(IM_Pixel & APixel, 
+  bool CTile::samePixelActuUp(IM_Pixel & APixel,
 			      const SegmentationMode & ASegmentationMode,
 			      const FocusAttentionMode & AFocusAttentionMode)
   {
-    uint x = APixel.x; uint y = APixel.y; 
+    uint x = APixel.x; uint y = APixel.y;
     if( x>=xmax() ) return true;
     if( y==ymin() || y>=ymax() ) return false;
 
     IM_Pixel pix2(x,y-1);
-    CDoublet doublet(x-xmin(), y-ymin(), XPOS);  
-  
+    CDoublet doublet(x-xmin(), y-ymin(), XPOS);
+
     return sameRegions(APixel, pix2, doublet, ASegmentationMode, AFocusAttentionMode);
   }
   //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ namespace Map2d
   unsigned int CTile::removeSmallRegions(unsigned int AThreshold)
   {
     return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
-  }   
+  }
 
   //******************************************************************************
 }//namespace Map2d

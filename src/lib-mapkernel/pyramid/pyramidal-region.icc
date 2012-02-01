@@ -39,7 +39,7 @@ namespace Map2d
   INLINE
   CPyramidalRegion::CPyramidalRegion() :
     CRegion            (  ),
-    FRegionUp          ( NULL ), 
+    FRegionUp          ( NULL ),
     FRegionDown        ( NULL ),
     FLabel             ( Invalid ),
     FFirstPixel        ( 0,0 )
@@ -49,7 +49,7 @@ namespace Map2d
   INLINE
   CPyramidalRegion::CPyramidalRegion(const CRegion& ARegion) :
     CRegion           (  ),
-    FRegionUp         ( NULL ), 
+    FRegionUp         ( NULL ),
     FRegionDown       ( NULL ),
     FLabel            ( Invalid ),
     FFirstPixel       ( 0,0 )
@@ -131,7 +131,7 @@ namespace Map2d
   }
  //------------------------------------------------------------------------------
   INLINE
-  TRegionId CPyramidalRegion::getGreySum() const{ 
+  TRegionId CPyramidalRegion::getGreySum() const{
     return FColorSum;
   }
   //------------------------------------------------------------------------------
@@ -151,17 +151,17 @@ namespace Map2d
   }
   //------------------------------------------------------------------------------
   INLINE
-  CPoint2D CPyramidalRegion::getFirstPixel() const{ 
+  CPoint2D CPyramidalRegion::getFirstPixel() const{
     return FFirstPixel;
   }
   //------------------------------------------------------------------------------
   INLINE
-  CPoint2D CPyramidalRegion::firstPixel() const{ 
+  CPoint2D CPyramidalRegion::firstPixel() const{
     return FFirstPixel;
   }
   //------------------------------------------------------------------------------
   INLINE
-  void CPyramidalRegion::setFirstPixel(const CPoint2D& APixel) { 
+  void CPyramidalRegion::setFirstPixel(const CPoint2D& APixel) {
     FFirstPixel = APixel;
   }
   //------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ namespace Map2d
     ++FNbPixels;
     CRegion::addPixel(ACoul, ADart);
   }
-  
+
   //------------------------------------------------------------------------------
   INLINE
   bool CPyramidalRegion::existRegionDown()
@@ -202,7 +202,7 @@ namespace Map2d
   INLINE
   void CPyramidalRegion::setRepresentativeDart(CDart* ADart)
   { return CRegion::setRepresentativeDart(static_cast<CPyramidalDart*>(ADart)); }
-  
+
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalRegion* CPyramidalRegion::getFather() const
@@ -221,12 +221,12 @@ namespace Map2d
   { return static_cast<CPyramidalRegion*>(CRegion::getNextSameCC()); }
   //------------------------------------------------------------------------------
   INLINE
-  void CPyramidalRegion::addGrey(TRegionId AGrey){ 
+  void CPyramidalRegion::addGrey(TRegionId AGrey){
     FColorSum += AGrey;
   }
   //------------------------------------------------------------------------------
   INLINE
-  TRegionId CPyramidalRegion::getAverageGrey() const{ 
+  TRegionId CPyramidalRegion::getAverageGrey() const{
     assert( FNbPixels > 0 );
     return FColorSum/FNbPixels;
   }
@@ -247,9 +247,9 @@ namespace Map2d
   //------------------------------------------------------------------------------
   INLINE
   CRegion* CPyramidalRegion::addBrother( TRegionId AId )
-  { 
+  {
     assert( getFather()!=NULL );
-    return getFather()->CRegion::addSon(AId); 
+    return getFather()->CRegion::addSon(AId);
   }
   //------------------------------------------------------------------------------
   INLINE

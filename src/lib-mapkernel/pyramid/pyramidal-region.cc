@@ -41,16 +41,16 @@ void CPyramidalRegion::addPixels( CRegion* ARegion )
   addGrey(static_cast<CPyramidalRegion*>(ARegion)->getGreySum());
   // Mise à jour de la somme des carrés des niveaux de gris
   //setGreySquareSum(getGreySquareSum()+ ARegion->getGreySquareSum());
-    
+
   TRegionId min = static_cast<CPyramidalRegion*>(ARegion)->getGreyMin();
-  TRegionId max = static_cast<CPyramidalRegion*>(ARegion)->getGreyMax();  
-  
+  TRegionId max = static_cast<CPyramidalRegion*>(ARegion)->getGreyMax();
+
   if( min  < getGreyMin() )
     setGreyMin(min);
-    
+
   if( max  > getGreyMax() )
     setGreyMax(max);
-        
+
   // Mise à jour de l'écart-type
   //TODO : à vérifier
   /*
@@ -58,7 +58,7 @@ void CPyramidalRegion::addPixels( CRegion* ARegion )
     float deviation2 = static_cast<CPyramidalRegion*>(ARegion)->getDeviation();
     unsigned int nbPix1 = getNbPixels();
     unsigned int nbPix2 = static_cast<CPyramidalRegion*>(ARegion)->getNbPixels();
-  
+
     setDeviation( sqrt( (nbPix1*(deviation1)*(deviation1) + nbPix2*(deviation2)*(deviation2))/(nbPix1 + nbPix2) ) );
   */
 }
@@ -73,11 +73,11 @@ void CPyramidalRegion::print()
   //assert(isOk());
   std::string sVoid = "-";
   std::cout<<std::endl;
-    
+
   if(isInfiniteRegion())
     {
       std::cout<<" Région Infinie:   Id: "<<getId()<<std::endl;
-      
+
       std::cout<<"  Représentant: "
 	       <<static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet()
 	       <<"   Region Up: ";
@@ -89,14 +89,14 @@ void CPyramidalRegion::print()
       if(existRegionDown())
 	std::cout<<getRegionDown()->getId();
       else
-	std::cout<<sVoid; 
-      std::cout<<std::endl;      
-      
+	std::cout<<sVoid;
+      std::cout<<std::endl;
+
       std::cout<<"  Father: ";
       if(existFather())
 	std::cout<<getFather()->getId();
       else
-	std::cout<<sVoid;    
+	std::cout<<sVoid;
       std::cout<<"   First Son: ";
       if(existSon())
 	std::cout<<getFirstSon()->getId();
@@ -113,22 +113,22 @@ void CPyramidalRegion::print()
       else
 	std::cout<<sVoid;
       std::cout<<std::endl;
-            
+
     }
   else
     {
       std::cout<<" Région pyramidale:   Id: "<<getId()<<std::endl;
-     
+
       std::cout<<"  Paramètres: ";
       std::cout<<"   First Pixel: "  <<getFirstPixel();
       std::cout<<"   Profondeur: "   <<getProfondeur();
-      std::cout<<"   Nb pixels: "    <<getNbPixels();      
+      std::cout<<"   Nb pixels: "    <<getNbPixels();
       std::cout<<std::endl;
 
       std::cout<<"  Critères:   ";
       //std::cout<<"   Merge: "     <<getMerge();
       //std::cout<<"   Split: "     <<getSplit();
-      //std::cout<<"   Ecart-type: "<<getDeviation();      
+      //std::cout<<"   Ecart-type: "<<getDeviation();
       std::cout<<"   Sum: "     <<getGreySquareSum();
       std::cout<<std::endl;
 
@@ -138,7 +138,7 @@ void CPyramidalRegion::print()
       std::cout<<"   Min: "     <<getGreyMin();
       std::cout<<"   Max: "     <<getGreyMax();
       std::cout<<std::endl;
-      
+
       std::cout<<"  Représentant: "<<static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet();
       std::cout<<"   Region Up: ";
       if(existRegionUp())
@@ -156,7 +156,7 @@ void CPyramidalRegion::print()
       if(existFather())
 	std::cout<<getFather()->getId();
       else
-	std::cout<<sVoid;    
+	std::cout<<sVoid;
       std::cout<<"   First Son: ";
       if(existSon())
 	std::cout<<getFirstSon()->getId();
@@ -219,13 +219,13 @@ void CPyramidalRegion::print()
 bool CPyramidalRegion::isOk()
 {
   bool result = true;
-  
+
   if(getRepresentativeDart() == NULL )
     {
       std::cout<<"Representative dart is NULL for region "<<getId()<<std::endl;
       result=false;
     }
-  
+
   return result;
 }
 

@@ -39,7 +39,7 @@ CMainWindow::CMainWindow()
 {
   setWindowTitle(tr("Tiled Top-Down Pyramid"));
   setWindowIcon(QIcon(":/icons/pyramid.png"));
-  
+
   createActions();
   createMenus();
   createToolBar();
@@ -52,16 +52,16 @@ CMainWindow::CMainWindow()
   statusBar()->addPermanentWidget(progressBar());
   statusBar()->addPermanentWidget( m_zoomDisplay );
   statusBar()->addPermanentWidget( m_positionDisplay );
-  
+
   m_centralWidget = new QTabWidget;
   m_centralWidget->setTabsClosable(true);
   m_centralWidget->setMovable(true);
-  
+
   connect( m_centralWidget, SIGNAL(currentChanged(int)),
 	   SLOT(changeTab(int)) );
   connect( m_centralWidget, SIGNAL(tabCloseRequested(int)),
 	   SLOT(closeTab(int)));
-  
+
   setCentralWidget(m_centralWidget);
 
   //panel
@@ -169,7 +169,7 @@ void CMainWindow::createActions()
   m_statusBarViewAct->setChecked(settings.value("statusBar", true).toBool());
   connect(m_statusBarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusBarDisplayed(bool)));
   settings.endGroup();
-  
+
   m_scriptAct = new QAction(QIcon(":/icons/text-x-generic"), tr("Load script"), this);
   m_scriptAct->setIcon(QIcon::fromTheme("text-x-generic", QIcon(":/icons/text-x-generic")));
   m_scriptAct->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_X) );
@@ -226,7 +226,7 @@ void CMainWindow::createMenus()
   m_viewMenu->addAction(m_addViewAct);
   m_viewMenu->addAction(m_tileViewAct);
   m_viewMenu->addAction(m_cascadeViewAct);
-  
+
 
   m_helpMenu = menuBar()->addMenu(tr("&Help"));
   m_helpMenu->addAction(m_documentationAct);
@@ -339,10 +339,10 @@ bool CMainWindow::isStatusBarDisplayed( )
 //------------------------------------------------------------------------------
 bool CMainWindow::loadScript()
 {
-  QString filename = QFileDialog::getOpenFileName(NULL,tr("Import script"), 
+  QString filename = QFileDialog::getOpenFileName(NULL,tr("Import script"),
 						  QDir::currentPath(),
 						  tr("QT Scripts (*.js *.qs)"));
-  
+
   if (filename.isEmpty())
     return false;
 
@@ -365,22 +365,22 @@ void CMainWindow::preferences()
   readSettings();
   CSettingsTree * settingsTree = new CSettingsTree;
   settingsTree->setSettingsObject(new QSettings);
-   
+
   m_preferences = new QDialog(this);
   m_preferences->setSizeGripEnabled(true);
-  
-   QDialogButtonBox * buttonBox = 
-     new QDialogButtonBox(QDialogButtonBox::Ok | 
+
+   QDialogButtonBox * buttonBox =
+     new QDialogButtonBox(QDialogButtonBox::Ok |
 			  QDialogButtonBox::Cancel);
-   
+
    connect(buttonBox, SIGNAL(accepted()), this, SLOT(acceptSettings()));
    connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelSettings()));
-   
-   QPushButton * resetButton = 
+
+   QPushButton * resetButton =
      new QPushButton(QIcon(":/icons/edit-clear.png"), tr("&Clear Settings"));
    buttonBox->addButton(resetButton, QDialogButtonBox::ResetRole);
    connect(resetButton, SIGNAL(clicked()), this, SLOT(resetSettings()));
-   
+
    QVBoxLayout * layout = new QVBoxLayout;
    layout->addWidget(settingsTree);
    layout->addWidget(buttonBox);
@@ -415,11 +415,11 @@ void CMainWindow::exportPng()
       statusBar()->showMessage("No view to be exported");
       return;
     }
-  
-  QString filename = QFileDialog::getSaveFileName(NULL,"Png export", 
+
+  QString filename = QFileDialog::getSaveFileName(NULL,"Png export",
 						  QDir::currentPath(),
 						  tr("Images PNG (*.png)"));
-  
+
   if(!filename.isEmpty())
     currentTab()->view()->exportPng(filename);
 }
@@ -456,7 +456,7 @@ void CMainWindow::addScene()
   connect( currentTab()->view(), SIGNAL(zoomChanged(qreal)),
 	   this, SLOT(updateZoomDisplay(qreal)) );
 
-  connect( currentTab()->view(), SIGNAL(positionChanged(QPoint)), 
+  connect( currentTab()->view(), SIGNAL(positionChanged(QPoint)),
 	   this, SLOT(updatePositionDisplay(QPoint)) );
 }
 //------------------------------------------------------------------------------
@@ -477,7 +477,7 @@ void CMainWindow::changeTab(int index)
 
       connect(m_cascadeViewAct, SIGNAL(triggered()),
 	      tab, SLOT(cascadeSubWindows()));
-      
+
       disconnect(tab->view(), SIGNAL(zoomChanged(qreal)), 0, 0);
       disconnect(tab->view(), SIGNAL(positionChanged(QPoint)), 0, 0);
 

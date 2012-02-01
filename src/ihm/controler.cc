@@ -81,7 +81,7 @@ void CControler::readSettings()
 
   for(int i=1; i<m_nbLevels;++i)
     setMergeThreshold(i, settings.value(QString("mergeThreshold %1").arg(i),m_merge.at(i)).toUInt());
-  
+
   settings.endGroup();
 }
 //------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ bool CControler::extract( const QString & filename )
   m_pyramid->setNbLevels(m_nbLevels);
 
   std::vector<unsigned int> v;
-  
+
   foreach(QVariant var, m_merge)
     {
       v.push_back(var.toUInt());
@@ -187,7 +187,7 @@ void CControler::open( const QString & path )
   m_pyramid->setNbLevels(m_nbLevels);
 
   std::vector<unsigned int> v;
-  
+
   foreach(QVariant var, m_merge)
     {
       v.push_back(var.toUInt());
@@ -204,7 +204,7 @@ void CControler::open( const QString & path )
 void CControler::save( const QString & path )
 {
   QDir dir(imageFilename());
-  m_pyramid->copyImageInWorkingDirectory(dir.absolutePath().toStdString(), 
+  m_pyramid->copyImageInWorkingDirectory(dir.absolutePath().toStdString(),
 					 imageFilename().toStdString());
   m_pyramid->save(path.toStdString());
   sendStatus(tr("Pyramid succesfully saved."));
@@ -381,10 +381,10 @@ void CControler::extractProgressBar()
   m_pyramid->image()->open();
   for(int k=0; k<nbLevels(); ++k)
     m_pyramid->addLevel();
-  
+
   sendStatus(tr("Building top level..."));
   m_pyramid->level(0)->createTopLevel();
-  
+
   uint tileCounter = 0;
   for(int k=1; k<nbLevels(); ++k)
     {
@@ -404,17 +404,17 @@ void CControler::extractProgressBar()
 	    switch((ExtractMode) extractMode())
 	      {
 	      case ConstantTileNumber:
-		level->burstAndMergeTile(pos, 
-					 (SegmentationMode) segmentationMode(), 
-					 (ProjectionMode) projectionMode(), 
-					 (FocusAttentionMode) focusAttentionMode(), 
+		level->burstAndMergeTile(pos,
+					 (SegmentationMode) segmentationMode(),
+					 (ProjectionMode) projectionMode(),
+					 (FocusAttentionMode) focusAttentionMode(),
 					 (DetectFictiveBordersMode) detectFictiveBordersMode());
 		break;
 	      case ConstantTileSize:
-		level->extractTile(pos, 
-				   (SegmentationMode) segmentationMode(), 
-				   (ProjectionMode) projectionMode(), 
-				   (FocusAttentionMode) focusAttentionMode(), 
+		level->extractTile(pos,
+				   (SegmentationMode) segmentationMode(),
+				   (ProjectionMode) projectionMode(),
+				   (FocusAttentionMode) focusAttentionMode(),
 				   (DetectFictiveBordersMode) detectFictiveBordersMode(),
 				   chrono);
 		break;
@@ -436,7 +436,7 @@ uint CControler::getNbRegions(int ALevel) const
 {
   if(m_pyramid==NULL)
     return 0;
-  
+
   return m_pyramid->level(ALevel)->nbRegions();
 }
 //------------------------------------------------------------------------------
@@ -444,7 +444,7 @@ uint CControler::getNbDarts(int ALevel) const
 {
   if(m_pyramid==NULL)
     return 0;
-  
+
   return m_pyramid->level(ALevel)->nbDarts();
 }
 //------------------------------------------------------------------------------
@@ -456,9 +456,9 @@ void CControler::exportSvg()
   m_dialogSvg = new QDialog;
   QHBoxLayout* layout = new QHBoxLayout;
 
- 
+
   QGroupBox *groupBox = new QGroupBox(tr("Pyramid Options"));
-  
+
   m_perspective = new QCheckBox(tr("Perspective"));
   m_topology = new QCheckBox(tr("Topology"));
   m_geometry = new QCheckBox(tr("Geometry"));
@@ -466,7 +466,7 @@ void CControler::exportSvg()
   m_perspective->setChecked(Qt::Unchecked);
   m_topology->setChecked(Qt::Checked);
   m_geometry->setChecked(Qt::Checked);
-  
+
   QVBoxLayout *vbox = new QVBoxLayout;
   vbox->addWidget(m_perspective);
   vbox->addWidget(m_topology);
@@ -476,36 +476,36 @@ void CControler::exportSvg()
 
 
   QGroupBox *groupBox2 = new QGroupBox(tr("Levels Options"));
-  
+
   m_topology2 = new QCheckBox(tr("Topology"));
   m_geometry2 = new QCheckBox(tr("Geometry"));
 
   m_topology2->setChecked(Qt::Checked);
   m_geometry2->setChecked(Qt::Checked);
-  
+
   QVBoxLayout *vbox2 = new QVBoxLayout;
   vbox2->addWidget(m_topology2);
   vbox2->addWidget(m_geometry2);
   vbox2->addStretch(1);
   groupBox2->setLayout(vbox2);
-  
-  QDialogButtonBox * buttonBox = 
+
+  QDialogButtonBox * buttonBox =
     new QDialogButtonBox(QDialogButtonBox::Cancel);
 
   buttonBox->setOrientation(Qt::Vertical);
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(closeSVG()));
-   
-  QPushButton * resetButton = 
+
+  QPushButton * resetButton =
     new QPushButton(QIcon(":/icons/edit-clear.png"), tr("Restore Defaults"));
   buttonBox->addButton(resetButton, QDialogButtonBox::ResetRole);
   connect(resetButton, SIGNAL(clicked()), this, SLOT(resetSVG()));
 
-  QPushButton * pyramidButton = 
+  QPushButton * pyramidButton =
     new QPushButton(tr("Export Pyramid"));
   buttonBox->addButton(pyramidButton, QDialogButtonBox::AcceptRole);
   connect(pyramidButton, SIGNAL(clicked()), this, SLOT(exportPyramidSVG()));
 
-  QPushButton * levelsButton = 
+  QPushButton * levelsButton =
     new QPushButton(tr("Export Levels"));
   buttonBox->addButton(levelsButton, QDialogButtonBox::AcceptRole);
   connect(levelsButton, SIGNAL(clicked()), this, SLOT(exportLevelsSVG()));

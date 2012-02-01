@@ -41,7 +41,7 @@
 using namespace fogrimmi;
 using namespace cimg_library;
 //******************************************************************************
-CImageTiff::CImageTiff(const std::string & AFilename) : 
+CImageTiff::CImageTiff(const std::string & AFilename) :
   CImage2D()
   , IM_Tiff(AFilename)
   , FNbPages(0)
@@ -63,8 +63,8 @@ CImageTiff::CImageTiff(const std::string & AFilename) :
     case 3:
       FColorMode = RGB;
       break;
-    default: 
-      std::cout<<"CImageTiff: Warning color encoding not supported : " 
+    default:
+      std::cout<<"CImageTiff: Warning color encoding not supported : "
 	       << getProperties().colorMode << std::endl;
       break;
     }
@@ -79,7 +79,7 @@ CImageTiff::CImageTiff( IM_ImageMemory& imgMem, const CFile& _fileName ):
 
 //------------------------------------------------------------------------------
 CImageTiff::~CImageTiff()
-{ 
+{
   delete[] FPages;
 }
 
@@ -92,7 +92,7 @@ uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
 
   // 2. On convertit les données pour la quantif
   //todo: pour niveau de gris, faire dim = 1 et pas mettre 3x la même valeur
-  int dim = 3; // dimension 
+  int dim = 3; // dimension
   int nPts = nbCurrentBoxPixels(); // number of data points
   KMdata dataPts(dim, nPts);//stockage des points
   KMterm term(50, 0, 0, 0, // run for 10 stages
@@ -100,7 +100,7 @@ uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
 	      0.60, 10, 0.95);
 
   getKmeansDataRGB(dataPts);
-  
+
   // 3. Quantification avec kmlocal
   dataPts.buildKcTree();
   KMfilterCenters ctrs(ANbClass, dataPts);
@@ -110,19 +110,19 @@ uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
   KMctrIdxArray closeCtr = new KMctrIdx[dataPts.getNPts()];
   double* sqDist = new double[dataPts.getNPts()];
   ctrs.getAssignments(closeCtr, sqDist);
-  KMcenterArray centers=ctrs.getCtrPts();  
+  KMcenterArray centers=ctrs.getCtrPts();
   std::vector< valarray<double> > v;
   std::vector<double> d1,d2;
   d1.resize( ANbClass );
   d2.resize( ANbClass );
-  
+
   for(uint b=0;b< ANbClass;b++){
     v.push_back(valarray<double>(centers[b],dim));
     d1[b]=d2[b]=((v[v.size()-1] * v[v.size()-1]).sum());
   }
-  
+
   std::sort(d2.begin(),d2.end());
-  
+
   for(uint b=0;b< ANbClass;b++){
     d1[b]=find(d2.begin(),d2.end(),d1[b])-d2.begin();
   }
@@ -162,7 +162,7 @@ uint8* CImageTiff::simplekmeans(const uint ANbClass)
   //omp_set_num_threads(4);
   double threshold = 0.001;
 
-  int dim = 3; // dimension 
+  int dim = 3; // dimension
   int nPts = nbCurrentBoxPixels();
 
   float **objects;
@@ -184,12 +184,12 @@ uint8* CImageTiff::simplekmeans(const uint ANbClass)
 	    ++i;
 	  }
       }
-  
+
     // 3. Quantification avec simplekmeans
     int * membership = (int*) malloc(nPts * sizeof(int));
     float **clusters = omp_kmeans(0, objects, dim, nPts,
 				  ANbClass, threshold, membership);
-    
+
     free(objects[0]); free(objects);
 
 //    // 4. On crée l'image de label à partir de la quantification
@@ -210,7 +210,7 @@ uint8* CImageTiff::simplekmeans(const uint ANbClass)
 uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeansMitosis"<<std::endl;
-  int dim = 1; // dimension 
+  int dim = 1; // dimension
   int nPts = 0;
   for(uint i=0; i<size; i=i+3)
     if(data[i]!=0 && data[i+1]!=0 && data[i+2]!=0)
@@ -229,7 +229,7 @@ uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
   for(uint i=0, j=0; i<size; i=i+3)
     if(data[i]!=0 && data[i+1]!=0 && data[i+2]!=0)
 	dataPts[j++][0] = 2*data[i] - data[i+1] - data[i+2];
-  
+
   // 3. Quantification avec kmlocal
   dataPts.buildKcTree();
   KMfilterCenters ctrs(ANbClass, dataPts);
@@ -238,7 +238,7 @@ uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
   KMctrIdxArray closeCtr = new KMctrIdx[dataPts.getNPts()];
   double* sqDist = new double[dataPts.getNPts()];
   ctrs.getAssignments(closeCtr, sqDist);
- 
+
   // 4. On crée l'image de label à partir de la quantification
   uint8* result = new uint8[size/3];
   bzero(result, size/3*sizeof(uint8));
@@ -264,12 +264,12 @@ uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
 uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeansRegions"<<std::endl;
-  int dim = 3; // dimension 
+  int dim = 3; // dimension
   int nPts = 0;
   for(uint i=0; i<size; i=i+3)
     if(data[i]!=0 && data[i+1]!=0 && data[i+2]!=0)
       nPts++;
-  
+
   if(nPts==0)
       return NULL;
 
@@ -277,7 +277,7 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
   KMterm term(100, 0, 0, 0, // run for 10 stages
 	      0.10, 0.10, 3, // other typical parameter values
 	      0.60, 10, 0.95);
-  
+
   for(uint i=0, j=0; i<size; i=i+3)
     if(data[i]!=0 && data[i+1]!=0 && data[i+2]!=0)
       {
@@ -286,7 +286,7 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
 	dataPts[j][2] = data[i+2];
 	++j;
       }
-  
+
   // 3. Quantification avec kmlocal
   dataPts.buildKcTree();
   KMfilterCenters ctrs(ANbClass, dataPts);
@@ -295,7 +295,7 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
   KMctrIdxArray closeCtr = new KMctrIdx[dataPts.getNPts()];
   double* sqDist = new double[dataPts.getNPts()];
   ctrs.getAssignments(closeCtr, sqDist);
-  KMcenterArray centers=ctrs.getCtrPts();  
+  KMcenterArray centers=ctrs.getCtrPts();
 
   // 4. On crée l'image de label à partir de la quantification
   for(uint i=0, j=0; i<size; i=i+3)
@@ -306,7 +306,7 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
 	data[i+2] = centers[closeCtr[j]][2];
 	++j;
       }
-  
+
   delete [] closeCtr;
   delete [] sqDist;
   //std::cout<<" [end] CImageTiff::kmeansRegions"<<std::endl;
@@ -314,9 +314,9 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
 }
 
 //------------------------------------------------------------------------------
-void CImageTiff::colorRegularization(int nb_iteration, 
-				     int pp, 
-				     double lambda, 
+void CImageTiff::colorRegularization(int nb_iteration,
+				     int pp,
+				     double lambda,
 				     int voisinage)
 {
   //std::cout<<"[start] CImageTiff::colorRegularization in level  "<< ADepth <<std::endl;
@@ -326,15 +326,15 @@ void CImageTiff::colorRegularization(int nb_iteration,
   double _value;
   double val=0.,_val=0.;
   bool end=false;
-  double sumChange=0.,sumK=0.;	
+  double sumChange=0.,sumK=0.;
   valarray<double> sums=valarray<double>(0.,6);
-	
+
   while (nb_iteration > 0 && !end)
     {
-      for (uint y = ystart(); y < ystop() ; ++y) 
+      for (uint y = ystart(); y < ystop() ; ++y)
 	{
 	  p.y = y;
-	  for (uint x = xstart(); x <xstop(); ++x) 
+	  for (uint x = xstart(); x <xstop(); ++x)
 	    {
 	      p.x = x;
 	      getPixel(p, depth());
@@ -345,12 +345,12 @@ void CImageTiff::colorRegularization(int nb_iteration,
 	      sums[4]+=p.value[1]*p.value[1];;
 	      sums[5]+=p.value[2]*p.value[2];;
 	      X=Y=Z=_value=sum=_val=0.;
-	      for(k=-voisinage; k<=voisinage; ++k) 
-		for(l=-voisinage; l<=voisinage; ++l) 
-		  {						
+	      for(k=-voisinage; k<=voisinage; ++k)
+		for(l=-voisinage; l<=voisinage; ++l)
+		  {
 		    q.x=p.x+l;
 		    q.y=p.y+k;
-		    if (isPixelInImage(q, depth()) && p!=q) 
+		    if (isPixelInImage(q, depth()) && p!=q)
 		      {
 			getPixel(q, depth());
 			_value=poids(p,q);
@@ -358,13 +358,13 @@ void CImageTiff::colorRegularization(int nb_iteration,
 			X += _value*q.value[0];
 			Y += _value*q.value[1];
 			Z += _value*q.value[2];
-			_val+=_value*distance(p,q); //distance euclidienne						
+			_val+=_value*distance(p,q); //distance euclidienne
 		      }
 		  }
 	      _value=(lambda+sum);
-	      if (_value==0) 
+	      if (_value==0)
 		_value=epsilon;
-	      
+
 	      p.value[0] = ((lambda)*p.value[0]/_value+X/_value) < 255 ? (lambda)*p.value[0]/_value+X/_value : 255;
 	      p.value[1] = ((lambda)*p.value[1]/_value+X/_value) < 255 ? (lambda)*p.value[1]/_value+X/_value : 255;
 	      p.value[2] = ((lambda)*p.value[2]/_value+X/_value) < 255 ? (lambda)*p.value[2]/_value+X/_value : 255;
@@ -376,8 +376,8 @@ void CImageTiff::colorRegularization(int nb_iteration,
 	      val+=_val;
 	    }
 	}
-      sumChange/=sumK;		
-      if (sumChange<epsilon)		
+      sumChange/=sumK;
+      if (sumChange<epsilon)
 	end=true;
       nb_iteration--;
     }
@@ -385,9 +385,9 @@ void CImageTiff::colorRegularization(int nb_iteration,
 }
 
 //------------------------------------------------------------------------------
-void CImageTiff::greyRegularization(int nb_iteration, 
-				    int pp, 
-				    double lambda, 
+void CImageTiff::greyRegularization(int nb_iteration,
+				    int pp,
+				    double lambda,
 				    int voisinage)
 {
   std::cout<<"CImageTiff::greyRegularization in level  "<< depth() <<std::endl;
@@ -412,7 +412,7 @@ void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
   KMdata dataPts(dim, nPts);//stockage des points
   KMterm term(20, 0, 0, 0, // run for 20 stages  // diminuer le nombre de passe (100 aller jusqu a 10)
 	      0.10, 0.10, 3, // other typical parameter values
-	      0.50, 10, 0.95);		
+	      0.50, 10, 0.95);
   uint n=0;
   for(uint r = 0; r < histo->getSizeX(); ++r)
     for(uint g = 0; g < histo->getSizeY(); ++g)
@@ -429,34 +429,34 @@ void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
 	}
   delete histo; histo=NULL;
   dataPts.buildKcTree();
-  
+
   KMfilterCenters ctrs(dim, dataPts);
   KMlocalSwap kmAlg(ctrs, term);
-  ctrs = kmAlg.execute();		
+  ctrs = kmAlg.execute();
   KMctrIdxArray closeCtr = new KMctrIdx[nPts];
   double* sqDist = new double[nPts];
   ctrs.getAssignments(closeCtr, sqDist);
   KMcenterArray centers = ctrs.getCtrPts();
-  
+
   vector<valarray<double> > v;
   vector <double> d1, d2;
   d1.resize(3); d2.resize(3);
-  
+
   for (int b=0 ; b < 3 ; b++){
     v.push_back(valarray < double> (centers[b], dim));
     d1[b]= d2[b]= ((v[v.size()-1]*v[v.size()-1]).sum());
   }
   std::sort(d2.begin(), d2.end());
 
-  //std::cout << " == D2 == " << std::endl; 
+  //std::cout << " == D2 == " << std::endl;
   for (int b=0 ; b < 3 ; b++)
     std::cout << d2[b] << " ";
   std::cout << std::endl;
 
-  
+
   for (int b=0 ; b < 3 ; b++)
     d1[b] = find(d2.begin(), d2.end(),d1[b]) - d2.begin();
-  
+
   //std::cout << " == D1 == " << std::endl;
   for (int b=0 ; b < 3 ; b++)
     std::cout << d1[b] << " ";
@@ -474,7 +474,7 @@ void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
       (*assignement)(r,g,b)= (d1[closeCtr[i]]==0) ? 1 : d1[closeCtr[i]];
       //std::cout<< " assign("<<r<<","<<g<<","<<b<<") ="<< (int)(*assignement)(r,g,b) << std::endl;
     }
-  
+
   delete[] sqDist;
   delete[] closeCtr;
 
@@ -489,7 +489,7 @@ bool CImageTiff::isSorted()
     if ( (getXSize(k)  * getYSize(k)) >
 	 (getXSize(k+1)* getYSize(k+1)) )
       return false;
-  
+
   return true;
 }
 

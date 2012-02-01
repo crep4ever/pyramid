@@ -31,7 +31,7 @@
 using namespace cimg_library;
 //******************************************************************************
 
-/// Type pour stocker la valeur d'un pixel. 
+/// Type pour stocker la valeur d'un pixel.
 /// Utiliser forcément un non-signé sous peine de problèmes.
 typedef uint16_t TLabel;
 
@@ -45,8 +45,8 @@ class CImageTiff : public CImage2D, public fogrimmi::IM_Tiff
 public:
   enum ColorMode{ Grey, RGB, RGBA };
   enum GreyConvertMode{ Basic, Gamma, Natural };
- 
-  
+
+
   bool FIsOk;    // Vrai si l'image est valide
   uint FNbPages; // Le nombre de pages dans l'image
   uint* FPages ; // Tableau des pages du tif (utile pour le tri)
@@ -84,7 +84,7 @@ public:
   /// @param ADepth le niveau d'un tif multipages
   /// @return la largeur de l'image
   uint getXSize(uint ADepth) ;
-  
+
   /// Similaire à getXSize
   /// @param ADepth le niveau d'un tif multipages
   /// @return la largeur de l'image
@@ -92,17 +92,17 @@ public:
 
   /// @return la hauteur de l'image
   uint getYSize(uint ADepth) ;
-  
+
   /// Similaire à getYSize
   /// @param ADepth le niveau d'un tif multipages
   /// @return la largeur de l'image
   uint height(uint ADepth);
-  
+
   /// Lit et charge en mémoire une partie de l'image
   /// @param ABox le cadre de lecture
   /// @param ADepth la page d'un tif multipages
   void read(const fogrimmi::IM_Box & ABox, int ADepth=-1);
-     
+
   /// Lit un pixel d'un tif potentiellement multipages
   /// @param Ax: abscisse
   /// @param Ay: ordonnée
@@ -126,7 +126,7 @@ public:
   //******************************************************************************
 
 
-  /// Tri par bulles des pages d'un tiff multi-pages de la plus faible 
+  /// Tri par bulles des pages d'un tiff multi-pages de la plus faible
   /// à la plus forte résolution
   void sortPages();
 
@@ -137,7 +137,7 @@ public:
 
   //todo: interpolation en utilisant la lirairie ImTiff
   CImageTiff* interpolatePagesWithImTiff(uint ANbLevel);
-  
+
   //todo: redimensionnent d'une image en utilisant la librairie ImTiff
   CImageTiff* rescale(uint ADepth, uint AWidth, uint AHeight);
 
@@ -194,7 +194,7 @@ public:
   //******************************************************************************
 
 
-  /// Vérifie que les pages sont triées de la plus faible 
+  /// Vérifie que les pages sont triées de la plus faible
   /// à la plus forte résolution
   /// @return true si le tif multipages est trié
   bool isSorted();
@@ -217,15 +217,15 @@ public:
 
   // Récupère tous les pixels de la box de la page dans le tableau data
   uint8* getData();
-  
+
   // ajout d'un canal alpha artificiel pour qt
   uint8* getDataQT();
-  
+
   /// Read pixel data from a box and stores it in a structure
   /// that may be used by km-local
   /// @param data : the data structure where pixel data is storedw
   void getKmeansData(KMdata& data);
-    
+
   /// Read pixel value supposing that pixels are stored as (24bits) RGB values
   /// @param data : the data structure where pixel data is stored
   void getKmeansDataRGB(KMdata& data);
@@ -250,7 +250,7 @@ public:
   void greyRegularization(int nb_iteration, int pp,double lambda, int voisinage);
 
 public:
-  
+
   // Cadre de lecture
   uint xstart() const;
   uint xstop() const;

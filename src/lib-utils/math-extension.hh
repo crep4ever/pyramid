@@ -156,7 +156,7 @@ inline bool isZero(const TCoordinate& AValue)
   // return areEqual(fabs(AValue), 0.0);
   return fabs(AValue) < EPSILON;
 }
-  
+
 /**
  * Donne le signe de AValue.
  *
@@ -202,7 +202,7 @@ inline bool isLessThan(const TCoordinate& AValue1, const TCoordinate& AValue2)
 {
   return AValue1 + EPSILON < AValue2;
 }
-  
+
 /**
  * Teste si AValue1 et AValue2 sont égaux, à EPSILON près.
  *

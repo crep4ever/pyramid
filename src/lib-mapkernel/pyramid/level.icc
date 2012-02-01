@@ -130,7 +130,7 @@ namespace Map2d
   INLINE
   void CLevel::setTileHeight(uint ATileHeight)
   {
-    if(ATileHeight>imageHeight()) 
+    if(ATileHeight>imageHeight())
       FTileHeight = imageHeight();
     else
       FTileHeight = ATileHeight;
@@ -167,9 +167,9 @@ namespace Map2d
 		     image()->getYSize(FDepth+1)/imageHeight() );
   }
 
-  //******************************************************************************	  
+  //******************************************************************************
   // Méthodes sur l'image
-  //******************************************************************************	    
+  //******************************************************************************
 
 
   INLINE
@@ -237,9 +237,9 @@ namespace Map2d
   }
 
 
-  //******************************************************************************	  
+  //******************************************************************************
   // Système de coordonnées pour les tuiles
-  //******************************************************************************	    
+  //******************************************************************************
 
 
   INLINE
@@ -269,25 +269,25 @@ namespace Map2d
   INLINE
   CPoint2D CLevel::tileTopLeft(CTile* ATile) const
   {
-    return CPoint2D(xmin(ATile),ymin(ATile));    
+    return CPoint2D(xmin(ATile),ymin(ATile));
   }
   //------------------------------------------------------------------------------
   INLINE
   CPoint2D CLevel::tileTopRight(CTile* ATile) const
   {
-    return CPoint2D(xmax(ATile),ymin(ATile));    
+    return CPoint2D(xmax(ATile),ymin(ATile));
   }
   //------------------------------------------------------------------------------
   INLINE
   CPoint2D CLevel::tileBottomLeft(CTile* ATile) const
   {
-    return CPoint2D(xmin(ATile),ymax(ATile));    
+    return CPoint2D(xmin(ATile),ymax(ATile));
   }
   //------------------------------------------------------------------------------
   INLINE
   CPoint2D CLevel::tileBottomRight(CTile* ATile) const
   {
-    return CPoint2D(xmax(ATile),ymax(ATile));    
+    return CPoint2D(xmax(ATile),ymax(ATile));
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -364,7 +364,7 @@ namespace Map2d
   }
   //------------------------------------------------------------------------------
   INLINE
-  void CLevel::splitTile(const CPoint2D & APos, 
+  void CLevel::splitTile(const CPoint2D & APos,
 			 const FocusAttentionMode & AFocusAttentionMode,
 			 const SegmentationMode & ASegmentationMode)
   {
@@ -381,7 +381,7 @@ namespace Map2d
     for(it = FTiles.begin(); it!=FTiles.end(); ++it)
       if( (*it)->index(0) == APos.getX() && (*it)->index(1) == APos.getY())
 	return *it;
-    
+
     return loadTile(APos);
   }
   //------------------------------------------------------------------------------
@@ -421,7 +421,7 @@ namespace Map2d
     //std::cout<<" w = "<<FTileWidth<<" h = "<<FTileHeight<<std::endl;
     assert(FTileWidth!=0 && FTileHeight!=0);
     CTile* newTile = new CTile(FTileWidth, FTileHeight);
- 
+
     newTile->setMergeThreshold(FMergeThreshold);
     newTile->setImage(FImage);
     newTile->setPixelMark();
@@ -461,8 +461,8 @@ namespace Map2d
     for(it = FTiles.begin(); it!=FTiles.end(); ++it)
       if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
 	return true;
-  
-    return false;    
+
+    return false;
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -471,7 +471,7 @@ namespace Map2d
     //std::cout<<"[start] CLevel::unloadAllTiles lvl "<<FDepth<<std::endl;
     for(uint i=0; i<FTiles.size(); ++i)
       delTile(FTiles[i]);
-      
+
     FTiles.clear();
     assert(FTiles.empty());
     //std::cout<<"[end] CLevel::unloadAllTiles"<<std::endl;
@@ -495,7 +495,7 @@ namespace Map2d
     if(FClassif) delete FClassif; FClassif=NULL;
     if(FAssignment) delete FAssignment; FAssignment=NULL;
     FHisto=NULL;
-  }   
+  }
 
   //******************************************************************************
   // Opérateurs sur les cartes tuilées
@@ -504,19 +504,19 @@ namespace Map2d
   INLINE
   CDart* CLevel::beta0(CDart* ADart) const
   {
-    return ADart->getBeta0();    
+    return ADart->getBeta0();
   }
   //------------------------------------------------------------------------------
   INLINE
   CDart* CLevel::beta1(CDart* ADart) const
   {
-    return ADart->getBeta1();    
+    return ADart->getBeta1();
   }
   //------------------------------------------------------------------------------
   INLINE
   CDart* CLevel::beta2(CDart* ADart) const
   {
-    return ADart->getBeta2();    
+    return ADart->getBeta2();
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -530,7 +530,7 @@ namespace Map2d
   CDart* CLevel::delta1(CDart* ADart) const
   {
     assert(false);
-    return ADart->getBeta2();    
+    return ADart->getBeta2();
   }
 
   //------------------------------------------------------------------------------
@@ -551,7 +551,7 @@ namespace Map2d
 	}
     //std::cout<<" [end] CLevel::regularization\n";
   }
-  
+
   //------------------------------------------------------------------------------
   INLINE
   void CLevel::histogram()
@@ -573,14 +573,14 @@ namespace Map2d
 	  box.XTop = tile->xmin()*ratiox;  box.YTop = tile->ymin()*ratioy;
 	  box.XBtm = tile->xmax()*ratiox;  box.YBtm = tile->ymax()*ratioy;
 	  image()->read(box, depth());
-	  
+
 	  //append histogram
 	  tile->histogram(FHisto);
 	  levelUp()->unloadTile(CPoint2D(i,j));
 	}
     assert(FHisto);
   }
-  
+
   //******************************************************************************
 } // namespace Map2d
 //******************************************************************************

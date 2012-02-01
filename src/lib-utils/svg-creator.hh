@@ -26,7 +26,7 @@
 #include <vector>
 //*****************************************************************************
 
-class CSvgCreator 
+class CSvgCreator
 {
   static const char endl = '\n';
 
@@ -38,7 +38,7 @@ public:
   ~CSvgCreator();
 
   // SVG Element (document creation)
-  void svgBegin( double h, double w, 
+  void svgBegin( double h, double w,
 		 const std::string & opt = "" );
   void svgEnd();
 
@@ -55,23 +55,23 @@ public:
   void markerEnd();
 
   // Use directive
-  void use( const std::string & href, 
+  void use( const std::string & href,
 	    double x=0, double y=0,
 	    const std::string & opt = "" );
-  
+
   // CSS Styling
   void styleCSS( const std::string & AStyle );
 
   // Grouping
   void groupBegin( const std::string & opt = "" );
   void groupEnd();
-  
+
   // Basic shape (missing ellipse)
   void line( double x1, double y1, double x2, double y2,
 	     const std::string & opt = "" );
   void circle( double cx, double cy, double r,
 	       const std::string & opt = "" );
-  void rect( double x1, double y1, 
+  void rect( double x1, double y1,
 	     double width, double height,
 	     const std::string & opt = "",
 	     double rx=0, double ry=0 );
@@ -94,7 +94,7 @@ public:
   void pathVLineTo( double y );
 
   void pathCurveTo( std::vector< TCoord > points );
-  void pathCurveTo( double x1, double y1, 
+  void pathCurveTo( double x1, double y1,
 		    double x2, double y2,
 		    double x, double y );
 

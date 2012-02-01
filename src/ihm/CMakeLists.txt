@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-set (IHM_SRCS 
+set (IHM_SRCS
   main.cc
   script-engine.cc
   controler.cc
@@ -16,7 +16,7 @@ set (IHM_SRCS
   file-chooser.cc
   panel.cc
   )
-set (NEED_MOCS 
+set (NEED_MOCS
   main-window.hh
   tab-controler.hh
   script-engine.hh

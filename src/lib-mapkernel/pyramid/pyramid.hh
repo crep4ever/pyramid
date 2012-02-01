@@ -33,7 +33,7 @@ class CImageTiff;
 
 namespace Map2d
 {
-  /** 
+  /**
    * \file pyramid.hh
    * \class CPyramid "pyramid.hh"
    * \author Romain Goffe
@@ -49,7 +49,7 @@ namespace Map2d
   private:
     // L'image
     CImageTiff* FImage;
-    
+
   protected:
     uint FNbPixels; //split crit
     float FDeviation;
@@ -61,7 +61,7 @@ namespace Map2d
     uint FProjectionMode;
     uint FFocusAttentionMode;
     uint FDetectFictiveBordersMode;
-    
+
   public:
     uint FTileTotal;
     uint FTileCounter;
@@ -83,7 +83,7 @@ namespace Map2d
 
     // Destructeur
     virtual ~CPyramid();
-    
+
     // Accesseurs
     CImageTiff* image() const;
     void setImage( CImageTiff* AImage );
@@ -93,16 +93,16 @@ namespace Map2d
 
     uint nbPixels() const;
     void setNbPixels(uint ANbPixels);
-    
+
     uint splitOracle() const;
     void setSplitOracle(uint ASplitOracle);
-    
+
     float deviation() const;
     void  setDeviation(float ADeviation);
-    
+
     uint tileWidth() const;
     void setTileWidth(uint ATileWidth);
-    
+
     uint tileHeight() const;
     void setTileHeight(uint ATileHeight);
 
@@ -129,13 +129,13 @@ namespace Map2d
 
     std::vector<uint> mergeThresholds() const;
     void setMergeThresholds( std::vector<uint> AMergeThresholds );
-    
+
     /// @return the number of topological tiles in the pyramid
     uint nbTiles() const;
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Méthodes sur l'image
-    //******************************************************************************	    
+    //******************************************************************************
 
 
     /// @return la largeur totale de l'image
@@ -151,11 +151,11 @@ namespace Map2d
     uint nbTilesHeight(uint APage) const;
 
     /// Donne les ratios en x et y d'un niveau par rapport au précédent
-    CPoint2D ratios(uint ALevel) const;    
+    CPoint2D ratios(uint ALevel) const;
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Propriétés sur les tuiles
-    //******************************************************************************	    
+    //******************************************************************************
 
 
     /// Abscisse maximum d'une tuile
@@ -184,9 +184,9 @@ namespace Map2d
     /// @return la hauteur de la tuile
     uint tileHeight(CTile* ATile) const;
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Opérations sur les tuiles
-    //******************************************************************************	    
+    //******************************************************************************
 
 
     /// Ajouter une tuile à la pyramide
@@ -215,7 +215,7 @@ namespace Map2d
 
     /// Charge les propriétés de la tuile
     /// @param ATile : la tuile
-    /// @param Ai, Aj, Ak : les coordonnées de la tuile    
+    /// @param Ai, Aj, Ak : les coordonnées de la tuile
     void loadTileUpDown(CTile* ATile);
 
     /// Charge toutes les tuiles en mémoire
@@ -229,9 +229,9 @@ namespace Map2d
     void unloadAllTiles();
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     //Opérations de construction
-    //******************************************************************************	    
+    //******************************************************************************
 
     /// Utilise la libImTiff pour l'extraction de l'image
     CImageTiff* importImTiff(const std::string & filename);
@@ -244,9 +244,9 @@ namespace Map2d
     uint extractLevel(uint id, uint ALevel);
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Appels système pour sauvegarde/export
-    //******************************************************************************	    
+    //******************************************************************************
 
     /// construit une pyramide d'après les fichiers d'un dossier
     /// @param APath: le chemin d'accès au dossier contenant la pyramide
@@ -257,7 +257,7 @@ namespace Map2d
     /// @param AImagePaht: le chemin absolu de l'image
     /// @param AImageName: le nom du fichier image (inutilisé)
     void copyImageInWorkingDirectory(const std::string & AImagePath, const std::string & AImageName);
-    
+
     /// Enregistre la pyramide en copiant le dossier result
     ///@param APath: le répertoire de destination
     void save(const std::string & APath);
@@ -272,7 +272,7 @@ namespace Map2d
     void exportData();
 
 
-    //******************************************************************************	  
+    //******************************************************************************
     // Opérations de contrôle et de vérification
     //******************************************************************************
 
@@ -286,7 +286,7 @@ namespace Map2d
     void printInfosMemory() const;
 
     /// Empreinte mémoire de la pyramide locale
-    /// @return la taille en Bytes de l'ensemble des tuiles actuellement 
+    /// @return la taille en Bytes de l'ensemble des tuiles actuellement
     /// chargées dans la pyramide
     uint getMemoryForLocalPyramid() const;
 
@@ -304,9 +304,9 @@ namespace Map2d
 
     /// Vérifie certaines contraintes sur la structure pyramidale
     // bool isPyramidOk();
- 	
+
   };
-  
+
 } // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("pyramid.icc")

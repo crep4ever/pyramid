@@ -43,10 +43,10 @@ int main( int argc, char * argv[] )
 
   for ( int i = 1; i < argc; ++i )
     {
-      if (   !strcmp(argv[i], "-h") 
-	     || !strcmp(argv[i], "-?") 
+      if (   !strcmp(argv[i], "-h")
+	     || !strcmp(argv[i], "-?")
 	     || !strcmp(argv[i], "--help"))
-	{ 
+	{
 	  usage(argv[0]);
 	  exit(EXIT_SUCCESS);
 	}
@@ -72,10 +72,10 @@ int main( int argc, char * argv[] )
 
   if( isScript )
     CScriptEngine::engine()->execute( filename );
-  
+
   if( !isGui )
     exit(EXIT_FAILURE);
-  
+
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
   QDir translationDirectory;
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] )
   QTranslator translator;
   translator.load(translationFilename, directory);
   app.installTranslator(&translator);
-  
+
   CMainWindow mainWindow;
   mainWindow.show();
   return app.exec();

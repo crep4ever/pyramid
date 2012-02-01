@@ -33,33 +33,33 @@ void CSvgExporter::drawPyramid(CPyramid* APyramid, bool APerspective, bool ATopo
 {
   std::ostringstream filename;
   filename<<".//output//pyramid.svg";
-  std::ofstream ofs( filename.str().c_str() );  
+  std::ofstream ofs( filename.str().c_str() );
   CSvgCreator svg( ofs );
-  svg.svgBegin( (APyramid->imageWidth(APyramid->nbLevels()-1)+50)*(APyramid->nbLevels()), 
+  svg.svgBegin( (APyramid->imageWidth(APyramid->nbLevels()-1)+50)*(APyramid->nbLevels()),
 		(APyramid->imageHeight(APyramid->nbLevels()-1)+50)*2 );
   if(APerspective)
     svg.groupBegin("transform=\"translate(300,0)\"");
-  
+
   for( uint i=1; i<APyramid->nbLevels(); ++i)
     {
       std::ostringstream translate;
       translate<<"transform=\"translate(0,"
 	       <<i*(APyramid->imageHeight(i)+30)
 	       <<")\" ";
-      
+
       svg.groupBegin(translate.str());
-      
+
       if(APerspective)
 	svg.groupBegin("transform=\"skewX(-30)\"");
-    
+
       if(ATopology)
 	addSvgPyramidTopology(APyramid, svg, i);
 
       if(AGeometry)
 	addSvgPyramidGeometry(APyramid, svg, i);
-      
+
       svg.groupEnd();
- 
+
       if(APerspective)
 	svg.groupEnd();
     }
@@ -79,12 +79,12 @@ void CSvgExporter::drawPyramidLevels(CPyramid* APyramid, bool ATopology, bool AG
       std::ostringstream filename;
       std::string sep = "-";
       filename<<".//output//pyramid"<<sep<<"level"<<sep<<i<<".svg";
-    
+
       std::ofstream ofs( filename.str().c_str() );
-      
+
       CSvgCreator svg( ofs );
       svg.svgBegin( APyramid->imageHeight(0), APyramid->imageWidth(0) );
-      
+
       if(ATopology)
 	addSvgPyramidTopology(APyramid, svg, i);
 
@@ -101,12 +101,12 @@ void CSvgExporter::drawPyramidTopology(CPyramid* APyramid)
 {
   std::ostringstream filename;
   std::string sep = "-";
-  
+
   for( uint i=0; i<APyramid->nbLevels(); ++i)
     {
       filename<<".//output//pyramid"<<sep<<"topology"<<sep<<"level"<<i<<".svg";
       std::ofstream ofs( filename.str().c_str() );
-      
+
       CSvgCreator svg( ofs );
       svg.svgBegin( APyramid->imageHeight(0), APyramid->imageWidth(0) );
       addSvgPyramidTopology(APyramid, svg, i);
@@ -120,13 +120,13 @@ void CSvgExporter::drawPyramidGeometry(CPyramid* APyramid)
 {
   std::ostringstream filename;
   std::string sep = "-";
-  
+
   for( uint i=0; i<APyramid->nbLevels(); ++i)
     {
       filename<<".//output//pyramid"<<sep<<"geometry"<<sep<<"level"<<i<<".svg";
-      
+
       std::ofstream ofs( filename.str().c_str() );
-      
+
       CSvgCreator svg( ofs );
       svg.svgBegin( APyramid->imageHeight(0), APyramid->imageWidth(0) );
       addSvgPyramidGeometry(APyramid, svg, i);
@@ -141,7 +141,7 @@ void CSvgExporter::addSvgPyramidTopology(CPyramid* APyramid, CSvgCreator& svg, u
   std::deque<CTile*>::iterator it;
   std::deque<CTile*> tiles;
   CLevel* lvl = APyramid->FLevels[ADepth];
-  
+
   for( it = lvl->tiles().begin(); it!=lvl->tiles().end(); ++it)
     {
       std::ostringstream translate;
@@ -158,7 +158,7 @@ void CSvgExporter::addSvgPyramidGeometry(CPyramid* APyramid, CSvgCreator& svg, u
   std::deque<CTile*>::iterator it;
   std::deque<CTile*> tiles;
   CLevel* lvl = APyramid->FLevels[ADepth];
-  
+
   for( it = lvl->tiles().begin(); it!=lvl->tiles().end(); ++it)
     {
       std::ostringstream translate;
@@ -167,7 +167,7 @@ void CSvgExporter::addSvgPyramidGeometry(CPyramid* APyramid, CSvgCreator& svg, u
 	       <<","
 	       <<(*it)->ymin()
 	       <<")\"";
-      
+
       svg.groupBegin(translate.str());
       addSvgMapGeometry((*it), svg);
       svg.groupEnd();
@@ -179,7 +179,7 @@ void CSvgExporter::drawTile(CTile* ATile)
 {
   std::ostringstream filename;
   std::string sep = "-";
-  
+
   filename<<".//output//svg"<<sep<<"tile"<<sep<<ATile->id()<<".svg";
   std::ofstream ofs( filename.str().c_str() );
 
@@ -196,7 +196,7 @@ void CSvgExporter::drawTileTopology(CTile* ATile)
 {
   std::ostringstream filename;
   std::string sep = "-";
- 
+
   filename<<".//output//map-topology"<<sep<<ATile->id()<<".svg";
   std::ofstream ofs( filename.str().c_str() );
 
@@ -212,7 +212,7 @@ void CSvgExporter::drawTileGeometry(CTile* ATile)
 {
   std::ostringstream filename;
   std::string sep = "-";
- 
+
   filename<<".//output//map-geometry"<<sep<<ATile->id()<<".svg";
   std::ofstream ofs( filename.str().c_str() );
 
@@ -228,7 +228,7 @@ void CSvgExporter::addSvgMapTopology(CTile* ATile, CSvgCreator& svg)
 {
   for( CDynamicCoverageAll it(ATile); it.cont(); ++it)
     addSvgDart(ATile, *it, svg);
-  
+
   //TODO des booleens pour mettre ces deux operations en options
   //drawFirstPixels(AMap, svg);
   //fillRegions(AMap, svg);
@@ -248,16 +248,16 @@ void CSvgExporter::addSvgMapGeometry(CTile* ATile, CSvgCreator& svg)
       {
 	temp.setX(x);
 	temp.setY(y);
-	
+
 	// Affichage des pointels
 	if( ATile->isPCell(temp) )
 	  svg.circle(x,y,0.05, "class=\"pointel\" " );
-	
+
 	// Affichage des lignels
 	temp.setLinel(XPOS);
 	if( ATile->isLCell(temp) )
 	  svg.line(x+0.2,y, x+0.8,y,"class=\"linel\" " );
-	
+
 	temp.setLinel(YPOS);
 	if( ATile->isLCell(temp) )
 	  svg.line(x,y+0.2, x,y+0.8, "class=\"linel\" ");
@@ -270,10 +270,10 @@ void CSvgExporter::drawRegion(CTile* AMap, CRegion* ARegion)
   assert(ARegion!=NULL);
   std::ostringstream filename;
   std::string sep = "-";
-  
+
   filename<<".//output//region"<<sep<<ARegion->getId()<<".svg";
   std::ofstream ofs( filename.str().c_str() );
-  
+
   CSvgCreator svg( ofs );
   svg.svgBegin( 5000, 5000 );
   addSvgRegion(AMap, ARegion, svg);
@@ -287,10 +287,10 @@ void CSvgExporter::drawDart(CTile* AMap, CDart* ADart)
   assert(ADart!=NULL);
   std::ostringstream filename;
   std::string sep = "-";
-  
+
   filename<<".//output//brin"<<sep<<static_cast<CPyramidalDart*>(ADart)->getId()<<".svg";
   std::ofstream ofs( filename.str().c_str() );
-  
+
   CSvgCreator svg( ofs );
   svg.svgBegin( 5000, 5000 );
   addSvgDart(AMap, ADart, svg);
@@ -304,23 +304,23 @@ CVertex CSvgExporter::calculateGap(const CVertex & APoint, const CDoublet & curr
   float gap = 0.2;
   float gapx = 0;
   float gapy = 0;
-  
+
   if( current.getPrevLinel().getLinel() == XPOS ||
       next.getPrevLinel().getLinel() == XPOS )
     gapx = gap;
-  
+
   else if( current.getPrevLinel().getLinel() == XNEG ||
 	   next.getPrevLinel().getLinel() == XNEG )
     gapx = -gap;
-    
+
   if( current.getPrevLinel().getLinel() == YPOS ||
       next.getPrevLinel().getLinel() == YPOS )
     gapy = gap;
-  
+
   else if( current.getPrevLinel().getLinel() == YNEG ||
 	   next.getPrevLinel().getLinel() == YNEG )
     gapy = -gap;
-  
+
   return CVertex(APoint.getX()+gapx, APoint.getY()+gapy);
 }
 
@@ -361,14 +361,14 @@ void CSvgExporter::addSvgDart(CTile* AMap, CDart* ADart, CSvgCreator& svg)
     // On dessine si besoin en rajoutant le point au path
     if(AMap->isPCell(next) || next == init)
       {
-	CVertex endPoint = calculateGap( CVertex(next.getX(),next.getY()), 
+	CVertex endPoint = calculateGap( CVertex(next.getX(),next.getY()),
 					 current, next );
 	svg.pathLineTo(endPoint.getX(), endPoint.getY());
 	break;
       }
     else if( current.getLinel() != next.getLinel())
       {
-	CVertex endPoint = calculateGap( CVertex(next.getX(),next.getY()), 
+	CVertex endPoint = calculateGap( CVertex(next.getX(),next.getY()),
 					 current, next );
 	svg.pathLineTo(endPoint.getX(), endPoint.getY());
 	current = next;
@@ -382,24 +382,24 @@ void CSvgExporter::addSvgDart(CTile* AMap, CDart* ADart, CSvgCreator& svg)
 void CSvgExporter::addSvgRegion(CTile* AMap, CRegion* ARegion, CSvgCreator& svg)
 {
   assert(ARegion!=NULL);
-  
+
   for( CDynamicCoverage1 it(AMap, ARegion->getRepresentativeDart()); it.cont(); ++it)
     addSvgDart(AMap, *it, svg);
-  
+
   // bords internes
   CRegion* region = ARegion;
   CRegion* firstSon = NULL;
   CRegion* brother = NULL;
-  
+
   if( region->existSon())
     {
       firstSon = region->getFirstSon();
-      
+
       for( CDynamicCoverage1 it( AMap, AMap->beta2(firstSon->getRepresentativeDart()) ); it.cont() ; ++it )
 	addSvgDart(AMap, *it, svg);
-      
+
       region = firstSon;
-      
+
       while( region->existBrother() )
 	{
 	  brother = region->getBrother();
@@ -414,7 +414,7 @@ void CSvgExporter::addSvgRegion(CTile* AMap, CRegion* ARegion, CSvgCreator& svg)
 void CSvgExporter::drawFirstPixels(CTile* ATile, CSvgCreator& svg)
 {
   //std::cout<<"[start] drawFirstPixels "<<std::endl;
-  
+
   // Parcours de toutes les régions de l'arbre d'inclusion
   for( CDynamicCoverageAllRegions it(ATile); it.cont(); ++it)
     for( CTraversalRegionPixels it2(ATile, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
@@ -423,7 +423,7 @@ void CSvgExporter::drawFirstPixels(CTile* ATile, CSvgCreator& svg)
 	  svg.rect((*it2).getX()+0.3, (*it2).getY()+0.3, 0.4, 0.4, "class=\"fpixel\" ");
 	  break;
 	}
-  
+
   //std::cout<<"[end] drawFirstPixels"<<std::endl;
 }
 

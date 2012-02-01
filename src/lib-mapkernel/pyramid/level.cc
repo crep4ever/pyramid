@@ -28,7 +28,7 @@
 using namespace Map2d;
 //******************************************************************************
 CLevel::~CLevel()
-{ 
+{
   //std::cout<<"[destructeur] CLevel \n";
   unloadAllTiles();
   FHisto=NULL;
@@ -43,7 +43,7 @@ void CLevel::createTopLevel()
 {
   std::cout<<"[start] CLevel::createTopLevel"<<std::endl;
   assert(depth()==0);
-  
+
   FTileCounter  = nbTilesWidth() * nbTilesHeight();
   uint width  = imageWidth();
   uint height = imageHeight();
@@ -72,7 +72,7 @@ void CLevel::createTopLevel()
 	  y = height;
 	  tileHeight = height % FTileHeight;
 	}
-      CTile* tile = new CTile(tileWidth, tileHeight);      
+      CTile* tile = new CTile(tileWidth, tileHeight);
       tile->setBottomRight(CPoint2D(x, y));
       tile->setId(i+1);
       tile->setIndex( 0, xmin(tile)/FTileWidth  );
@@ -83,13 +83,13 @@ void CLevel::createTopLevel()
       tile->setPixelMark();
       tile->createTopTile();
       tile->write();
-      delete tile;     
+      delete tile;
     }
   //std::cout<<"[end] CLevel::createTopLevel"<<std::endl;
 }
 
 //------------------------------------------------------------------------------
-void CLevel::extract(const ExtractMode & AExtractMode, 
+void CLevel::extract(const ExtractMode & AExtractMode,
 		     const SegmentationMode & ASegmentationMode,
 		     const ProjectionMode & AProjectionMode,
 		     const FocusAttentionMode & AFocusAttentionMode,
@@ -119,12 +119,12 @@ void CLevel::extract(const ExtractMode & AExtractMode,
 	switch(AExtractMode)
 	  {
 	  case ConstantTileNumber:
-	    memory = burstAndMergeTile(pos, ASegmentationMode, AProjectionMode, 
+	    memory = burstAndMergeTile(pos, ASegmentationMode, AProjectionMode,
 				       AFocusAttentionMode, ADetectFictiveBordersMode);
-	    break;	  
+	    break;
 	  case ConstantTileSize:
-	    memory = extractTile(pos, ASegmentationMode, AProjectionMode, 
-				 AFocusAttentionMode, ADetectFictiveBordersMode, 
+	    memory = extractTile(pos, ASegmentationMode, AProjectionMode,
+				 AFocusAttentionMode, ADetectFictiveBordersMode,
 				 segmentationChrono);
 	    break;
 	  default:
@@ -134,7 +134,7 @@ void CLevel::extract(const ExtractMode & AExtractMode,
 	FMemory = (FMemory <= memory)? memory : FMemory;
 	levelUp()->unloadTile(pos); // Swap tile up
       }
-  unload();      
+  unload();
   if(FClassif) delete FClassif;
   if(FAssignment) delete FAssignment;
   FClassif=NULL;
@@ -156,7 +156,7 @@ void CLevel::extract(const ExtractMode & AExtractMode,
 }
 
 //------------------------------------------------------------------------------
-uint  CLevel::burstAndMergeTile(const CPoint2D & APos, 
+uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
 				const SegmentationMode & ASegmentationMode,
 				const ProjectionMode & AProjectionMode,
 				const FocusAttentionMode & AFocusAttentionMode,
@@ -168,11 +168,11 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   if(i>0) memory += loadTile(CPoint2D(i-1, j))->memory(); // Load tile left
   if(j>0) memory += loadTile(CPoint2D(i, j-1))->memory(); // Load tile top
   memory+=levelUp()->tile(APos)->memory();
-  
+
   CTile* parent = levelUp()->tile(APos);
   parent->FAssignment = FAssignment;
   parent->FClassif = FClassif;
-  
+
   CTile* newTile = parent->createChildByCopy(AProjectionMode);
   newTile->setId(++FTileCounter);
   newTile->setMergeThreshold(FMergeThreshold);
@@ -180,8 +180,8 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   // On éclate le bord de la tuile de façon à récupérer les coins et les beta2
   newTile->splitBorder();
   retrieveTileCorners(newTile);
-  retrieveTileBeta2(newTile, ASegmentationMode, ADetectFictiveBordersMode); 
-  
+  retrieveTileBeta2(newTile, ASegmentationMode, ADetectFictiveBordersMode);
+
   //classif
   IM_Box box;
   box.XTop = xmin(newTile);  box.YTop = ymin(newTile);
@@ -189,16 +189,16 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   image()->setDepth(FDepth);
   image()->setCurrentBox(box);
   newTile->FClassif = image()->kmeans(3);
-  
+
   // Split de la tuile par burst/merge
   newTile->burstAndMerge(AFocusAttentionMode, ASegmentationMode);
   memory += newTile->memory();
   delete [] newTile->FClassif;
- 
+
   // Simplification des sommets de degré 2
   newTile->simplifyMap();
   simplifyTileBorder(newTile);
- 
+
   // Reconstruction de l'arbre d'inclusion des régions
   newTile->computeInclusionTree();
 
@@ -234,8 +234,8 @@ uint CLevel::extractTile(const CPoint2D & APos,
   CTile* parent = levelUp()->tile(APos);
   parent->FAssignment = FAssignment;
   parent->FClassif = FClassif;
-  std::deque<CTile*> children; 
-  
+  std::deque<CTile*> children;
+
   parent->extractChildren(children, ASegmentationMode, AProjectionMode, AFocusAttentionMode, AChrono);
 
   uint memory = 0;
@@ -249,7 +249,7 @@ uint CLevel::extractTile(const CPoint2D & APos,
       uint i = tile->index(0);  uint j = tile->index(1);
       if(i>0) childrenMemory += loadTile( CPoint2D(i-1,j) )->memory(); // Load tile left
       if(j>0) childrenMemory += loadTile( CPoint2D(i,j-1) )->memory(); // Load tile top
-      
+
       //pas besoin de splitter le bord car on ne supprime pas les sommets de
       //degré 2 du bord pendant l'extraction
       retrieveTileCorners(tile);
@@ -286,7 +286,7 @@ CTile* CLevel::tileTop(CTile* ATile)
 
   if( ymin(ATile) == 0 )
     return NULL; // Pas de tuile up
-    
+
   for(it=FTiles.begin(); it!=FTiles.end(); ++it)
     {
       current = *it;
@@ -303,7 +303,7 @@ CTile* CLevel::tileLeft(CTile* ATile)
 
   if( xmin(ATile) == 0 )
     return NULL; // Pas de tuile left
-    
+
   for(it=FTiles.begin(); it!=FTiles.end(); ++it)
     {
       current = *it;
@@ -318,7 +318,7 @@ void CLevel::delTile(CTile* ATile)
   //on s'assure de bien supprimer une tuile appartenant à ce niveau
   assert(ATile->index(2)==FDepth);
   //std::cout<<" [start] CLevel::delTile ("<<ATile->index(0)<<","<<ATile->index(1)<<","<<ATile->index(2)<<")"<<std::endl;
-    
+
   // les brins et régions des tuiles up et down ne peuvent plus pointer sur this
   if(ATile->existTileUp())
     {
@@ -340,7 +340,7 @@ void CLevel::delTile(CTile* ATile)
       //puisqu'on est en top-down, il n'y a qu'un seul parent
       up->setTileDown(NULL);
     }
-    
+
   if(ATile->existTileDown())
     {
       //Il faut que toutes les tuiles filles qui avaient pour parent ATile
@@ -361,7 +361,7 @@ void CLevel::delTile(CTile* ATile)
     }
   delete ATile;
 }
-  
+
 
 
 //******************************************************************************
@@ -379,20 +379,20 @@ void CLevel::simplifyTileTopBorder(CTile* ATile)
       //std::cout<<"simplify Top Border"<<std::endl;
       CTile* topTile  = tileTop(ATile);
       CDart* topRep = topTile->getInclusionTreeRoot()->getRepresentativeDart();
-      
+
       // On se positionne comme il faut
       CDart* up  = topRep;
       CDart* down = beta0(rep);
-      
+
       while(topTile->getDoublet(up).getLinel()!=XPOS)
 	up = beta1(up);
 
       assert(topTile->getDoublet( up ).getLinel() == XPOS);
       assert(currentTile->getDoublet(down).getLinel() == XNEG);
-      
+
       // On avance d'un cran
-      up = beta1(up); 
-      
+      up = beta1(up);
+
       // Tant qu'on n'arrive pas au bout du bord,
       // si les deux pointels sont de degré 2, on les supprime
       // sinon, on avance ensemble
@@ -400,7 +400,7 @@ void CLevel::simplifyTileTopBorder(CTile* ATile)
 	{
 	  up = beta1(up);
 	  down = beta0(down);
-	  
+
 	  if( currentTile->isDegreeTwoPointel(currentTile->getDoublet(beta1(down))) &&
 	      topTile->isDegreeTwoPointel(topTile->getDoublet(beta0(up))) )
 	    {
@@ -436,18 +436,18 @@ void CLevel::simplifyTileLeftBorder(CTile* ATile)
       // On se positionne comme il faut
       CDart* left  = leftRep;
       CDart* right = rep;
-      
+
       while(leftTile->getDoublet(left).getLinel()!=YNEG)
 	{
 	  assert(beta0(left)!=left);
 	  left = beta0(left);
 	}
-      
+
       assert(leftTile->getDoublet( left ).getLinel() == YNEG);
       assert(currentTile->getDoublet(right).getLinel() == YPOS);
-      
+
       // On avance d'un cran
-      right = beta1(right); 
+      right = beta1(right);
 
       // Tant qu'on n'arrive pas au bout du bord,
       // si les deux pointels sont de degré 2, on les supprime
@@ -456,7 +456,7 @@ void CLevel::simplifyTileLeftBorder(CTile* ATile)
 	{
 	  right = beta1(right);
 	  left = beta0(left);
-	  
+
 	  if( currentTile->isDegreeTwoPointel(currentTile->getDoublet(beta0(right))) &&
 	      leftTile->isDegreeTwoPointel(leftTile->getDoublet(beta1(left))) )
 	    {
@@ -480,7 +480,7 @@ void CLevel::simplifyTileLeftBorder(CTile* ATile)
 //------------------------------------------------------------------------------
 void CLevel::simplifyTileBorder(CTile* ATile)
 {
-  //std::cout<<"[start] CLevel::simplifyTileBorder"<<std::endl;   
+  //std::cout<<"[start] CLevel::simplifyTileBorder"<<std::endl;
   CTile* currentTile = ATile;
   CDart* rep = currentTile->getInclusionTreeRoot()->getRepresentativeDart();
 
@@ -489,12 +489,12 @@ void CLevel::simplifyTileBorder(CTile* ATile)
 
   // Traitement de la tuile de gauche (leftTile)
   simplifyTileLeftBorder(currentTile);
-  
+
   // Simplification des bords bas et droite de l'image
   if( xmax(currentTile) == imageWidth() )
     {
       CDart* dart = rep;
-      
+
       while(currentTile->getDoublet(dart).getLinel()!=YNEG)
 	dart = beta0(dart);
 
@@ -505,16 +505,16 @@ void CLevel::simplifyTileBorder(CTile* ATile)
 	    currentTile->vertexRemoval(beta1(dart));
 	}
     }
-  
+
   if( ymax(currentTile) == imageHeight() )
     {
       CDart* dart = rep;
-      
+
       while(currentTile->getDoublet(dart).getLinel()!=XPOS)
 	dart = beta1(dart);
-      
+
       dart = beta1(dart);
-      
+
       while( currentTile->getDoublet(dart).getLinel() == XPOS )
 	{
 	  dart = beta1(dart);
@@ -522,7 +522,7 @@ void CLevel::simplifyTileBorder(CTile* ATile)
 	    currentTile->vertexRemoval(beta0(dart));
 	}
     }
-  //std::cout<<"[end] CLevel::simplifyTileBorder"<<std::endl;   
+  //std::cout<<"[end] CLevel::simplifyTileBorder"<<std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -534,26 +534,26 @@ void CLevel::retrieveTileCorners(CTile* ATile) const
   CDart* up    = NULL;
   CDart* right = NULL;
   CDart* down  = NULL;
-  
+
   uint x = ATile->width();
   uint y = ATile->height();
- 
+
   assert(ATile->getInclusionTreeRoot()!=NULL);
   CDart* current = ATile->getInclusionTreeRoot()->getRepresentativeDart();
-  
+
   CDoublet dLeft  (0,0,YPOS); //doublet de référence
   CDoublet dUp    (x,0,XNEG); //doublet de départ
   CDoublet dRight (x,0,XNEG); //un cran après celui qu'on cherche
   CDoublet dDown  (0,y,XPOS); //doublet de référence
-  
+
   left = current;
   assert(left!=NULL);
   assert( ATile->getDoublet(left) == dLeft );
-  
+
   up = ATile->beta0(left);
   assert(up!=NULL);
-  current = ATile->beta1(current);    
-  
+  current = ATile->beta1(current);
+
   for(CDynamicCoverage1 it(ATile, current); it.cont(); ++it)
     if( ATile->getDoublet(*it) == dDown )
       {
@@ -571,7 +571,7 @@ void CLevel::retrieveTileCorners(CTile* ATile) const
 	}
     }
   assert(right!=NULL);
-  
+
   ATile->addCorner(left);
   ATile->addCorner(up);
   ATile->addCorner(right);
@@ -583,7 +583,7 @@ void CLevel::retrieveTileCorners(CTile* ATile) const
 //------------------------------------------------------------------------------
 void CLevel::retrieveTileBeta2(CTile* ATile,
 			       const SegmentationMode & ASegmentationMode,
-			       const DetectFictiveBordersMode & ADetectFictiveBordersMode) 
+			       const DetectFictiveBordersMode & ADetectFictiveBordersMode)
 {
   //std::cout<<"*** [start] CLevel::retrieveBeta2 ***"<<std::endl;
   //std::cout<<"detect fictive borders = "<<ADetectFictiveBordersMode<<std::endl;
@@ -599,33 +599,33 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
   if( existTileLeft(currentTile) )
     {
       leftTile = tileLeft(currentTile);
-      
+
       CDart* left  = NULL;
       CDart* right = NULL;
       CDart* nextleft  = NULL;
       CDart* nextright = NULL;
-      
+
       // left est le brin de droite de leftTile
       // right est le brin de gauche de currentTile
       // left et right sont des brins de la région infinie
       retrieveTileCorners(leftTile);
       left  = leftTile->FCorners[2];
       right = currentTile->FCorners[0];
-      
+
       while(leftTile->getDoublet(left).getLinel() == YNEG)
 	{
 	  nextleft  = beta0(left);
 	  nextright = beta1(right);
-	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(beta2(right))->getId()] = 
+	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(beta2(right))->getId()] =
 	    static_cast<CPyramidalDart*>(left->getBeta2())->getId();
 
-	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)	  
+	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)
 	    {
 	      CPyramidalDart* dart1 = static_cast<CPyramidalDart*>(beta2(left));
 	      CPyramidalDart* dart2 = static_cast<CPyramidalDart*>(beta2(right));
 	      CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(dart1->getRegion());
 	      CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(dart2->getRegion());
-	      
+
 	      if(region1->label() == region2->label())
 		//if(currentTile->isRegionToMerge(region1, region2, ASegmentationMode))
 		{
@@ -639,37 +639,37 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
 	}
     }
 
-  // Traitement de la tuile du haut  
+  // Traitement de la tuile du haut
   if( existTileTop(currentTile) )
     {
-      topTile = tileTop(currentTile);    
-      
+      topTile = tileTop(currentTile);
+
       CDart* up  = NULL;
       CDart* down = NULL;
       CDart* nextup  = NULL;
       CDart* nextdown = NULL;
-      
+
       // down est le brin up de currentTile
       // up est le brin down de topTile
       // down et up sont des brins de la région infinie
       retrieveTileCorners(topTile);
       up   = topTile->FCorners[3];
       down = currentTile->FCorners[1];
-      
+
       while(topTile->getDoublet(up).getLinel() == XPOS)
 	{
 	  nextup = up->getBeta1();
 	  nextdown = down->getBeta0();
-	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(down->getBeta2())->getId()] =  
+	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(down->getBeta2())->getId()] =
 	    static_cast<CPyramidalDart*>(up->getBeta2())->getId();
 
-	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)	  
+	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)
 	    {
 	      CPyramidalDart* dart1 = static_cast<CPyramidalDart*>(beta2(up));
 	      CPyramidalDart* dart2 = static_cast<CPyramidalDart*>(beta2(down));
 	      CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(dart1->getRegion());
 	      CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(dart2->getRegion());
-		      
+
 	      if(region1->label() == region2->label())
 		//if(currentTile->isRegionToMerge(region1, region2, ASegmentationMode))
 		{
@@ -704,7 +704,7 @@ uint CLevel::nbDarts()
       	current = tile(CPoint2D(i,j));
       	for(CDynamicCoverageAll it(current); it.cont(); ++it)
       	  ++total;
-	
+
       	unloadTile(CPoint2D(i,j));
       }
   return total;
@@ -722,7 +722,7 @@ uint CLevel::nbFictiveDarts()
       	for(CDynamicCoverageAll it(current); it.cont(); ++it)
 	  if(static_cast<CPyramidalDart*>(*it)->isFictive())
 	    ++total;
-	
+
       	unloadTile(CPoint2D(i,j));
       }
   return total;
@@ -739,7 +739,7 @@ uint CLevel::nbRegions()
       	current = tile(CPoint2D(i,j));
       	for(CDynamicCoverageAllRegions it(current); it.cont(); ++it)
       	  ++total;
-	
+
       	unloadTile(CPoint2D(i,j));
       }
   return total;
@@ -766,7 +766,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
   //    }
 
   if(ASegmentationMode==Histology)
-    {    
+    {
       switch( depth() )
 	{
 	case 1:
@@ -775,7 +775,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
       	  //image()->moveClasses(FClassif, size);
       	  image()->mergeClasses(1,0, FClassif, size);
 	  break;
-	  
+
 	case 2:
 	  std::cout<<" CLevel::preprocessing level 2 \n"<<std::endl;
 	  histogram();
@@ -784,7 +784,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  assert(FHisto);
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
-	  
+
 	case 3:
 	  std::cout<<" CLevel::preprocessing level 3 \n"<<std::endl;
 	  histogram();
@@ -792,7 +792,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  FAssignment->assign(256,256,256,1);
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
-	  
+
 	case 4:
 	  std::cout<<" CLevel::preprocessing level 4 \n"<<std::endl;
 	  histogram();
@@ -800,7 +800,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  FAssignment->assign(256,256,256,1);
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
-	  
+
 	default:
 	  break;
 	}
@@ -830,7 +830,7 @@ void CLevel::print()
   int sys = 0;
   std::cout<<"mémoire ram max = " << FMemory << std::endl;
   std::cout<<"mémoire disque = " ;
-  sys = system("du -h ./output"); 
+  sys = system("du -h ./output");
   std::cout << std::endl;
   std::cout<<"nombre de brins = " << nbDarts() << std::endl;
   std::cout<<"nombre de brins fictifs = " << nbFictiveDarts() << std::endl;

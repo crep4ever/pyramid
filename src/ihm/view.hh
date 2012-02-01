@@ -28,7 +28,7 @@ class CScene;
 
 /**
  * \file view.hh
- * 
+ *
  * Class for generic views in the Qt version of the topological map.
  *
  * \class CView "view.hh"
@@ -41,20 +41,20 @@ class CScene;
 class CView : public QGraphicsView
 {
   Q_OBJECT
-  
+
 public:
-  /// Constructor 
+  /// Constructor
   CView( CScene * scene );
-  
+
   /// Destructor
   virtual ~CView();
-  
+
   /// getter on the controled scene
   CScene * controledScene() const;
-  
+
   /// getter on the current zoom factor
   qreal zoom() const;
-  
+
 signals:
   /// zoom change
   void zoomChanged(qreal zoom);

@@ -24,10 +24,10 @@ void CSvgCreator::svgBegin( double h, double w, const std::string & opt )
       << "height=\"" << h << "\" "
       << "width=\"" << w << "\" "
       << opt
-      << ">" 
+      << ">"
       << endl;
 
-  // Palette tango: black:#2e3436 ; blue:#204a87; red:#ef2929 ; green:#4e9a06 ; white:#eeeeec ; 
+  // Palette tango: black:#2e3436 ; blue:#204a87; red:#ef2929 ; green:#4e9a06 ; white:#eeeeec ;
   //  styleCSS(" .dart { fill:none; stroke:\"#2e3436\"; stroke-width:0.1; } .representativeDart { fill:none; stroke:\"#ef2929\"; stroke-width:0.1; } .pointel { fill:\"#4e9a06\"; stroke:\"#4e9a06\"; stroke-width:0.1; } .linel { fill:\"#4e9a06\"; stroke:\"#4e9a06\"; stroke-width:0.1; } .firstPixel { fill=\"#eeeeec\"; stroke:\"#204a87\"; stroke-width:0.1; } " );
 
   styleCSS(" .dart { fill:none; stroke:#2e3436; stroke-width:0.1; } .representativeDart { fill:none; stroke:#ef2929; stroke-width:0.1; } .pointel { fill:none; stroke:#204a87; stroke-width:0.1; } .linel { fill:none; stroke:#4e9a06; stroke-width:0.1; } .fpixel { fill:#eeeeec; stroke:#204a87; stroke-width:0.1; } .fictivePointel { fill:none; stroke:#ef2929; stroke-width:0.1; } .fictiveLinel { fill:none; stroke:#ef2929; stroke-width:0.1; }" );
@@ -88,12 +88,12 @@ void CSvgCreator::markerBegin( const std::string & id,
 			       const std::string & orient,
 			       const std::string & opt )
 {
-  FOs << "<marker " 
+  FOs << "<marker "
       << "id=\""<< id << "\" "
-      << "orient=\""<< orient <<"\" " 
-      << "refX=\"" << refX << "\" " 
+      << "orient=\""<< orient <<"\" "
+      << "refX=\"" << refX << "\" "
       << "refY=\"" << refY << "\" "
-      << opt << ">" 
+      << opt << ">"
       << endl;
 }
 
@@ -108,7 +108,7 @@ void CSvgCreator::markerEnd()
 // Use directive
 //******************************************************************************
 
-void CSvgCreator::use( const std::string & href, 
+void CSvgCreator::use( const std::string & href,
 		       double x, double y,
 		       const std::string & opt )
 {}
@@ -119,7 +119,7 @@ void CSvgCreator::use( const std::string & href,
 
 void CSvgCreator::styleCSS( const std::string & AStyle )
 {
-  FOs << "<style type=\"text/css\"><![CDATA[" 
+  FOs << "<style type=\"text/css\"><![CDATA["
       << endl
       << AStyle
       << endl
@@ -149,43 +149,43 @@ void CSvgCreator::groupEnd()
 void CSvgCreator::line( double x1, double y1, double x2, double y2,
 			const std::string & opt )
 {
-  FOs << "<line " 
+  FOs << "<line "
       << "x1=\"" << x1 << "\" y1=\"" << y1 << "\" "
-      << "x2=\"" << x2 << "\" y2=\"" << y2 << "\" " 
+      << "x2=\"" << x2 << "\" y2=\"" << y2 << "\" "
       << opt
-      << "/>" 
-      << endl; 
+      << "/>"
+      << endl;
 }
 
 //------------------------------------------------------------------------------
 void CSvgCreator::circle( double cx, double cy, double r,
 			  const std::string & opt )
 {
-  FOs << "<circle " 
+  FOs << "<circle "
       << "cx=\"" << cx << "\" cy=\"" << cy << "\" "
-      << "r=\"" << r << "\" " 
+      << "r=\"" << r << "\" "
       << opt
-      << "/>" 
-      << endl; 
+      << "/>"
+      << endl;
 }
 
 //------------------------------------------------------------------------------
-void CSvgCreator::rect( double x, double y, 
+void CSvgCreator::rect( double x, double y,
 			double width, double height,
 			const std::string & opt,
 			double rx, double ry )
 {
-  FOs << "<rect " 
+  FOs << "<rect "
       << "x=\"" << x << "\" y=\"" << y << "\" "
       << "width=\"" << width << "\" height=\"" << height << "\" ";
 
   if( rx != 0 )
-    FOs << "rx=\"" << rx << "\" "; 
+    FOs << "rx=\"" << rx << "\" ";
   if( ry != 0 )
-    FOs << "ry=\"" << ry << "\" "; 
+    FOs << "ry=\"" << ry << "\" ";
   FOs << opt
-      << "/>" 
-      << endl; 
+      << "/>"
+      << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ void CSvgCreator::polyPoint( double x, double y )
 //------------------------------------------------------------------------------
 void CSvgCreator::polylineBegin( const std::string & opt )
 {
-  FOs << "<polyline " 
+  FOs << "<polyline "
       << opt
       << " points=\"";
 }
@@ -213,7 +213,7 @@ void CSvgCreator::polygonBegin( const std::string & opt )
 {
   FOs << "<polygon "
       << opt
-      << " points=\""; 
+      << " points=\"";
 }
 
 //------------------------------------------------------------------------------
@@ -291,7 +291,7 @@ void CSvgCreator::pathCurveTo( std::vector< TCoord > points )
 }
 
 //------------------------------------------------------------------------------
-void CSvgCreator::pathCurveTo( double x1, double y1, 
+void CSvgCreator::pathCurveTo( double x1, double y1,
 			       double x2, double y2,
 			       double x, double y )
 {

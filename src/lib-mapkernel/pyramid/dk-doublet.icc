@@ -89,10 +89,10 @@
   INLINE
   bool CDkDoublet::operator == (const CDkDoublet & ADkDoublet) const
   {
-    return ( Fx == ADkDoublet.Fx 
-	     && Fy == ADkDoublet.Fy 
+    return ( Fx == ADkDoublet.Fx
+	     && Fy == ADkDoublet.Fy
 	     && FL == ADkDoublet.FL
-	     && weight() == ADkDoublet.weight() 
+	     && weight() == ADkDoublet.weight()
 	     && prev() == ADkDoublet.prev() );
   }
   //------------------------------------------------------------------------------
@@ -113,7 +113,7 @@
     AStream << "[ ("
 	    << ADkDoublet.getX() << ", "
 	    << ADkDoublet.getY() << ") ";
-    
+
     switch (ADkDoublet.getLinel())
       {
       case XPOS: AStream<<"XPOS "; break;
@@ -127,7 +127,7 @@
       AStream<<" Prev = "<<*static_cast<CDoublet*>(ADkDoublet.prev());
     else
       AStream<<" Prev = NULL";
-    
+
     return AStream<<"]";
   }
 //******************************************************************************

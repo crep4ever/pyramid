@@ -32,14 +32,14 @@
 namespace Map2d
 {
   INLINE
-  bool CTile::isRegionToSplit(CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode) 
-  {	
+  bool CTile::isRegionToSplit(CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode)
+  {
     //std::cout<<"CTile::isRegionToSplit criterion = "<< AFocusAttentionMode <<std::endl;
     if(!ARegion)
       std::cout<<"CTile::isRegionToSplit : warning null region won't be refined"<<std::endl;
-    if(ARegion==NULL || ARegion->isInfiniteRegion()) 
+    if(ARegion==NULL || ARegion->isInfiniteRegion())
       return false;
-    
+
     CCriterionSplit* oracle = NULL;
     CPyramidalRegion* region = static_cast<CPyramidalRegion*>(ARegion);
 
@@ -48,7 +48,7 @@ namespace Map2d
       case FocusSize:
 	oracle = new CSplitNbPix(ARegion, 4);
 	break;
-	
+
       case FocusGrey:
 	oracle = new CSplitGrey(ARegion, mergeThreshold());
 	break;
@@ -79,7 +79,7 @@ namespace Map2d
 	    return false;
 	  }
 	assert(false);
-	
+
       case FocusAll:
 	return !ARegion->isInfiniteRegion();
 
@@ -92,7 +92,7 @@ namespace Map2d
 	  int red= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
 	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
 	    {
-	      pix.x=(*it).getX(); 
+	      pix.x=(*it).getX();
 	      pix.y=(*it).getY();
 	      image()->getPixel( pix, index(2) );
 	      ++count;
@@ -108,7 +108,7 @@ namespace Map2d
 	  int blue= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
 	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
 	    {
-	      pix.x=(*it).getX(); 
+	      pix.x=(*it).getX();
 	      pix.y=(*it).getY();
 	      image()->getPixel( pix, index(2) );
 	      ++count;
@@ -117,7 +117,7 @@ namespace Map2d
 	  std::cout<<"blue = " << blue << "for nb = " << count << std::endl;
 	  return (blue/count > 70);
 	}
-	
+
       default:
 	std::cout<<"CTile::isRegionToSplit criterion not supported"<<std::endl;
 	assert(false);
@@ -134,12 +134,12 @@ namespace Map2d
   bool CTile::isRegionToMerge(CRegion* ARegion1, CRegion* ARegion2, const SegmentationMode & ASegmentationMode)
   {
     assert(ARegion1 != NULL && ARegion2 != NULL);
-    
+
     if( ARegion1->isInfiniteRegion() || ARegion2->isInfiniteRegion() )
       return false;
 
     CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
-    CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);      
+    CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);
     uint x1, y1, x2, y2;
     x1 = region1->getFirstPixel().getX(); y1 = region1->getFirstPixel().getY();
     x2 = region2->getFirstPixel().getX(); y2 = region2->getFirstPixel().getY();
@@ -153,10 +153,10 @@ namespace Map2d
 	  CMergeGrey crit1 (ARegion1, ARegion2, mergeThreshold());
 	  return crit1.isRegionToMerge();
 	}
-	
+
       case GreyValue:
 	break;
-	
+
       case Classif:
 	{
 	  return FClassif[pos1] == FClassif[pos2];
@@ -173,7 +173,7 @@ namespace Map2d
 	  return FClassif[pos1] == FClassif[pos2];
 	return true;
       }
-    
+
     return false;
   }
 
@@ -185,7 +185,7 @@ namespace Map2d
     uint ratiox = upRatioX();  uint ratioy = upRatioY();
     uint offsetx = tileUp()->xmin()*ratiox;
     uint offsety = tileUp()->ymin()*ratioy;
-  
+
     //pour une classif sur l'ensemble des tuiles filles
     uint pos1 = ( (APixel1.x-offsetx) + (width()*ratiox)*(APixel1.y-offsety) ) ;
     uint pos2 = ( (APixel2.x-offsetx) + (width()*ratiox)*(APixel2.y-offsety) ) ;
@@ -207,7 +207,7 @@ namespace Map2d
     switch(ASegmentationMode)
       {
       case GreyValue:
-	//Attention! pas bon pour les images couleurs car ne définit pas une partition, 
+	//Attention! pas bon pour les images couleurs car ne définit pas une partition,
 	//ok pour les images en niveau de gris
 	//std::cout << "CTile::sameRegions : GreyValue "<<std::endl;
 	//std::cout<<"value 1 = "<<image()->getPixelGreyValue(APixel1)<<" value 2 = "<<image()->getPixelGreyValue(APixel2)<<std::endl;
@@ -217,7 +217,7 @@ namespace Map2d
 	//std::cout << "CTile::sameRegions : Thresholds "<<std::endl;
 	//std::cout<<"diff = "<<abs(image()->getPixelGreyValue(APixel1) - image()->getPixelGreyValue(APixel2))<<std::endl;
 	return (uint) abs(image()->getPixelGreyValue(APixel1) - image()->getPixelGreyValue(APixel2)) < mergeThreshold();
-      
+
       case Classif:
 	return FClassif[pos1] == FClassif[pos2];
 
@@ -226,7 +226,7 @@ namespace Map2d
 	  //std::cout << "CTile::sameRegions : Histology SameRegionOracle "<<std::endl;
 
 	  if(depth()==1)
-	    {	
+	    {
 	      //	    if(image()->colorMode()==CImageTiff::RGB)
 	      //	      return FClassif[pos5] == FClassif[pos6] &&
 	      //		FClassif[pos5+1] == FClassif[pos6+1] &&
@@ -236,7 +236,7 @@ namespace Map2d
 	    }
 
 	  //	if(depth()==2)
-	  //	  {	
+	  //	  {
 	  //	    if(image()->colorMode()==CImageTiff::RGB)
 	  //	      return FClassif[pos1] == FClassif[pos2] &&
 	  //		FClassif[pos1+1] == FClassif[pos2+1] &&
@@ -255,7 +255,7 @@ namespace Map2d
 
 	  if(!FAssignment)
 	    return true;
-	
+
 	  return (*FAssignment)(APixel1.value[0], APixel1.value[1], APixel1.value[2]) ==
 	    (*FAssignment)(APixel2.value[0], APixel2.value[1], APixel2.value[2]);
 	}
@@ -269,7 +269,7 @@ namespace Map2d
 	      //return FClassif[pos1] == FClassif[pos2];
 	      assert(FClassif);
 	      return FClassif[pos9] == FClassif[pos10];
-	    
+
 	    }
 	  return true;
 	  //	if(image()->colorMode()==CImageTiff::RGB)
@@ -279,7 +279,7 @@ namespace Map2d
 	  //	else if(image()->colorMode()==CImageTiff::Grey)
 	  //	  return FClassif[pos1] == FClassif[pos2];
 	}
-      
+
       default:
 	std::cout<<"CTile::sameRegions : Warning unsupported SameRegionOracle"<<std::endl;
 	break;
@@ -287,7 +287,7 @@ namespace Map2d
     std::cout<<"[end] CTile::sameRegions : false"<<std::endl;
     return false;
   }
-  
+
   //******************************************************************************
 } // namespace Map2d
   //******************************************************************************

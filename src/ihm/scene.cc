@@ -413,7 +413,7 @@ void CScene::drawImage()
 
   CImageTiff * image = a_pyramid->image();
   if( image == NULL ) return;
-       
+
   assert(image->isOpen);
   QImage qImage;
   IM_Box box;
@@ -422,27 +422,27 @@ void CScene::drawImage()
     {
       uint width  = image->getXSize(level());
       uint height = image->getYSize(level());
-      
+
       uint depth = level();
       if(depth > (unsigned)image->getNbPages()-1)
 	depth = image->getNbPages()-1;
-      
+
       box.XTop = 0; box.YTop = 0;
       box.XBtm = width; box.YBtm = height;
       image->setDepth(depth);
       image->setCurrentBox(box);
-      
+
       uint8* data = image->getDataQT();
       qImage = QImage(data, width, height, QImage::Format_RGB32).rgbSwapped();
       assert(!qImage.isNull());
       m_pixmap = new QPixmap(QPixmap::fromImage(qImage));
       delete [] data;
     }
-  
+
   QGraphicsPixmapItem * pixItem = addPixmap(*m_pixmap);
   if(pixItem != NULL)
     m_imageItem->addToGroup(pixItem);
-  
+
   setOpacity();
 }
 
@@ -455,23 +455,23 @@ void CScene::drawInterpixel(CTile* a_tile, QGraphicsItemGroup * group)
   uint sizeX = a_tile->width()+1;
   uint sizeY = a_tile->height()+1;
   uint x,y;
-  
+
   //#pragma omp parallel shared(a_tile, group) private(x,y,temp)
   for(x=0; x<sizeX; ++x)
     for(y=0; y<sizeY; ++y)
       {
 	temp.setX(x);
 	temp.setY(y);
-	    
+
 	// Affichage des pointels
 	if( a_tile->isPCell(temp) )
 	  drawPointel(temp, group);
-	
+
 	// Affichage des lignels
 	temp.setLinel(XPOS);
 	if( a_tile->isLCell(temp) )
 	  drawLinel(x, y, 1, false, group);
-	
+
 	temp.setLinel(YPOS);
 	if ( a_tile->isLCell(temp) )
 	  drawLinel(x, y, 2, false, group);
@@ -486,7 +486,7 @@ void CScene::drawMap(CTopologicalMap* a_map, QGraphicsItemGroup * group)
     drawDart(a_map, *it, group);
 }
 //------------------------------------------------------------------------------
-void CScene::drawOpenMap(CTile* a_tile, QGraphicsItemGroup* group, 
+void CScene::drawOpenMap(CTile* a_tile, QGraphicsItemGroup* group,
 				QGraphicsItemGroup* fictiveGroup)
 {
   if( a_tile == NULL ) return;
@@ -502,7 +502,7 @@ void CScene::drawBorders(CTopologicalMap* a_map, QGraphicsItemGroup * group,
   for( CDynamicCoverageAll it(a_map); it.cont(); ++it)
     if( (*it) < a_map->beta2(*it) ) //sioux
       drawEdge( a_map, *it, group, fictiveGroup );
-  
+
   group->setHandlesChildEvents(false);
   fictiveGroup->setHandlesChildEvents(false);
 }
@@ -578,19 +578,19 @@ void CScene::drawLabels(CTile* a_map, QGraphicsItemGroup * group)
     }
   painter.end();
   QGraphicsPixmapItem * pixItem = addPixmap(*pixmap);
-  if( group ) 
-    group->addToGroup(pixItem); 
+  if( group )
+    group->addToGroup(pixItem);
   group->setHandlesChildEvents(false);
-  
+
 }
 //------------------------------------------------------------------------------
-void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart, 
+void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
 			      QGraphicsItemGroup* group,
 			      QGraphicsItemGroup* fictiveGroup)
 {
   CDartPath path;
   path.setDart(a_dart);
-  
+
   CDoublet init = a_map->getDoublet(a_dart);
   CDoublet current(init);
   CDoublet next(init);
@@ -605,7 +605,7 @@ void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
   prev.setNextPointel();
 
   // Puis on démarre le chemin
-  QPointF startPoint = calculateGap( QPointF(current.getX(),current.getY()), 
+  QPointF startPoint = calculateGap( QPointF(current.getX(),current.getY()),
 				     prev, current);
   path.moveTo( startPoint );
 
@@ -617,18 +617,18 @@ void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
       next = next.getNextLinel();
     }
     while(!a_map->isLCell(next));
-    
+
     // On dessine si besoin en rajoutant le point au path
     if(a_map->isPCell(next) || next == init)
       {
-	QPointF endPoint = calculateGap( QPointF(next.getX(),next.getY()), 
+	QPointF endPoint = calculateGap( QPointF(next.getX(),next.getY()),
 					 current, next );
 	path.lineTo( endPoint );
 	break;
     }
     else if( current.getLinel() != next.getLinel())
       {
-	QPointF endPoint = calculateGap( QPointF(next.getX(),next.getY()), 
+	QPointF endPoint = calculateGap( QPointF(next.getX(),next.getY()),
 					 current, next );
 	path.lineTo( endPoint );
 	current = next;
@@ -645,7 +645,7 @@ void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
 
   // On ajoute le chemin dans la scene.
   QGraphicsPathItem* tmp;
-  
+
   //tmp->setFlag(QGraphicsItem::ItemIsSelectable, true);
   //tmp->setFlag(QGraphicsItem::ItemIsMovable, true);
 
@@ -675,22 +675,22 @@ void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
 }
 //------------------------------------------------------------------------------
 void CScene::drawEdge( CTopologicalMap* a_map,
-			      CDart* a_dart, 
-			      QGraphicsItemGroup* group, 
+			      CDart* a_dart,
+			      QGraphicsItemGroup* group,
 			      QGraphicsItemGroup* fictiveGroup )
 {
   QPainterPath path;
-  
+
   CDoublet cur = a_map->getDoublet(a_dart);
   CDoublet stop = a_map->getDoublet(a_map->beta1(a_dart));
   CDoublet next = cur;
-  
+
   path.moveTo(cur.getX(), cur.getY());
 
   do{
     // Doublet suivant
     next.setNextPointel();
-    do 
+    do
       {
 	next.setNextLinel();
       }
@@ -713,24 +713,24 @@ void CScene::drawEdge( CTopologicalMap* a_map,
   QGraphicsPathItem* tmp;
   tmp = addPath(path);
   tmp->setZValue(3);
-  
+
   if(static_cast<CPyramidalDart*>(a_dart)->isFictive() && fictiveGroup)
     fictiveGroup->addToGroup(tmp);
   else  if( group != NULL)
     group->addToGroup(tmp);
 }
 //------------------------------------------------------------------------------
-void CScene::drawPointel( const CDoublet& a_doublet, 
+void CScene::drawPointel( const CDoublet& a_doublet,
 					QGraphicsItemGroup* group )
 {
   uint x = a_doublet.getX();
   uint y = a_doublet.getY();
 
-  QGraphicsEllipseItem* item = addEllipse(x-0.1, y-0.1, 
-					  0.2, 0.2, 
+  QGraphicsEllipseItem* item = addEllipse(x-0.1, y-0.1,
+					  0.2, 0.2,
 					  pointelPen, pointelBrush);
   item->setZValue(6);
-  
+
   if( group != NULL)
     group->addToGroup(item);
 
@@ -765,30 +765,30 @@ void CScene::drawLinel( uint x, uint y, uint orientation, bool fictive,
   group->setHandlesChildEvents(false);
 }
 //------------------------------------------------------------------------------
-QPointF CScene::calculateGap( const QPointF & point, 
-					    const CDoublet & current, 
+QPointF CScene::calculateGap( const QPointF & point,
+					    const CDoublet & current,
 					    const CDoublet & next )
 {
   qreal gap = 0.2;
   qreal gapx = 0;
   qreal gapy = 0;
-  
+
   if( current.getPrevLinel().getLinel() == XPOS ||
       next.getPrevLinel().getLinel() == XPOS )
     gapx = gap;
-  
+
   else if( current.getPrevLinel().getLinel() == XNEG ||
 	   next.getPrevLinel().getLinel() == XNEG )
     gapx = -gap;
-  
+
   if( current.getPrevLinel().getLinel() == YPOS ||
       next.getPrevLinel().getLinel() == YPOS )
     gapy = gap;
-  
+
   else if( current.getPrevLinel().getLinel() == YNEG ||
 	   next.getPrevLinel().getLinel() == YNEG )
     gapy = -gap;
-    
+
   return point + QPointF(gapx,gapy);
 }
 //------------------------------------------------------------------------------
@@ -796,32 +796,32 @@ void CScene::drawCurrentLevel()
 {
   CPyramid * a_pyramid = controler()->pyramid();
   if(a_pyramid==NULL) return;
-  
+
   std::deque<CTile*> levelTiles;
   std::deque<CTile*>::iterator it;
   CLevel* lvl = a_pyramid->level(level());
   lvl->image()->open();
   lvl->loadAllTiles();
   levelTiles = lvl->tiles();
-  
+
   for(it = levelTiles.begin(); it != levelTiles.end(); ++it)
     {
       QGraphicsItemGroup* group = createItemGroup(QList<QGraphicsItem*>());
-	  
+
       QGraphicsItemGroup* groupBorders = createItemGroup(QList<QGraphicsItem*>());
       QGraphicsItemGroup* fictiveBorders = createItemGroup(QList<QGraphicsItem*>());
       if(isBordersToDisplay())
 	{
 	  drawBorders(*it, groupBorders, fictiveBorders);
 	}
-	
+
       QGraphicsItemGroup* groupMap = createItemGroup(QList<QGraphicsItem*>());
       QGraphicsItemGroup* fictiveDarts = createItemGroup(QList<QGraphicsItem*>());
       if(isMapToDisplay())
 	{
 	  drawOpenMap(*it, groupMap, fictiveDarts);
 	}
-      
+
       QGraphicsItemGroup* groupInterpixel = createItemGroup(QList<QGraphicsItem*>());
       if(isInterpixelToDisplay())
 	{
@@ -833,7 +833,7 @@ void CScene::drawCurrentLevel()
 	{
 	  drawLabels(*it, groupLabels);
 	}
-      
+
       // Regroupement par tuile
       group->addToGroup(groupBorders);
       group->addToGroup(groupMap);
@@ -841,10 +841,10 @@ void CScene::drawCurrentLevel()
       group->addToGroup(groupLabels);
       group->addToGroup(fictiveDarts);
       group->addToGroup(fictiveBorders);
-      
+
       //Positionnement de la tuile
       group->moveBy((*it)->xmin(),(*it)->ymin());
-      
+
       // Regroupement par type d'objets
       m_bordersItem->addToGroup(groupBorders);
       m_mapItem->addToGroup(groupMap);
@@ -856,7 +856,7 @@ void CScene::drawCurrentLevel()
 
   if(isImageToDisplay())
     {
-      drawImage();   
+      drawImage();
     }
 }
 //------------------------------------------------------------------------------
@@ -864,14 +864,14 @@ void CScene::levelSelector()
 {
   CPyramid * pyramid = controler()->pyramid();
   if(pyramid==NULL) return;
-  
+
   m_levelSelector = new QSlider(Qt::Vertical);
   m_levelSelector->setPageStep(1);
   m_levelSelector->setSingleStep(1);
   m_levelSelector->setTickPosition(QSlider::TicksRight);
   m_levelSelector->setRange(0, pyramid->nbLevels()-1);
   m_levelSelector->setValue(level());
-  
+
   connect(m_levelSelector, SIGNAL(valueChanged(int)),
 	  this, SLOT(sliderChanged(int)));
 }
@@ -905,21 +905,21 @@ QList< QAction* > CScene::actions() const
 void CScene::drawTile(CTile* a_tile)
 {
   QGraphicsItemGroup* group = createItemGroup(QList<QGraphicsItem*>());
-	  
+
   QGraphicsItemGroup* groupBorders = createItemGroup(QList<QGraphicsItem*>());
   QGraphicsItemGroup* fictiveBorders = createItemGroup(QList<QGraphicsItem*>());
   if(isBordersToDisplay())
     {
       drawBorders(a_tile, groupBorders, fictiveBorders);
     }
-	
+
   QGraphicsItemGroup* groupMap = createItemGroup(QList<QGraphicsItem*>());
   QGraphicsItemGroup* fictiveDarts = createItemGroup(QList<QGraphicsItem*>());
   if(isMapToDisplay())
     {
       drawOpenMap(a_tile, groupMap, fictiveDarts);
     }
-      
+
   QGraphicsItemGroup* groupInterpixel = createItemGroup(QList<QGraphicsItem*>());
   if(isInterpixelToDisplay())
     {
@@ -931,7 +931,7 @@ void CScene::drawTile(CTile* a_tile)
     {
       drawLabels(a_tile, groupLabels);
     }
-      
+
   // Regroupement par tuile
   group->addToGroup(groupBorders);
   group->addToGroup(groupMap);
@@ -939,10 +939,10 @@ void CScene::drawTile(CTile* a_tile)
   group->addToGroup(groupLabels);
   group->addToGroup(fictiveDarts);
   group->addToGroup(fictiveBorders);
-      
+
   //Positionnement de la tuile
   group->moveBy(a_tile->xmin(),a_tile->ymin());
-      
+
   // Regroupement par type d'objets
   m_bordersItem->addToGroup(groupBorders);
   m_mapItem->addToGroup(groupMap);

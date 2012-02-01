@@ -27,7 +27,7 @@ namespace Map2d
 
 INLINE
 CSplitNbPix::CSplitNbPix() :
-CCriterionSplit (),  
+CCriterionSplit (),
 FThreshold  ( 2 ) //on ne splitte pas les régions d'un pixel
 {}
 //------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ bool CSplitNbPix::isRegionToSplit()
   //std::cout<<"Valeur du seuil"<<getThreshold()<<std::endl;
   return (getRegion()->getNbPixels() > getThreshold() );
 }
-  
+
 //******************************************************************************
 } // namespace Map2d
 //******************************************************************************
