@@ -23,6 +23,7 @@
 #include "pyramidal-region.hh"
 #include "traversal-region-pixels.hh"
 #include <pngwriter.h>
+#include <iostream>
 #include INCLUDE_NON_INLINE("tile.icc")
 
 #define UNUSED(x) (void)x
@@ -394,11 +395,11 @@ void CTile::getRegionBoundingBox(CDart* ADart, std::vector<uint>& tab)
 void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADirname)
 {
   //std::cout<<" [start] CTile::exportRegionToPng "<<std::endl;
-  ostringstream stream;
+  std::ostringstream stream;
   stream << "mkdir -p "<<ADirname<<"/";
   UNUSED(system(stream.str().c_str()));
   
-  ostringstream oss;
+  std::ostringstream oss;
   oss << ADirname << "/region_" 
       << index(0) << "-"<< index(1) << "-" << index(2) 
       << "_" << FCount++ << ".png";

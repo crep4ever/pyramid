@@ -33,7 +33,7 @@ void CSvgExporter::drawPyramid(CPyramid* APyramid, bool APerspective, bool ATopo
 {
   std::ostringstream filename;
   filename<<".//output//pyramid.svg";
-  ofstream ofs( filename.str().c_str() );  
+  std::ofstream ofs( filename.str().c_str() );  
   CSvgCreator svg( ofs );
   svg.svgBegin( (APyramid->imageWidth(APyramid->nbLevels()-1)+50)*(APyramid->nbLevels()), 
 		(APyramid->imageHeight(APyramid->nbLevels()-1)+50)*2 );
@@ -80,7 +80,7 @@ void CSvgExporter::drawPyramidLevels(CPyramid* APyramid, bool ATopology, bool AG
       std::string sep = "-";
       filename<<".//output//pyramid"<<sep<<"level"<<sep<<i<<".svg";
     
-      ofstream ofs( filename.str().c_str() );
+      std::ofstream ofs( filename.str().c_str() );
       
       CSvgCreator svg( ofs );
       svg.svgBegin( APyramid->imageHeight(0), APyramid->imageWidth(0) );
@@ -105,7 +105,7 @@ void CSvgExporter::drawPyramidTopology(CPyramid* APyramid)
   for( uint i=0; i<APyramid->nbLevels(); ++i)
     {
       filename<<".//output//pyramid"<<sep<<"topology"<<sep<<"level"<<i<<".svg";
-      ofstream ofs( filename.str().c_str() );
+      std::ofstream ofs( filename.str().c_str() );
       
       CSvgCreator svg( ofs );
       svg.svgBegin( APyramid->imageHeight(0), APyramid->imageWidth(0) );
@@ -125,7 +125,7 @@ void CSvgExporter::drawPyramidGeometry(CPyramid* APyramid)
     {
       filename<<".//output//pyramid"<<sep<<"geometry"<<sep<<"level"<<i<<".svg";
       
-      ofstream ofs( filename.str().c_str() );
+      std::ofstream ofs( filename.str().c_str() );
       
       CSvgCreator svg( ofs );
       svg.svgBegin( APyramid->imageHeight(0), APyramid->imageWidth(0) );
@@ -181,7 +181,7 @@ void CSvgExporter::drawTile(CTile* ATile)
   std::string sep = "-";
   
   filename<<".//output//svg"<<sep<<"tile"<<sep<<ATile->id()<<".svg";
-  ofstream ofs( filename.str().c_str() );
+  std::ofstream ofs( filename.str().c_str() );
 
   CSvgCreator svg( ofs );
   svg.svgBegin( ATile->height(), ATile->width() );
@@ -198,7 +198,7 @@ void CSvgExporter::drawTileTopology(CTile* ATile)
   std::string sep = "-";
  
   filename<<".//output//map-topology"<<sep<<ATile->id()<<".svg";
-  ofstream ofs( filename.str().c_str() );
+  std::ofstream ofs( filename.str().c_str() );
 
   CSvgCreator svg( ofs );
   svg.svgBegin( ATile->height(), ATile->width() );
@@ -214,7 +214,7 @@ void CSvgExporter::drawTileGeometry(CTile* ATile)
   std::string sep = "-";
  
   filename<<".//output//map-geometry"<<sep<<ATile->id()<<".svg";
-  ofstream ofs( filename.str().c_str() );
+  std::ofstream ofs( filename.str().c_str() );
 
   CSvgCreator svg( ofs );
   svg.svgBegin( ATile->height(), ATile->width() );
@@ -272,7 +272,7 @@ void CSvgExporter::drawRegion(CTile* AMap, CRegion* ARegion)
   std::string sep = "-";
   
   filename<<".//output//region"<<sep<<ARegion->getId()<<".svg";
-  ofstream ofs( filename.str().c_str() );
+  std::ofstream ofs( filename.str().c_str() );
   
   CSvgCreator svg( ofs );
   svg.svgBegin( 5000, 5000 );
@@ -289,7 +289,7 @@ void CSvgExporter::drawDart(CTile* AMap, CDart* ADart)
   std::string sep = "-";
   
   filename<<".//output//brin"<<sep<<static_cast<CPyramidalDart*>(ADart)->getId()<<".svg";
-  ofstream ofs( filename.str().c_str() );
+  std::ofstream ofs( filename.str().c_str() );
   
   CSvgCreator svg( ofs );
   svg.svgBegin( 5000, 5000 );
@@ -437,7 +437,7 @@ void CSvgExporter::fillRegions(CTile* AMap, CSvgCreator& svg)
       if(!(*it)->isInfiniteRegion())
 	{
 	  std::stringstream ss;
-	  ss << hex << static_cast<CPyramidalRegion*>(*it)->getAverageGrey();
+	  ss << std::hex << static_cast<CPyramidalRegion*>(*it)->getAverageGrey();
 	  std::string value = ss.str();
 	  for( CTraversalRegionPixels it2(AMap, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
 	    {
