@@ -157,7 +157,7 @@ namespace Map2d
 
     //Extraction
     uint8* FClassif;
-    CImg<char>* FAssignment;
+    CVolume<uint8_t>* FAssignment;
   public:
     // Informations nécessaires pour certains traitements
     std::vector<CDart*> FCorners; // Coins de la tuile

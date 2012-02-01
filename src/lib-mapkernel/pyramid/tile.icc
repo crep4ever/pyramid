@@ -1017,7 +1017,7 @@ namespace Map2d
 		    pix.x = pixel.x()+xmin();
 		    pix.y = pixel.y()+ymin();
 		    image()->getPixel( pix, depth() );
-		    value = (*FAssignment)( pix.value[0], pix.value[1], pix.value[2]);
+		    value = FAssignment->getValue( pix.value[0], pix.value[1], pix.value[2]);
 		    region->setLabel(intToLabel(value));
 		    //std::cout<<"value = " << value << std::endl;
 		  }

@@ -24,7 +24,6 @@
 #include "point2d.hh"
 #include "imageTiff.hh"
 #include "inline-macro.hh"
-#include "CImg.h"
 #include "chrono.hh"
 #include "macros.hh"
 //******************************************************************************
@@ -69,7 +68,7 @@ namespace Map2d
   public:
     uint8* FClassif;
     CVolume<uint>* FHisto;
-    CImg<char>* FAssignment;
+    CVolume<uint8_t>* FAssignment;
 
   private:
     // Iterateur pour le parcours des tuiles

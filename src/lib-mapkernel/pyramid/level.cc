@@ -779,26 +779,20 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	case 2:
 	  std::cout<<" CLevel::preprocessing level 2 \n"<<std::endl;
 	  histogram();
-	  FAssignment = new CImg<char>;
-	  FAssignment->assign(256,256,256,1);
 	  assert(FHisto);
-	  image()->kmeansHistogram(FHisto, FAssignment);
+	  FAssignment = image()->kmeansHistogram(FHisto);
 	  break;
 
 	case 3:
 	  std::cout<<" CLevel::preprocessing level 3 \n"<<std::endl;
 	  histogram();
-	  FAssignment = new CImg<char>;
-	  FAssignment->assign(256,256,256,1);
-	  image()->kmeansHistogram(FHisto, FAssignment);
+	  FAssignment = image()->kmeansHistogram(FHisto);
 	  break;
 
 	case 4:
 	  std::cout<<" CLevel::preprocessing level 4 \n"<<std::endl;
 	  histogram();
-	  FAssignment = new CImg<char>;
-	  FAssignment->assign(256,256,256,1);
-	  image()->kmeansHistogram(FHisto, FAssignment);
+	  FAssignment = image()->kmeansHistogram(FHisto);
 	  break;
 
 	default:

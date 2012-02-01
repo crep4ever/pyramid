@@ -154,7 +154,7 @@ public:
   /// @return a table with the clustering result
   uint8* kmeans(uint ANbClass);
 
-  void kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement);
+  CVolume<uint8_t>* kmeansHistogram(CVolume<uint>* histo);
 
   /// k-means algorithm with KMLocal library
   /// @param ANbClass : the number of clusters

@@ -256,8 +256,8 @@ namespace Map2d
 	  if(!FAssignment)
 	    return true;
 
-	  return (*FAssignment)(APixel1.value[0], APixel1.value[1], APixel1.value[2]) ==
-	    (*FAssignment)(APixel2.value[0], APixel2.value[1], APixel2.value[2]);
+	  return FAssignment->getValue(APixel1.value[0], APixel1.value[1], APixel1.value[2]) ==
+	    FAssignment->getValue(APixel2.value[0], APixel2.value[1], APixel2.value[2]);
 	}
 
       case SegmentationOff:

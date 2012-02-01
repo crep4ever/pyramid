@@ -395,7 +395,7 @@ void CImageTiff::greyRegularization(int nb_iteration,
 }
 
 //------------------------------------------------------------------------------
-void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
+CVolume<uint8_t>* CImageTiff::kmeansHistogram(CVolume<uint>* histo)
 {
   //std::cout<<"[start] CImageTiff::kmeansHistogram \n";
   int dim = 3; // dimension
@@ -406,7 +406,7 @@ void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
       for(uint b = 0; b < histo->getSizeZ(); ++b)
 	nPts += histo->getValue(r,g,b);
 
-  if(nPts==0) return;
+  if(nPts==0) return 0;
 
   //std::cout<<"[start] CImageTiff::kmeansHistogram computing kmeans on " << nPts <<" data points \n";
   KMdata dataPts(dim, nPts);//stockage des points
@@ -462,22 +462,24 @@ void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
     std::cout << d1[b] << " ";
   std::cout << std::endl;
 
-  int i, r,g,b;
-  //#pragma omp parallel for shared(r,g,b) private(i)
-  for ( i = 0 ; i < nPts; ++i)
+  CVolume<uint8_t>* assignment = new CVolume<uint8_t>(256,256,256);
+  assignment->fill(1);
+  int r,g,b;
+  for ( int i = 0 ; i < nPts; ++i)
     {
       r =  dataPts[i][0];
       g =  dataPts[i][1];
       b =  dataPts[i][2];
       //move+merge classes
       //std::cout<< " d1[closeCtr["<<i<<"]] " << d1[closeCtr[i]] << std::endl;
-      (*assignement)(r,g,b)= (d1[closeCtr[i]]==0) ? 1 : d1[closeCtr[i]];
+      assignment->setValue(r,g,b, (d1[closeCtr[i]]==0) ? 1 : d1[closeCtr[i]]);
       //std::cout<< " assign("<<r<<","<<g<<","<<b<<") ="<< (int)(*assignement)(r,g,b) << std::endl;
     }
 
   delete[] sqDist;
   delete[] closeCtr;
 
+  return assignment;
   //std::cout<<"[end] CImageTiff::kmeansHistogram \n";
 }
 
