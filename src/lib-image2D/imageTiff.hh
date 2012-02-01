@@ -25,10 +25,8 @@
 #include "image2D.hh"
 #include "macros.hh"
 #include "inline-macro.hh"
-#include "CImg.h"
 #include "volume.hh"
 
-using namespace cimg_library;
 //******************************************************************************
 
 /// Type pour stocker la valeur d'un pixel.

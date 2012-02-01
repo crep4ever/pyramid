@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
-#include "CImg.h"
 #include <algorithm>
 #include <vector>
 #include <valarray>
@@ -39,7 +38,6 @@
 #define UNUSED(x) (void)x
 
 using namespace fogrimmi;
-using namespace cimg_library;
 //******************************************************************************
 CImageTiff::CImageTiff(const std::string & AFilename) :
   CImage2D()
