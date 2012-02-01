@@ -19,8 +19,6 @@
 //******************************************************************************
 #include <limits>
 //******************************************************************************
-namespace Map2d
-{
   INLINE
   CDkDoublet::~CDkDoublet()
   {}
@@ -53,7 +51,7 @@ namespace Map2d
   }
   //------------------------------------------------------------------------------
   INLINE
-  void CDkDoublet::updateWeight(float AValue, Heap & AHeap)
+  void CDkDoublet::updateWeight(float AValue, Heap<CDkDoublet*> & AHeap)
   {
     setWeight(AValue);
     AHeap.modify(this);
@@ -132,5 +130,4 @@ namespace Map2d
     
     return AStream<<"]";
   }
-}
 //******************************************************************************

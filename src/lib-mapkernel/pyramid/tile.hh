@@ -51,6 +51,7 @@
 using namespace fogrimmi;
 
 class CImageTiff;
+class CDkDoublet;
 
 namespace Map2d
 {
@@ -1037,12 +1038,12 @@ namespace Map2d
     /// @param ADoublet2 : point d'arrivée
     /// @param AHeap : le tas contenant tous les noeuds 
     /// @return last node
-    CDkDoublet* findNodes(const CEdge & AEdge, Heap & AHeap);
+    CDkDoublet* findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap);
     
     ///Récupère les voisins d'un doublet étant à une distance d'un lignel
     ///@param ADoublet : le doublet
     ///@return les voisins
-    std::vector<CDkDoublet*> findNeighbors(CDkDoublet* ADoublet, const Heap & AHeap);
+    std::vector<CDkDoublet*> findNeighbors(CDkDoublet* ADoublet, const Heap<CDkDoublet*> & AHeap);
     
     ///On met à jour la distance entre le noeud initial et ANode2
     ///en regardant s'il faut passer par ANode1

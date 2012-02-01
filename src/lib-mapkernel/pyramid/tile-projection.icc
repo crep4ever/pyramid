@@ -111,14 +111,14 @@ namespace Map2d
   }
   //------------------------------------------------------------------------------
   INLINE
-  std::vector<CDkDoublet*> CTile::findNeighbors(CDkDoublet* ANode, const Heap & AHeap)
+  std::vector<CDkDoublet*> CTile::findNeighbors(CDkDoublet* ANode, const Heap<CDkDoublet*> & AHeap)
   {
     //std::cout<<"[start] CTile::findNeighbors of "<<ANode<<std::endl;
     // todo: faire un parcours sur l'index. Et même mieux, faire une multimap
     // pour coder l'adjacence des pointels 
     
     std::vector<CDkDoublet*> result;
-    typedef __gnu_pbds::priority_queue<CDkDoublet*, EdgeComp, rc_binomial_heap_tag> ThinHeap;
+    typedef __gnu_pbds::priority_queue<CDkDoublet*, EdgeComp<CDkDoublet*>, rc_binomial_heap_tag> ThinHeap;
     const ThinHeap nodes = AHeap.heap;
     ThinHeap::iterator it;
     for(it = nodes.begin(); it!=nodes.end(); ++it)

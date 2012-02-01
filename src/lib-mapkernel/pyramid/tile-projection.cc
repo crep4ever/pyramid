@@ -216,7 +216,7 @@ uint CTile::projectPath(const CEdge & AEdge)
   //std::cout<<std::endl;
 
   //Dijkstra
-  Heap nodes;
+  Heap<CDkDoublet*> nodes;
   CDkDoublet* n1, *n2, *last;
   last = findNodes(AEdge, nodes);
   if(!last) return 0;
@@ -270,7 +270,7 @@ uint CTile::projectPath(const CEdge & AEdge)
   return 0;  
 }
 //------------------------------------------------------------------------------
-CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap & AHeap)
+CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
 {
   if(AEdge.size()==1)
     {

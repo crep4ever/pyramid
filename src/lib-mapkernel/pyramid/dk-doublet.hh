@@ -26,9 +26,6 @@
 #include "heap.hh"
 //******************************************************************************
 
-namespace Map2d
-{
-
   /**
    * \file dk-doublet.hh
    * \brief Class to add a weight on doublet for dijkstra algorithm
@@ -52,7 +49,7 @@ namespace Map2d
     //Accesseurs
     float weight() const;
     void setWeight(float AWeight);
-    void updateWeight(float AValue, Heap & AHeap);
+    void updateWeight(float AValue, Heap<CDkDoublet*> & AHeap);
     
     CDkDoublet* prev() const;
     void setPrev(CDkDoublet* APrev);
@@ -65,8 +62,6 @@ namespace Map2d
     friend std::ostream& operator<<(std::ostream& AStream,
 				    const CDkDoublet& ADoublet);
   };
-  
-} // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("dk-doublet.icc")
 //******************************************************************************
