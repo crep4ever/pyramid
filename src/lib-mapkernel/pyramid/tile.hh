@@ -1074,7 +1074,7 @@ namespace Map2d
     void assignClassifLabelsToRegions(const FocusAttentionMode & AFocusAttentionMode);
     CPyramidalRegion::Label intToLabel(const uint label);
 
-    void histogram(CImg<float>* histo);
+    void histogram(CVolume<uint>* histo);
 
     unsigned int mergeRegions(bool (CRegion::*AMethod)(CRegion*,int)const, int AThreshold);
     unsigned int removeSmallRegions(unsigned int AThreshold);

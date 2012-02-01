@@ -395,35 +395,42 @@ void CImageTiff::greyRegularization(int nb_iteration,
 }
 
 //------------------------------------------------------------------------------
-void CImageTiff::kmeansHistogram(CImg<float>* histo, CImg<char>* assignement)
+void CImageTiff::kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement)
 {
   //std::cout<<"[start] CImageTiff::kmeansHistogram \n";
   int dim = 3; // dimension
-  int nPts = histo->sum(); // number of data points
-  if(nPts==0) 
-    return;
+
+  int nPts = 0; // number of data points
+  for(uint r = 0; r < histo->getSizeX(); ++r)
+    for(uint g = 0; g < histo->getSizeY(); ++g)
+      for(uint b = 0; b < histo->getSizeZ(); ++b)
+	nPts += histo->getValue(r,g,b);
+
+  if(nPts==0) return;
 
   //std::cout<<"[start] CImageTiff::kmeansHistogram computing kmeans on " << nPts <<" data points \n";
-  KMdata* dataPts = new KMdata(dim, nPts);//stockage des points
-  KMterm term(20, 0, 0, 0, // run for 50 stages  // diminuer le nombre de passe (100 aller jusqu a 10)
+  KMdata dataPts(dim, nPts);//stockage des points
+  KMterm term(20, 0, 0, 0, // run for 20 stages  // diminuer le nombre de passe (100 aller jusqu a 10)
 	      0.10, 0.10, 3, // other typical parameter values
 	      0.50, 10, 0.95);		
   uint n=0;
-  cimg_forXYZ(*histo,r,g,b)
-    {
-      int nb = (*histo)(r,g,b);
-      for (int kk=0 ; kk < nb ; ++kk)
+  for(uint r = 0; r < histo->getSizeX(); ++r)
+    for(uint g = 0; g < histo->getSizeY(); ++g)
+      for(uint b = 0; b < histo->getSizeZ(); ++b)
 	{
-	  (*dataPts)[n][0]=r;
-	  (*dataPts)[n][1]=g;
-	  (*dataPts)[n][2]=b;
-	  ++n;
+	  int value = histo->getValue(r,g,b);
+	  for (int i=0 ; i < value ; ++i)
+	    {
+	      dataPts[n][0]=r;
+	      dataPts[n][1]=g;
+	      dataPts[n][2]=b;
+	      ++n;
+	    }
 	}
-    }
   delete histo; histo=NULL;
-  dataPts->buildKcTree(); 
+  dataPts.buildKcTree();
   
-  KMfilterCenters ctrs(dim, *dataPts);
+  KMfilterCenters ctrs(dim, dataPts);
   KMlocalSwap kmAlg(ctrs, term);
   ctrs = kmAlg.execute();		
   KMctrIdxArray closeCtr = new KMctrIdx[nPts];
@@ -459,16 +466,15 @@ void CImageTiff::kmeansHistogram(CImg<float>* histo, CImg<char>* assignement)
   //#pragma omp parallel for shared(r,g,b) private(i)
   for ( i = 0 ; i < nPts; ++i)
     {
-      r =  (*dataPts)[i][0];
-      g =  (*dataPts)[i][1];
-      b =  (*dataPts)[i][2];
+      r =  dataPts[i][0];
+      g =  dataPts[i][1];
+      b =  dataPts[i][2];
       //move+merge classes
       //std::cout<< " d1[closeCtr["<<i<<"]] " << d1[closeCtr[i]] << std::endl;
       (*assignement)(r,g,b)= (d1[closeCtr[i]]==0) ? 1 : d1[closeCtr[i]];
       //std::cout<< " assign("<<r<<","<<g<<","<<b<<") ="<< (int)(*assignement)(r,g,b) << std::endl;
     }
   
-  delete dataPts;
   delete[] sqDist;
   delete[] closeCtr;
 

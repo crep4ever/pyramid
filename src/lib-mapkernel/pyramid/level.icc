@@ -18,7 +18,7 @@
 
 //******************************************************************************
 #include "tile.hh"
-#include "CImg.h"
+//#include "CImg.h"
 namespace Map2d
 {
   //******************************************************************************
@@ -145,7 +145,7 @@ namespace Map2d
   INLINE
   void CLevel::setTileWidth(uint ATileWidth)
   {
-    if(ATileWidth>imageWidth()) 
+    if(ATileWidth > imageWidth())
       FTileWidth = imageWidth();
     else
       FTileWidth = ATileWidth;
@@ -556,9 +556,8 @@ namespace Map2d
   INLINE
   void CLevel::histogram()
   {
-    FHisto = new CImg<float>;
-    FHisto->assign(256,256,256,1);
-    (*FHisto) = 0.; 
+    FHisto = new CVolume<uint>(256,256,256);
+    FHisto->fill(0);
 
     CTile* tile;  IM_Box box;
     uint ratiox = upRatios().x(); uint ratioy = upRatios().y();
@@ -579,6 +578,7 @@ namespace Map2d
 	  tile->histogram(FHisto);
 	  levelUp()->unloadTile(CPoint2D(i,j));
 	}
+    assert(FHisto);
   }
   
   //******************************************************************************

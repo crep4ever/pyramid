@@ -781,6 +781,7 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	  histogram();
 	  FAssignment = new CImg<char>;
 	  FAssignment->assign(256,256,256,1);
+	  assert(FHisto);
 	  image()->kmeansHistogram(FHisto, FAssignment);
 	  break;
 	  
@@ -812,14 +813,14 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 void CLevel::printHistogram()
 {
   std::cout<<"[start] CLevel::printHistogram" << std::endl;
-  std::cout<<" number of data points = " << FHisto->sum() << std::endl;
-  cimg_forXYZ(*FHisto,r,g,b)
-    {
-      int nb = (*FHisto)(r,g,b);
-      if(nb>0)
-	std::cout<<"pixel (" << r << "," << g << "," << b << ") counted " << nb << " times" << std::endl;      
-    }
-  std::cout<<"[end] CLevel::printHistogram" << std::endl;
+  uint sum = 0;
+  for(uint r = 0; r < FHisto->getSizeX(); ++r)
+    for(uint g = 0; g < FHisto->getSizeY(); ++g)
+      for(uint b = 0; b < FHisto->getSizeZ(); ++b)
+	{
+	  sum += FHisto->getValue(r,g,b);
+	  std::cout<<"color (" << r << "," << g << "," << b << ") counted " << FHisto->getValue(r,g,b) << " times" << std::endl;
+	}
 }
 
 //------------------------------------------------------------------------------

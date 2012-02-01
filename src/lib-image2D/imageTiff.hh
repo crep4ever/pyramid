@@ -26,6 +26,8 @@
 #include "macros.hh"
 #include "inline-macro.hh"
 #include "CImg.h"
+#include "volume.hh"
+
 using namespace cimg_library;
 //******************************************************************************
 
@@ -152,7 +154,7 @@ public:
   /// @return a table with the clustering result
   uint8* kmeans(uint ANbClass);
 
-  void kmeansHistogram(CImg<float>* histo, CImg<char>* assignement);
+  void kmeansHistogram(CVolume<uint>* histo, CImg<char>* assignement);
 
   /// k-means algorithm with KMLocal library
   /// @param ANbClass : the number of clusters

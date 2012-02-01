@@ -207,11 +207,10 @@ template< typename TElement >
 inline
 void CVolume< TElement >::fill( const TElement & AValue )
 {
-  assert(false);
   assert( FData != NULL );
   //#pragma omp parallel for
-  //for( unsigned int i = 0 ; i < size ; ++i )
-  //  FData[i] = AValue;
+  for( unsigned int i = 0 ; i < FSizeX*FSizeY*FSizeZ ; ++i )
+    FData[i] = AValue;
 }
 
 template< typename TElement >

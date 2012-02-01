@@ -1076,7 +1076,7 @@ namespace Map2d
 
   //------------------------------------------------------------------------------
   INLINE
-  void CTile::histogram(CImg<float>* histo)
+  void CTile::histogram(CVolume<uint>* histo)
   {
     IM_Pixel pix;
     uint ratiox = downRatioX();
@@ -1093,7 +1093,8 @@ namespace Map2d
 		  pix.x = ((*it2).x() + xmin())*ratiox + i;  
 		  pix.y = ((*it2).y() + ymin())*ratioy + j;
 		  image()->getPixel(pix, depth()+1);
-		  (*histo)(pix.value[0], pix.value[1], pix.value[2])++;
+		  histo->setValue(pix.value[0], pix.value[1], pix.value[2],
+				  histo->getValue(pix.value[0], pix.value[1], pix.value[2])+1);
 		}
 	}
   }

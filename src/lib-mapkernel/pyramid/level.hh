@@ -68,9 +68,9 @@ namespace Map2d
 
   public:
     uint8* FClassif;
-    CImg<float>* FHisto;
+    CVolume<uint>* FHisto;
     CImg<char>* FAssignment;
-   
+
   private:
     // Iterateur pour le parcours des tuiles
     std::deque<CTile*>::iterator it;
