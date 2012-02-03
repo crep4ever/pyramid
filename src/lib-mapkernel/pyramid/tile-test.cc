@@ -33,174 +33,174 @@ using namespace Map2d;
 void CTile::print()
 {
 #ifdef DEBUG_PYRAMID
-  std::cout<<"Tile :"<<id()<<std::endl;
+  std::cout << "Tile :" << id() << std::endl;
 
-  std::cout<<"   BottomRight corner: "<<bottomRight();
-  std::cout<<"   Width: "<<width();
-  std::cout<<"   Height: "<<height();
+  std::cout << "   BottomRight corner: " << bottomRight();
+  std::cout << "   Width: " << width();
+  std::cout << "   Height: " << height();
 
-  std::cout<<"  Index: "<<index(0)<<"-"<<index(1)<<"-"<<index(2);
+  std::cout << "  Index: " << index(0) << "-" << index(1) << "-" << index(2);
 
   if(existTileUp())
-    std::cout<<"  Up: " <<tileUp()->id();
+    std::cout << "  Up: "  << tileUp()->id();
   else
-    std::cout<<"  Up: NULL";
+    std::cout << "  Up: NULL";
 
   if(existTileDown())
-    std::cout<<"  Down: " <<tileDown()->id();
+    std::cout << "  Down: "  << tileDown()->id();
   else
-    std::cout<<"  Down: NULL";
+    std::cout << "  Down: NULL";
 
-  std::cout<<std::endl;
+  std::cout << std::endl;
 #endif
 }
 //------------------------------------------------------------------------------
 void CTile::printCorners()
 {
-  std::cout<<"\n[start] CTile: printCorners "<<std::endl;
+  std::cout << "\n[start] CTile: printCorners " << std::endl;
   for ( uint i = 0; i < FCorners.size(); ++i )
     static_cast<CPyramidalDart*>(FCorners[i])->print();
 
-  std::cout<<"[end] CTile: printCorners\n"<<std::endl;
+  std::cout << "[end] CTile: printCorners\n" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printMapDarts()
 {
-  std::cout<<"\n[start] CTile::printMapDarts  "<<std::endl;
+  std::cout << "\n[start] CTile::printMapDarts  " << std::endl;
 
   if(FMapDarts.empty())
-    std::cout<<"WARNING: CTile::printMapDarts FMapDarts is empty"<<std::endl;
+    std::cout << "WARNING: CTile::printMapDarts FMapDarts is empty" << std::endl;
   else
     {
       std::map<TDartId, CPyramidalDart*>::iterator it;
       for ( it=FMapDarts.begin(); it!=FMapDarts.end(); ++it )
-	std::cout<<" Key (dart id) = "<<it->first
-		 <<" Value (dart*) = "<<it->second<<std::endl;
+	std::cout << " Key (dart id) = " << it->first
+		  << " Value (dart*) = " << it->second << std::endl;
     }
-  std::cout<<"[end] CTile: printDarts\n"<<std::endl;
+  std::cout << "[end] CTile: printDarts\n" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printMapRegions()
 {
-  std::cout<<"\n[start] CTile::printMapRegions  "<<std::endl;
+  std::cout << "\n[start] CTile::printMapRegions  " << std::endl;
 
   if(FMapRegions.empty())
-    std::cout<<"WARNING: CTile::printMapRegions FMapRegions is empty"<<std::endl;
+    std::cout << "WARNING: CTile::printMapRegions FMapRegions is empty" << std::endl;
   else
     {
       std::map<TRegionId, CRegion*>::iterator it;
       for ( it=FMapRegions.begin(); it!=FMapRegions.end(); ++it )
-      std::cout<<" Key (region id) = "<<(*it).first
-	       <<" Value (region*) = "<<(*it).second<<std::endl;
+      std::cout << " Key (region id) = " << (*it).first
+	        << " Value (region*) = " << (*it).second << std::endl;
     }
-  std::cout<<"[end] CTile: printMapRegions\n"<<std::endl;
+  std::cout << "[end] CTile: printMapRegions\n" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printMapBeta2()
 {
-  std::cout<<"\n[start] CTile::printMapBeta2  "<<std::endl;
+  std::cout << "\n[start] CTile::printMapBeta2  " << std::endl;
 
   if(FMapBeta2.empty())
-    std::cout<<"WARNING: CTile::printMapBeta2 FMapBeta2 is empty"<<std::endl;
+    std::cout << "WARNING: CTile::printMapBeta2 FMapBeta2 is empty" << std::endl;
   else
     {
       std::map<TDartId, TDartId>::iterator it;
       for ( it=FMapBeta2.begin(); it!=FMapBeta2.end(); ++it )
-	std::cout<<" Key (dart id in current tile) = "<<(*it).first
-		 <<" Value (dart id in adjacent tile (beta2')) = "<<(*it).second<<std::endl;
+	std::cout << " Key (dart id in current tile) = " << (*it).first
+		  << " Value (dart id in adjacent tile (beta2')) = " << (*it).second << std::endl;
 
     }
-  std::cout<<"[end] CTile: printMapBeta2\n"<<std::endl;
+  std::cout << "[end] CTile: printMapBeta2\n" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printPropertiesStruct(struct SProperties* AProperties)
 {
-  std::cout << "[start] CTile::printPropertiesStruct"<<std::endl;
+  std::cout  <<  "[start] CTile::printPropertiesStruct" << std::endl;
 
-  std::cout<<"Tuile n°"<<AProperties->id<<std::endl;
-  std::cout<<"BottomRight    = "<<AProperties->bottomRight<<std::endl;
-  std::cout<<"Index (i,j,k)  = "<<AProperties->indexI<<"-"<<AProperties->indexJ<<"-"<<AProperties->indexK<<std::endl;
-  std::cout<<"up             = "<<AProperties->up<<std::endl;
-  std::cout<<"down           = "<<AProperties->down<<std::endl;
-  std::cout<<"nbDarts        = "<<AProperties->nbDarts<<std::endl;
-  std::cout<<"nbRegions      = "<<AProperties->nbRegions<<std::endl;
+  std::cout << "Tuile n°" << AProperties->id << std::endl;
+  std::cout << "BottomRight    = " << AProperties->bottomRight << std::endl;
+  std::cout << "Index (i,j,k)  = " << AProperties->indexI << "-" << AProperties->indexJ << "-" << AProperties->indexK << std::endl;
+  std::cout << "up             = " << AProperties->up << std::endl;
+  std::cout << "down           = " << AProperties->down << std::endl;
+  std::cout << "nbDarts        = " << AProperties->nbDarts << std::endl;
+  std::cout << "nbRegions      = " << AProperties->nbRegions << std::endl;
 
-  std::cout << "[end] CTile::printPropertiesStruct"<<std::endl;
+  std::cout  <<  "[end] CTile::printPropertiesStruct" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printTopoStruct(struct SDart* ADarts, uint ASize)
 {
-  std::cout << "[start] CTile::printTopoStruct"<<std::endl;
+  std::cout  <<  "[start] CTile::printTopoStruct" << std::endl;
 
   for(uint i=0; i<ASize; ++i)
     {
-      std::cout<<"Brin n°"<<ADarts[i].id<<std::endl;
-      std::cout<<"Beta1  = "<<ADarts[i].beta1<<std::endl;
-      std::cout<<"Beta2  = "<<ADarts[i].beta2<<std::endl;
-      std::cout<<"doublet= "<<ADarts[i].doublet<<std::endl;
-      std::cout<<"region = "<<ADarts[i].region<<std::endl;
-      std::cout<<"up = "<<ADarts[i].up<<std::endl;
-      std::cout<<"down = "<<ADarts[i].down<<"\n"<<std::endl;
+      std::cout << "Brin n°" << ADarts[i].id << std::endl;
+      std::cout << "Beta1  = " << ADarts[i].beta1 << std::endl;
+      std::cout << "Beta2  = " << ADarts[i].beta2 << std::endl;
+      std::cout << "doublet= " << ADarts[i].doublet << std::endl;
+      std::cout << "region = " << ADarts[i].region << std::endl;
+      std::cout << "up = " << ADarts[i].up << std::endl;
+      std::cout << "down = " << ADarts[i].down << "\n" << std::endl;
     }
 
-  std::cout << "[end] CTile::printTopoStruct"<<std::endl;
+  std::cout  <<  "[end] CTile::printTopoStruct" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printTreeStruct(struct SRegion* ARegions, uint ASize)
 {
-  std::cout << "[start] CTile::printTreeStruct"<<std::endl;
+  std::cout  <<  "[start] CTile::printTreeStruct" << std::endl;
 
   for(uint i=0; i<ASize; ++i)
     {
-      std::cout<<"Region n°"<<ARegions[i].id<<std::endl;
-      std::cout<<"First pixel          = "<<ARegions[i].firstPixel<<std::endl;
-      std::cout<<"Nombre de pixels     = "<<ARegions[i].nbPixels<<std::endl;
-      std::cout<<"Somme nv gris        = "<<ARegions[i].greySum<<std::endl;
-      std::cout<<"Somme carrés nv gris = "<<ARegions[i].greySquareSum<<std::endl;
-      std::cout<<"up                   = "<<ARegions[i].up<<std::endl;
-      std::cout<<"down                 = "<<ARegions[i].down<<std::endl;
-      std::cout<<"gris min             = "<<ARegions[i].greyMin<<std::endl;
-      std::cout<<"gris max             = "<<ARegions[i].greyMax<<std::endl;
-      std::cout<<"father               = "<<ARegions[i].father<<std::endl;
-      std::cout<<"brother              = "<<ARegions[i].brother<<std::endl;
-      std::cout<<"cc                   = "<<ARegions[i].cc<<std::endl;
-      std::cout<<"representative       = "<<ARegions[i].representative<<std::endl;
-      std::cout<<"infinite             = "<<ARegions[i].infinite<<"\n"<<std::endl;
+      std::cout << "Region n°" << ARegions[i].id << std::endl;
+      std::cout << "First pixel          = " << ARegions[i].firstPixel << std::endl;
+      std::cout << "Nombre de pixels     = " << ARegions[i].nbPixels << std::endl;
+      std::cout << "Somme nv gris        = " << ARegions[i].greySum << std::endl;
+      std::cout << "Somme carrés nv gris = " << ARegions[i].greySquareSum << std::endl;
+      std::cout << "up                   = " << ARegions[i].up << std::endl;
+      std::cout << "down                 = " << ARegions[i].down << std::endl;
+      std::cout << "gris min             = " << ARegions[i].greyMin << std::endl;
+      std::cout << "gris max             = " << ARegions[i].greyMax << std::endl;
+      std::cout << "father               = " << ARegions[i].father << std::endl;
+      std::cout << "brother              = " << ARegions[i].brother << std::endl;
+      std::cout << "cc                   = " << ARegions[i].cc << std::endl;
+      std::cout << "representative       = " << ARegions[i].representative << std::endl;
+      std::cout << "infinite             = " << ARegions[i].infinite << "\n" << std::endl;
     }
 
-  std::cout << "[end] CTile::printTreeStruct"<<std::endl;
+  std::cout  <<  "[end] CTile::printTreeStruct" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printChainRegionList()
 {
   CRegion* rootRegion = getInclusionTreeRoot();
   CRegion* tmp = rootRegion;
-  std::cout<<"\n***** Affichage de la liste chainée des régions *****"<<std::endl;
-  std::cout<<"("<<tmp->getId();
+  std::cout << "\n***** Affichage de la liste chainée des régions *****" << std::endl;
+  std::cout << "(" << tmp->getId();
   while(tmp->getFirstSon() != NULL )
     {
-      std::cout<<", "<<tmp->getFirstSon()->getId();
+      std::cout << ", " << tmp->getFirstSon()->getId();
       tmp = tmp->getFirstSon();
     }
-  std::cout<<")"<<std::endl;
+  std::cout << ")" << std::endl;
 
   tmp = rootRegion;
   while(tmp != NULL)
     {
-      std::cout<<"\n region id: "<<tmp->getId()<<std::endl;
-      std::cout<<" First Pixel: "<<static_cast<CPyramidalRegion*>(tmp)->getFirstPixel()<<std::endl;
-      //std::cout<<" brin représentant: "<<getDoublet(tmp->getRepresentativeDart())<<std::endl;
-      // std::cout<<" beta0 du brin représentant: "<<getDoublet(beta0(tmp->getRepresentativeDart()))<<std::endl;
-      // std::cout<<" id self loop (getNextSameCC) : "<<tmp->getNextSameCC()->getId()<<std::endl;// !commenter si méthode utilisée après relabelDarts
-      std::cout<<" id prev element (getBrother): "<<tmp->getBrother()->getId()<<std::endl;
+      std::cout << "\n region id: " << tmp->getId() << std::endl;
+      std::cout << " First Pixel: " << static_cast<CPyramidalRegion*>(tmp)->firstPixel() << std::endl;
+      //std::cout << " brin représentant: " << getDoublet(tmp->getRepresentativeDart()) << std::endl;
+      // std::cout << " beta0 du brin représentant: " << getDoublet(beta0(tmp->getRepresentativeDart())) << std::endl;
+      // std::cout << " id self loop (getNextSameCC) : " << tmp->getNextSameCC()->getId() << std::endl;// !commenter si méthode utilisée après relabelDarts
+      std::cout << " id prev element (getBrother): " << tmp->getBrother()->getId() << std::endl;
       if( tmp->getFirstSon() != NULL )
 	{
-	  std::cout<<" id next element (getFirstSon): "<<tmp->getFirstSon()->getId()<<std::endl;
+	  std::cout << " id next element (getFirstSon): " << tmp->getFirstSon()->getId() << std::endl;
 	  tmp = tmp->getFirstSon();
 	}
       else
 	{
-	  std::cout<<"***** Fin de la liste chainée des régions *****\n"<<std::endl<<std::endl;
+	  std::cout << "***** Fin de la liste chainée des régions *****\n" << std::endl << std::endl;
 	  tmp = tmp->getFirstSon();
 	}
     }
@@ -210,16 +210,16 @@ void CTile::printRegionList(std::deque<CPyramidalRegion*>& AList)
 {
   std::deque<CPyramidalRegion*>::iterator it;
 
-  std::cout<<"\n*****Affichage d'une liste de régions*****"<<std::endl;
+  std::cout << "\n*****Affichage d'une liste de régions*****" << std::endl;
   int count = 0;
   for(it=AList.begin(); it != AList.end(); ++it)
     {
-      std::cout<<"Region : "<<(*it)->getId();
-      std::cout<<"   FirstPixel : ("<<(*it)->getFirstPixel()<<std::endl<<std::endl;
+      std::cout << "Region : " << (*it)->getId();
+      std::cout << "   FirstPixel : (" << (*it)->firstPixel() << std::endl << std::endl;
       ++count;
     }
-  std::cout<<"Nombre de régions dans la liste : "<<count<<std::endl;
-  std::cout<<"************************************"<<std::endl;
+  std::cout << "Nombre de régions dans la liste : " << count << std::endl;
+  std::cout << "************************************" << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printInfosAllRegions()
@@ -245,37 +245,37 @@ void CTile::printInfosMap()
 
   getGlobalCharacteristics(&nbD, &nbV, &nbE, &nbF, &nbCC);
 
-  std::cout<<std::endl<<" Carte pyramidale : "<<std::endl
-	   <<"  Brins: "<<nbD
-	   <<"   Sommets: "<<nbV
-	   <<"   Arêtes: "<<nbE
-	   <<"   Faces: "<<nbF
-	   <<"   CC: "<<nbCC
-	   <<"   Régions: "<<getNbRegions()<<std::endl;
+  std::cout << std::endl << " Carte pyramidale : " << std::endl
+	    << "  Brins: " << nbD
+	    << "   Sommets: " << nbV
+	    << "   Arêtes: " << nbE
+	    << "   Faces: " << nbF
+	    << "   CC: " << nbCC
+	    << "   Régions: " << getNbRegions() << std::endl;
 
 
-  std::cout<<"   Level Up: ";
+  std::cout << "   Level Up: ";
   /*
     if(existMapUp())
-    std::cout<<getMapUp();
+    std::cout << getMapUp();
     else
-    std::cout<<sVoid;
-    std::cout<<"   Level Down: ";
+    std::cout << sVoid;
+    std::cout << "   Level Down: ";
     if(existMapDown())
-    std::cout<<getMapDown();
+    std::cout << getMapDown();
     else
-    std::cout<<sVoid;
+    std::cout << sVoid;
   */
-  std::cout<<std::endl;
+  std::cout << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printInfosMemory()
 {
-  std::cout<<"\t Carte:\t"<<getMemoryForMap()
-	   <<"\t Arbre:\t"<<getMemoryForInclusionTree()
-	   <<"\t Image:\t"<<getMemoryForImageTile()
-	   <<"\t Khalimsky:\t"<<getMemoryForKhalimsky()<<"\n";
-    //	   <<"   Total: "<<getMemoryForMap() + getMemoryForInclusionTree() + getMemoryForKhalimsky()<<std::endl;
+  std::cout << "\t Carte:\t" << getMemoryForMap()
+	    << "\t Arbre:\t" << getMemoryForInclusionTree()
+	    << "\t Image:\t" << getMemoryForImageTile()
+	    << "\t Khalimsky:\t" << getMemoryForKhalimsky() << "\n";
+    //	    << "   Total: " << getMemoryForMap() + getMemoryForInclusionTree() + getMemoryForKhalimsky() << std::endl;
 }
 //------------------------------------------------------------------------------
 void CTile::printInclusionTree()
@@ -311,14 +311,14 @@ bool CTile::checkGeometry()
     {
       if( !isLCell(getDoublet(*it)) )
 	{
-	  std::cerr<<"CTile::checkMapGeometry Le brin n'a pas de lignel : "<<
-	    getDoublet(*it)<<std::endl;
+	  std::cerr << "CTile::checkMapGeometry Le brin n'a pas de lignel : " <<
+	    getDoublet(*it) << std::endl;
 	  result = false;
 	}
       if( !isPCell(getDoublet(*it)) && !isEdgeLoop(*it) )
 	{
-	  std::cerr<<"CTile::checkMapGeometry Le brin n'a pas de pointel : "<<
-	    getDoublet(*it)<<std::endl;
+	  std::cerr << "CTile::checkMapGeometry Le brin n'a pas de pointel : " <<
+	    getDoublet(*it) << std::endl;
 	  result = false;
 	}
     }
@@ -340,7 +340,7 @@ bool CTile::checkSquareRegion(CDart* ADart) const
       if(tmpDoublet != currentDoublet.getNextPointel().getNextLinel())
 	{
 	  result = false;
-	  std::cerr<<"CTile::checkSquareRegion : erreur de géométrie"<<std::endl;
+	  std::cerr << "CTile::checkSquareRegion : erreur de géométrie" << std::endl;
 	}
       currentDoublet = tmpDoublet;
     }
@@ -348,31 +348,31 @@ bool CTile::checkSquareRegion(CDart* ADart) const
   if( tmpDart != ADart )
     {
       result = false;
-      std::cerr<<"CTile::checkSquareRegion : erreur de topologie"<<std::endl;
+      std::cerr << "CTile::checkSquareRegion : erreur de topologie" << std::endl;
     }
   return result;
 }
 //------------------------------------------------------------------------------
 bool CTile::checkDartLinks()
 {
-  //std::cout<<"  [start] CTile::checkDartLinks"<<std::endl;
+  //std::cout << "  [start] CTile::checkDartLinks" << std::endl;
   for( CDynamicCoverageAll it( this ); it.cont(); ++it )
     {
       CPyramidalDart* dart = static_cast<CPyramidalDart*>( *it );
       if ( dart->up() != NULL && dart->up()->down() != dart )
-	//std::cout<<"checkDartLinks warning : no involution up/down "<<dart->doublet()<<std::endl;
+	//std::cout << "checkDartLinks warning : no involution up/down " << dart->doublet() << std::endl;
 
       if(dart->existUp() && !dart->up()->existDown())
-	std::cout<<"checkDartLinks error : wrong link up/down on dart "<<dart->doublet()<<std::endl;
+	std::cout << "checkDartLinks error : wrong link up/down on dart " << dart->doublet() << std::endl;
 
     }
   return true;
-  //std::cout<<"  [end] CTile::checkDartLinks"<<std::endl;
+  //std::cout << "  [end] CTile::checkDartLinks" << std::endl;
 }
 //------------------------------------------------------------------------------
 bool CTile::checkRegionLinks()
 {
-  //std::cout<<"  [start] CTile::checkRegionLinks"<<std::endl;
+  //std::cout << "  [start] CTile::checkRegionLinks" << std::endl;
   bool result = false;
   int cpt = 0;
   for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
@@ -381,9 +381,9 @@ bool CTile::checkRegionLinks()
     CPyramidalRegion* region = static_cast<CPyramidalRegion*>( *it );
     assert( region != NULL );
 
-    if (region->getRegionUp() != NULL && region->getRegionUp()->getRegionDown() != region)
+    if (region->up() != NULL && region->up()->down() != region)
       {
-	std::cerr<<"  CTile::checkRegionLinks : wrong link up/down on region "<<cpt<<" Details :\n"<<std::endl;
+	std::cerr << "  CTile::checkRegionLinks : wrong link up/down on region " << cpt << " Details :\n" << std::endl;
 	region->print();
 	result = false;
       }
@@ -393,13 +393,13 @@ bool CTile::checkRegionLinks()
       }
     }
   return result;
-  //std::cout<<"  [end] CTile::checkRegionLinks"<<std::endl;
+  //std::cout << "  [end] CTile::checkRegionLinks" << std::endl;
 }
 //------------------------------------------------------------------------------
 bool CTile::checkDarts()
 {
   return true;
-  //std::cout<<"  [start] CTile::checkDarts"<<std::endl;
+  //std::cout << "  [start] CTile::checkDarts" << std::endl;
   bool found = false;
   CPyramidalDart* dart = NULL;
   CPyramidalDart* current = NULL;
@@ -411,7 +411,7 @@ bool CTile::checkDarts()
 
       if(dart->id()==0)
 	{
-	  std::cout<<" CTile::checkDarts the following dart has a non-valid id:"<<std::endl;
+	  std::cout << " CTile::checkDarts the following dart has a non-valid id:" << std::endl;
 	  dart->print();
 	}
 
@@ -433,7 +433,7 @@ bool CTile::checkDarts()
 	    }
 	  if(!found)
 	    {
-	      std::cout<<" CTile::checkDarts the following dart does not belong to this map:"<<std::endl;
+	      std::cout << " CTile::checkDarts the following dart does not belong to this map:" << std::endl;
 	      dart->print();
 	      return false;
 	    }
@@ -441,12 +441,12 @@ bool CTile::checkDarts()
       found = false;
     }
   return true;
-  //std::cout<<"  [end] CTile::checkDarts"<<std::endl;
+  //std::cout << "  [end] CTile::checkDarts" << std::endl;
 }
 //------------------------------------------------------------------------------
 bool CTile::checkRegions()
 {
-  //std::cout<<"  [start] CTile::checkNbRegions"<<std::endl;
+  //std::cout << "  [start] CTile::checkNbRegions" << std::endl;
 
   uint count = 0;
   for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
@@ -454,7 +454,7 @@ bool CTile::checkRegions()
 
   if(count!=getNbRegions())
     {
-      std::cout<<" WARNING: checkRegions: "<<count<<" régions dans l'arbre contre "<<getNbRegions()<<" crées"<<std::endl;
+      std::cout << " WARNING: checkRegions: " << count << " régions dans l'arbre contre " << getNbRegions() << " crées" << std::endl;
       return false;
     }
 
@@ -472,7 +472,7 @@ bool CTile::checkRegions()
 	}
       if(local!=(*it)->getNbPixels() && !(*it)->isInfiniteRegion())
       {
-	std::cout<<" WARNING: checkRegions: "<<local<<" pixels parcourus dans une région de "<<(*it)->getNbPixels()<<" pixels"<<std::endl;
+	std::cout << " WARNING: checkRegions: " << local << " pixels parcourus dans une région de " << (*it)->getNbPixels() << " pixels" << std::endl;
 	static_cast<CPyramidalRegion*>(*it)->print();
 	return false;
       }
@@ -481,18 +481,18 @@ bool CTile::checkRegions()
   uint pix = width()*height();
   if(total-1!=pix)
     {
-      std::cout<<" WARNING: checkRegions: "<<total-1<<" pixels parcourus contre une taille d'image = "<<pix<<std::endl;
+      std::cout << " WARNING: checkRegions: " << total-1 << " pixels parcourus contre une taille d'image = " << pix << std::endl;
       return false;
     }
 
-  //std::cout<<"  [end] CTile::checkNbRegions"<<std::endl
+  //std::cout << "  [end] CTile::checkNbRegions" << std::endl
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool CTile::checkNbChainRegions()
 {
-  //std::cout<<"  [start] CTile::checkNbRegions"<<std::endl;
+  //std::cout << "  [start] CTile::checkNbRegions" << std::endl;
   CRegion* current = getInclusionTreeRoot();
 
   uint count = 0;
@@ -504,18 +504,18 @@ bool CTile::checkNbChainRegions()
 
   if(count!=getNbRegions())
     {
-      std::cout<<" WARNING: checkNbChainRegions: "<<count<<" régions dans la liste contre "<<getNbRegions()<<" crées"<<std::endl;
+      std::cout << " WARNING: checkNbChainRegions: " << count << " régions dans la liste contre " << getNbRegions() << " crées" << std::endl;
       return false;
     }
 
-  //std::cout<<"  [end] CTile::checkNbRegions"<<std::endl
+  //std::cout << "  [end] CTile::checkNbRegions" << std::endl
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool CTile::isChainRegionListOk()
 {
-  //std::cout<<"\n[start] isChainRegionListOk"<<std::endl;
+  //std::cout << "\n[start] isChainRegionListOk" << std::endl;
   bool result = true; bool result1=true; bool result2=true; bool result3=true; bool result4=true;
 
   CRegion* rootRegion = getInclusionTreeRoot();
@@ -532,27 +532,27 @@ bool CTile::isChainRegionListOk()
 
       if( !(tmp->getRepresentativeDart() != NULL) )
 	{
-	  std::cerr<<"CTile::isChainRegionListOk() : le brin représentant de la région "<<id<<" est nul."<<std::endl;
+	  std::cerr << "CTile::isChainRegionListOk() : le brin représentant de la région " << id << " est nul." << std::endl;
 	  return false;
 	}
 
       if( !(id == tmp->getNextSameCC()->getId()) )
 	{
-	  std::cerr<<"CTile::isChainRegionListOk() : la région "<<id<<" ne boucle pas sur elle-même."<<std::endl;
+	  std::cerr << "CTile::isChainRegionListOk() : la région " << id << " ne boucle pas sur elle-même." << std::endl;
 	  return false;
 	}
 
       if( next != NULL)
 	if( !(id == next->getBrother()->getId()) )
 	  {
-	    std::cerr<<"CTile::isChainRegionListOk() : la région suivant la région "<<id<<" est incorrecte."<<std::endl;
+	    std::cerr << "CTile::isChainRegionListOk() : la région suivant la région " << id << " est incorrecte." << std::endl;
 	    return false;
 	  }
 
       if( tmp != rootRegion)
 	if( !(id == prev->getFirstSon()->getId()) )
 	  {
-	    std::cerr<<"CTile::isChainRegionListOk() : la région précédant la région "<<id<<" est incorrecte."<<std::endl;
+	    std::cerr << "CTile::isChainRegionListOk() : la région précédant la région " << id << " est incorrecte." << std::endl;
 	    return false;
 	  }
 
@@ -560,7 +560,7 @@ bool CTile::isChainRegionListOk()
       result = result1 && result2 && result3 && result4;
     }
 
-  //std::cout<<"\n[start] isChainRegionListOk"<<std::endl;
+  //std::cout << "\n[start] isChainRegionListOk" << std::endl;
   return result;
 }
 //------------------------------------------------------------------------------
@@ -613,15 +613,15 @@ bool CTile::checkLignelDartMatrix(CVolume<CDart*>* AMatrix)
 	  if( dart!=NULL)
 	    {
 	      ++count2;
-	      //std::cout<<"x,y,z = "<<x<<","<<y<<","<<z<<std::endl;
+	      //std::cout << "x,y,z = " << x << "," << y << "," << z << std::endl;
 	      //dart->print();
 	    }
 	}
   if(count2!=count3)
     {
-      std::cout<<"nb brins = "<<count1<<std::endl;
-      std::cout<<"nb lignels parcourus = "<<count3<<std::endl;
-      std::cout<<"nb elt matrix = "<<count2<<std::endl;
+      std::cout << "nb brins = " << count1 << std::endl;
+      std::cout << "nb lignels parcourus = " << count3 << std::endl;
+      std::cout << "nb elt matrix = " << count2 << std::endl;
     }
 
   return (count2==count3);
@@ -641,7 +641,7 @@ bool CTile::checkHierarchy()
 	{
 	  if( !upDart->getRegion()->isInfiniteRegion() )
 	    {
-	      std::cout << " CTile::checkHierarchy error: following dart has no down :"<<std::endl;
+	      std::cout  <<  " CTile::checkHierarchy error: following dart has no down :" << std::endl;
 	      print();
 	      upDart->print();
 	      return false;
@@ -652,7 +652,7 @@ bool CTile::checkHierarchy()
 	  CPyramidalDart* downDart = upDart->down();
 	  if( downDart->up()!=upDart )
 	    {
-	      std::cout << " CTile::checkHierarchy error: first down has a wrong up :"<<std::endl;
+	      std::cout  <<  " CTile::checkHierarchy error: first down has a wrong up :" << std::endl;
 	      downDart->print();
 	      return false;
 	    }
@@ -663,11 +663,11 @@ bool CTile::checkHierarchy()
 //------------------------------------------------------------------------------
 bool CTile::isOk()
 {
-  //std::cout<<"CTile::isOk() "<<std::endl;
+  //std::cout << "CTile::isOk() " << std::endl;
 
   if(!isMapOk())
     {
-      std::cout<<"CTile::isOk() error: topological map problem"<<std::endl;
+      std::cout << "CTile::isOk() error: topological map problem" << std::endl;
       print();
       printInfosAllDarts();
       return false;
@@ -675,14 +675,14 @@ bool CTile::isOk()
 
   if(!checkGeometry())
     {
-      std::cout<<"CTile::isOk() error: geometrical problem"<<std::endl;
+      std::cout << "CTile::isOk() error: geometrical problem" << std::endl;
       print();
       return false;
     }
 
   if(!checkDarts())
     {
-      std::cout<<"CTile::isOk() error: cannot access some darts"<<std::endl;
+      std::cout << "CTile::isOk() error: cannot access some darts" << std::endl;
       print();
       return false;
     }
@@ -695,9 +695,9 @@ bool CTile::isOk()
     ++count;
   if(count != getNbRegions())
     {
-      std::cout<<"CTile::isOk() error: regions warning "<<std::endl;
-      std::cout<<" traversed regions = "<<count<<std::endl;
-      std::cout<<" number of regions = "<<getNbRegions()<<std::endl;
+      std::cout << "CTile::isOk() error: regions warning " << std::endl;
+      std::cout << " traversed regions = " << count << std::endl;
+      std::cout << " number of regions = " << getNbRegions() << std::endl;
       return false;
     }
 
@@ -707,9 +707,9 @@ bool CTile::isOk()
     ++count;
   if(count != getNbDarts())
     {
-      std::cout<<"CTile::isOk() error: regions warning "<<std::endl;
-      std::cout<<" traversed darts = "<<count<<std::endl;
-      std::cout<<" number of darts = "<<getNbDarts()<<std::endl;
+      std::cout << "CTile::isOk() error: regions warning " << std::endl;
+      std::cout << " traversed darts = " << count << std::endl;
+      std::cout << " number of darts = " << getNbDarts() << std::endl;
       return false;
     }
 
@@ -718,13 +718,13 @@ bool CTile::isOk()
   for(CDynamicCoverageAllRegions it(this); it.cont(); ++it)
     if((*it)->getRepresentativeDart()==NULL)
       {
-	std::cout<<"Le brin représentant de la région "<<(*it)->getId()<<" est NULL"<<std::endl;
+	std::cout << "Le brin représentant de la région " << (*it)->getId() << " est NULL" << std::endl;
 	return false;
       }
 
 //  if(!checkHierarchy())
 //    {
-//      std::cout<<"CTile::isOk() error: hierarchical problem"<<std::endl;
+//      std::cout << "CTile::isOk() error: hierarchical problem" << std::endl;
 //      print();
 //      return false;
 //    }
@@ -734,7 +734,7 @@ bool CTile::isOk()
 /*
 bool CTile::isOk()
 {
-  //std::cout<<"  [start] CTile::isPyramidalMapOk()"<<std::endl;
+  //std::cout << "  [start] CTile::isPyramidalMapOk()" << std::endl;
   bool result = false;
   bool nbPixelsOk = true;
 
@@ -743,7 +743,7 @@ bool CTile::isOk()
   int count = 0;
   for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
     {
-      //std::cout<<"CTile::isPyramidalMapOk : checking region "<<(*it)->getId()<<std::endl;
+      //std::cout << "CTile::isPyramidalMapOk : checking region " << (*it)->getId() << std::endl;
       assert( static_cast<CPyramidalRegion*>(*it)->isPyramidalRegionOk() );
       nbPixels += (*it)->getNbPixels();
       ++count;
@@ -752,13 +752,13 @@ bool CTile::isOk()
 
   if( !nbPixelsOk )
     {
-      std::cerr<<"CTile::isPyramidalMapOk : wrong number of pixels"<<std::endl;
-      std::cout<<"there are "<<nbPixels<<" pixels in "<<count<<" regions."<<std::endl;
-      std::cout<<"the image size is "<<getSizeX()<<"*"<<getSizeY()<<"="<<getSizeX()*getSizeY()<<" pixels"<<std::endl;
+      std::cerr << "CTile::isPyramidalMapOk : wrong number of pixels" << std::endl;
+      std::cout << "there are " << nbPixels << " pixels in " << count << " regions." << std::endl;
+      std::cout << "the image size is " << getSizeX() << "*" << getSizeY() << "=" << getSizeX()*getSizeY() << " pixels" << std::endl;
     }
 
   result = nbPixelsOk;
-  //std::cout<<"  [end] CTile::isPyramidalMapOk()"<<std::endl;
+  //std::cout << "  [end] CTile::isPyramidalMapOk()" << std::endl;
   return result;
 }
 */
@@ -784,13 +784,13 @@ unsigned long int CTile::getMemoryForImageTile() const
 //------------------------------------------------------------------------------
 unsigned long int CTile::getMemoryForTile() const
 {
-  //std::cout<<"size of CTile : "<<sizeof(CTile)<<std::endl;
+  //std::cout << "size of CTile : " << sizeof(CTile) << std::endl;
 
   unsigned long int result = sizeof(CTile);
 
-  //std::cout<<" size map darts = "<<FMapDarts.size()<<std::endl;
-  //std::cout<<" size TDartId = "<<sizeof(TDartId)<<std::endl;
-  //std::cout<<" size CPyramidalDart* = "<<sizeof(CPyramidalDart*)<<std::endl;
+  //std::cout << " size map darts = " << FMapDarts.size() << std::endl;
+  //std::cout << " size TDartId = " << sizeof(TDartId) << std::endl;
+  //std::cout << " size CPyramidalDart* = " << sizeof(CPyramidalDart*) << std::endl;
 
   result += sizeof(std::map<TDartId, CPyramidalDart*>::value_type)*FMapDarts.size();
   result += sizeof(std::map<TRegionId, CRegion*>::value_type)*FMapRegions.size();

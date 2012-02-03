@@ -727,8 +727,8 @@ namespace Map2d
   {
     CPyramidalDart* result = static_cast<CPyramidalDart*>(CMapBasic::addMapDart());
     result->setId(++FCount);
-    result->setDartUp(NULL);
-    result->setDartDown(NULL);
+    result->setUp(NULL);
+    result->setDown(NULL);
     return result;
   }
   //------------------------------------------------------------------------------
@@ -771,8 +771,8 @@ namespace Map2d
       (CTopologicalMap::addMapDart(ADoublet, ARegion));
     ++FCount;
     result->setId(FCount);
-    result->setDartUp(NULL);
-    result->setDartDown(NULL);
+    result->setUp(NULL);
+    result->setDown(NULL);
     return result;
   }
   //------------------------------------------------------------------------------
@@ -787,7 +787,7 @@ namespace Map2d
   void CTile::setDartUp(CDart* ADart, CDart* ADartUp)
   {
     assert( ADart!=NULL && ADartUp!=NULL );
-    static_cast<CPyramidalDart*>(ADart)->setDartUp(static_cast<CPyramidalDart*>(ADartUp));
+    static_cast<CPyramidalDart*>(ADart)->setUp(static_cast<CPyramidalDart*>(ADartUp));
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -801,7 +801,7 @@ namespace Map2d
   void CTile::setDartDown(CDart* ADart, CDart* ADartDown)
   {
     assert( ADart!=NULL && ADartDown!=NULL);
-    static_cast<CPyramidalDart*>(ADart)->setDartDown(static_cast<CPyramidalDart*>(ADartDown));
+    static_cast<CPyramidalDart*>(ADart)->setDown(static_cast<CPyramidalDart*>(ADartDown));
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -870,28 +870,28 @@ namespace Map2d
   CPyramidalRegion* CTile::getRegionUp(CRegion* ARegion) const
   {
     assert( ARegion!=NULL );
-    return static_cast<CPyramidalRegion*>(ARegion)->getRegionUp();
+    return static_cast<CPyramidalRegion*>(ARegion)->up();
   }
   //------------------------------------------------------------------------------
   INLINE
   void CTile::setRegionUp(CRegion* ARegion, CRegion* ARegionUp)
   {
     assert( ARegion!=NULL && ARegionUp!=NULL );
-    static_cast<CPyramidalRegion*>(ARegion)->setRegionUp(static_cast<CPyramidalRegion*>(ARegionUp));
+    static_cast<CPyramidalRegion*>(ARegion)->setUp(static_cast<CPyramidalRegion*>(ARegionUp));
   }
   //------------------------------------------------------------------------------
   INLINE
   CPyramidalRegion* CTile::getRegionDown(CRegion* ARegion) const
   {
     assert( ARegion!=NULL );
-    return static_cast<CPyramidalRegion*>(ARegion)->getRegionDown();
+    return static_cast<CPyramidalRegion*>(ARegion)->down();
   }
   //------------------------------------------------------------------------------
   INLINE
   void CTile::setRegionDown(CRegion* ARegion, CRegion* ARegionDown)
   {
     assert( ARegion!=NULL && ARegionDown!=NULL);
-    static_cast<CPyramidalRegion*>(ARegion)->setRegionDown(static_cast<CPyramidalRegion*>(ARegionDown));
+    static_cast<CPyramidalRegion*>(ARegion)->setDown(static_cast<CPyramidalRegion*>(ARegionDown));
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -995,9 +995,9 @@ namespace Map2d
 	  {
 	    region->setLabel(CPyramidalRegion::Invalid);
 	  }
-	else if(tileUp()->isRegionToSplit(region->regionUp(), AFocusAttentionMode))
+	else if(tileUp()->isRegionToSplit(region->up(), AFocusAttentionMode))
 	  {
-	    CPoint2D pixel = region->getFirstPixel() ;
+	    CPoint2D pixel = region->firstPixel() ;
 	    //pour la classif sur tout le niveau
 	    //uint pos2 = ( (pixel.x()+xmin() ) + (image()->getXSize(depth()))*(pixel.y()+ymin()) ) * 3 ;
 	    uint pos2 = ( (pixel.x()+xmin() ) + (image()->getXSize(depth()))*(pixel.y()+ymin()) ) ;
@@ -1024,8 +1024,8 @@ namespace Map2d
 		break;
 
 	      default:
-		if(region->regionUp()->regionDown()==region)
-		  region->setLabel( (CPyramidalRegion::Label) (region->regionUp()->label()+2) );
+		if(region->up()->down()==region)
+		  region->setLabel( (CPyramidalRegion::Label) ((int) region->up()->label()+2) );
 		else if(FClassif)
 		  region->setLabel( (CPyramidalRegion::Label)FClassif[pos2] );
 		break;

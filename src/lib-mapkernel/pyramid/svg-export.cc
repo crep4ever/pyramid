@@ -418,7 +418,7 @@ void CSvgExporter::drawFirstPixels(CTile* ATile, CSvgCreator& svg)
   // Parcours de toutes les régions de l'arbre d'inclusion
   for( CDynamicCoverageAllRegions it(ATile); it.cont(); ++it)
     for( CTraversalRegionPixels it2(ATile, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
-      if( (*it2) == static_cast<CPyramidalRegion*>(*it)->getFirstPixel() && !(*it)->isInfiniteRegion() )
+      if( (*it2) == static_cast<CPyramidalRegion*>(*it)->firstPixel() && !(*it)->isInfiniteRegion() )
 	{
 	  svg.rect((*it2).getX()+0.3, (*it2).getY()+0.3, 0.4, 0.4, "class=\"fpixel\" ");
 	  break;

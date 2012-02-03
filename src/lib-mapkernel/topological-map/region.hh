@@ -171,7 +171,7 @@ namespace Map2d
     void setNextSameCC( CRegion*  );
     void setId        ( TRegionId );
 
-  public: //RG: protected -> public
+  protected:
     /// Identifiant de la région
     TRegionId FId;
     

@@ -306,8 +306,8 @@ void CTile::loadTree()
 	      CPyramidalRegion* upInfiniteRegion =
 		static_cast<CInfinitePyramidalRegion*>(tileUp()->getInclusionTreeRoot());
 
-	      newRegion->setRegionUp(upInfiniteRegion);
-	      upInfiniteRegion->setRegionDown(newRegion);
+	      newRegion->setUp(upInfiniteRegion);
+	      upInfiniteRegion->setDown(newRegion);
 
 	    }
 	  if(existTileDown())
@@ -315,8 +315,8 @@ void CTile::loadTree()
 	      CPyramidalRegion* downInfiniteRegion =
 		static_cast<CInfinitePyramidalRegion*>(tileDown()->getInclusionTreeRoot());
 
-	      downInfiniteRegion->setRegionUp(newRegion);
-	      newRegion->setRegionDown(downInfiniteRegion);
+	      downInfiniteRegion->setUp(newRegion);
+	      newRegion->setDown(downInfiniteRegion);
 	    }
 	}
 
@@ -359,22 +359,22 @@ void CTile::saveTree()
 	{
 	  current = static_cast<CPyramidalRegion*>(*it);
 
-	  if(current->existRegionUp())
-	    FRegionFields[count].up = current->getRegionUp()->id();
+	  if(current->existUp())
+	    FRegionFields[count].up = current->up()->id();
 	  else if (FFirst)
 	    FRegionFields[count].up = 0;
 	  else FRegionFields[count].up = FOldRegions[count].up;
 
 
-	  if(current->existRegionDown())
-	    FRegionFields[count].down = current->getRegionDown()->id();
+	  if(current->existDown())
+	    FRegionFields[count].down = current->down()->id();
 	  else if(FFirst)
 	    FRegionFields[count].down = 0;
 	  else
 	    FRegionFields[count].down = FOldRegions[count].down;
 
 	  FRegionFields[count].id            = current->id();
-	  FRegionFields[count].firstPixel    = current->getFirstPixel();
+	  FRegionFields[count].firstPixel    = current->firstPixel();
 	  FRegionFields[count].nbPixels      = current->getNbPixels();
 	  FRegionFields[count].greySum       = current->getGreySum();
 	  FRegionFields[count].greySquareSum = current->getGreySquareSum();

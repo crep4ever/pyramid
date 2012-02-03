@@ -123,8 +123,8 @@ void CTile::copyRegions(CTile* ATileUp)
   CPyramidalRegion* downInfiniteRegion = addMapInfiniteRegion();
   CPyramidalRegion* upInfiniteRegion = static_cast<CInfinitePyramidalRegion*>(ATileUp->getInclusionTreeRoot());
   setInclusionTreeRoot(downInfiniteRegion);
-  upInfiniteRegion->setRegionDown(downInfiniteRegion);
-  downInfiniteRegion->setRegionUp(upInfiniteRegion);
+  upInfiniteRegion->setDown(downInfiniteRegion);
+  downInfiniteRegion->setUp(upInfiniteRegion);
 
   // Les régions
   for( CDynamicCoverageAll it( ATileUp ); it.cont();++it )
@@ -132,13 +132,13 @@ void CTile::copyRegions(CTile* ATileUp)
       upDart = static_cast<CPyramidalDart*>( *it );
       upRegion = ATileUp->getRegion(upDart);
 
-      if(!upRegion->existRegionDown())
+      if(!upRegion->existDown())
 	{
 	  downRegion = addMapRegion(upRegion);
 	  ATileUp->linkRegionUpDown(upRegion, downRegion);
 	}
       else
-	downRegion = upRegion->getRegionDown();
+	downRegion = upRegion->down();
 
       ATileUp->getDartDown(upDart)->setRegion(downRegion);
     }
@@ -147,22 +147,22 @@ void CTile::copyRegions(CTile* ATileUp)
   for( CDynamicCoverageAllRegions it( ATileUp ); it.cont();++it )
     {
       upRegion =  static_cast<CPyramidalRegion*>(*it);
-      downRegion = upRegion->getRegionDown();
+      downRegion = upRegion->down();
       downRegion->setRepresentativeDart(static_cast<CPyramidalDart*>(upRegion->getRepresentativeDart())->down());
 
       if(upRegion->existNextSameCC())
-	downRegion->setNextSameCC(upRegion->getNextSameCC()->getRegionDown());
+	downRegion->setNextSameCC(upRegion->getNextSameCC()->down());
 
       if(upRegion->existFather() )
-	downRegion->setFather(upRegion->getFather()->getRegionDown());
+	downRegion->setFather(upRegion->getFather()->down());
 
       if(upRegion->existBrother() )
-	downRegion->setBrother(upRegion->getBrother()->getRegionDown());
+	downRegion->setBrother(upRegion->getBrother()->down());
 
       if(upRegion->existSon())
-	downRegion->setFirstSon(upRegion->getFirstSon()->getRegionDown());
+	downRegion->setFirstSon(upRegion->getFirstSon()->down());
 
-      CPoint2D upPixel = upRegion->getFirstPixel();
+      CPoint2D upPixel = upRegion->firstPixel();
       downRegion->setFirstPixel(CPoint2D(upPixel.getX()*ratiox, upPixel.getY()*ratioy));
       downRegion->setNbPixels(0);
     }
@@ -303,12 +303,12 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
 	      tempRegion = *it2;
 	      for( ++it2 ; it2!=newRegions.end(); ++it2 )
 		{
-		  if( (*it2)->getFirstPixel() <  tempRegion->getFirstPixel() )
+		  if( (*it2)->firstPixel() <  tempRegion->firstPixel() )
 		    tempRegion = *it2;
 		}
 	      updateRegionList(currentRegion, newRegions);
-	      static_cast<CPyramidalRegion*>(currentRegion)->getRegionUp()
-		->setRegionDown(tempRegion);
+	      static_cast<CPyramidalRegion*>(currentRegion)->up()
+		->setDown(tempRegion);
 
 	      //On indique que la région a été traitée et qu'il faudra la supprimer
 	      toDelete.push(currentRegion);
@@ -468,8 +468,8 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
   // Conservation de la relation causale des brins
   if( dart->existUp() )
     {
-      j ->setDartUp(upDart);
-      j2->setDartUp(upDart->getBeta2());
+      j ->setUp(upDart);
+      j2->setUp(upDart->getBeta2());
     }
 
   linkBeta1(i , j ); linkBeta1(j , i1 );
@@ -525,12 +525,12 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
     dStack.push(*it);
 
   // bords internes
-  current = current->getRegionUp();
+  current = current->up();
 
   if( current->existSon())
     {
       CPyramidalRegion* son = current->getFirstSon();
-      CDart* dart = beta2(son->getRegionDown()->getRepresentativeDart());
+      CDart* dart = beta2(son->down()->getRepresentativeDart());
       for(CDynamicCoverage1 it(this, dart); it.cont(); ++it)
 	dStack.push(*it);
 
@@ -539,7 +539,7 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
       while( current->existBrother() )
 	{
 	  CPyramidalRegion* brother = current->getBrother();
-	  CDart* dart2 = beta2(brother->getRegionDown()->getRepresentativeDart());
+	  CDart* dart2 = beta2(brother->down()->getRepresentativeDart());
 	  for(CDynamicCoverage1 it(this, dart2); it.cont(); ++it )
 	    dStack.push(*it);
 
@@ -585,7 +585,7 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
     }
 
   // bords internes
-  CPyramidalRegion* region = static_cast<CPyramidalRegion*>(getRegion(ADart))->getRegionUp();
+  CPyramidalRegion* region = static_cast<CPyramidalRegion*>(getRegion(ADart))->up();
   CPyramidalRegion* firstSon = NULL;
   CPyramidalRegion* brother = NULL;
   assert( region != NULL );
@@ -593,7 +593,7 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
   if(region->existSon())
     {
       firstSon = region->getFirstSon();
-      CDart* dart = beta2(firstSon->getRegionDown()->getRepresentativeDart());
+      CDart* dart = beta2(firstSon->down()->getRepresentativeDart());
       for( CDynamicCoverage1 it( this, dart ); it.cont() ; ++it )
 	{
 	  array->setDart(*it);
@@ -603,7 +603,7 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
       while( region->existBrother() )
 	{
 	  brother = region->getBrother();
-	  CDart* dart2 = beta2(brother->getRegionDown()->getRepresentativeDart());
+	  CDart* dart2 = beta2(brother->down()->getRepresentativeDart());
 	  for( CDynamicCoverage1 it( this, dart2 ) ; it.cont() ; ++it )
 	    {
 	      array->setDart(*it);
@@ -732,7 +732,7 @@ void CTile::createNewRegions(CRegion* ARegion,
 	    {
 	      assert( checkSquareRegion( currentDart ) );
 	      region = addMapRegion();
-	      region->setRegionUp(tmp->getRegionUp());
+	      region->setUp(tmp->up());
 	      for( int i = 0 ; i < 4 ; ++i )
 		{
 		  setRegion( currentDart, region );
@@ -1004,13 +1004,13 @@ void CTile::extractVertexRemoval( CDart* ADart )
   if(dart->existUp())
     {
       CPyramidalDart* upDart = dart->up();
-      upDart->setDartDown( dart->getBeta0() );
+      upDart->setDown( dart->getBeta0() );
     }
 
   if(tempDart->existUp())
     {
       CPyramidalDart* upDart = tempDart->up();
-      upDart->setDartDown(tempDart->getBeta0());
+      upDart->setDown(tempDart->getBeta0());
     }
 
   vertexRemoval( ADart );

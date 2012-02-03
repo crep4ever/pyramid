@@ -66,7 +66,7 @@ namespace Map2d
   { return m_up; }
 
   INLINE
-  void CPyramidalDart::setDartUp(CPyramidalDart* dart)
+  void CPyramidalDart::setUp(CPyramidalDart* dart)
   { m_up = dart; }
 
   INLINE
@@ -74,7 +74,7 @@ namespace Map2d
   { return m_down; }
 
   INLINE
-  void CPyramidalDart::setDartDown(CPyramidalDart* dart)
+  void CPyramidalDart::setDown(CPyramidalDart* dart)
   { m_down = dart; }
 
   INLINE

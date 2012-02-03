@@ -138,12 +138,12 @@ void CTile::extractMapMainLoop( CDart* ALast,
 	      CPyramidalRegion* upRegion   = static_cast<CPyramidalRegion*>
 		(FMatrixPixelRegion->getValue( up.getX(), up.getY() ));
 
-	      downRegion->setRegionUp(upRegion);
+	      downRegion->setUp(upRegion);
 	      if(upRegion)
 		downRegion->setLabel((CPyramidalRegion::Label)(upRegion->label()));
 
-	      if(upRegion!=NULL && !upRegion->existRegionDown())
-		upRegion->setRegionDown(downRegion);
+	      if(upRegion!=NULL && !upRegion->existDown())
+		upRegion->setDown(downRegion);
 
 	      downRegion->setFirstPixel(CPoint2D(x,y));
 	      downRegion->setLabel((CPyramidalRegion::Label) upRegion->label());
@@ -453,9 +453,9 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
   CPyramidalDart* actu   = NULL;
   CPyramidalDart* upDart = static_cast<CPyramidalDart*>(FMatrixLignelDart->getDart(upDoublet));
 
-  first->setDartUp(upDart);
+  first->setUp(upDart);
   if(upDart!=NULL )
-    upDart->setDartDown(first);
+    upDart->setDown(first);
 
   for(uint i=0; i<3; ++i)
     {
@@ -466,9 +466,9 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
       actu = static_cast<CPyramidalDart*>(addMapDart(doublet, ARegion));
       upDart = static_cast<CPyramidalDart*>(FMatrixLignelDart->getDart(upDoublet));
 
-      actu->setDartUp(upDart);
+      actu->setUp(upDart);
       if(upDart!=NULL)
-	upDart->setDartDown(actu);
+	upDart->setDown(actu);
 
       linkBeta1(prev, actu);
       prev = actu;
@@ -494,9 +494,9 @@ void CTile::linkInfiniteUpDown()
       CDoublet up = CDoublet(down.getX()/upRatioX(), down.getY()/upRatioY());
       CPyramidalDart* upDart = 	static_cast<CPyramidalDart*>(FMatrixLignelDart->getDart(up));
 
-      downDart->setDartUp(upDart);
+      downDart->setUp(upDart);
       if(upDart!=NULL)
-	upDart->setDartDown(downDart);
+	upDart->setDown(downDart);
     }
 }
 

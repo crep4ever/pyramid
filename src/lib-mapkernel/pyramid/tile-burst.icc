@@ -58,7 +58,7 @@ namespace Map2d
 	break;
 
       case FocusHisto:
-	//std::cout<<"CTile::isRegionToSplit region "<< region->getFirstPixel() << " label = "<< (int)region->label() <<" depth = " << depth() <<std::endl;
+	//std::cout<<"CTile::isRegionToSplit region "<< region->firstPixel() << " label = "<< (int)region->label() <<" depth = " << depth() <<std::endl;
 	switch(depth())
 	  {
 	  case 0:
@@ -141,8 +141,8 @@ namespace Map2d
     CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
     CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);
     uint x1, y1, x2, y2;
-    x1 = region1->getFirstPixel().getX(); y1 = region1->getFirstPixel().getY();
-    x2 = region2->getFirstPixel().getX(); y2 = region2->getFirstPixel().getY();
+    x1 = region1->firstPixel().getX(); y1 = region1->firstPixel().getY();
+    x2 = region2->firstPixel().getX(); y2 = region2->firstPixel().getY();
     uint pos1 = ( (x1) + (width())*(y1) );
     uint pos2 = ( (x2) + (width())*(y2) );
 

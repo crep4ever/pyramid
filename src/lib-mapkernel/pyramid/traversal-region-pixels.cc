@@ -29,7 +29,7 @@ CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
 {
   if( ARegion->isInfiniteRegion() ) return;
 
-  FPixelsStack.push(static_cast<CPyramidalRegion*>(ARegion)->getFirstPixel());
+  FPixelsStack.push(static_cast<CPyramidalRegion*>(ARegion)->firstPixel());
   this->operator++();
   FTile->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
 }
@@ -47,7 +47,7 @@ void CTraversalRegionPixels::reinit()
     {
       FPixelsStack.pop();
     }
-  FPixelsStack.push(static_cast<CPyramidalRegion*>(FRegion)->getFirstPixel());
+  FPixelsStack.push(static_cast<CPyramidalRegion*>(FRegion)->firstPixel());
   this->operator++();
   FTile->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
 }

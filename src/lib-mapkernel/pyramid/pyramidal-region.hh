@@ -28,77 +28,193 @@ namespace Map2d
 {
   /**
    * \file pyramidal-region.hh
-   * \class CPyramidalRegion "pyramidal-region.hh"
-   * \author Romain Goffe
-   * \brief CPyramidalRegion is a region within a pyramid with
-   *  up/down relationships
+   * \class CPyramidalRegion
+   * \brief CPyramidalRegion is a region within a top-down pyramid
+   *
+   * A pyramidal region contains additionnal information such as up/down relationships.
+   * The region "up" is the parent region in the previous level.
+   * The region "down" is the first child (also called 'representative') in the next level.
+   * The region "down" contains the projection of the region's first pixel (top-left).
    */
 
   class CCriterionSplit;
   class CCriterionMerge;
 
-  class CPyramidalRegion: public CRegion{
-
+  class CPyramidalRegion: public CRegion
+  {
   public:
+    /// \enum Label
+    /// This enum describes the different kinds of regions
+    /// that compose an histological image
     enum Label {Background, Tissue, DarkTissue, BrightTissue, Lesion, Cancer, Stroma, Mitosis, InSitu, Invalid};
 
-  protected:
-    CPyramidalRegion* FRegionUp; // pointeur sur la région ascendante
-    CPyramidalRegion* FRegionDown; // pointeur sur la région descendante dont le brin représentant est l'image down du représentant de sa région up
-
-    int FLabel;
-
-    /// Coordonnées du premier pixel de la région (haut/gauche)
-    CPoint2D  FFirstPixel;
+  private:
+    CPyramidalRegion* m_up;   ///< region up
+    CPyramidalRegion* m_down; ///< region down
+    Label m_label;            ///< region's label
+    CPoint2D  m_firstPixel;   ///< first pixel (top-left) of the region
 
   public:
-    CPyramidalRegion();                                // Constructeur par défaut
-    CPyramidalRegion(const CRegion& ARegion);          // Constructeur à partir d'une région
-    CPyramidalRegion(const CPyramidalRegion& ARegion); // Constructeur par recopie: copie des paramètres de la région, on ne copie pas les relations father/brother/firstson ...
-    virtual ~CPyramidalRegion(); // Destructeur
+    /// Default constructor
+    CPyramidalRegion();
 
+    /// Copy constructor
+    /// @param  region: the region to copy
+    CPyramidalRegion(const CRegion& region);
+
+    /// Copy constructor without father/brother/son relationships
+    /// @param region: the region to copy
+    CPyramidalRegion(const CPyramidalRegion& region);
+
+    /// Destructor
+    virtual ~CPyramidalRegion();
+
+    /// Getter on the region's representative dart
+    /// This dart is always chose of the external face
+    /// and the first pointel of its embedding usually corresponds
+    /// to the coordinate of the region's first pixel
+    /// @return the representative dart
     virtual CDart* getRepresentativeDart() const;
-    virtual void setRepresentativeDart(CDart* ADart);
 
-    // Accesseurs
-    CPyramidalRegion* getRegionUp()   const;
-    CPyramidalRegion* regionUp()   const;
-    CPyramidalRegion* getRegionDown() const;
-    CPyramidalRegion* regionDown() const;
+    /// Setter on the region's representative dart
+    /// This dart is always chose of the external face
+    /// and the first pointel of its embedding usually corresponds
+    /// to the coordinate of the region's first pixel
+    /// @param dart: the representative dart
+    virtual void setRepresentativeDart(CDart* dart);
 
-    void setRegionUp    (CPyramidalRegion* ARegion);
-    void setRegionDown  (CPyramidalRegion* ARegion);
+    /// Getter on the parent region (region up) in previous level
+    /// @return the region up
+    CPyramidalRegion* up()   const;
 
-    int label() const;
-    void setLabel(const Label & ALabel);
+    /// Setter on the region that represents the set of this region's children in next level
+    /// The region "down" contains the projection of this region's first pixel (top-left).
+    /// @param region: the region down
+    void setUp(CPyramidalRegion* region);
 
+    /// Getter on the region that represents the set of this region's children in next level
+    /// The region "down" contains the projection of this region's first pixel (top-left).
+    /// @return the region down
+    CPyramidalRegion* down() const;
+
+    /// Setter on the parent region (region up) in previous level
+    /// @param region: the region up
+    void setDown(CPyramidalRegion* region);
+
+    /// Getter on the region's label
+    /// @return the label
+    Label label() const;
+
+    /// Setter on the region's label
+    /// @param label: the label
+    void setLabel(const Label & label);
+
+    /// Getter on the region's brother
+    /// The brother denotes a region of the same level in the inclusion tree
+    /// but from a different connected component
+    /// @return the brother region
     CPyramidalRegion* getBrother()    const;
+
+    /// Getter on the region's father
+    /// The father denotes the parent region within  the inclusion tree
+    /// @return the father region
     CPyramidalRegion* getFather()     const;
+
+    /// Getter on the region's first son
+    /// The first son denotes the first region in the imbricated connected component
+    /// @return the first son region
     CPyramidalRegion* getFirstSon()   const;
+
+    /// Getter on the next region within the same connected component
+    /// @return the next region within the same connected component
     CPyramidalRegion* getNextSameCC() const;
 
-    TRegionId         getGreyMin()   const;
-    void setGreyMin    (TRegionId AColorMin);
+    /// Getter on the minimum grey level of the pixels of the region
+    /// A grey level is stored as a value between 0 and 255
+    /// @return the minimum grey level
+    uint getGreyMin()   const;
 
-    TRegionId         getGreyMax()   const;
-    void setGreyMax    (TRegionId AColorMax);
+    /// TODO: protected?
+    /// Setter on the minimum grey level of the pixels of the region
+    /// A grey level is stored as a value between 0 and 255
+    /// @param greyValue: a minimum grey level
+    void setGreyMin(TRegionId greyValue);
 
-    TRegionId getGreySum() const;
-    void setGreySum (TRegionId AGrey);
+    /// Getter on the maximum grey level of the pixels of the region
+    /// A grey level is stored as a value between 0 and 255
+    /// @return the maximum grey level
+    uint getGreyMax()   const;
 
-    unsigned int getGreySquareSum() const;
-    void setGreySquareSum (unsigned int ASum);
+    /// TODO: protected?
+    /// Setter on the maximum grey level of the pixels of the region
+    /// A grey level is stored as a value between 0 and 255
+    /// @param greyValue: a minimum grey level
+    void setGreyMax(TRegionId greyValue);
 
-    unsigned int getNbPixels() const;
-    void setNbPixels(unsigned int ANbPix);
+    /// Getter on the sum of the region's pixels grey levels
+    /// ie: grey(pixel1) + grey(pixel2) + ...
+    /// A grey level is stored as a value between 0 and 255
+    /// @return the sum for region's pixels grey levels
+    uint getGreySum() const;
 
-    CPoint2D getFirstPixel() const;
+    /// TODO: protected?
+    /// Setter on the sum of the region's pixels grey levels
+    /// A grey level is stored as a value between 0 and 255
+    /// @param sum: sum of region's pixels grey levels
+    void setGreySum (TRegionId sum);
+
+    /// Getter on the square sum of the region's pixels grey levels
+    /// ie: grey(pixel1)² + grey(pixel2)² + ...
+    /// A grey level is stored as a value between 0 and 255
+    /// @return the sum for region's pixels grey levels
+    uint getGreySquareSum() const;
+
+    /// TODO: protected?
+    /// Setter on the square sum of the region's pixels grey levels
+    /// ie: grey(pixel1)² + grey(pixel2)² + ...
+    /// A grey level is stored as a value between 0 and 255
+    /// @param sum: the square sum for region's pixels grey levels
+    void setGreySquareSum (uint sum);
+
+    /// Getter on the region's number of pixels
+    /// @return the number of pixels
+    uint getNbPixels() const;
+
+    /// Setter on the region's number of pixels
+    /// @param value: a number of pixels
+    void setNbPixels(uint value);
+
+    /// Getter on the region's first pixel
+    /// The first pixel (fp) denotes that is at the left of the top line
+    /// Note that for each pixel p in the region, y(fp) <= y(p)
+    /// but that x(fp) <= x(p) may not be always true
+    /// @return the first pixel
     CPoint2D firstPixel() const;
-    void setFirstPixel(const CPoint2D& APixel);
 
+    /// Setter on the region's first pixel (top-left)
+    /// The first pixel (fp) denotes that is at the left of the top line
+    /// Note that for each pixel p in the region, y(fp) <= y(p)
+    /// but that x(fp) <= x(p) may not be always true
+    /// @param pixel: a first pixel
+    void setFirstPixel(const CPoint2D& pixel);
+
+    /// Getter on the region's last pixel (bottom-right)
+    /// The last pixel (lp) denotes that is at the right of the bottom line
+    /// Note that for each pixel p in the region, y(lp) >= y(p)
+    /// but that x(lp) >= x(p) may not be always true
+    /// @return the last pixel
     CPoint2D lastPixel() const;
-    void setLastPixel(const CPoint2D& APixel);
 
+    /// Setter on the region's last pixel (bottom-right)
+    /// The last pixel (lp) denotes that is at the right of the bottom line
+    /// Note that for each pixel p in the region, y(lp) >= y(p)
+    /// but that x(lp) >= x(p) may not be always true
+    /// @param pixel: a last pixel
+    void setLastPixel(const CPoint2D& pixel);
+
+    /// Getter on the region's identifier
+    /// The identifier is a unique positive integer
+    /// @return the region's identifier
     uint id() const;
 
     //******************************************************************************
@@ -107,12 +223,12 @@ namespace Map2d
     virtual CRegion* addSon( TRegionId );
     virtual CRegion* addBrother( TRegionId );
     virtual CRegion* addSameCC( TRegionId );
-    virtual void     addPixels(CRegion* ARegion);
-    virtual void addPixel( TRegionId ACoul, CDart* ADart=NULL );
+    virtual void     addPixels(CRegion* region);
+    virtual void addPixel( TRegionId ACoul, CDart* dart=NULL );
     void addGrey(TRegionId AGrey);
     TRegionId getAverageGrey() const;
 
-    void mergeWith(CPyramidalRegion* ARegion);
+    void mergeWith(CPyramidalRegion* region);
 
     //******************************************************************************
     //Opérations de contrôle et de vérification
@@ -120,11 +236,11 @@ namespace Map2d
 
     /// Teste l'existence d'une région up
     /// @return true si la région a une up
-    bool existRegionUp();
+    bool existUp();
 
     /// Teste l'existence d'une région down
     /// @return true si la région a une down
-    bool existRegionDown();
+    bool existDown();
 
     /// Affiche les caractéristiques d'une région
     void print();
@@ -137,8 +253,8 @@ namespace Map2d
 
   /// La classe région infinie. La seule différence concerne la méthode
   /// isInfiniteRegion qui va désormais retourner vrai.
-  class CInfinitePyramidalRegion : public CPyramidalRegion{
-
+  class CInfinitePyramidalRegion : public CPyramidalRegion
+  {
   public:
     CInfinitePyramidalRegion();
     virtual ~CInfinitePyramidalRegion();
@@ -154,7 +270,7 @@ namespace Map2d
     public :
       bool operator()( CPyramidalRegion* region1, CPyramidalRegion* region2 )
         {
-          return region1->getFirstPixel() < region2->getFirstPixel();
+          return region1->firstPixel() < region2->firstPixel();
         }
    };
 

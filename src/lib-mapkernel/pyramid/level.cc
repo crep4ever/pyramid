@@ -326,16 +326,16 @@ void CLevel::delTile(CTile* ATile)
       //il faut parcourir uniquement les brins/régions de up qui sont plongés dans this
       for( CDynamicCoverageAllRegions it( ATile ); it.cont(); ++it )
 	{
-	  CPyramidalRegion* upRegion = static_cast<CPyramidalRegion*>(*it)->getRegionUp();
-	  if(upRegion!=NULL  && upRegion->getRegionDown()==(*it))
-	    upRegion->setRegionDown(NULL);
+	  CPyramidalRegion* upRegion = static_cast<CPyramidalRegion*>(*it)->up();
+	  if(upRegion!=NULL  && upRegion->down()==(*it))
+	    upRegion->setDown(NULL);
 	}
 
       for( CDynamicCoverageAll it( ATile ); it.cont(); ++it )
 	{
 	  CPyramidalDart* upDart = static_cast<CPyramidalDart*>(*it)->up();
 	  if(upDart!=NULL && upDart->down()==(*it))
-	    upDart->setDartDown(NULL);
+	    upDart->setDown(NULL);
 	}
       //puisqu'on est en top-down, il n'y a qu'un seul parent
       up->setTileDown(NULL);
@@ -351,10 +351,10 @@ void CLevel::delTile(CTile* ATile)
 	  {
 	    //Régions
 	    for( CDynamicCoverageAllRegions it2( *it ); it2.cont(); ++it2 )
-	      static_cast<CPyramidalRegion*>(*it2)->setRegionUp(NULL);
+	      static_cast<CPyramidalRegion*>(*it2)->setUp(NULL);
 	    //Brins
 	    for( CDynamicCoverageAll it2( *it ); it2.cont(); ++it2 )
-	      static_cast<CPyramidalDart*>(*it2)->setDartUp(NULL);
+	      static_cast<CPyramidalDart*>(*it2)->setUp(NULL);
 	    //Tuile
 	    copy[i]->setTileUp(NULL);
 	  }

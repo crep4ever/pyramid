@@ -43,7 +43,7 @@ namespace Map2d
   INLINE
   bool CSplitHole::isRegionToSplit()
   {
-    return static_cast<CPyramidalRegion*>(FRegion)->getRegionUp()->existSon();
+    return static_cast<CPyramidalRegion*>(FRegion)->up()->existSon();
   }
 
   //******************************************************************************

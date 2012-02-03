@@ -16,24 +16,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "pyramidal-region.hh"
 #include INCLUDE_NON_INLINE("pyramidal-region.icc")
-//******************************************************************************
+
 using namespace Map2d;
 
-//------------------------------------------------------------------------------
 CInfinitePyramidalRegion::~CInfinitePyramidalRegion()
 {
   //std::cout<<" [start] CInfinitePyramidalRegion::destructeur() "<<std::endl;
-
-  FRegionUp   = NULL;
-  FRegionDown = NULL;
-  // FCriterionSplit = NULL;
-  // FCriterionMerge = NULL;
+  setUp(NULL);
+  setDown(NULL);
 }
-//------------------------------------------------------------------------------
+
 void CPyramidalRegion::addPixels( CRegion* ARegion )
 {
   assert(false);
@@ -52,7 +47,7 @@ void CPyramidalRegion::addPixels( CRegion* ARegion )
     setGreyMax(max);
 
   // Mise à jour de l'écart-type
-  //TODO : à vérifier
+  // TODO : à vérifier
   /*
     float deviation1 = getDeviation();
     float deviation2 = static_cast<CPyramidalRegion*>(ARegion)->getDeviation();
@@ -72,161 +67,156 @@ void CPyramidalRegion::print()
 #ifdef DEBUG_PYRAMID
   //assert(isOk());
   std::string sVoid = "-";
-  std::cout<<std::endl;
+  std::cout << std::endl;
 
   if(isInfiniteRegion())
     {
-      std::cout<<" Région Infinie:   Id: "<<getId()<<std::endl;
+      std::cout << " Région Infinie:   Id: " << getId() << std::endl;
 
-      std::cout<<"  Représentant: "
-	       <<static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet()
-	       <<"   Region Up: ";
-      if(existRegionUp())
-	std::cout<<getRegionUp()->getId();
+      std::cout << "  Représentant: "
+	        << static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet()
+	        << "   Region Up: ";
+      if(existUp())
+	std::cout << up()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   Region Down: ";
-      if(existRegionDown())
-	std::cout<<getRegionDown()->getId();
+	std::cout << sVoid;
+      std::cout << "   Region Down: ";
+      if(existDown())
+	std::cout  <<  down()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<std::endl;
+	std::cout << sVoid;
+      std::cout << std::endl;
 
-      std::cout<<"  Father: ";
+      std::cout << "  Father: ";
       if(existFather())
-	std::cout<<getFather()->getId();
+	std::cout << getFather()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   First Son: ";
+	std::cout << sVoid;
+      std::cout << "   First Son: ";
       if(existSon())
-	std::cout<<getFirstSon()->getId();
+	std::cout << getFirstSon()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   Brother: ";
+	std::cout << sVoid;
+      std::cout << "   Brother: ";
       if(existBrother())
-	std::cout<<getBrother()->getId();
+	std::cout << getBrother()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   Next Same CC: ";
+	std::cout << sVoid;
+      std::cout << "   Next Same CC: ";
       if(existNextSameCC())
-	std::cout<<getNextSameCC()->getId();
+	std::cout << getNextSameCC()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<std::endl;
+	std::cout << sVoid;
+      std::cout << std::endl;
 
     }
   else
     {
-      std::cout<<" Région pyramidale:   Id: "<<getId()<<std::endl;
+      std::cout << " Région pyramidale:   Id: " << getId() << std::endl;
 
-      std::cout<<"  Paramètres: ";
-      std::cout<<"   First Pixel: "  <<getFirstPixel();
-      std::cout<<"   Profondeur: "   <<getProfondeur();
-      std::cout<<"   Nb pixels: "    <<getNbPixels();
-      std::cout<<std::endl;
+      std::cout << "  Paramètres: ";
+      std::cout << "   First Pixel: "   << getFirstPixel();
+      std::cout << "   Profondeur: "    << getProfondeur();
+      std::cout << "   Nb pixels: "     << getNbPixels();
+      std::cout << std::endl;
 
-      std::cout<<"  Critères:   ";
-      //std::cout<<"   Merge: "     <<getMerge();
-      //std::cout<<"   Split: "     <<getSplit();
-      //std::cout<<"   Ecart-type: "<<getDeviation();
-      std::cout<<"   Sum: "     <<getGreySquareSum();
-      std::cout<<std::endl;
+      std::cout << "  Critères:   ";
+      //std::cout << "   Merge: "      << getMerge();
+      //std::cout << "   Split: "      << getSplit();
+      //std::cout << "   Ecart-type: " << getDeviation();
+      std::cout << "   Sum: "      << getGreySquareSum();
+      std::cout << std::endl;
 
-      std::cout<<"  Couleurs:   ";
-      //std::cout<<"   Moyenne: " <<getAverageGrey();
-      std::cout<<"   Somme: "   <<getGreySum();
-      std::cout<<"   Min: "     <<getGreyMin();
-      std::cout<<"   Max: "     <<getGreyMax();
-      std::cout<<std::endl;
+      std::cout << "  Couleurs:   ";
+      //std::cout << "   Moyenne: "  << getAverageGrey();
+      std::cout << "   Somme: "    << getGreySum();
+      std::cout << "   Min: "      << getGreyMin();
+      std::cout << "   Max: "      << getGreyMax();
+      std::cout << std::endl;
 
-      std::cout<<"  Représentant: "<<static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet();
-      std::cout<<"   Region Up: ";
-      if(existRegionUp())
-	std::cout<<getRegionUp()->getId();
+      std::cout << "  Représentant: " << static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet();
+      std::cout << "   Region Up: ";
+      if(existUp())
+	std::cout << up()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   Region Down: ";
-      if(existRegionDown())
-	std::cout<<getRegionDown()->getId();
+	std::cout << sVoid;
+      std::cout << "   Region Down: ";
+      if(existDown())
+	std::cout << down()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<std::endl;
+	std::cout << sVoid;
+      std::cout << std::endl;
 
-      std::cout<<"  Father: ";
+      std::cout << "  Father: ";
       if(existFather())
-	std::cout<<getFather()->getId();
+	std::cout << getFather()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   First Son: ";
+	std::cout << sVoid;
+      std::cout << "   First Son: ";
       if(existSon())
-	std::cout<<getFirstSon()->getId();
+	std::cout << getFirstSon()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   Brother: ";
+	std::cout << sVoid;
+      std::cout << "   Brother: ";
       if(existBrother())
-	std::cout<<getBrother()->getId();
+	std::cout << getBrother()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<"   Next Same CC: ";
+	std::cout << sVoid;
+      std::cout << "   Next Same CC: ";
       if(existNextSameCC())
-	std::cout<<getNextSameCC()->getId();
+	std::cout << getNextSameCC()->getId();
       else
-	std::cout<<sVoid;
-      std::cout<<std::endl;
+	std::cout << sVoid;
+      std::cout << std::endl;
 
-      std::cout<<"   Histological Label: ";
+      std::cout << "   Histological Label: ";
       switch(label())
 	{
 	case Background:
-	  std::cout<<"Background";
+	  std::cout << "Background";
 	  break;
 	case Tissue:
-	  std::cout<<"Tissue";
+	  std::cout << "Tissue";
 	  break;
 	case DarkTissue:
-	  std::cout<<"DarkTissue";
+	  std::cout << "DarkTissue";
 	  break;
 	case BrightTissue:
-	  std::cout<<"BrightTissue";
+	  std::cout << "BrightTissue";
 	  break;
 	case Lesion:
-	  std::cout<<"Lesion";
+	  std::cout << "Lesion";
 	  break;
 	case Cancer:
-	  std::cout<<"Cancer";
+	  std::cout << "Cancer";
 	  break;
 	case Stroma:
-	  std::cout<<"Stroma";
+	  std::cout << "Stroma";
 	  break;
 	case Mitosis:
-	  std::cout<<"Mitosis";
+	  std::cout << "Mitosis";
 	  break;
 	case InSitu:
-	  std::cout<<"InSitu";
+	  std::cout << "InSitu";
 	  break;
 	case Invalid:
-	  std::cout<<"Invalid";
+	  std::cout << "Invalid";
 	  break;
 	default:
-	  std::cout<<sVoid;
+	  std::cout << sVoid;
 	  break;
 	}
-      std::cout<<std::endl;
+      std::cout << std::endl;
     }
 #endif
 }
-//------------------------------------------------------------------------------
+
 bool CPyramidalRegion::isOk()
 {
-  bool result = true;
-
-  if(getRepresentativeDart() == NULL )
+  if( !getRepresentativeDart() )
     {
-      std::cout<<"Representative dart is NULL for region "<<getId()<<std::endl;
-      result=false;
+      std::cout << "Representative dart is NULL for region " << id() << std::endl;
+      return false;
     }
-
-  return result;
+  return true;
 }
-
-//******************************************************************************

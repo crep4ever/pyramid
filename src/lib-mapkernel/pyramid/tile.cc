@@ -179,7 +179,7 @@ int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
   // racine de l'arbre (cad la première pour notre ordre de parcours)
   CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
   CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);
-  if ( region1->getFirstPixel() < region2->getFirstPixel() )
+  if ( region1->firstPixel() < region2->firstPixel() )
     {
       region2->setNextSameCC(region1);
       region2->setRepresentativeDart( NULL );
@@ -273,8 +273,8 @@ void CTile::relabelDarts()
 
 	  //Conservation des up/down
 	  CPyramidalRegion* region = getRegion(*it);
-	  if( region->existRegionUp() && region->getRegionUp()->getRegionDown()==region)
-	    region->getRegionUp()->setRegionDown(static_cast<CPyramidalRegion*>(findRegionRoot(region)));
+	  if( region->existUp() && region->up()->down()==region)
+	    region->up()->setDown(static_cast<CPyramidalRegion*>(findRegionRoot(region)));
 
 	  //on récupère la région avec laquelle il va falloir étiquetter
 	  //la région courante
@@ -328,8 +328,8 @@ void CTile::relabelDarts()
 	  TempRegion->setBrother(NULL);
 	  TempRegion->setNextSameCC(NULL);
 
-	  assert( !static_cast<CPyramidalRegion*>(TempRegion)->existRegionUp() ||
-		  !(static_cast<CPyramidalRegion*>(TempRegion)->getRegionUp()->getRegionDown()==TempRegion));
+	  assert( !static_cast<CPyramidalRegion*>(TempRegion)->existUp() ||
+		  !(static_cast<CPyramidalRegion*>(TempRegion)->up()->down()==TempRegion));
 
 	  delete TempRegion;
 	  //on décrémente le nombre de régions de la carte
@@ -347,8 +347,8 @@ void CTile::relabelDarts()
 void CTile::delRegion(CRegion* ARegion)
 {
   assert( ARegion!=NULL );
-  assert( !static_cast<CPyramidalRegion*>(ARegion)->existRegionUp() ||
-	  !(static_cast<CPyramidalRegion*>(ARegion)->getRegionUp()->getRegionDown()==ARegion));
+  assert( !static_cast<CPyramidalRegion*>(ARegion)->existUp() ||
+	  !(static_cast<CPyramidalRegion*>(ARegion)->up()->down()==ARegion));
 
   setNbRegions(getNbRegions()-1);
 

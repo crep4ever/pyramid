@@ -28,9 +28,9 @@ namespace Map2d
 {
   /**
    * \file pyramidal-dart.hh
-   * \class CPyramidalDart "pyramidal-dart.hh"
+   * \class CPyramidalDart
    * \brief CPyramidalDart is a dart within a top-down pyramid
-   * 
+   *
    * A pyramidal dart contains additionnal information such as up/down relationships.
    * The dart "up" is the parent dart in the previous level.
    * The dart "down" is the first child (also called 'representative') in the next level.
