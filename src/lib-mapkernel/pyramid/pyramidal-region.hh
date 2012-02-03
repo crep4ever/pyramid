@@ -99,6 +99,8 @@ namespace Map2d
     CPoint2D lastPixel() const;
     void setLastPixel(const CPoint2D& APixel);
 
+    uint id() const;
+
     //******************************************************************************
     //Opérations sur la région
     //******************************************************************************

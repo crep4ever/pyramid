@@ -20,161 +20,98 @@ namespace Map2d
 {
   INLINE
   CPyramidalDart::~CPyramidalDart()
-  {
-    //std::cout<<"suppression pyramidal dart"<<std::endl;
-  }
-  //------------------------------------------------------------------------------
-  INLINE
-  CPyramidalDart::CPyramidalDart() :
-    CTopologicalDart  (),
-    FId               ( static_cast<TDartId>(0) ),
-    FDartUp	      (NULL),
-    FDartDown         (NULL),
-    FBeta2b           (NULL),
-    FFictive          (false)
-  {
-    //std::cout<<"CPyramidal Dart : constructeur par défaut"<<std::endl;
-  }
-  //------------------------------------------------------------------------------
-  INLINE
-  CPyramidalDart::CPyramidalDart(const CPyramidalDart & ADart) :
-    CTopologicalDart  (ADart),
-    FId               (ADart.FId),
-    FDartUp           (ADart.FDartUp),
-    FDartDown         (ADart.FDartDown),
-    FBeta2b           (ADart.FBeta2b),
-    FFictive          (ADart.FFictive)
-  {
-    std::cout<<"CPyramidal Dart : constructeur par recopie"<<std::endl;
-  }
-  //------------------------------------------------------------------------------
-  INLINE
-  CPyramidalDart::CPyramidalDart(const CTopologicalDart & ADart) :
-    CTopologicalDart(ADart),
-    FId             ( static_cast<TDartId>(0) ),
-    FDartUp	    (NULL),
-    FDartDown	    (NULL),
-    FBeta2b         (NULL),
-    FFictive        (false)
-  {
-    std::cout<<"CPyramidal Dart : constructeur depuis un topologicalDart"<<std::endl;
-  }
-  //------------------------------------------------------------------------------
-  /*
-    INLINE
-    CPyramidalDart::CPyramidalDart(const std::bitset<NB_MARKS> & AMarks) :
-    CTopologicalDart  (AMarks),
-    FId               ( static_cast<TDartId>(0) ),
-    FDartUp           (NULL),
-    FDartDown         (NULL)
-    {
-    std::cout<<"CPyramidal Dart : constructeur avec initialisation des marques"<<std::endl;
-    }
-  */
-  //------------------------------------------------------------------------------
-  INLINE
-  CPyramidalDart::CPyramidalDart(const CDoublet & ADoublet, CRegion* ARegion,
-				 const std::bitset<NB_MARKS> & AMarks) :
-    CTopologicalDart(),
-    FId             ( static_cast<TDartId>(0) ),
-    FDartUp	    (NULL),
-    FDartDown 	    (NULL),
-    FBeta2b         (NULL),
-    FFictive        (false)
-  {
-    //std::cout<<"CPyramidal Dart : constructeur depuis doublet et marques"<<std::endl;
-  }
-  //******************************************************************************
+  { }
 
   INLINE
-  TDartId CPyramidalDart::getId() const
-  { return FId; }
-  //------------------------------------------------------------------------------
+  CPyramidalDart::CPyramidalDart() :
+    CTopologicalDart (),
+    m_id             ( static_cast<TDartId>(0) ),
+    m_up	     (NULL),
+    m_down           (NULL),
+    m_phi            (NULL),
+    m_fictive        (false)
+  { }
+
   INLINE
-  void CPyramidalDart::setId(TDartId AId){
-    //assert(AId>0); -> 0 dans le destructeur
-    FId=AId;
-  }
-  //------------------------------------------------------------------------------
+  CPyramidalDart::CPyramidalDart(const CPyramidalDart & dart) :
+    CTopologicalDart (dart),
+    m_id             (dart.m_id),
+    m_up             (dart.m_up),
+    m_down           (dart.m_down),
+    m_phi            (dart.m_phi),
+    m_fictive        (dart.m_fictive)
+  { /*std::cout<<"CPyramidal Dart : constructeur par recopie"<<std::endl;*/ }
+
   INLINE
-  CPyramidalDart* CPyramidalDart::getDartUp() const
-  { return FDartUp; }
-  //------------------------------------------------------------------------------
+  CPyramidalDart::CPyramidalDart(const CDoublet & doublet, CRegion* region,
+				 const std::bitset<NB_MARKS> & AMarks) :
+    CTopologicalDart (),
+    m_id             ( static_cast<TDartId>(0) ),
+    m_up	     (NULL),
+    m_down 	     (NULL),
+    m_phi            (NULL),
+    m_fictive        (false)
+  { }
+
+  INLINE
+  TDartId CPyramidalDart::id() const
+  { return m_id; }
+
+  INLINE
+  void CPyramidalDart::setId(TDartId value)
+  { m_id = value; }
+
   INLINE
   CPyramidalDart* CPyramidalDart::up() const
-  { return FDartUp; }
-  //------------------------------------------------------------------------------
+  { return m_up; }
+
   INLINE
-  void CPyramidalDart::setDartUp(CPyramidalDart* ADart){
-    FDartUp=ADart;
-  }
-  //------------------------------------------------------------------------------
-  INLINE
-  CPyramidalDart* CPyramidalDart::getDartDown() const
-  { return FDartDown; }
-  //------------------------------------------------------------------------------
+  void CPyramidalDart::setDartUp(CPyramidalDart* dart)
+  { m_up = dart; }
+
   INLINE
   CPyramidalDart* CPyramidalDart::down() const
-  { return FDartDown; }
-  //------------------------------------------------------------------------------
+  { return m_down; }
+
   INLINE
-  void CPyramidalDart::setDartDown(CPyramidalDart* ADart){
-    FDartDown=ADart;
-  }
-  //------------------------------------------------------------------------------
+  void CPyramidalDart::setDartDown(CPyramidalDart* dart)
+  { m_down = dart; }
+
   INLINE
-  CPyramidalDart* CPyramidalDart::getBeta2b() const
-  { return FBeta2b; }
-  //------------------------------------------------------------------------------
+  CPyramidalDart* CPyramidalDart::phi() const
+  { return m_phi; }
+
   INLINE
-  void CPyramidalDart::setBeta2b(CPyramidalDart* ADart){
-    FBeta2b=ADart;
-  }
-  //------------------------------------------------------------------------------
+  void CPyramidalDart::setPhi(CPyramidalDart* dart)
+  { m_phi = dart; }
+
   INLINE
   bool CPyramidalDart::isFictive() const
-  { return FFictive; }
-  //------------------------------------------------------------------------------
+  { return m_fictive; }
+
   INLINE
-  void CPyramidalDart::setFictive(bool value){
-    FFictive=value;
-  }
-  //------------------------------------------------------------------------------
+  void CPyramidalDart::setFictive(bool value)
+  { m_fictive = value; }
+
   INLINE
   CPyramidalDart* CPyramidalDart::getBeta0() const
   { return static_cast<CPyramidalDart*>(CTopologicalDart::getBeta0()); }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPyramidalDart* CPyramidalDart::getBeta1() const
   { return static_cast<CPyramidalDart*>(CTopologicalDart::getBeta1()); }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPyramidalDart* CPyramidalDart::getBeta2() const
   { return static_cast<CPyramidalDart*>(CTopologicalDart::getBeta2()); }
-  //------------------------------------------------------------------------------
+
   INLINE
-  bool CPyramidalDart::existDartUp()
-  {
-    return( FDartUp != NULL);
-  }
-  //------------------------------------------------------------------------------
+  bool CPyramidalDart::existUp()
+  { return( m_up != NULL); }
+
   INLINE
-  bool CPyramidalDart::existDartDown()
-  {
-    return( FDartDown != NULL);
-  }
-  //  //------------------------------------------------------------------------------
-  //  INLINE
-  //  CDoublet& CPyramidalDart::getDoublet()
-  //  {
-  //    return this->doublet();
-  //  }
-  //  //------------------------------------------------------------------------------
-  //  INLINE
-  //  void CPyramidalDart::setDoublet(const CDoublet& ADoublet)
-  //  {
-  //    FDoublet = ADoublet;
-  //  }
+  bool CPyramidalDart::existDown()
+  { return( m_down != NULL); }
 
   //******************************************************************************
 } // namespace Map2d

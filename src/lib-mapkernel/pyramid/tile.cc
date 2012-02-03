@@ -45,8 +45,8 @@ void CTile::createTopTile()
   CPyramidalDart* inf  = static_cast<CPyramidalDart*>(infRegion->getRepresentativeDart());
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(region->getRepresentativeDart());
 
-  FMapDarts[inf->getId()]  = inf;
-  FMapDarts[dart->getId()] = dart;
+  FMapDarts[inf->id()]  = inf;
+  FMapDarts[dart->id()] = dart;
 
   //loadImage();
   traversePixelsSingleRegion();

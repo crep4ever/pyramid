@@ -198,29 +198,29 @@ void CTile::saveTopology()
     {
       current = static_cast<CPyramidalDart*>(*it);
 
-      FDartFields[count].id    = current->getId();
-      FDartFields[count].beta1 = current->getBeta1()->getId();
+      FDartFields[count].id    = current->id();
+      FDartFields[count].beta1 = current->getBeta1()->id();
 
-      it2 = FMapBeta2.find(current->getId());
+      it2 = FMapBeta2.find(current->id());
 
       if(it2 != FMapBeta2.end())
 	FDartFields[count].beta2 = it2->second;
       else
-	FDartFields[count].beta2 = current->getBeta2()->getId();
+	FDartFields[count].beta2 = current->getBeta2()->id();
 
       FDartFields[count].doublet = current->doublet();
       FDartFields[count].fictive  = current->isFictive();
-      FDartFields[count].region  = getRegion(current)->getId();
+      FDartFields[count].region  = getRegion(current)->id();
 
-      if(current->existDartUp())
-	FDartFields[count].up = current->getDartUp()->getId();
+      if(current->existUp())
+	FDartFields[count].up = current->up()->id();
       else if(FFirst)
 	FDartFields[count].up = 0;
       else
 	FDartFields[count].up = FOldDarts[count].up;
 
-      if(current->existDartDown())
-	FDartFields[count].down = current->getDartDown()->getId();
+      if(current->existDown())
+	FDartFields[count].down = current->down()->id();
       else if(FFirst)
 	FDartFields[count].down = 0;
       else
@@ -360,20 +360,20 @@ void CTile::saveTree()
 	  current = static_cast<CPyramidalRegion*>(*it);
 
 	  if(current->existRegionUp())
-	    FRegionFields[count].up = current->getRegionUp()->getId();
+	    FRegionFields[count].up = current->getRegionUp()->id();
 	  else if (FFirst)
 	    FRegionFields[count].up = 0;
 	  else FRegionFields[count].up = FOldRegions[count].up;
 
 
 	  if(current->existRegionDown())
-	    FRegionFields[count].down = current->getRegionDown()->getId();
+	    FRegionFields[count].down = current->getRegionDown()->id();
 	  else if(FFirst)
 	    FRegionFields[count].down = 0;
 	  else
 	    FRegionFields[count].down = FOldRegions[count].down;
 
-	  FRegionFields[count].id            = current->getId();
+	  FRegionFields[count].id            = current->id();
 	  FRegionFields[count].firstPixel    = current->getFirstPixel();
 	  FRegionFields[count].nbPixels      = current->getNbPixels();
 	  FRegionFields[count].greySum       = current->getGreySum();
@@ -401,28 +401,28 @@ void CTile::saveTree()
 
 
       if(current->existFather())
-	FRegionFields[count].father = current->getFather()->getId();
+	FRegionFields[count].father = current->getFather()->id();
       else
 	FRegionFields[count].father = 0;
 
       if(current->existSon())
-	FRegionFields[count].son = current->getFirstSon()->getId();
+	FRegionFields[count].son = current->getFirstSon()->id();
       else
 	FRegionFields[count].son = 0;
 
       if(current->existBrother())
-	FRegionFields[count].brother = current->getBrother()->getId();
+	FRegionFields[count].brother = current->getBrother()->id();
       else
 	FRegionFields[count].brother = 0;
 
       if(current->existNextSameCC())
-	FRegionFields[count].cc = current->getNextSameCC()->getId();
+	FRegionFields[count].cc = current->getNextSameCC()->id();
       else
 	FRegionFields[count].cc = 0;
 
       //static_cast<CPyramidalDart*>(current->getRepresentativeDart())->printInfos();
-      assert( static_cast<CPyramidalDart*>(current->getRepresentativeDart())->getId()!=0 );
-      FRegionFields[count].representative = static_cast<CPyramidalDart*>(current->getRepresentativeDart())->getId();
+      assert( static_cast<CPyramidalDart*>(current->getRepresentativeDart())->id()!=0 );
+      FRegionFields[count].representative = static_cast<CPyramidalDart*>(current->getRepresentativeDart())->id();
 
       ++count;
     }

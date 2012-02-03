@@ -359,10 +359,10 @@ bool CTile::checkDartLinks()
   for( CDynamicCoverageAll it( this ); it.cont(); ++it )
     {
       CPyramidalDart* dart = static_cast<CPyramidalDart*>( *it );
-      if ( dart->getDartUp() != NULL && dart->getDartUp()->getDartDown() != dart )
+      if ( dart->up() != NULL && dart->up()->down() != dart )
 	//std::cout<<"checkDartLinks warning : no involution up/down "<<dart->doublet()<<std::endl;
 
-      if(dart->existDartUp() && !dart->getDartUp()->existDartDown())
+      if(dart->existUp() && !dart->up()->existDown())
 	std::cout<<"checkDartLinks error : wrong link up/down on dart "<<dart->doublet()<<std::endl;
 
     }
@@ -409,7 +409,7 @@ bool CTile::checkDarts()
     {
       dart = static_cast<CPyramidalDart*>( *it );
 
-      if(dart->getId()==0)
+      if(dart->id()==0)
 	{
 	  std::cout<<" CTile::checkDarts the following dart has a non-valid id:"<<std::endl;
 	  dart->print();
@@ -637,7 +637,7 @@ bool CTile::checkHierarchy()
   for( CDynamicCoverageAll it(upTile); it.cont(); ++it )
     {
       CPyramidalDart* upDart = static_cast<CPyramidalDart*>(*it);
-      if( !upDart->existDartDown() )
+      if( !upDart->existDown() )
 	{
 	  if( !upDart->getRegion()->isInfiniteRegion() )
 	    {
@@ -649,8 +649,8 @@ bool CTile::checkHierarchy()
 	}
       else
 	{
-	  CPyramidalDart* downDart = upDart->getDartDown();
-	  if( downDart->getDartUp()!=upDart )
+	  CPyramidalDart* downDart = upDart->down();
+	  if( downDart->up()!=upDart )
 	    {
 	      std::cout << " CTile::checkHierarchy error: first down has a wrong up :"<<std::endl;
 	      downDart->print();

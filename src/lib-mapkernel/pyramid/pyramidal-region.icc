@@ -272,6 +272,9 @@ void CPyramidalRegion::mergeWith(CPyramidalRegion* ARegion)
   CRegion::mergeWith(ARegion);
 }
 
+  INLINE
+  uint CPyramidalRegion::id() const
+  { return getId(); }
 
   //******************************************************************************
   //La région infinie

@@ -148,7 +148,7 @@ void CTile::copyRegions(CTile* ATileUp)
     {
       upRegion =  static_cast<CPyramidalRegion*>(*it);
       downRegion = upRegion->getRegionDown();
-      downRegion->setRepresentativeDart(static_cast<CPyramidalDart*>(upRegion->getRepresentativeDart())->getDartDown());
+      downRegion->setRepresentativeDart(static_cast<CPyramidalDart*>(upRegion->getRepresentativeDart())->down());
 
       if(upRegion->existNextSameCC())
 	downRegion->setNextSameCC(upRegion->getNextSameCC()->getRegionDown());
@@ -194,9 +194,9 @@ void CTile::copyDarts(CTile* ATileUp)
     {
       upDart = static_cast<CPyramidalDart*>( *it );
       downDart = ATileUp->getDartDown(upDart);
-      downDart->setBeta0(upDart->getBeta0()->getDartDown());
-      downDart->setBeta1(upDart->getBeta1()->getDartDown());
-      downDart->setBeta2(upDart->getBeta2()->getDartDown());
+      downDart->setBeta0(upDart->getBeta0()->down());
+      downDart->setBeta1(upDart->getBeta1()->down());
+      downDart->setBeta2(upDart->getBeta2()->down());
     }
 }
 //------------------------------------------------------------------------------
@@ -446,7 +446,7 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
   assert( ADart != NULL );
 
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(ADart);
-  CPyramidalDart* upDart = dart->getDartUp();
+  CPyramidalDart* upDart = dart->up();
 
   CDart* i   = ADart;
   CDart* i1  = NULL;
@@ -466,7 +466,7 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
   CPyramidalDart* j2 = static_cast<CPyramidalDart*>(addMapDart( t2, getRegion(i2) ));
 
   // Conservation de la relation causale des brins
-  if( dart->existDartUp() )
+  if( dart->existUp() )
     {
       j ->setDartUp(upDart);
       j2->setDartUp(upDart->getBeta2());
@@ -1001,15 +1001,15 @@ void CTile::extractVertexRemoval( CDart* ADart )
   CPyramidalDart* tempDart  = static_cast<CPyramidalDart*>(beta21(ADart));
 
   // On s'assure de conserver les up/down
-  if(dart->existDartUp())
+  if(dart->existUp())
     {
-      CPyramidalDart* upDart = dart->getDartUp();
+      CPyramidalDart* upDart = dart->up();
       upDart->setDartDown( dart->getBeta0() );
     }
 
-  if(tempDart->existDartUp())
+  if(tempDart->existUp())
     {
-      CPyramidalDart* upDart = tempDart->getDartUp();
+      CPyramidalDart* upDart = tempDart->up();
       upDart->setDartDown(tempDart->getBeta0());
     }
 

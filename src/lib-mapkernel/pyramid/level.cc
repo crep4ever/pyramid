@@ -333,8 +333,8 @@ void CLevel::delTile(CTile* ATile)
 
       for( CDynamicCoverageAll it( ATile ); it.cont(); ++it )
 	{
-	  CPyramidalDart* upDart = static_cast<CPyramidalDart*>(*it)->getDartUp();
-	  if(upDart!=NULL && upDart->getDartDown()==(*it))
+	  CPyramidalDart* upDart = static_cast<CPyramidalDart*>(*it)->up();
+	  if(upDart!=NULL && upDart->down()==(*it))
 	    upDart->setDartDown(NULL);
 	}
       //puisqu'on est en top-down, il n'y a qu'un seul parent
@@ -616,8 +616,8 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
 	{
 	  nextleft  = beta0(left);
 	  nextright = beta1(right);
-	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(beta2(right))->getId()] =
-	    static_cast<CPyramidalDart*>(left->getBeta2())->getId();
+	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(beta2(right))->id()] =
+	    static_cast<CPyramidalDart*>(left->getBeta2())->id();
 
 	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)
 	    {
@@ -660,8 +660,8 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
 	{
 	  nextup = up->getBeta1();
 	  nextdown = down->getBeta0();
-	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(down->getBeta2())->getId()] =
-	    static_cast<CPyramidalDart*>(up->getBeta2())->getId();
+	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(down->getBeta2())->id()] =
+	    static_cast<CPyramidalDart*>(up->getBeta2())->id();
 
 	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)
 	    {

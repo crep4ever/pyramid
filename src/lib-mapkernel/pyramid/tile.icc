@@ -780,7 +780,7 @@ namespace Map2d
   CPyramidalDart* CTile::getDartUp(CDart* ADart) const
   {
     assert( ADart!=NULL );
-    return static_cast<CPyramidalDart*>(ADart)->getDartUp();
+    return static_cast<CPyramidalDart*>(ADart)->up();
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -794,7 +794,7 @@ namespace Map2d
   CPyramidalDart* CTile::getDartDown(CDart* ADart) const
   {
     assert( ADart!=NULL );
-    return static_cast<CPyramidalDart*>(ADart)->getDartDown();
+    return static_cast<CPyramidalDart*>(ADart)->down();
   }
   //------------------------------------------------------------------------------
   INLINE

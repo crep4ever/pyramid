@@ -288,7 +288,7 @@ void CSvgExporter::drawDart(CTile* AMap, CDart* ADart)
   std::ostringstream filename;
   std::string sep = "-";
 
-  filename<<".//output//brin"<<sep<<static_cast<CPyramidalDart*>(ADart)->getId()<<".svg";
+  filename<<".//output//brin"<<sep<<static_cast<CPyramidalDart*>(ADart)->id()<<".svg";
   std::ofstream ofs( filename.str().c_str() );
 
   CSvgCreator svg( ofs );
