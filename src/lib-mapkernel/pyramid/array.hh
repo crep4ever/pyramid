@@ -37,30 +37,29 @@ namespace Map2d
   class CArray
   {
   protected:
-    CVolume<CDart*>* FArray;
-    unsigned int FXmin;
-    unsigned int FYmin;
+    CVolume<CDart*>* m_array;
+    unsigned int m_xmin;
+    unsigned int m_ymin;
 
   public:
-    /// Constructeur
-    /// @param AXmin: l'abscisse minimum de la région
-    /// @param AYmin: l'ordonnée minimum de la région
-    /// @param AWidth: la largeur de la région
-    /// @param AHeight : la hauteur de la région
-    CArray(unsigned int AXmin, unsigned int AYmin, unsigned int AWidth, unsigned int AHeight);
+    /// Constructor
+    /// @param xmin: the minium abscissa of the region
+    /// @param ymin: the minimum ordinate of the region
+    /// @param width: region's width
+    /// @param height : region's height
+    CArray(unsigned int xmin, unsigned int ymin, unsigned int width, unsigned int height);
 
-    // Destructeur
+    // Destructor
     virtual ~CArray();
 
-    /// Récupérer un brin à partir d'un doublet
-    /// @param ADoublet: un doublet
-    /// @return le brin correspondant
-    CDart* getDart(const CDoublet& ADoublet) const;
+    /// Retrieve a dart from its embedding
+    /// @param doublet: the doublet that belongs to the dart's embedding
+    /// @return the corresponding dart in the map
+    CDart* getDart(const CDoublet& doublet) const;
 
-    /// Ajouter un brin à la structure de façon à pouvoir le
-    /// récupérer par la suite en donnant son doublet
-    /// @param ADart: le brin
-    void setDart(CDart* ADart);
+    /// Add a dart to the table so that it can be retrieved from its embedding later
+    /// @param dart: the dart
+    void setDart(CDart* dart);
 
   };
 } // namespace Map2d

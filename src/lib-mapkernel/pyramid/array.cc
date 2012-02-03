@@ -24,10 +24,8 @@ using namespace Map2d;
 //******************************************************************************
 CArray::~CArray()
 {
-  //std::cout<<"destructeur CArray"<<std::endl;
-  assert(FArray != NULL);
-  delete FArray;
-  FArray = NULL;
+  delete m_array;
+  m_array = NULL;
 }
 
 //------------------------------------------------------------------------------
