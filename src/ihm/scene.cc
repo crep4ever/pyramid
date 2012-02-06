@@ -30,6 +30,7 @@
 #include "region.hh"
 #include "traversal-region-pixels.hh"
 using namespace Map2d;
+using namespace pyramid;
 using namespace fogrimmi;
 //******************************************************************************
 CScene::CScene( CControler * AControler, uint ALevel )

@@ -20,8 +20,9 @@
 #ifndef CRITERION_MERGE_HH
 #define CRITERION_MERGE_HH
 //******************************************************************************
+#include "region.hh"
 
-namespace Map2d
+namespace clustering
 {
   /**
    * \file criterion-merge.hh
@@ -32,28 +33,26 @@ namespace Map2d
    * \author Romain Goffe
    */
 
-  class CRegion;
-
   class CCriterionMerge
   {
   public :
 
-    CRegion* FRegion1;
-    CRegion* FRegion2;
+    Map2d::CRegion* FRegion1;
+    Map2d::CRegion* FRegion2;
 
     // Constructeurs
     CCriterionMerge(); //par défaut
-    CCriterionMerge(CRegion* ARegion1, CRegion* ARegion2);
+    CCriterionMerge(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2);
 
     // Destructeur
     virtual ~CCriterionMerge() = 0;
 
     // Accesseurs
-    CRegion* getRegion1() const;
-    void setRegion1(CRegion* ARegion);
+    Map2d::CRegion* getRegion1() const;
+    void setRegion1(Map2d::CRegion* ARegion);
 
-    CRegion* getRegion2() const;
-    void setRegion2(CRegion* ARegion);
+    Map2d::CRegion* getRegion2() const;
+    void setRegion2(Map2d::CRegion* ARegion);
 
     //******************************************************************************
     //Méthodes
@@ -63,7 +62,7 @@ namespace Map2d
     virtual bool isRegionToMerge() = 0;
 
   };
-}
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("criterion-merge.icc")
 //******************************************************************************

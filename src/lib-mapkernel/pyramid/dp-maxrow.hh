@@ -25,7 +25,7 @@
 #include "doublet.hh"
 #include "macros.hh"
 //******************************************************************************
-namespace Map2d
+namespace pyramid
 {
   /**
    * \file dp-maxrow.hh
@@ -70,7 +70,7 @@ namespace Map2d
     void setDoublet2(const CDoublet & ADoublet2);
 
   };
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("dp-maxrow.icc")
 //******************************************************************************

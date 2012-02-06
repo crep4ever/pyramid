@@ -30,6 +30,7 @@
 #define UNUSED(x) (void)x
 
 using namespace Map2d;
+using namespace pyramid;
 
 //******************************************************************************
 //Constructeurs

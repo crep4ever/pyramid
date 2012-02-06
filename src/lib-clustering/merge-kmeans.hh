@@ -29,7 +29,7 @@
  * Fusionne deux régions adjacentes si elles appartiennent à une même classe
  * après la calssification opérée par la lib kmlocal
  */
-namespace Map2d
+namespace clustering
 {
   class CRegion;
   class CMergeKMeans : public CCriterionMerge
@@ -57,7 +57,7 @@ namespace Map2d
     bool isRegionToMerge();
 
   };
-}
+} // end namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("merge-kmeans.icc")
 //******************************************************************************

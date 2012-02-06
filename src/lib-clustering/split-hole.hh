@@ -23,21 +23,20 @@
 #include "criterion-split.hh"
 //#include "pyramidal-region.hh"
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
   //class CSplitGrey;
   /**
    * Détermine si l'on doit éclater une région d'après le critère topologique suivant:
    * on split la région si sa région mère a un trou (ie, il existe un first son)
    */
-  class CRegion;
   class CSplitHole : public CCriterionSplit
   {
   public:
 
     // Constructeurs
     CSplitHole(); //par défaut
-    CSplitHole(CRegion* ARegion);
+    CSplitHole(Map2d::CRegion* ARegion);
     // Destructeur
     ~CSplitHole();
 
@@ -48,7 +47,7 @@ namespace Map2d
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
   };
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("split-hole.icc")
 //******************************************************************************

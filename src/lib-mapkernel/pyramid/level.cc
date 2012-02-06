@@ -25,7 +25,10 @@
 #include "chrono.hh"
 #include <cassert>
 #include INCLUDE_NON_INLINE("level.icc")
+
 using namespace Map2d;
+using namespace pyramid;
+
 //******************************************************************************
 CLevel::~CLevel()
 {

@@ -24,7 +24,9 @@
 #include "pyramidal-region.hh"
 #include "coverage-region-pixels.hh"
 #include "svg-export.hh"
+
 using namespace Map2d;
+using namespace pyramid;
 
 //******************************************************************************
 // Display information

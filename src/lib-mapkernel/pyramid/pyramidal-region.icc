@@ -18,7 +18,7 @@
 #include <cmath>
 #include "pyramidal-dart.hh"
 
-namespace Map2d
+namespace pyramid
 {
   INLINE
   CPyramidalRegion::~CPyramidalRegion()
@@ -245,4 +245,4 @@ namespace Map2d
   bool CInfinitePyramidalRegion::isInfiniteRegion() const
   { return true; }
 
-} // namespace Map2d
+} // namespace pyramid

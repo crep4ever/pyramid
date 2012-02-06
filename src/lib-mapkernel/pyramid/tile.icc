@@ -25,7 +25,8 @@
 #include <string.h>
 #include <map>
 #include "traversal-region-pixels.hh"
-namespace Map2d
+
+namespace pyramid
 {
   INLINE
   CTile::~CTile()
@@ -1140,5 +1141,5 @@ namespace Map2d
 
 
   //******************************************************************************
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************

@@ -30,7 +30,10 @@
 #include "chrono.hh"
 #include "orders.hh"
 #include INCLUDE_NON_INLINE("tile-extract.icc")
+
 using namespace Map2d;
+using namespace pyramid;
+
 //******************************************************************************
 CDart* CTile::makeTileBorder()
 {

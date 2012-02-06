@@ -30,7 +30,7 @@
 
 #include INCLUDE_NON_INLINE("tile-projection.icc")
 using namespace Map2d;
-using namespace std;
+using namespace pyramid;
 
 //------------------------------------------------------------------------------
 void CTile::projectionStandard()

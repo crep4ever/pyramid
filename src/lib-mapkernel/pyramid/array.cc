@@ -20,7 +20,8 @@
 #include "inline-macro.hh"
 #include "array.hh"
 #include INCLUDE_NON_INLINE("array.icc")
-using namespace Map2d;
+using namespace pyramid;
+
 //******************************************************************************
 CArray::~CArray()
 {

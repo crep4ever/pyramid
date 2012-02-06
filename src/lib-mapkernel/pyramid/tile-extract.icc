@@ -23,7 +23,7 @@
 #include "pyramidal-region.hh"
 #include "traversal-region-pixels.hh"
 //******************************************************************************
-namespace Map2d
+namespace pyramid
 {
   INLINE
   CMatrix<CRegion*>* CTile::createPixelRegionMatrix()
@@ -86,5 +86,5 @@ namespace Map2d
   }
 
   //******************************************************************************
-}//namespace Map2d
+} //namespace pyramid
 //******************************************************************************

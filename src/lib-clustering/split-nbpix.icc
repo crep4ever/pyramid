@@ -19,7 +19,7 @@
 //******************************************************************************
 #include "region.hh"
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
 //******************************************************************************
 //Constructeurs
@@ -35,7 +35,7 @@ INLINE
 CSplitNbPix::~CSplitNbPix(){}
 //------------------------------------------------------------------------------
 INLINE
-CSplitNbPix::CSplitNbPix(CRegion* ARegion, unsigned int AThreshold) :
+CSplitNbPix::CSplitNbPix(Map2d::CRegion* ARegion, unsigned int AThreshold) :
 CCriterionSplit(ARegion)
 {
   FThreshold = AThreshold;
@@ -64,5 +64,5 @@ bool CSplitNbPix::isRegionToSplit()
 }
 
 //******************************************************************************
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************

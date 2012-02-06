@@ -19,7 +19,7 @@
 //******************************************************************************
 #include "pyramidal-region.hh"
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
   //******************************************************************************
   //Constructeurs
@@ -34,7 +34,7 @@ namespace Map2d
   CSplitDeviation::~CSplitDeviation(){}
   //------------------------------------------------------------------------------
   INLINE
-  CSplitDeviation::CSplitDeviation(CRegion* ARegion, unsigned int AMergeThreshold) :
+  CSplitDeviation::CSplitDeviation(Map2d::CRegion* ARegion, unsigned int AMergeThreshold) :
     CCriterionSplit(ARegion)
   {
     FMergeThreshold = AMergeThreshold;
@@ -57,7 +57,7 @@ namespace Map2d
 
     //Calcul de l'écart type de la région mère
     float deviation = 0;
-    CPyramidalRegion* region = static_cast<CPyramidalRegion*>(FRegion);
+    pyramid::CPyramidalRegion* region = static_cast<pyramid::CPyramidalRegion*>(FRegion);
 
     if(region->getNbPixels() == 0)
       {
@@ -76,5 +76,5 @@ namespace Map2d
     return FMergeThreshold < (unsigned int) deviation  +1 ;
   }
   //******************************************************************************
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************

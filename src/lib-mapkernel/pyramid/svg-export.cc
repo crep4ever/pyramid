@@ -28,6 +28,7 @@
 #include "traversal-region-pixels.hh"
 #include "vertex.hh"
 using namespace Map2d;
+using namespace pyramid;
 //******************************************************************************
 void CSvgExporter::drawPyramid(CPyramid* APyramid, bool APerspective, bool ATopology, bool AGeometry)
 {

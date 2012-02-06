@@ -21,6 +21,7 @@
 #include INCLUDE_NON_INLINE("pyramidal-region.icc")
 
 using namespace Map2d;
+using namespace pyramid;
 
 CInfinitePyramidalRegion::~CInfinitePyramidalRegion()
 {

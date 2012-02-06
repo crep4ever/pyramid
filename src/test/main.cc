@@ -19,7 +19,7 @@
 #include <iostream>
 #include <tiffio.h>
 #include "pyramid.hh"
-using namespace Map2d;
+using namespace pyramid;
 
 int main(int argc, char * argv[])
 {

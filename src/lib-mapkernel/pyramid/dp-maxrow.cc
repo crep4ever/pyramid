@@ -21,7 +21,7 @@
 #include "dp-maxrow.hh"
 #include <vector>
 #include INCLUDE_NON_INLINE("dp-maxrow.icc")
-using namespace Map2d;
+using namespace pyramid;
 
 CMaxRow::~CMaxRow()
 {}

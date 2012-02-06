@@ -25,6 +25,8 @@
 #define UNUSED(x) (void)x
 
 using namespace Map2d;
+using namespace pyramid;
+
 //******************************************************************************
 bool CTile::readInt(const std::string& fileName, std::vector<uint>& dest)
 {

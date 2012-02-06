@@ -23,7 +23,7 @@
 //******************************************************************************
 //Constructeurs
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
   INLINE
   CMergeGrey::CMergeGrey() :
@@ -36,7 +36,7 @@ namespace Map2d
   {}
   //------------------------------------------------------------------------------
   INLINE
-  CMergeGrey::CMergeGrey(CRegion* ARegion1, CRegion* ARegion2, unsigned int AMergeThreshold) :
+  CMergeGrey::CMergeGrey(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2, unsigned int AMergeThreshold) :
     CCriterionMerge(ARegion1, ARegion2){
     FMergeThreshold = AMergeThreshold;
   }
@@ -59,8 +59,8 @@ namespace Map2d
   {
     // Les deux région doivent être issues du même père
     // pour garder la causalité top-down
-    CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(FRegion1);
-    CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(FRegion2);
+    pyramid::CPyramidalRegion* region1 = static_cast<pyramid::CPyramidalRegion*>(FRegion1);
+    pyramid::CPyramidalRegion* region2 = static_cast<pyramid::CPyramidalRegion*>(FRegion2);
     //désactivé pour les bords fictifs
     //assert( region1->getRegionUp() ==region2->getRegionUp() );
 
@@ -72,5 +72,5 @@ namespace Map2d
     //std::cout<<"Diff average gray = "<<diff<<" seuil de merge = "<<getMergeThreshold()<<std::endl;
     return diff < getMergeThreshold();
   }
-}
+} // end namespace clustering
 //******************************************************************************

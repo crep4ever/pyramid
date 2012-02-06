@@ -30,6 +30,11 @@
 
 namespace Map2d
 {
+  class CDart;
+}
+
+namespace pyramid
+{
   /**
    * \file level.hh
    * \class CLevel "level.hh"
@@ -39,7 +44,6 @@ namespace Map2d
    */
 
   class CTile;
-  class CDart;
   class CLevel;
 
   class CLevel
@@ -113,13 +117,13 @@ namespace Map2d
     /// Relie 2 levels (up/down)
     //void linkLevelUpDown(CLevel* ALevelUp, CLevel* ALevelDown);
 
-    CDart* beta0(CDart* ADart) const;
-    CDart* beta1(CDart* ADart) const;
-    CDart* beta2(CDart* ADart) const;
+    Map2d::CDart* beta0(Map2d::CDart* ADart) const;
+    Map2d::CDart* beta1(Map2d::CDart* ADart) const;
+    Map2d::CDart* beta2(Map2d::CDart* ADart) const;
 
     //todo
-    CDart* delta1(CDart* ADart) const;
-    CDart* delta2(CDart* ADart) const;
+    Map2d::CDart* delta1(Map2d::CDart* ADart) const;
+    Map2d::CDart* delta2(Map2d::CDart* ADart) const;
 
 
     //******************************************************************************
@@ -394,7 +398,7 @@ namespace Map2d
     void print();
   };
 
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("level.icc")
 //******************************************************************************

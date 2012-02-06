@@ -23,7 +23,7 @@
 #include "point2d.hh"
 #include <stack>
 //*****************************************************************************
-namespace Map2d
+namespace pyramid
 {
   /**
    * Itérateur des pixels d'une région.
@@ -92,7 +92,7 @@ namespace Map2d
     bool                   FStop;
   };
 
-} // namespace Map2d
+} // namespace pyramid
 //*****************************************************************************
 #endif // TRAVERSAL_REGION_PIXELS_HH
 //*****************************************************************************

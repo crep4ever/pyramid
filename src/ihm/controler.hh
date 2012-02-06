@@ -30,11 +30,11 @@
 #include <QVariant>
 //******************************************************************************
 
-namespace Map2d
+namespace pyramid
 {
   class CPyramid;
   class CTile;
-};
+}
 
 class QAction;
 class QProgressBar;
@@ -107,7 +107,7 @@ class CControler : public QObject
   virtual void readSettings();
 
   /// getter on the controler's pyramid
-  Map2d::CPyramid * pyramid();
+  pyramid::CPyramid * pyramid();
 
   /// getter on the nbLevels property
   int nbLevels() const;
@@ -221,7 +221,7 @@ private:
   void infos() const;
 
   CMainWindow* m_parent;
-  Map2d::CPyramid* m_pyramid;
+  pyramid::CPyramid* m_pyramid;
 
   int  m_nbLevels;
   int  m_tileWidth;

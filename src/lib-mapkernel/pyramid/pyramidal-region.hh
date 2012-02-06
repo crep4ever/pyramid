@@ -24,7 +24,15 @@
 #include "point2d.hh"
 //******************************************************************************
 
-namespace Map2d
+using namespace Map2d;
+
+namespace clustering
+{
+  class CCriterionSplit;
+  class CCriterionMerge;
+}
+
+namespace pyramid
 {
   /**
    * \file pyramidal-region.hh
@@ -36,9 +44,6 @@ namespace Map2d
    * The region "down" is the first child (also called 'representative') in the next level.
    * The region "down" contains the projection of the region's first pixel (top-left).
    */
-
-  class CCriterionSplit;
-  class CCriterionMerge;
 
   class CPyramidalRegion: public CRegion
   {
@@ -274,7 +279,7 @@ namespace Map2d
         }
    };
 
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("pyramidal-region.icc")
 //******************************************************************************

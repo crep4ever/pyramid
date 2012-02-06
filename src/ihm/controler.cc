@@ -28,6 +28,7 @@
 #include "imageTiff.hh"
 #include "file-chooser.hh"
 using namespace Map2d;
+using namespace pyramid;
 //******************************************************************************
 
 CControler::CControler( CMainWindow* AParent )

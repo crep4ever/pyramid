@@ -26,6 +26,8 @@
 #include "heap.hh"
 //******************************************************************************
 
+namespace pyramid
+{
   /**
    * \file dk-doublet.hh
    * \brief Class to add a weight on doublet for dijkstra algorithm
@@ -62,6 +64,7 @@
     friend std::ostream& operator<<(std::ostream& AStream,
 				    const CDkDoublet& ADoublet);
   };
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("dk-doublet.icc")
 //******************************************************************************

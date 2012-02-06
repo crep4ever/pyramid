@@ -31,10 +31,14 @@
 namespace Map2d
 {
   class CDart;
-  class CPyramid;
-  class CTile;
   class CTopologicalMap;
-};
+}
+
+namespace pyramid
+{
+  class CTile;
+  class CPyramid;
+}
 
 class QAction;
 class QPixmap;
@@ -154,7 +158,7 @@ protected:
   void drawImage();
 
   /// draw the elements representing the interpixel elements
-  void drawInterpixel(Map2d::CTile* ATile, QGraphicsItemGroup * group = NULL);
+  void drawInterpixel(pyramid::CTile* ATile, QGraphicsItemGroup * group = NULL);
 
   /// draw the elements representing the map
   void drawMap(Map2d::CTopologicalMap* map, QGraphicsItemGroup * group = NULL);
@@ -164,7 +168,7 @@ protected:
 		   QGraphicsItemGroup * fictiveGroup = NULL);
 
   /// draw the image regions labels
-  void drawLabels(Map2d::CTile* map, QGraphicsItemGroup * group = NULL);
+  void drawLabels(pyramid::CTile* map, QGraphicsItemGroup * group = NULL);
 
   /// draw the elements representing the borders of tiles
   //  void drawFictiveBorders(Map2d::CTopologicalMap* map, QGraphicsItemGroup * group = NULL,
@@ -193,7 +197,7 @@ protected:
   void drawCurrentLevel2();
 
   /// draw a map without darts that belong to the infinite region
-  void drawOpenMap(Map2d::CTile* ATile, QGraphicsItemGroup* AGroup=NULL,
+  void drawOpenMap(pyramid::CTile* ATile, QGraphicsItemGroup* AGroup=NULL,
 		   QGraphicsItemGroup* AFictiveGroup=NULL);
 
   CControler* m_controler;

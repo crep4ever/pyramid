@@ -16,19 +16,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-namespace Map2d
+namespace pyramid
 {
   INLINE
   CArray::CArray(unsigned int xmin, unsigned int ymin, unsigned int width, unsigned int height) :
     m_xmin(xmin),
     m_ymin(ymin)
   {
-    m_array = new CVolume< CDart* >(width+1, height+1, 2);
+    m_array = new CVolume< Map2d::CDart* >(width+1, height+1, 2);
     m_array->fill();
   }
 
   INLINE
-  CDart*  CArray::getDart(const CDoublet& ADoublet) const
+  Map2d::CDart*  CArray::getDart(const CDoublet& ADoublet) const
   {
     if( ADoublet.isPos(ADoublet.getLinel()) )
       {
@@ -42,7 +42,7 @@ namespace Map2d
 	if( ADoublet.isX(ADoublet.getLinel()) )
 	  {
 	    if(ADoublet.getX()<=0) return NULL;
-	    CDart* tmp = m_array->getValue( ADoublet.getX()-1 - m_xmin, ADoublet.getY() - m_ymin, 0 );
+	    Map2d::CDart* tmp = m_array->getValue( ADoublet.getX()-1 - m_xmin, ADoublet.getY() - m_ymin, 0 );
 	    if( tmp == NULL)
 	      return NULL;
 	    else
@@ -51,7 +51,7 @@ namespace Map2d
 	else
 	  {
 	    if(ADoublet.getY()<=0) return NULL;
-	    CDart* tmp = m_array->getValue( ADoublet.getX() - m_xmin, ADoublet.getY()-1 - m_ymin, 1 );
+	    Map2d::CDart* tmp = m_array->getValue( ADoublet.getX() - m_xmin, ADoublet.getY()-1 - m_ymin, 1 );
 	    if( tmp == NULL)
 	      return NULL;
 	    else
@@ -61,10 +61,10 @@ namespace Map2d
   }
 
   INLINE
-  void CArray::setDart(CDart* ADart)
+  void CArray::setDart(Map2d::CDart* ADart)
   {
     assert(ADart->getBeta2()!=NULL);
-    CDoublet doublet = static_cast<CTopologicalDart*>(ADart)->doublet();
+    CDoublet doublet = static_cast<Map2d::CTopologicalDart*>(ADart)->doublet();
 
     if( doublet.isPos(doublet.getLinel()) )
       {
@@ -82,5 +82,5 @@ namespace Map2d
       }
   }
 
-} // namespace Map2d
+} // namespace pyramid
 

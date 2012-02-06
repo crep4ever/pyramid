@@ -22,7 +22,10 @@
 #include "coverage-region-pixels.hh"
 #include "svg-export.hh"
 #include "pyramidal-dart.hh"
+
 using namespace Map2d;
+using namespace pyramid;
+
 //******************************************************************************
 void CTile::createMask(std::vector<CDoublet>& AMask)
 {

@@ -28,6 +28,7 @@
 #include INCLUDE_NON_INLINE("tile-burst.icc")
 
 using namespace Map2d;
+using namespace pyramid;
 
 //------------------------------------------------------------------------------
 CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)

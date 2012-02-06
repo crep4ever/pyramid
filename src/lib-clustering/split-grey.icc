@@ -20,7 +20,7 @@
 #include "pyramidal-region.hh"
 #include <cassert>
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
   //******************************************************************************
   //Constructeurs
@@ -33,7 +33,7 @@ namespace Map2d
   {}
   //------------------------------------------------------------------------------
   INLINE
-  CSplitGrey::CSplitGrey(CRegion* ARegion, unsigned int AMergeThreshold) :
+  CSplitGrey::CSplitGrey(Map2d::CRegion* ARegion, unsigned int AMergeThreshold) :
     CCriterionSplit(ARegion)
   {
     FMergeThreshold = AMergeThreshold;
@@ -58,7 +58,8 @@ namespace Map2d
   INLINE
   bool CSplitGrey::isRegionToSplit()
   {
-    int diff = static_cast<CPyramidalRegion*>(FRegion)->getGreyMax() - static_cast<CPyramidalRegion*>(FRegion)->getGreyMin();
+    int diff = static_cast<pyramid::CPyramidalRegion*>(FRegion)->getGreyMax() -
+      static_cast<pyramid::CPyramidalRegion*>(FRegion)->getGreyMin();
     assert(diff>=0);
 
     //std::cout<<"différence min / max de la région "<<FRegion->getId()<<" = "<<diff<<std::endl;
@@ -67,5 +68,5 @@ namespace Map2d
   }
 
   //******************************************************************************
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************

@@ -4,7 +4,7 @@
 //******************************************************************************
 #include "criterion-split.hh"
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
   //class CSplitGrey;
   /**
@@ -29,7 +29,7 @@ namespace Map2d
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
   };
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("split-histo.icc")
 //******************************************************************************

@@ -19,7 +19,7 @@
 //******************************************************************************
 #include "pyramidal-region.hh"
 //******************************************************************************
-namespace Map2d
+namespace clustering
 {
   //******************************************************************************
   //Constructeurs
@@ -30,7 +30,7 @@ namespace Map2d
   {}
   //------------------------------------------------------------------------------
   INLINE
-  CSplitHole::CSplitHole(CRegion* ARegion) : CCriterionSplit(ARegion)
+  CSplitHole::CSplitHole(Map2d::CRegion* ARegion) : CCriterionSplit(ARegion)
   {}
   //------------------------------------------------------------------------------
   INLINE
@@ -43,9 +43,9 @@ namespace Map2d
   INLINE
   bool CSplitHole::isRegionToSplit()
   {
-    return static_cast<CPyramidalRegion*>(FRegion)->up()->existSon();
+    return static_cast<pyramid::CPyramidalRegion*>(FRegion)->up()->existSon();
   }
 
   //******************************************************************************
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************

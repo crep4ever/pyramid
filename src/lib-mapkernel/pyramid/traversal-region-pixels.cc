@@ -20,6 +20,7 @@
 #include "traversal-region-pixels.hh"
 #include "tile.hh"
 using namespace Map2d;
+using namespace pyramid;
 //*****************************************************************************
 CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
 					       CPyramidalRegion* ARegion):

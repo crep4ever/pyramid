@@ -27,12 +27,11 @@
 #include "merge-grey.hh"
 #include "split-deviation.hh"
 
-
 //******************************************************************************
-namespace Map2d
+namespace pyramid
 {
   INLINE
-  bool CTile::isRegionToSplit(CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode)
+  bool CTile::isRegionToSplit(Map2d::CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode)
   {
     //std::cout<<"CTile::isRegionToSplit criterion = "<< AFocusAttentionMode <<std::endl;
     if(!ARegion)
@@ -40,21 +39,21 @@ namespace Map2d
     if(ARegion==NULL || ARegion->isInfiniteRegion())
       return false;
 
-    CCriterionSplit* oracle = NULL;
+    clustering::CCriterionSplit* oracle = NULL;
     CPyramidalRegion* region = static_cast<CPyramidalRegion*>(ARegion);
 
     switch(AFocusAttentionMode)
       {
       case FocusSize:
-	oracle = new CSplitNbPix(ARegion, 4);
+	oracle = new clustering::CSplitNbPix(ARegion, 4);
 	break;
 
       case FocusGrey:
-	oracle = new CSplitGrey(ARegion, mergeThreshold());
+	oracle = new clustering::CSplitGrey(ARegion, mergeThreshold());
 	break;
 
       case FocusHomogeneous:
-	oracle = new CSplitDeviation(ARegion, mergeThreshold());
+	oracle = new clustering::CSplitDeviation(ARegion, mergeThreshold());
 	break;
 
       case FocusHisto:
@@ -131,7 +130,7 @@ namespace Map2d
 
   //------------------------------------------------------------------------------
   INLINE
-  bool CTile::isRegionToMerge(CRegion* ARegion1, CRegion* ARegion2, const SegmentationMode & ASegmentationMode)
+  bool CTile::isRegionToMerge(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2, const SegmentationMode & ASegmentationMode)
   {
     assert(ARegion1 != NULL && ARegion2 != NULL);
 
@@ -150,7 +149,7 @@ namespace Map2d
       {
       case Thresholds:
 	{
-	  CMergeGrey crit1 (ARegion1, ARegion2, mergeThreshold());
+	  clustering::CMergeGrey crit1 (ARegion1, ARegion2, mergeThreshold());
 	  return crit1.isRegionToMerge();
 	}
 
@@ -289,5 +288,5 @@ namespace Map2d
   }
 
   //******************************************************************************
-} // namespace Map2d
+} // namespace pyramid
   //******************************************************************************

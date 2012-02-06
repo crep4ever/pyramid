@@ -26,6 +26,11 @@
 
 namespace Map2d
 {
+  class CRegion;
+}
+
+namespace pyramid
+{
   /**
    * \file pyramidal-dart.hh
    * \class CPyramidalDart
@@ -38,9 +43,7 @@ namespace Map2d
    * d2=beta1(d1), the dart down of d is d1.
    */
 
-  class CRegion;
-
-  class CPyramidalDart: public CTopologicalDart
+  class CPyramidalDart: public Map2d::CTopologicalDart
   {
 
   private:
@@ -64,7 +67,7 @@ namespace Map2d
      *  @param  marks   the marks
      *  @return an instance of pyramidal dart
      */
-    CPyramidalDart(const CDoublet & doublet, CRegion* region,
+    CPyramidalDart(const CDoublet & doublet, Map2d::CRegion* region,
 		   const std::bitset<NB_MARKS> & marks);
 
     /// Destructor
@@ -152,7 +155,7 @@ namespace Map2d
     friend std::ostream& operator<<(std::ostream&, const CPyramidalDart &);
   };
 
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("pyramidal-dart.icc")
 //******************************************************************************

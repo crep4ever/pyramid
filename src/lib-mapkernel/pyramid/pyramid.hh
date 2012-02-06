@@ -31,7 +31,7 @@
 
 class CImageTiff;
 
-namespace Map2d
+namespace pyramid
 {
   /**
    * \file pyramid.hh
@@ -307,7 +307,7 @@ namespace Map2d
 
   };
 
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("pyramid.icc")
 //******************************************************************************

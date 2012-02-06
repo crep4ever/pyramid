@@ -51,15 +51,25 @@
 using namespace fogrimmi;
 
 class CImageTiff;
-class CDkDoublet;
 
 namespace Map2d
+{
+  class CDart;
+  class CRegion;
+  class CTopologicalDart;
+}
+
+namespace pyramid
 {
   /**
    * \class CTile "tile.hh"
    * \brief CTile is a local topological map which corresponds
    * to a subdivision of an image
    */
+
+  class CArray;
+  class CDkDoublet;
+  class CPyramidalDart;
 
   // Load/Swap related structures
   struct SDart
@@ -108,12 +118,6 @@ namespace Map2d
   };
 
   typedef std::vector<CDoublet> CEdge;
-
-  class CArray;
-  class CDart;
-  class CRegion;
-  class CPyramidalDart;
-  class CTopologicalDart;
 
   class CTile: public CTopologicalMap
   {
@@ -809,7 +813,7 @@ namespace Map2d
     /// Return true si la région doit être éclatée
     /// @param ARegion: la région à tester
     /// @param ALevel: le niveau de la région, permet de récupérer les seuils appropriés
-    bool isRegionToSplit(CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode);
+    bool isRegionToSplit(Map2d::CRegion* ARegion, const FocusAttentionMode & AFocusAttentionMode);
 
     /// Insère un sommet sur l'arête d'un brin
     /// @param ADart: le brin
@@ -879,7 +883,7 @@ namespace Map2d
     /// @param ARegion2: région 2
     /// @param ASegmentationMode: critère de segmentation
     /// @return true si les 2 régions doivent être fusionnées
-    bool isRegionToMerge(CRegion* ARegion1, CRegion* ARegion2,
+    bool isRegionToMerge(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2,
 			 const SegmentationMode & ASegmentationMode=Thresholds);
 
     /// Parcours tous les brins de la carte pour voir pour chaque brin d s'il
@@ -1103,7 +1107,7 @@ namespace Map2d
 
   };
 
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("tile.icc")
 #include INCLUDE_INLINE("tile-extract.icc")

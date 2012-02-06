@@ -21,7 +21,7 @@
 #define MERGE_GREY_HH
 //******************************************************************************
 #include "criterion-merge.hh"
-using namespace Map2d;
+
 //******************************************************************************
 //class CMergeGrey;
 /**
@@ -29,7 +29,7 @@ using namespace Map2d;
  * de niveaux de gris est inférieure à un seuil défini
  */
 
-namespace Map2d
+namespace clustering
 {
   class CMergeGrey : public CCriterionMerge
   {
@@ -40,7 +40,7 @@ namespace Map2d
   public:
     // Constructeurs
     CMergeGrey(); //par défaut
-    CMergeGrey(CRegion* ARegion1, CRegion* ARegion2, unsigned int AMergeThreshold);
+    CMergeGrey(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2, unsigned int AMergeThreshold);
 
     // Destructeur
     ~CMergeGrey();
@@ -55,7 +55,7 @@ namespace Map2d
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToMerge();
   };
-}
+} // end namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("merge-grey.icc")
 //******************************************************************************

@@ -22,7 +22,8 @@
 //******************************************************************************
 #include "criterion-split.hh"
 //******************************************************************************
-namespace Map2d
+
+namespace clustering
 {
   //class CSplitGrey;
   /**
@@ -31,7 +32,6 @@ namespace Map2d
    * si gris max - gris min < seuil de merge , on n'éclate pas la région
    */
 
-  class CRegion;
   class CSplitGrey : public CCriterionSplit
   {
   protected:
@@ -40,7 +40,7 @@ namespace Map2d
   public:
     // Constructeurs
     CSplitGrey(); //par défaut
-    CSplitGrey(CRegion* ARegion, unsigned int AMergeThreshold);
+    CSplitGrey(Map2d::CRegion* ARegion, unsigned int AMergeThreshold);
 
     // Destructeur
     ~CSplitGrey();
@@ -54,9 +54,8 @@ namespace Map2d
 
     /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
-
   };
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("split-grey.icc")
 //******************************************************************************

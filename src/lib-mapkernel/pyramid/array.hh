@@ -24,7 +24,13 @@
 #include "doublet.hh"
 #include "volume.hh"
 //******************************************************************************
+
 namespace Map2d
+{
+  class CDart;
+}
+
+namespace pyramid
 {
   /**
    * \file array.hh
@@ -37,7 +43,7 @@ namespace Map2d
   class CArray
   {
   protected:
-    CVolume<CDart*>* m_array;
+    CVolume<Map2d::CDart*>* m_array;
     unsigned int m_xmin;
     unsigned int m_ymin;
 
@@ -55,14 +61,14 @@ namespace Map2d
     /// Retrieve a dart from its embedding
     /// @param doublet: the doublet that belongs to the dart's embedding
     /// @return the corresponding dart in the map
-    CDart* getDart(const CDoublet& doublet) const;
+    Map2d::CDart* getDart(const CDoublet& doublet) const;
 
     /// Add a dart to the table so that it can be retrieved from its embedding later
     /// @param dart: the dart
-    void setDart(CDart* dart);
+    void setDart(Map2d::CDart* dart);
 
   };
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************
 #include INCLUDE_INLINE("array.icc")
 //******************************************************************************

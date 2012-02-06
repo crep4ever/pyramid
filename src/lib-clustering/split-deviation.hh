@@ -23,7 +23,8 @@
 #include "criterion-split.hh"
 #include <cmath>
 //******************************************************************************
-namespace Map2d
+
+namespace clustering
 {
   //class CMergeDeviation;
   /**
@@ -35,15 +36,13 @@ namespace Map2d
    * mais par l'écart-type de la région mère.
    */
 
-  class CRegion;
-
   class CSplitDeviation : public CCriterionSplit
   {
   public:
 
     // Constructeurs
     CSplitDeviation(); //par défaut
-    CSplitDeviation(CRegion* ARegion, unsigned int AMergeThreshold);
+    CSplitDeviation(Map2d::CRegion* ARegion, unsigned int AMergeThreshold);
 
     // Destructeur
     virtual ~CSplitDeviation();
@@ -58,9 +57,8 @@ namespace Map2d
   protected:
     unsigned int FMergeThreshold; //Le seuil de merge
 
-
   };
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("split-deviation.icc")
 //******************************************************************************

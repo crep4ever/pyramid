@@ -20,7 +20,10 @@
 #include "inline-macro.hh"
 #include "pyramidal-dart.hh"
 #include INCLUDE_NON_INLINE("pyramidal-dart.icc")
+
 using namespace Map2d;
+using namespace pyramid;
+
 //******************************************************************************
 void CPyramidalDart::print( std::ostream& AOs ) const
 {

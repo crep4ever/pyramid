@@ -22,13 +22,13 @@
 //******************************************************************************
 #include "criterion-split.hh"
 //******************************************************************************
-namespace Map2d{
 
+namespace clustering
+{
   /**
    * Split une région suivant sa taille en pixels
    */
 
-  class CRegion;
   class CSplitNbPix : public CCriterionSplit
   {
   protected:
@@ -37,7 +37,7 @@ namespace Map2d{
   public:
     // Constructeurs
     CSplitNbPix(); //par défaut
-    CSplitNbPix(CRegion* ARegion, unsigned int ANbPix);
+    CSplitNbPix(Map2d::CRegion *ARegion, unsigned int ANbPix);
 
     // Destructeur
     virtual ~CSplitNbPix();
@@ -45,15 +45,14 @@ namespace Map2d{
     unsigned int getThreshold() const;
     void setThreshold(unsigned int AThreshold);
 
-//******************************************************************************
-//Méthodes
-//******************************************************************************
+    //******************************************************************************
+    //Méthodes
+    //******************************************************************************
 
-  /// Détermine si @param ARegion doit être éclatée ou non
+    /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
-
   };
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("split-nbpix.icc")
 //******************************************************************************

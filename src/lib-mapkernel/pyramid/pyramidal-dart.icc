@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-namespace Map2d
+namespace pyramid
 {
   INLINE
   CPyramidalDart::~CPyramidalDart()
@@ -43,7 +43,7 @@ namespace Map2d
   { /*std::cout<<"CPyramidal Dart : constructeur par recopie"<<std::endl;*/ }
 
   INLINE
-  CPyramidalDart::CPyramidalDart(const CDoublet & doublet, CRegion* region,
+  CPyramidalDart::CPyramidalDart(const CDoublet & doublet, Map2d::CRegion* region,
 				 const std::bitset<NB_MARKS> & AMarks) :
     CTopologicalDart (),
     m_id             ( static_cast<TDartId>(0) ),
@@ -114,5 +114,5 @@ namespace Map2d
   { return( m_down != NULL); }
 
   //******************************************************************************
-} // namespace Map2d
+} // namespace pyramid
 //******************************************************************************

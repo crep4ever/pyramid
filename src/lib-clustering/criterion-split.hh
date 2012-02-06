@@ -20,8 +20,10 @@
 #ifndef CRITERION_SPLIT_HH
 #define CRITERION_SPLIT_HH
 //******************************************************************************
+#include "region.hh"
+using namespace Map2d;
 
-namespace Map2d
+namespace clustering
 {
   /**
    * \file criterion-split.hh
@@ -31,7 +33,6 @@ namespace Map2d
    * \author Romain Goffe
    */
 
-  class CRegion;
   class CCriterionSplit
   {
   protected:
@@ -56,7 +57,7 @@ namespace Map2d
     virtual bool isRegionToSplit() = 0;
 
   };
-} // namespace Map2d
+} // namespace clustering
 //******************************************************************************
 #include INCLUDE_INLINE("criterion-split.icc")
 //******************************************************************************

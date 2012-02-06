@@ -28,6 +28,10 @@ namespace Map2d
 {
   class CDart;
   class CRegion;
+}
+
+namespace pyramid
+{
   class CTile;
   class CPyramid;
 
@@ -70,11 +74,11 @@ namespace Map2d
 
     /// Export svg d'une région vers ./output/region-id.svg
     /// @param ARegion: la région à exporter
-    void drawRegion(CTile* AMap, CRegion* ARegion);
+    void drawRegion(CTile* AMap, Map2d::CRegion* ARegion);
 
     /// Export svg d'un brin vers ./output/brin-id.svg
     /// @param ADart: le brin à exporter
-    void drawDart(CTile* AMap, CDart* ADart);
+    void drawDart(CTile* AMap, Map2d::CDart* ADart);
 
     /// Représente les first pixels des régions dans l'export svg
     /// @param ASvg: le flux dans lequel on ajoute les informations des first pixels
@@ -101,12 +105,12 @@ namespace Map2d
     /// Génération du contenu svg de la région
     /// @param ARegion: la région concernée
     /// @param ASvg: le flux dans lequel on ajoute les informations de la région
-    void addSvgRegion(CTile* AMap, CRegion* ARegion, CSvgCreator& ASvg);
+    void addSvgRegion(CTile* AMap, Map2d::CRegion* ARegion, CSvgCreator& ASvg);
 
     /// Génération du contenu svg du brin
     /// @param ADart: le brin concerné
     /// @param ASvg: le flux dans lequel on ajoute les informations du brin
-    void addSvgDart(CTile* AMap, CDart* ADart, CSvgCreator& ASvg);
+    void addSvgDart(CTile* AMap, Map2d::CDart* ADart, CSvgCreator& ASvg);
 
     /// Colorise les régions d'une carte d'après leur niveau de gris moyen
     /// @param AMap: la carte
@@ -121,7 +125,7 @@ namespace Map2d
     CVertex calculateGap(const CVertex & APoint, const CDoublet & current, const CDoublet & next );
 
   };
-}
+} // namespace pyramid
 //******************************************************************************
 #endif // SVG_EXPORT_HH
 //******************************************************************************
