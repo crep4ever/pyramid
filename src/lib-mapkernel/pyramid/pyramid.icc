@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "imageTiff.hh"
 #include "level.hh"
 #include "tile.hh"
@@ -39,44 +38,44 @@ namespace pyramid
   {
     return FImage;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setImage(CImageTiff* AImage)
   {
     assert( AImage!=NULL );
     FImage = AImage;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::nbPixels() const
   {
     return FNbPixels;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setNbPixels(uint ANbPixels)
   {
     FNbPixels = ANbPixels;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   float CPyramid::deviation() const
   {
     return FDeviation;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setDeviation(float ADeviation)
   {
     FDeviation = ADeviation;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::tileWidth() const
   {
     return FTileWidth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setTileWidth(uint ATileWidth)
   {
@@ -85,13 +84,13 @@ namespace pyramid
     else
       FTileWidth = ATileWidth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::tileHeight() const
   {
     return FTileHeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setTileHeight(uint ATileHeight)
   {
@@ -100,49 +99,49 @@ namespace pyramid
     else
       FTileHeight = ATileHeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::nbLevels() const
   {
     return FNbLevels;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setNbLevels(uint ANbLevels)
   {
     FNbLevels = ANbLevels;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   std::vector<uint> CPyramid::mergeThresholds() const
   {
     return FMergeThresholds;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setMergeThresholds(std::vector<uint> AMergeThresholds)
   {
     FMergeThresholds = AMergeThresholds;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::extractMode() const
   {
     return FExtractMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setExtractMode(const ExtractMode & AMode)
   {
     FExtractMode = AMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   std::deque<CLevel*> CPyramid::levels() const
   {
     return FLevels;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CLevel* CPyramid::level(uint ALevel) const
   {
@@ -154,21 +153,21 @@ namespace pyramid
   // Méthodes sur l'image
   //******************************************************************************
 
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::imageWidth(uint APage) const
   {
     assert( FImage!=NULL);
     return FImage->getXSize(APage);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::imageHeight(uint APage) const
   {
     assert( FImage!=NULL);
     return FImage->getYSize(APage);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::nbTilesWidth(uint APage) const
   {
@@ -176,7 +175,7 @@ namespace pyramid
     uint truncated = (width%FTileWidth > 0)?1:0;
     return width/FTileWidth + truncated;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::nbTilesHeight(uint APage) const
   {
@@ -184,7 +183,7 @@ namespace pyramid
     uint truncated = (height%FTileHeight > 0)?1:0;
     return height/FTileHeight + truncated;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CPyramid::ratios(uint ALevel) const
   {
@@ -204,21 +203,21 @@ namespace pyramid
   {
     return level(APos.z())->tile( CPoint2D(APos.x(),APos.y()) );
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::writeTile(const CPoint3D & APos)
   {
     //std::cout<<"pyr write tile "<<" ("<<APos.x()<<","<<APos.y()<<","<<APos.z()<<")"<<std::endl;
     level(APos.z())->writeTile( CPoint2D(APos.x(),APos.y()) );
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::unloadAllTiles()
   {
     for(uint i=0; i<nbLevels(); ++i)
       level(i)->unloadAllTiles();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::loadAllTiles()
   {
@@ -228,7 +227,7 @@ namespace pyramid
       level(i)->loadAllTiles();
     //std::cout<<std::endl;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::addTile(CTile* ATile, uint ALevel)
   {
@@ -236,7 +235,7 @@ namespace pyramid
     assert(ATile->index(2) == ALevel);
     level(ALevel)->addTile(ATile);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::linkTileUpDown(CTile* ATileUp, CTile* ATileDown)
   {
@@ -244,91 +243,91 @@ namespace pyramid
     ATileUp->setTileDown(ATileDown);
     ATileDown->setTileUp(ATileUp);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::xmax( CTile* ATile ) const
   {
     return ATile->xmax();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::xmin( CTile* ATile ) const
   {
     return ATile->xmin();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::ymax( CTile* ATile ) const
   {
     return ATile->ymax();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::ymin( CTile* ATile ) const
   {
     return ATile->ymin();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::tileWidth(CTile* ATile) const
   {
     return ATile->width();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::tileHeight(CTile* ATile) const
   {
     return ATile->height();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::segmentationMode() const
   {
     return FSegmentationMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setSegmentationMode(const SegmentationMode & AMode)
   {
     FSegmentationMode = AMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::projectionMode() const
   {
     return FProjectionMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setProjectionMode(const ProjectionMode & AMode)
   {
     FProjectionMode = AMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::focusAttentionMode() const
   {
     return FFocusAttentionMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setFocusAttentionMode(const FocusAttentionMode & AMode)
   {
     FFocusAttentionMode = AMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::detectFictiveBordersMode() const
   {
     return FDetectFictiveBordersMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CPyramid::setDetectFictiveBordersMode(const DetectFictiveBordersMode & AMode)
   {
     FDetectFictiveBordersMode = AMode;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CPyramid::nbTiles() const
   {
@@ -337,7 +336,4 @@ namespace pyramid
       res += nbTilesWidth(i) * nbTilesHeight(i);
     return res;
   }
-
-  //******************************************************************************
 } // namespace pyramid
-//******************************************************************************

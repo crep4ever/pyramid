@@ -16,9 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "tile.hh"
-//#include "CImg.h"
 
 namespace pyramid
 {
@@ -45,89 +43,88 @@ namespace pyramid
   //Accesseurs
   //******************************************************************************
 
-  //------------------------------------------------------------------------------
   INLINE
   CLevel* CLevel::levelUp() const
   {
     return FLevelUp;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setLevelUp(CLevel* ALevel)
   {
     //if(ALevel) std::cout<<"setLevelUp= "<<ALevel->id()<<" down = "<<id()<<std::endl;
     FLevelUp = ALevel;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CLevel* CLevel::levelDown() const
   {
     return FLevelDown;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setLevelDown(CLevel* ALevel)
   {
     //if(ALevel) std::cout<<"setLevelUp= "<<ALevel->id()<<" down = "<<id()<<std::endl;
     FLevelDown = ALevel;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CImageTiff* CLevel::image() const
   {
     return FImage;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setImage(CImageTiff* AImage)
   {
     assert( AImage!=NULL );
     FImage = AImage;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   std::deque<CTile*> CLevel::tiles() const
   {
     return FTiles;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setTiles(std::deque<CTile*>& ATiles)
   {
     assert( !ATiles.empty() );
     FTiles = ATiles;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::mergeThreshold() const
   {
     return FMergeThreshold;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setMergeThreshold(uint AMergeThreshold)
   {
     FMergeThreshold = AMergeThreshold;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::depth() const
   {
     return FDepth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setDepth(uint ADepth)
   {
     FDepth = ADepth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::tileHeight() const
   {
     return FTileHeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setTileHeight(uint ATileHeight)
   {
@@ -136,13 +133,13 @@ namespace pyramid
     else
       FTileHeight = ATileHeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::tileWidth() const
   {
     return FTileWidth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::setTileWidth(uint ATileWidth)
   {
@@ -152,7 +149,7 @@ namespace pyramid
       FTileWidth = ATileWidth;
   }
 
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CLevel::upRatios() const
   {
@@ -160,7 +157,7 @@ namespace pyramid
     return CPoint2D( imageWidth()/image()->getXSize(FDepth-1),
 		     imageHeight()/image()->getYSize(FDepth-1) );
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CLevel::downRatios() const
   {
@@ -178,49 +175,49 @@ namespace pyramid
   {
     ATile->loadImage();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::imageWidth() const
   {
     assert( FImage!=NULL);
     return FImage->getXSize(depth());
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::imageHeight() const
   {
     assert( FImage!=NULL);
     return FImage->getYSize(depth());
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::componentWidth() const
   {
     assert( FImage!=NULL);
     return FImage->getProperties().componentWidth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::componentHeight() const
   {
     assert( FImage!=NULL);
     return FImage->getProperties().componentHeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::nbComponentsWidth() const
   {
     assert( FImage!=NULL);
     return FImage->getProperties().width/FImage->getProperties().componentWidth;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::nbComponentsHeight() const
   {
     assert( FImage!=NULL);
     return FImage->getProperties().height/FImage->getProperties().componentHeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::nbTilesWidth() const
   {
@@ -228,7 +225,7 @@ namespace pyramid
     uint truncated = (width%FTileWidth > 0)?1:0;
     return width/FTileWidth + truncated;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::nbTilesHeight() const
   {
@@ -248,79 +245,79 @@ namespace pyramid
   {
     return ATile->xmax();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::xmin( CTile* ATile ) const
   {
     return ATile->xmin();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::ymax( CTile* ATile ) const
   {
     return ATile->ymax();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::ymin( CTile* ATile ) const
   {
     return ATile->ymin();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CLevel::tileTopLeft(CTile* ATile) const
   {
     return CPoint2D(xmin(ATile),ymin(ATile));
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CLevel::tileTopRight(CTile* ATile) const
   {
     return CPoint2D(xmax(ATile),ymin(ATile));
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CLevel::tileBottomLeft(CTile* ATile) const
   {
     return CPoint2D(xmin(ATile),ymax(ATile));
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CPoint2D CLevel::tileBottomRight(CTile* ATile) const
   {
     return CPoint2D(xmax(ATile),ymax(ATile));
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CLevel::existTileLeft(CTile* ATile) const
   {
     return xmin(ATile) > 0;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CLevel::existTileTop(CTile* ATile) const
   {
     return ymin(ATile) > 0;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::tileWidth(CTile* ATile) const
   {
     return ATile->width();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::tileHeight(CTile* ATile) const
   {
     return ATile->height();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::tileIndexI(CTile* ATile) const
   {
     return ATile->index(0);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CLevel::tileIndexJ(CTile* ATile) const
   {
@@ -337,25 +334,25 @@ namespace pyramid
   {
     tile(APos)->simplifyMap();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::splitTileBorder(const CPoint2D & APos)
   {
     tile(APos)->splitBorder();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::splitTileBorder(CTile* ATile)
   {
     ATile->splitBorder();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::retrieveTileCorners(const CPoint2D & APos)
   {
     retrieveTileCorners(tile(APos));
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::retrieveTileBeta2(const CPoint2D & APos,
 				 const SegmentationMode & ASegmentationMode,
@@ -363,7 +360,7 @@ namespace pyramid
   {
     retrieveTileBeta2(tile(APos), ASegmentationMode, ADetectFictiveBordersMode);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::splitTile(const CPoint2D & APos,
 			 const FocusAttentionMode & AFocusAttentionMode,
@@ -385,7 +382,7 @@ namespace pyramid
 
     return loadTile(APos);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::addTile(CTile* ATile)
   {
@@ -393,28 +390,27 @@ namespace pyramid
     //assert( ATile->isOk());
     FTiles.push_back(ATile);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::writeTile(const CPoint2D & APos)
   {
     assert(isTileLoaded(APos));
     tile(APos)->write();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::writeTile(CTile* ATile)
   {
     assert(ATile!=NULL);
     ATile->write();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CTile* CLevel::loadTile(uint i, uint j)
   {
     return loadTile(CPoint2D(i,j));
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   CTile* CLevel::loadTile(const CPoint2D & APos)
   {
@@ -432,14 +428,14 @@ namespace pyramid
     //todo: tester s'il y une tuile gauche ou haut et faire les coutures par beta2'
     return newTile;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CLevel::unloadTile(uint i, uint j)
   {
     return unloadTile(CPoint2D(i,j));
   }
 
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CLevel::unloadTile(const CPoint2D & APos)
   {
@@ -455,7 +451,7 @@ namespace pyramid
     assert(!isTileLoaded(APos));
     return false;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CLevel::isTileLoaded(const CPoint2D & APos)
   {
@@ -465,7 +461,7 @@ namespace pyramid
 
     return false;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::unloadAllTiles()
   {
@@ -477,7 +473,7 @@ namespace pyramid
     assert(FTiles.empty());
     //std::cout<<"[end] CLevel::unloadAllTiles"<<std::endl;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::loadAllTiles()
   {
@@ -485,7 +481,7 @@ namespace pyramid
       for(uint i=0; i<nbTilesWidth(); ++i)
 	tile(CPoint2D(i,j));
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CLevel::unload()
   {
@@ -507,26 +503,26 @@ namespace pyramid
   {
     return ADart->getBeta0();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDart* CLevel::beta1(CDart* ADart) const
   {
     return ADart->getBeta1();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDart* CLevel::beta2(CDart* ADart) const
   {
     return ADart->getBeta2();
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDart* CLevel::delta2(CDart* dart) const
   {
     assert(false);
     return NULL;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDart* CLevel::delta1(CDart* ADart) const
   {
@@ -534,7 +530,6 @@ namespace pyramid
     return ADart->getBeta2();
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   void CLevel::regularization(int nb_iteration, int pp, double lambda, int voisinage)
   {
@@ -553,7 +548,6 @@ namespace pyramid
     //std::cout<<" [end] CLevel::regularization\n";
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   void CLevel::histogram()
   {
@@ -581,7 +575,4 @@ namespace pyramid
 	}
     assert(FHisto);
   }
-
-  //******************************************************************************
 } // namespace pyramid
-//******************************************************************************

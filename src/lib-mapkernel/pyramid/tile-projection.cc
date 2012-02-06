@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "tile.hh"
 #include "array.hh"
@@ -29,10 +28,10 @@
 #include <limits>
 
 #include INCLUDE_NON_INLINE("tile-projection.icc")
+
 using namespace Map2d;
 using namespace pyramid;
 
-//------------------------------------------------------------------------------
 void CTile::projectionStandard()
 {
   //std::cout<<"\n[start] CTile::projectionStandard"<<std::endl;
@@ -81,7 +80,6 @@ void CTile::projectionStandard()
   //std::cout<<"\n[end] CTile::projectionStandard()"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::projectionDijkstraConstant()
 {
   //std::cout<<"\n[start] CTile::projectionDijkstraConstant"<<std::endl;
@@ -134,7 +132,6 @@ void CTile::projectionDijkstraConstant()
 }
 
 
-//------------------------------------------------------------------------------
 void CTile::projectionDijkstra()
 {
   //std::cout<<"\n[start] CTile::projectionDijkstra"<<std::endl;
@@ -204,7 +201,6 @@ void CTile::projectionDijkstra()
 }
 
 
-//------------------------------------------------------------------------------
 uint CTile::projectPath(const CEdge & AEdge)
 {
   //std::cout<<"[start] CTile::projectPath"<<std::endl;
@@ -269,7 +265,7 @@ uint CTile::projectPath(const CEdge & AEdge)
   //std::cout<<"[end] CTile::projectPath"<<std::endl;
   return 0;
 }
-//------------------------------------------------------------------------------
+
 CDkDoublet* CTile::findNodes(const CEdge & AEdge, Heap<CDkDoublet*> & AHeap)
 {
   if(AEdge.size()==1)

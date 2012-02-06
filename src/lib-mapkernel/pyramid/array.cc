@@ -16,18 +16,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "array.hh"
 #include INCLUDE_NON_INLINE("array.icc")
+
 using namespace pyramid;
 
-//******************************************************************************
 CArray::~CArray()
 {
   delete m_array;
   m_array = NULL;
 }
-
-//------------------------------------------------------------------------------
 

@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "imageTiff.hh"
 #include "image2D.hh"
@@ -38,7 +37,7 @@
 #define UNUSED(x) (void)x
 
 using namespace fogrimmi;
-//******************************************************************************
+
 CImageTiff::CImageTiff(const std::string & AFilename) :
   CImage2D()
   , IM_Tiff(AFilename)
@@ -70,18 +69,15 @@ CImageTiff::CImageTiff(const std::string & AFilename) :
   FDepth = 0;
 }
 
-//------------------------------------------------------------------------------
 CImageTiff::CImageTiff( IM_ImageMemory& imgMem, const CFile& _fileName ):
     IM_Tiff( imgMem, _fileName )
 { }
 
-//------------------------------------------------------------------------------
 CImageTiff::~CImageTiff()
 {
   delete[] FPages;
 }
 
-//------------------------------------------------------------------------------
 uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeans"<<std::endl;
@@ -148,7 +144,6 @@ uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
   return result;
 }
 
-//------------------------------------------------------------------------------
 uint8* CImageTiff::simplekmeans(const uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::simplekmeans"<<std::endl;
@@ -204,7 +199,6 @@ uint8* CImageTiff::simplekmeans(const uint ANbClass)
     return (uint8*) membership;
 }
 
-//------------------------------------------------------------------------------
 uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeansMitosis"<<std::endl;
@@ -258,7 +252,6 @@ uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)
   return result;
 }
 
-//------------------------------------------------------------------------------
 uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
 {
   //std::cout<<" [start] CImageTiff::kmeansRegions"<<std::endl;
@@ -311,7 +304,6 @@ uint8* CImageTiff::kmeansRegions(uint8* data, uint size, uint ANbClass)
   return data;
 }
 
-//------------------------------------------------------------------------------
 void CImageTiff::colorRegularization(int nb_iteration,
 				     int pp,
 				     double lambda,
@@ -382,7 +374,6 @@ void CImageTiff::colorRegularization(int nb_iteration,
   //std::cout<<"[end] CImageTiff::colorRegularization in level  "<< depth() <<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CImageTiff::greyRegularization(int nb_iteration,
 				    int pp,
 				    double lambda,
@@ -392,7 +383,6 @@ void CImageTiff::greyRegularization(int nb_iteration,
   assert(false);
 }
 
-//------------------------------------------------------------------------------
 CVolume<uint8_t>* CImageTiff::kmeansHistogram(CVolume<uint>* histo)
 {
   //std::cout<<"[start] CImageTiff::kmeansHistogram \n";
@@ -482,7 +472,6 @@ CVolume<uint8_t>* CImageTiff::kmeansHistogram(CVolume<uint>* histo)
 }
 
 
-//------------------------------------------------------------------------------
 bool CImageTiff::isSorted()
 {
   for(uint k=0; k<FNbPages-1; ++k)
@@ -493,7 +482,6 @@ bool CImageTiff::isSorted()
   return true;
 }
 
-//------------------------------------------------------------------------------
 void CImageTiff::printInfosAllPixels(uint APage)
 {
   std::cout<<" Affichage des infos pixels de la profondeur " << APage <<std::endl;
@@ -512,6 +500,3 @@ void CImageTiff::printInfosAllPixels(uint APage)
     }
   std::cout<<std::endl;
 }
-
-//******************************************************************************
-

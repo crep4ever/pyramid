@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "tile.hh"
 #include "tile.hh"
 #include "pyramidal-dart.hh"
@@ -27,7 +26,6 @@
 using namespace Map2d;
 using namespace pyramid;
 
-//******************************************************************************
 bool CTile::readInt(const std::string& fileName, std::vector<uint>& dest)
 {
   std::ifstream istr (fileName.c_str(), std::ios::in | std::ios::trunc );
@@ -49,7 +47,7 @@ bool CTile::readInt(const std::string& fileName, std::vector<uint>& dest)
   istr.close();
   return result;
 }
-//------------------------------------------------------------------------------
+
 void CTile::saveProperties()
 {
   //std::cout<<"[start] CTile::saveProperties"<<std::endl;
@@ -80,7 +78,6 @@ void CTile::saveProperties()
   //std::cout<<"[end] CTile::saveProperties"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::loadProperties()
 {
   setId(FProperties->id);
@@ -91,7 +88,6 @@ void CTile::loadProperties()
   assert(width()!=0 && height()!=0);
 }
 
-//------------------------------------------------------------------------------
 void CTile::loadEmptyTopology()
 {
   //std::cout<<"[start] CTile::loadEmptyTopology"<<std::endl;
@@ -108,7 +104,6 @@ void CTile::loadEmptyTopology()
   //std::cout<<"[end] CTile::loadEmptyTopology"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::loadTopology()
 {
   //std::cout<<"[start] CTile::loadTileTopology"<<std::endl;
@@ -178,13 +173,10 @@ void CTile::loadTopology()
 	  tileDown()->linkDartUpDown(newDart,itd->second);
 	}
     }
-
   //assert(checkDarts());
-
   //std::cout<<"[end] CTile::loadTopology"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::saveTopology()
 {
   //std::cout<<"[start] CTile::saveTopology"<<std::endl;
@@ -238,8 +230,6 @@ void CTile::saveTopology()
   //std::cout<<"[end] CTile::saveTopology"<<std::endl;
 }
 
-
-//------------------------------------------------------------------------------
 void CTile::loadEmptyTree()
 {
   //std::cout<<"[start] CTile::loadEmptyTree"<<std::endl;
@@ -265,8 +255,6 @@ void CTile::loadEmptyTree()
   //std::cout<<"[end] CTile::loadEmptyTree"<<std::endl;
 }
 
-
-//------------------------------------------------------------------------------
 void CTile::loadTree()
 {
   //std::cout<<"[start] CTile::loadTree"<<std::endl;
@@ -344,8 +332,6 @@ void CTile::loadTree()
   //std::cout<<"[end] CTile::loadTree"<<std::endl;
 }
 
-
-//------------------------------------------------------------------------------
 void CTile::saveTree()
 {
   //std::cout<<"[start] CTile::saveTree"<<std::endl;
@@ -435,8 +421,6 @@ void CTile::saveTree()
   //std::cout<<"[end] CTile::saveTree"<<std::endl;
 }
 
-
-//------------------------------------------------------------------------------
 void CTile::write()
 {
   //std::cout<<"[start] CTile::write "<<" ("<<index(0)<<","<<index(1)<<","<<index(2)<<")"<<std::endl;
@@ -504,8 +488,6 @@ void CTile::write()
   //std::cout<<"[end] CTile::write"<<std::endl;
 }
 
-
-//------------------------------------------------------------------------------
 void CTile::load(unsigned int Ai, unsigned int Aj, unsigned int Ak)
 {
   //std::cout<<"[start] CTile::load "<<" ("<<Ai<<","<<Aj<<","<<Ak<<")"<<std::endl;

@@ -16,12 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//*****************************************************************************
 #include "traversal-region-pixels.hh"
 #include "tile.hh"
+
 using namespace Map2d;
 using namespace pyramid;
-//*****************************************************************************
+
 CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
 					       CPyramidalRegion* ARegion):
   FTile(ATile),
@@ -34,12 +34,12 @@ CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
   this->operator++();
   FTile->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
 }
-//*****************************************************************************
+
 CTraversalRegionPixels::~CTraversalRegionPixels()
 {
   FTile->unmarkAllPixels();
 }
-//*****************************************************************************
+
 void CTraversalRegionPixels::reinit()
 {
   FStop = false;
@@ -52,7 +52,7 @@ void CTraversalRegionPixels::reinit()
   this->operator++();
   FTile->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
 }
-//*****************************************************************************
+
 void CTraversalRegionPixels::operator++()
 {
   if( FPixelsStack.empty() )
@@ -114,20 +114,20 @@ void CTraversalRegionPixels::operator++()
 	}
     }
 }
-//*****************************************************************************
+
 const CPoint2D & CTraversalRegionPixels::operator++(int)
 {
   this->operator ++();
   return FCurrentPixel;
 }
-//*****************************************************************************
+
 bool CTraversalRegionPixels::cont() const
 {
   return !FStop;
 }
-//*****************************************************************************
+
 const CPoint2D & CTraversalRegionPixels::operator*()
 {
   return FCurrentPixel;
 }
-//*****************************************************************************
+

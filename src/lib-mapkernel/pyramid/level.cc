@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "level.hh"
 #include "pyramidal-region.hh"
@@ -29,13 +28,13 @@
 using namespace Map2d;
 using namespace pyramid;
 
-//******************************************************************************
 CLevel::~CLevel()
 {
   //std::cout<<"[destructeur] CLevel \n";
   unloadAllTiles();
   FHisto=NULL;
 }
+
 
 //******************************************************************************
 // Construction
@@ -91,7 +90,6 @@ void CLevel::createTopLevel()
   //std::cout<<"[end] CLevel::createTopLevel"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CLevel::extract(const ExtractMode & AExtractMode,
 		     const SegmentationMode & ASegmentationMode,
 		     const ProjectionMode & AProjectionMode,
@@ -158,7 +156,6 @@ void CLevel::extract(const ExtractMode & AExtractMode,
   std::cout<<"[end] CPyramid::extract level \n";
 }
 
-//------------------------------------------------------------------------------
 uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
 				const SegmentationMode & ASegmentationMode,
 				const ProjectionMode & AProjectionMode,
@@ -224,7 +221,6 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   //std::cout<<"[end] CLevel::burstAndMergeTile"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 uint CLevel::extractTile(const CPoint2D & APos,
 			 const SegmentationMode & ASegmentationMode,
 			 const ProjectionMode & AProjectionMode,
@@ -281,7 +277,6 @@ uint CLevel::extractTile(const CPoint2D & APos,
   //std::cout<<"[end] CLevel::extractTile"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 CTile* CLevel::tileTop(CTile* ATile)
 {
   assert(ATile!=NULL);
@@ -298,7 +293,7 @@ CTile* CLevel::tileTop(CTile* ATile)
     }
   return NULL;
 }
-//------------------------------------------------------------------------------
+
 CTile* CLevel::tileLeft(CTile* ATile)
 {
   assert(ATile!=NULL);
@@ -315,7 +310,7 @@ CTile* CLevel::tileLeft(CTile* ATile)
     }
   return NULL;
 }
-//------------------------------------------------------------------------------
+
 void CLevel::delTile(CTile* ATile)
 {
   //on s'assure de bien supprimer une tuile appartenant à ce niveau
@@ -364,7 +359,6 @@ void CLevel::delTile(CTile* ATile)
     }
   delete ATile;
 }
-
 
 
 //******************************************************************************
@@ -424,7 +418,6 @@ void CLevel::simplifyTileTopBorder(CTile* ATile)
     }
 }
 
-//------------------------------------------------------------------------------
 void CLevel::simplifyTileLeftBorder(CTile* ATile)
 {
   CTile* currentTile = ATile;
@@ -480,7 +473,6 @@ void CLevel::simplifyTileLeftBorder(CTile* ATile)
     }
 }
 
-//------------------------------------------------------------------------------
 void CLevel::simplifyTileBorder(CTile* ATile)
 {
   //std::cout<<"[start] CLevel::simplifyTileBorder"<<std::endl;
@@ -528,7 +520,6 @@ void CLevel::simplifyTileBorder(CTile* ATile)
   //std::cout<<"[end] CLevel::simplifyTileBorder"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CLevel::retrieveTileCorners(CTile* ATile) const
 {
   ATile->FCorners.clear();
@@ -583,7 +574,6 @@ void CLevel::retrieveTileCorners(CTile* ATile) const
   //std::cout<<"[end] CLevel::retrieveCorners"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CLevel::retrieveTileBeta2(CTile* ATile,
 			       const SegmentationMode & ASegmentationMode,
 			       const DetectFictiveBordersMode & ADetectFictiveBordersMode)
@@ -693,9 +683,11 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
   //std::cout<<"*** [end] CLevel::retrieveBeta2 ***"<<std::endl;
 }
 
+
 //******************************************************************************
 // Opérations de contrôle et vérification
 //******************************************************************************
+
 
 uint CLevel::nbDarts()
 {
@@ -713,7 +705,6 @@ uint CLevel::nbDarts()
   return total;
 }
 
-//------------------------------------------------------------------------------
 uint CLevel::nbFictiveDarts()
 {
   uint total = 0;
@@ -731,7 +722,6 @@ uint CLevel::nbFictiveDarts()
   return total;
 }
 
-//------------------------------------------------------------------------------
 uint CLevel::nbRegions()
 {
   uint total = 0;
@@ -748,7 +738,6 @@ uint CLevel::nbRegions()
   return total;
 }
 
-//------------------------------------------------------------------------------
 void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 {
   //std::cout<<"[start] CLevel::preprocessing level "<<FDepth<<" \n";
@@ -806,7 +795,6 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 }
 
 
-//------------------------------------------------------------------------------
 void CLevel::printHistogram()
 {
   std::cout<<"[start] CLevel::printHistogram" << std::endl;
@@ -820,7 +808,6 @@ void CLevel::printHistogram()
 	}
 }
 
-//------------------------------------------------------------------------------
 void CLevel::print()
 {
 #ifdef DEBUG_PYRAMID

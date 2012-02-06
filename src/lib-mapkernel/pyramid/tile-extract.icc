@@ -16,13 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "matrix.hh"
 #include "array.hh"
 #include "pyramidal-dart.hh"
 #include "pyramidal-region.hh"
 #include "traversal-region-pixels.hh"
-//******************************************************************************
+
 namespace pyramid
 {
   INLINE
@@ -37,7 +36,7 @@ namespace pyramid
 
     return matrix;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CArray* CTile::createLignelDartMatrix()
   {
@@ -48,7 +47,6 @@ namespace pyramid
     return array;
   }
 
-  //-----------------------------------------------------------------------------
   INLINE
   bool CTile::samePixelActuLeft(IM_Pixel & APixel,
 				const SegmentationMode & ASegmentationMode,
@@ -63,7 +61,7 @@ namespace pyramid
 
     return sameRegions(APixel, pix2, doublet, ASegmentationMode, AFocusAttentionMode);
   }
-  //-----------------------------------------------------------------------------
+
   INLINE
   bool CTile::samePixelActuUp(IM_Pixel & APixel,
 			      const SegmentationMode & ASegmentationMode,
@@ -78,13 +76,10 @@ namespace pyramid
 
     return sameRegions(APixel, pix2, doublet, ASegmentationMode, AFocusAttentionMode);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   unsigned int CTile::removeSmallRegions(unsigned int AThreshold)
   {
     return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
   }
-
-  //******************************************************************************
 } //namespace pyramid
-//******************************************************************************

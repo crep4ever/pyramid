@@ -18,7 +18,7 @@ add_library (mapkernel
   topological-map/topological-map.cc 
   #
   pyramid/dk-doublet.cc
-  pyramid/dp-maxrow.cc
+  #pyramid/dp-maxrow.cc
   pyramid/traversal-region-pixels.cc
   pyramid/pyramid.cc 
   pyramid/level.cc 

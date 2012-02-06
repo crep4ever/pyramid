@@ -16,67 +16,66 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include <limits>
-//******************************************************************************
+
 namespace pyramid
 {
   INLINE
   CDkDoublet::~CDkDoublet()
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   CDkDoublet::CDkDoublet() :
     CDoublet(),
     FWeight(std::numeric_limits<float>::max()),
     FPrev(NULL)
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   CDkDoublet::CDkDoublet(const CDkDoublet & ADkDoublet) :
     CDoublet(ADkDoublet),
     FWeight(ADkDoublet.FWeight),
     FPrev(ADkDoublet.FPrev)
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   CDkDoublet::CDkDoublet(const CDoublet & ADoublet) :
     CDoublet(ADoublet),
     FWeight(std::numeric_limits<float>::max()),
     FPrev(NULL)
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   float CDkDoublet::weight() const
   {
     return FWeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CDkDoublet::updateWeight(float AValue, Heap<CDkDoublet*> & AHeap)
   {
     setWeight(AValue);
     AHeap.modify(this);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CDkDoublet::setWeight(float AWeight)
   {
     FWeight = AWeight;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDkDoublet* CDkDoublet::prev() const
   {
     return FPrev;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CDkDoublet::setPrev(CDkDoublet* ADkDoublet)
   {
     FPrev = ADkDoublet;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDkDoublet& CDkDoublet::operator = (const CDkDoublet& ADkDoublet)
   {
@@ -87,7 +86,7 @@ namespace pyramid
     setPrev(ADkDoublet.prev());
     return *this;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CDkDoublet::operator == (const CDkDoublet & ADkDoublet) const
   {
@@ -97,17 +96,17 @@ namespace pyramid
 	     && weight() == ADkDoublet.weight()
 	     && prev() == ADkDoublet.prev() );
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CDkDoublet::operator != (const CDkDoublet & ADkDoublet) const
   { return ! operator==(ADkDoublet); }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CDkDoublet::operator < (const CDkDoublet & ADkDoublet) const
   {
     return ( weight() < ADkDoublet.weight() );
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   std::ostream & operator<<(std::ostream & AStream,
 					const CDkDoublet&  ADkDoublet)
@@ -133,4 +132,3 @@ namespace pyramid
     return AStream<<"]";
   }
 } // namespace pyramid
-//******************************************************************************

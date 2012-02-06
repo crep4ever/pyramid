@@ -16,18 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "tile.hh"
 #include "traversal-region-pixels.hh"
-// split/merge criteria
 #include "split-nbpix.hh"
 #include "split-grey.hh"
 #include "split-histo.hh"
-//#include "split-hole.hh"
 #include "merge-grey.hh"
 #include "split-deviation.hh"
 
-//******************************************************************************
 namespace pyramid
 {
   INLINE
@@ -128,7 +124,6 @@ namespace pyramid
     return res;
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   bool CTile::isRegionToMerge(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2, const SegmentationMode & ASegmentationMode)
   {
@@ -176,7 +171,6 @@ namespace pyramid
     return false;
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   bool CTile::oracle(const IM_Pixel & APixel1, const IM_Pixel & APixel2,
 		     const SegmentationMode & ASegmentationMode)
@@ -286,7 +280,4 @@ namespace pyramid
     std::cout<<"[end] CTile::sameRegions : false"<<std::endl;
     return false;
   }
-
-  //******************************************************************************
 } // namespace pyramid
-  //******************************************************************************

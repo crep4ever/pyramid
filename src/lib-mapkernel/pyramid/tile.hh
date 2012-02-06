@@ -16,10 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #ifndef TILE_HH
 #define TILE_HH
-//******************************************************************************
+
 #include "point2d.hh"
 #include "kernel-types.hh"
 #include "volume.hh"
@@ -38,7 +37,6 @@
 #include "heap.hh"
 #include "chrono.hh"
 #include "macros.hh"
-//******************************************************************************
 
 /**
  * \file tile.hh

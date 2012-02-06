@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "svg-export.hh"
 #include "svg-creator.hh"
 #include <deque>
@@ -27,9 +26,10 @@
 #include "pyramidal-dart.hh"
 #include "traversal-region-pixels.hh"
 #include "vertex.hh"
+
 using namespace Map2d;
 using namespace pyramid;
-//******************************************************************************
+
 void CSvgExporter::drawPyramid(CPyramid* APyramid, bool APerspective, bool ATopology, bool AGeometry)
 {
   std::ostringstream filename;
@@ -72,7 +72,6 @@ void CSvgExporter::drawPyramid(CPyramid* APyramid, bool APerspective, bool ATopo
   ofs.close();
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawPyramidLevels(CPyramid* APyramid, bool ATopology, bool AGeometry)
 {
   for( uint i=1; i<APyramid->nbLevels(); ++i)
@@ -97,7 +96,6 @@ void CSvgExporter::drawPyramidLevels(CPyramid* APyramid, bool ATopology, bool AG
     }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawPyramidTopology(CPyramid* APyramid)
 {
   std::ostringstream filename;
@@ -116,7 +114,6 @@ void CSvgExporter::drawPyramidTopology(CPyramid* APyramid)
     }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawPyramidGeometry(CPyramid* APyramid)
 {
   std::ostringstream filename;
@@ -136,7 +133,6 @@ void CSvgExporter::drawPyramidGeometry(CPyramid* APyramid)
     }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::addSvgPyramidTopology(CPyramid* APyramid, CSvgCreator& svg, uint ADepth)
 {
   std::deque<CTile*>::iterator it;
@@ -153,7 +149,6 @@ void CSvgExporter::addSvgPyramidTopology(CPyramid* APyramid, CSvgCreator& svg, u
     }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::addSvgPyramidGeometry(CPyramid* APyramid, CSvgCreator& svg, uint ADepth)
 {
   std::deque<CTile*>::iterator it;
@@ -175,7 +170,6 @@ void CSvgExporter::addSvgPyramidGeometry(CPyramid* APyramid, CSvgCreator& svg, u
     }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawTile(CTile* ATile)
 {
   std::ostringstream filename;
@@ -192,7 +186,6 @@ void CSvgExporter::drawTile(CTile* ATile)
   ofs.close();
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawTileTopology(CTile* ATile)
 {
   std::ostringstream filename;
@@ -208,7 +201,6 @@ void CSvgExporter::drawTileTopology(CTile* ATile)
   ofs.close();
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawTileGeometry(CTile* ATile)
 {
   std::ostringstream filename;
@@ -224,7 +216,6 @@ void CSvgExporter::drawTileGeometry(CTile* ATile)
   ofs.close();
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::addSvgMapTopology(CTile* ATile, CSvgCreator& svg)
 {
   for( CDynamicCoverageAll it(ATile); it.cont(); ++it)
@@ -235,7 +226,6 @@ void CSvgExporter::addSvgMapTopology(CTile* ATile, CSvgCreator& svg)
   //fillRegions(AMap, svg);
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::addSvgMapGeometry(CTile* ATile, CSvgCreator& svg)
 {
   // Parcours de la matrice de Khalimsky
@@ -265,7 +255,6 @@ void CSvgExporter::addSvgMapGeometry(CTile* ATile, CSvgCreator& svg)
       }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawRegion(CTile* AMap, CRegion* ARegion)
 {
   assert(ARegion!=NULL);
@@ -282,7 +271,6 @@ void CSvgExporter::drawRegion(CTile* AMap, CRegion* ARegion)
   ofs.close();
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawDart(CTile* AMap, CDart* ADart)
 {
   assert(ADart!=NULL);
@@ -299,7 +287,6 @@ void CSvgExporter::drawDart(CTile* AMap, CDart* ADart)
   ofs.close();
 }
 
-//------------------------------------------------------------------------------
 CVertex CSvgExporter::calculateGap(const CVertex & APoint, const CDoublet & current, const CDoublet & next )
 {
   float gap = 0.2;
@@ -325,7 +312,6 @@ CVertex CSvgExporter::calculateGap(const CVertex & APoint, const CDoublet & curr
   return CVertex(APoint.getX()+gapx, APoint.getY()+gapy);
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::addSvgDart(CTile* AMap, CDart* ADart, CSvgCreator& svg)
 {
   CDoublet init = AMap->getDoublet(ADart);
@@ -379,7 +365,6 @@ void CSvgExporter::addSvgDart(CTile* AMap, CDart* ADart, CSvgCreator& svg)
   svg.pathEnd();
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::addSvgRegion(CTile* AMap, CRegion* ARegion, CSvgCreator& svg)
 {
   assert(ARegion!=NULL);
@@ -411,7 +396,6 @@ void CSvgExporter::addSvgRegion(CTile* AMap, CRegion* ARegion, CSvgCreator& svg)
     }
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::drawFirstPixels(CTile* ATile, CSvgCreator& svg)
 {
   //std::cout<<"[start] drawFirstPixels "<<std::endl;
@@ -428,7 +412,6 @@ void CSvgExporter::drawFirstPixels(CTile* ATile, CSvgCreator& svg)
   //std::cout<<"[end] drawFirstPixels"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CSvgExporter::fillRegions(CTile* AMap, CSvgCreator& svg)
 {
   //std::cout<<"[start] fillPixels "<<std::endl;

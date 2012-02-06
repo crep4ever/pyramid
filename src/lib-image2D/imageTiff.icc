@@ -16,46 +16,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include <cassert>
 #include <cmath>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "KMdata.h"
+
 using namespace fogrimmi;
-//******************************************************************************
 
 INLINE
 uint CImageTiff::pageFromDepth(uint ADepth) const
 {
   return (ADepth > FNbPages-1)?FPages[FNbPages-1]:FPages[ADepth];
 }
-//------------------------------------------------------------------------------
+
 INLINE
 void CImageTiff::read(const IM_Box& ABox, int ADepth)
 {
   uint page = (ADepth==-1)?pageFromDepth(getCurrentPage()):pageFromDepth(ADepth);
   IM_Tiff::read(ABox, page);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 int CImageTiff::colorMode() const
 {
   return FColorMode;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::depth() const
 {
   return FDepth;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 void CImageTiff::setDepth(uint ADepth)
 {
-   FDepth = ADepth;
+  FDepth = ADepth;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 TLabel CImageTiff::getPixelGreyValue(const IM_Pixel & APixel, GreyConvertMode AMethod) const
 {
@@ -77,65 +76,64 @@ TLabel CImageTiff::getPixelGreyValue(const IM_Pixel & APixel, GreyConvertMode AM
       assert(false); return 0;
     }
 }
-//------------------------------------------------------------------------------
+
 INLINE
 void CImageTiff::getPixel(IM_Pixel & APixel, uint ADepth)
 {
   uint page = pageFromDepth(ADepth);
   getPixelValue(APixel, page);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::getXSize(uint ADepth)
 {
   uint page = pageFromDepth(ADepth);
   return getPageWidth(page);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::width(uint ADepth)
 {
   return getXSize(ADepth);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::getYSize(uint ADepth)
 {
   uint page = pageFromDepth(ADepth);
   return getPageHeight(page);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::height(uint APage)
 {
   return getYSize(APage);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 bool CImageTiff::isOk() const
 {
   return FIsOk;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::getNumberOfByte() const
 {
   return sizeof(this);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 bool CImageTiff::isPixelInImage(uint Ax, uint Ay, uint ADepth)
 {
   return Ax<width(ADepth) && Ay<height(ADepth);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 bool CImageTiff::isPixelInImage(const IM_Pixel & APixel, uint ADepth)
 {
   return APixel.x<width(ADepth) && APixel.y<height(ADepth);
 }
 
-//------------------------------------------------------------------------------
 INLINE
 void CImageTiff::unload()
 {
@@ -145,7 +143,7 @@ void CImageTiff::unload()
   if(this!=NULL)
     close();
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint8* CImageTiff::getData()
 {
@@ -163,14 +161,13 @@ uint8* CImageTiff::getData()
 	  getPixel(pix, depth());
 
 	  for(uint i=0; i<mode; ++i)
-	      data[n++] = pix.value[i];
+	    data[n++] = pix.value[i];
 	}
     }
 
   return data;
 }
 
-//------------------------------------------------------------------------------
 INLINE
 uint8* CImageTiff::getDataQT()
 {
@@ -212,14 +209,14 @@ uint8* CImageTiff::getDataQT()
 
   return data;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 void CImageTiff::openPage(uint ADepth)
 {
   uint page = pageFromDepth(ADepth);
   open(page);
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::getNbTilesWidth(uint ATileWidth, uint ADepth)
 {
@@ -227,7 +224,7 @@ uint CImageTiff::getNbTilesWidth(uint ATileWidth, uint ADepth)
   uint truncated = (imageWidth % ATileWidth > 0)?1:0;
   return imageWidth/ATileWidth + truncated;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 uint CImageTiff::getNbTilesHeight(uint ATileHeight, uint ADepth)
 {
@@ -235,7 +232,7 @@ uint CImageTiff::getNbTilesHeight(uint ATileHeight, uint ADepth)
   uint truncated = (imageHeight % ATileHeight > 0)?1:0;
   return imageHeight/ATileHeight + truncated;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 double CImageTiff::distance(const IM_Pixel & p, const IM_Pixel & q)
 {
@@ -245,7 +242,7 @@ double CImageTiff::distance(const IM_Pixel & p, const IM_Pixel & q)
     return (double)fabs(p.value[0]-q.value[0]);
   assert(false); return 0;
 }
-//------------------------------------------------------------------------------
+
 INLINE
 double CImageTiff::poids(const IM_Pixel & p, const IM_Pixel & q)
 {
@@ -267,7 +264,6 @@ double CImageTiff::poids(const IM_Pixel & p, const IM_Pixel & q)
   assert(false); return 0;
 }
 
-//------------------------------------------------------------------------------
 INLINE
 void CImageTiff::moveClasses(uint8* data, uint ASize, uint dim)
 {
@@ -289,7 +285,7 @@ void CImageTiff::moveClasses(uint8* data, uint ASize, uint dim)
 	data[i+j]   = labels[key];
     }
 }
-//------------------------------------------------------------------------------
+
 INLINE
 void CImageTiff::mergeClasses(int cl1, int cl2, uint8* data, uint ASize)
 {
@@ -298,7 +294,6 @@ void CImageTiff::mergeClasses(int cl1, int cl2, uint8* data, uint ASize)
       data[i] = cl1;
 }
 
-//------------------------------------------------------------------------------
 INLINE
 void CImageTiff::regularization(int nb_iteration,
 				int pp,
@@ -319,7 +314,7 @@ void CImageTiff::regularization(int nb_iteration,
       break;
     }
 }
-//******************************************************************************
+
 INLINE
 std::string CImageTiff::filename(const std::string & AExt) const
 {
@@ -333,7 +328,6 @@ void CImageTiff::setFilename(const std::string & AFilename)
 {
   FFilename = AFilename;
 }
-
 
 INLINE
 void CImageTiff::getKmeansData(KMdata& data)
@@ -444,55 +438,3 @@ uint CImageTiff::nbCurrentBoxPixels() const
   assert( ystop() >= ystart() );
   return ( xstop() - xstart() )*( ystop() - ystart() );
 }
-
-/*
-void CImageTiff::getData(const IM_Box& a_Box,
-			 CMatrix* data,
-			 const uint a_Depth,
-			 const DataReadMode & a_mode)
-{
-  IM_Pixel pix;
-  unsigned long int n = 0;
-  uint xstart, ystart, xstop, ystop;
-  xstart = (uint) ABox.XTop;
-  ystart = (uint) ABox.YTop;
-  xstop  = (uint) ABox.XBtm;
-  ystop  = (uint) ABox.YBtm;
-
-  uint8* data = new uint8[(xstop-xstart+1)*(ystop-ystart+1)*4*sizeof(uint8)];
-
-  if(colorMode()==RGB)
-    for( uint y = ystart; y < ystop; ++y)
-      {
-	pix.y = y;
-	for( uint x = xstart; x < xstop; ++x)
-	  {
-	    pix.x = x;
-	    getPixel(pix, ADepth);
-	    data[n++] = pix.value[0];
-	    data[n++] = pix.value[1];
-	    data[n++] = pix.value[2];
-	    data[n++] = 255;
-	  }
-      }
-  else if(colorMode()==Grey)
-    for( uint y = ystart; y < ystop; ++y)
-      {
-	pix.y = y;
-	for( uint x = xstart; x < xstop; ++x)
-	  {
-	    pix.x = x;
-	    getPixel(pix, ADepth);
-	    data[n++] = pix.value[0]*(0.66);
-	    data[n++] = pix.value[0]*(0.66);
-	    data[n++] = pix.value[0]*(0.66);
-	    data[n++] = 255;
-	  }
-      }
-  else
-    std::cout<<"CImageTiff::getAllDataFromModeQT error: unrecognized image mode"<<std::endl;
-
-  return data;
-}
-
-*/

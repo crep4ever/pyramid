@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "tile.hh"
 #include "array.hh"
@@ -34,7 +33,6 @@
 using namespace Map2d;
 using namespace pyramid;
 
-//******************************************************************************
 CDart* CTile::makeTileBorder()
 {
   //std::cout<<" [start] CTile::makeBorder"<<std::endl;
@@ -75,7 +73,6 @@ CDart* CTile::makeTileBorder()
   return first;
 }
 
-//------------------------------------------------------------------------------
 void CTile::extractMapMainLoop( CDart* ALast,
 				const SegmentationMode & ASegmentationMode,
 				const FocusAttentionMode & AFocusAttentionMode)
@@ -232,7 +229,6 @@ void CTile::extractMapMainLoop( CDart* ALast,
   //std::cout<<" [end] CTile::extractMainLoop"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::extractMap( CTile* ATileUp,
 			const SegmentationMode & ASegmentationMode,
 			const FocusAttentionMode & AFocusAttentionMode)
@@ -276,7 +272,7 @@ void CTile::extractMap( CTile* ATileUp,
   assert(checkHierarchy());
   //std::cout<<" [end] CTile::extractMap"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::extractChildren(std::deque<CTile*>& AChildren,
 			    const SegmentationMode & ASegmentationMode,
 			    const ProjectionMode & AProjectionMode,
@@ -414,7 +410,7 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
   delete FMatrixLignelDart;
   //std::cout<<"[end] CTile::extract\n"<<std::endl;
 }
-//-----------------------------------------------------------------------------
+
 bool CTile::sameRegions(IM_Pixel & APixel1, IM_Pixel & APixel2,
 			const CDoublet & ADoublet,
 			const SegmentationMode & ASegmentationMode,
@@ -441,7 +437,6 @@ bool CTile::sameRegions(IM_Pixel & APixel1, IM_Pixel & APixel2,
   //std::cout<<"[end] same regions"<<std::endl;
 }
 
-//-----------------------------------------------------------------------------
 CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
 			       CRegion* ARegion)
 {
@@ -482,7 +477,7 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
 
   return beta1(first); //retourne le brin last de la face carré
 }
-//-----------------------------------------------------------------------------
+
 void CTile::linkInfiniteUpDown()
 {
   if(!existTileUp())
@@ -503,7 +498,6 @@ void CTile::linkInfiniteUpDown()
     }
 }
 
-//******************************************************************************
 unsigned int CTile::
 mergeRegions(bool (CRegion::*AMethod)(CRegion*,int)const, int AThreshold)
 {

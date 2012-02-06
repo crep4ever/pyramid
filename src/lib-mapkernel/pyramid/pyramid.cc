@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "pyramid.hh"
 #include "imageTiff.hh"
@@ -53,7 +52,7 @@ CPyramid::CPyramid():
   FLevelCounter(0),
   FMaxMemory(0)
 { }
-//------------------------------------------------------------------------------
+
 CPyramid::CPyramid(const std::string & AFilename):
   FImage(NULL),
   FNbPixels(2),
@@ -75,7 +74,6 @@ CPyramid::CPyramid(const std::string & AFilename):
   importImTiff(AFilename);
 }
 
-//******************************************************************************
 CPyramid::~CPyramid()
 {
   //std::cout<<"[destructeur] CPyramid \n";
@@ -115,7 +113,7 @@ void CPyramid::build()
   std::cout<<std::endl<<"success"<<std::endl;
   //std::cout<<"[end] CPyramid::buildPyramid \n";
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::addLevel()
 {
   //std::cout<<" [start] CPyramid::addLevel"<<std::endl;
@@ -152,7 +150,7 @@ void CPyramid::addLevel()
   FLevels.push_back(lvl);
   //std::cout<<" [end] CPyramid::addLevel"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 CImageTiff* CPyramid::importImTiff(const std::string & filename)
 {
   CImageTiff* tif = new CImageTiff(filename);
@@ -164,7 +162,7 @@ CImageTiff* CPyramid::importImTiff(const std::string & filename)
   setImage(tif);
   return tif;
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::linkTilesUpDown()
 {
   for(uint k=1;k<nbLevels()-1; ++k)
@@ -198,10 +196,10 @@ void CPyramid::linkTilesUpDown()
 }
 
 
-
 //******************************************************************************
 // Méthodes système
 //******************************************************************************
+
 
 void CPyramid::open(const std::string & APath)
 {
@@ -215,7 +213,7 @@ void CPyramid::open(const std::string & APath)
 
   //std::cout<<" taille de la pyramide ouverte = "<<FTiles.size()<<" tuiles."<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::copyImageInWorkingDirectory(const std::string & AImagePath, const std::string & AImageName)
 {
   // AImageName est bien le nom original de l'image
@@ -225,25 +223,25 @@ void CPyramid::copyImageInWorkingDirectory(const std::string & AImagePath, const
 
   UNUSED(system(command.str().c_str()));
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::save(const std::string & APath)
 {
   std::ostringstream command;
   command<<"cp .//output//* "<<APath<<" ;";
   UNUSED(system(command.str().c_str()));
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::clear()
 {
   UNUSED(system("rm -rf output//* ;"));
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::init()
 {
   clear();
   mkdir("output", 00755);
 }
-//------------------------------------------------------------------------------
+
 void CPyramid::exportData()
 {
   UNUSED(system("rm -rf .//result//* ; "));
@@ -255,14 +253,13 @@ void CPyramid::exportData()
 // Opérations de contrôle et vérification
 //******************************************************************************
 
-//------------------------------------------------------------------------------
+
 unsigned long int CPyramid::getMemoryForPyramid() const
 {
   //std::cout<<"size of CPyramid : "<<sizeof(CPyramid)<<std::endl;
   return sizeof(CPyramid);
 }
 
-//------------------------------------------------------------------------------
 void CPyramid::printInfosMemory() const
 {
   /*
@@ -287,7 +284,6 @@ void CPyramid::printInfosMemory() const
   */
 }
 
-//------------------------------------------------------------------------------
 uint CPyramid::getMemoryForLocalPyramid() const
 {
   /*
@@ -309,7 +305,6 @@ uint CPyramid::getMemoryForLocalPyramid() const
   return 0;
 }
 
-//------------------------------------------------------------------------------
 uint CPyramid::nbDarts()
 {
   unloadAllTiles();
@@ -319,7 +314,6 @@ uint CPyramid::nbDarts()
   return total;
 }
 
-//------------------------------------------------------------------------------
 uint CPyramid::nbRegions()
 {
   unloadAllTiles();
@@ -329,7 +323,6 @@ uint CPyramid::nbRegions()
   return total;
 }
 
-//------------------------------------------------------------------------------
 void CPyramid::totalMemoryRequired() const
 {
   /*
@@ -356,7 +349,6 @@ void CPyramid::totalMemoryRequired() const
   */
 }
 
-//------------------------------------------------------------------------------
 /*
   bool CPyramid::isPyramidOk(){
 
@@ -367,7 +359,7 @@ void CPyramid::totalMemoryRequired() const
 
   }
 */
-//------------------------------------------------------------------------------
+
 void CPyramid::print()
 {
 #ifdef DEBUG_PYRAMID

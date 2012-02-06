@@ -16,18 +16,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #ifndef IMAGETIFF_HH
 #define IMAGETIFF_HH
-//******************************************************************************
+
 #include "tiff.h"
 #include <string>
 #include "image2D.hh"
 #include "macros.hh"
 #include "inline-macro.hh"
 #include "volume.hh"
-
-//******************************************************************************
 
 /// Type pour stocker la valeur d'un pixel.
 /// Utiliser forcément un non-signé sous peine de problèmes.
@@ -266,8 +263,5 @@ private:
 
 #include INCLUDE_INLINE("imageTiff.icc")
 #include INCLUDE_INLINE("omp_kmeans.icc")
-
-//******************************************************************************
-//******************************************************************************
 
 #endif // IMAGETIFF_HH

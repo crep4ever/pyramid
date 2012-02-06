@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "tile.hh"
 #include "pyramidal-dart.hh"
@@ -30,7 +29,6 @@
 
 using namespace Map2d;
 using namespace pyramid;
-//******************************************************************************
 
 void CTile::createTopTile()
 {
@@ -52,7 +50,7 @@ void CTile::createTopTile()
   //loadImage();
   traversePixelsSingleRegion();
 }
-//------------------------------------------------------------------------------
+
 void CTile::createSingleRegion(uint AWidth, uint AHeight)
 {
   CPyramidalDart* dart = NULL;
@@ -114,7 +112,7 @@ void CTile::createSingleRegion(uint AWidth, uint AHeight)
   relabelDarts();
   computeInclusionTree();
 }
-//------------------------------------------------------------------------------
+
 void CTile::splitSingleRegion(uint AWidth, uint AHeight)
 {
   CDart* dart = getInclusionTreeRoot()->getFirstSon()->getRepresentativeDart();
@@ -128,7 +126,7 @@ void CTile::splitSingleRegion(uint AWidth, uint AHeight)
   doublet.setDoublet(0, AHeight, YNEG);
   dart = insertVertexOnEdge(dart, doublet);
 }
-//------------------------------------------------------------------------------
+
 void CTile::traversePixelsSingleRegion()
 {
   assert(getNbRegions()==2);
@@ -153,7 +151,7 @@ void CTile::traversePixelsSingleRegion()
 
   delete [] data;
 }
-//------------------------------------------------------------------------------
+
 void CTile::traversePixels()
 {
   image()->read(boundingBox(), index(2));
@@ -165,7 +163,7 @@ void CTile::traversePixels()
 	addPixel(pix, *it);
       }
 }
-//------------------------------------------------------------------------------
+
 int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
 {
   // l'union de deux régions revient à unir leurs racines
@@ -198,7 +196,7 @@ int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
 
   return 1;
 }
-//------------------------------------------------------------------------------
+
 void CTile::simplifyMap()
 {
   //std::cout<<"[start] CTile::simplifyTile"<<std::endl;
@@ -241,7 +239,7 @@ void CTile::simplifyMap()
 
   //std::cout<<"[end] CTile::simplifyTile"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::deleteRegionList(std::deque<CRegion*>& AList)
 {
   CRegion* currentRegion = NULL;
@@ -257,7 +255,7 @@ void CTile::deleteRegionList(std::deque<CRegion*>& AList)
       delRegion(currentRegion);
     }
 }
-//------------------------------------------------------------------------------
+
 void CTile::relabelDarts()
 {
   // 1. On parcours les brins de la carte pour effectuer une mise à
@@ -364,7 +362,7 @@ void CTile::delRegion(CRegion* ARegion)
 
   delete ARegion;
 }
-//------------------------------------------------------------------------------
+
 void CTile::getRegionBoundingBox(CDart* ADart, std::vector<uint>& tab)
 {
   CDoublet tmp;
@@ -392,7 +390,6 @@ void CTile::getRegionBoundingBox(CDart* ADart, std::vector<uint>& tab)
     }
 }
 
-//------------------------------------------------------------------------------
 void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADirname)
 {
   //std::cout<<" [start] CTile::exportRegionToPng "<<std::endl;
@@ -427,7 +424,6 @@ void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADi
   //std::cout<<" [end] CTile::exportRegionToPng "<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::saveMitosis()
 {
   //std::cout<<" [start] CTile::saveMitosis "<<std::endl;

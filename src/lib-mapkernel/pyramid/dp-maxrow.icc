@@ -18,14 +18,14 @@
 
 namespace pyramid
 {
-  //------------------------------------------------------------------------------
+
   INLINE
   CMaxRow::CMaxRow():
     FDoublet1 ( CDoublet() ),
     FValue    ( 0 ),
     FDoublet2 ( CDoublet() )
   { }
-  //------------------------------------------------------------------------------
+
   INLINE
   CMaxRow::CMaxRow(const CDoublet & ADoublet1,
 		   uint AValue,
@@ -34,44 +34,41 @@ namespace pyramid
     FValue    (AValue),
     FDoublet2 (ADoublet2)
   { }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDoublet CMaxRow::doublet1() const
   {
     return FDoublet1;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CMaxRow::setDoublet1(const CDoublet & ADoublet1)
   {
     FDoublet1 = ADoublet1;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   uint CMaxRow::value() const
   {
     return FValue;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CMaxRow::setValue(uint  AValue)
   {
     FValue = AValue;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CDoublet CMaxRow::doublet2() const
   {
     return FDoublet2;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   void CMaxRow::setDoublet2(const CDoublet & ADoublet2)
   {
     FDoublet2 = ADoublet2;
   }
-
-  //******************************************************************************
 } //namespace pyramid
-//******************************************************************************
 

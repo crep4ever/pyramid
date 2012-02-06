@@ -16,12 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "dk-doublet.hh"
-//******************************************************************************
+
 namespace pyramid
 {
-  //------------------------------------------------------------------------------
   INLINE
   void CTile::projection(const ProjectionMode & AProjectionMode)
   {
@@ -51,7 +49,7 @@ namespace pyramid
       }
     //std::cout<<"\n[end] CTile::projection()"<<std::endl;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   float CTile::weight(CDkDoublet* ANode1, CDkDoublet* ANode2)
   {
@@ -71,14 +69,13 @@ namespace pyramid
     //std::cout<<"[end] CTile::weight"<<std::endl;
     return gradientInverse(*ANode1, Relative);
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   float CTile::gradientInverse(const CDoublet & ADoublet, const SystemMode & ASystem)
   {
     return  (1.0/(gradient(ADoublet, ASystem)+1))*256;
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   CEdge CTile::reductionWindow(const CDoublet & APointel)
   {
@@ -109,7 +106,7 @@ namespace pyramid
     //std::cout<<"[end] CTile::candidatePosisitons "<<std::endl;
     return result;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   std::vector<CDkDoublet*> CTile::findNeighbors(CDkDoublet* ANode, const Heap<CDkDoublet*> & AHeap)
   {
@@ -134,7 +131,6 @@ namespace pyramid
     return result;
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   void CTile::addNewEdge(std::vector<CEdge> & AVector)
   {
@@ -146,7 +142,6 @@ namespace pyramid
       }
   }
 
-  //------------------------------------------------------------------------------
   INLINE
   void CTile::addDoublet(std::vector<CEdge> & AVector, const CDoublet & ADoublet)
   {
@@ -155,7 +150,4 @@ namespace pyramid
     assert(!AVector.empty());
     AVector.back().push_back(ADoublet);
   }
-
-  //******************************************************************************
 }//namespace pyramid
-//******************************************************************************

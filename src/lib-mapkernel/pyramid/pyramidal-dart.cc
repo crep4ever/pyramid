@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "pyramidal-dart.hh"
 #include INCLUDE_NON_INLINE("pyramidal-dart.icc")
@@ -24,7 +23,6 @@
 using namespace Map2d;
 using namespace pyramid;
 
-//******************************************************************************
 void CPyramidalDart::print( std::ostream& AOs ) const
 {
   CTopologicalDart::print(AOs);
@@ -34,10 +32,9 @@ void CPyramidalDart::print( std::ostream& AOs ) const
   if(up()) downDoublet = down()->doublet();
   AOs<<", up: "<<upDoublet<<", down: "<<downDoublet;
 }
-//------------------------------------------------------------------------------
+
 std::ostream& operator<<(std::ostream& AOs, const CPyramidalDart &ADart)
 {
   ADart.print(AOs);
   return AOs;
 }
-//******************************************************************************

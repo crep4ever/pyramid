@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "tile.hh"
 #include "array.hh"
 #include "coverage-region-pixels.hh"
@@ -26,7 +25,6 @@
 using namespace Map2d;
 using namespace pyramid;
 
-//******************************************************************************
 void CTile::createMask(std::vector<CDoublet>& AMask)
 {
   //std::cout<<"[start] CTile::createMask"<<std::endl;
@@ -60,7 +58,6 @@ void CTile::createMask(std::vector<CDoublet>& AMask)
   //std::cout<<"[end] CTile::createMask"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::applyMask(std::vector<CDoublet>& AMask)
 {
   //std::cout<<"[start] CTile::applyMask"<<std::endl;
@@ -85,7 +82,6 @@ void CTile::applyMask(std::vector<CDoublet>& AMask)
   //std::cout<<"[end] CTile::applyMask"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::insertVertexOnFictivePointels()
 {
   //std::cout<<"[start] CTile::insertVertexOnFictivePointels"<<std::endl;
@@ -121,7 +117,6 @@ void CTile::insertVertexOnFictivePointels()
   //std::cout<<"[end] CTile::insertVertexOnFictivePointels"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::createMaskUnitEdges(std::vector<CDoublet>& AMask)
 {
   //std::cout<<"[start] CTile::createMaskUnitEdges"<<std::endl;
@@ -160,7 +155,6 @@ void CTile::createMaskUnitEdges(std::vector<CDoublet>& AMask)
   //std::cout<<"[end] CTile::createMaskUnitEdges"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::sewAroundPointel(const CDoublet& APointel, const CArray* AArray, int toDelete)
 {
   //std::cout<<"[start] CTile::sewAroundPointel"<<std::endl;
@@ -220,7 +214,7 @@ void CTile::sewAroundPointel(const CDoublet& APointel, const CArray* AArray, int
     }
   //std::cout<<"[end] CTile::sewAroundPointel"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::sewMapWithMask(std::vector<CDoublet>& AMask)
 {
   //std::cout<<"[start] CTile::sewMapWithMask"<<std::endl;
@@ -272,7 +266,6 @@ void CTile::sewMapWithMask(std::vector<CDoublet>& AMask)
   //std::cout<<"[end] CTile::sewMapWithMask"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::createSons()
 {
   std::cout<<"[start] CTile::createSons"<<std::endl;
@@ -360,7 +353,6 @@ void CTile::createSons()
   std::cout<<"[end] CTile::createSons"<<std::endl;
 }
 
-//------------------------------------------------------------------------------
 void CTile::shareDartsWithSon(CTile* ASon)
 {
   std::cout<<"[start] CTile::shareDartsWithSon"<<std::endl;
@@ -467,7 +459,6 @@ void CTile::shareDartsWithSon(CTile* ASon)
 
 }
 
-//------------------------------------------------------------------------------
 CTile* CTile::createChildrenBySplit()
 {
   std::cout<<"\n[start] CTile::copySplitLinkTile()"<<std::endl;

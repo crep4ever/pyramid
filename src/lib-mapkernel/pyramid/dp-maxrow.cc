@@ -16,13 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "dp-maxrow.hh"
 #include <vector>
 #include INCLUDE_NON_INLINE("dp-maxrow.icc")
+
 using namespace pyramid;
 
 CMaxRow::~CMaxRow()
 {}
-//******************************************************************************
