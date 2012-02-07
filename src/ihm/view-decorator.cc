@@ -16,13 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "view-decorator.hh"
 #include <QLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDebug>
-//******************************************************************************
 
 CViewDecorator::CViewDecorator( QWidget * AParent )
   : QWidget( AParent )
@@ -37,21 +35,21 @@ CViewDecorator::CViewDecorator( QWidget * AParent )
 
   setLayout( m_layout2 );
 }
-//******************************************************************************
+
 CViewDecorator::~CViewDecorator()
 {}
-//******************************************************************************
+
 QWidget * CViewDecorator::widget() const
 {
   return m_centralWidget;
 }
-//******************************************************************************
+
 void CViewDecorator::setWidget( QWidget * AWidget )
 {
   m_centralWidget = AWidget;
   m_layout1->addWidget( AWidget );
 }
-//******************************************************************************
+
 void CViewDecorator::addWidget( QWidget * AWidget, Qt::DockWidgetArea area )
 {
   switch( area )
@@ -72,10 +70,9 @@ void CViewDecorator::addWidget( QWidget * AWidget, Qt::DockWidgetArea area )
       break;
     }
 }
-//******************************************************************************
+
 void CViewDecorator::removeWidget( QWidget * AWidget )
 {
   m_layout1->removeWidget( AWidget );
   m_layout2->removeWidget( AWidget );
 }
-//******************************************************************************

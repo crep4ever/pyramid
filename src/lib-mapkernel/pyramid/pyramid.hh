@@ -16,10 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #ifndef PYRAMID_HH
 #define PYRAMID_HH
-//******************************************************************************
+
 #include <vector>
 #include <deque>
 #include <string>
@@ -27,9 +26,13 @@
 #include "point3d.hh"
 #include "inline-macro.hh"
 #include "macros.hh"
-//******************************************************************************
 
 class CImageTiff;
+
+/**
+ * \namespace pyramid
+ * \brief construction of tiled top-down pyramids
+ */
 
 namespace pyramid
 {
@@ -304,12 +307,8 @@ namespace pyramid
 
     /// Vérifie certaines contraintes sur la structure pyramidale
     // bool isPyramidOk();
-
   };
 
 } // namespace pyramid
-//******************************************************************************
 #include INCLUDE_INLINE("pyramid.icc")
-//******************************************************************************
 #endif // PYRAMID_HH
-//******************************************************************************

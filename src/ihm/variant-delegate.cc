@@ -38,10 +38,8 @@
  **
  ****************************************************************************/
 
-//******************************************************************************
 #include <QtGui>
 #include "variant-delegate.hh"
-//******************************************************************************
 
 CVariantDelegate::CVariantDelegate(QObject *parent)
   : QItemDelegate(parent)
@@ -63,7 +61,7 @@ CVariantDelegate::CVariantDelegate(QObject *parent)
   timeExp.setPattern("([0-9]{,2}):([0-9]{,2}):([0-9]{,2})");
   dateTimeExp.setPattern(dateExp.pattern() + "T" + timeExp.pattern());
 }
-//******************************************************************************
+
 void CVariantDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
@@ -80,7 +78,7 @@ void CVariantDelegate::paint(QPainter *painter,
 
   QItemDelegate::paint(painter, option, index);
 }
-//******************************************************************************
+
 QWidget *CVariantDelegate::createEditor(QWidget *parent,
 					const QStyleOptionViewItem &,
 					const QModelIndex &index) const
@@ -150,7 +148,7 @@ QWidget *CVariantDelegate::createEditor(QWidget *parent,
 
   return lineEdit;
 }
-//******************************************************************************
+
 void CVariantDelegate::setEditorData(QWidget *editor,
                                      const QModelIndex &index) const
 {
@@ -158,7 +156,7 @@ void CVariantDelegate::setEditorData(QWidget *editor,
   if (QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor))
     lineEdit->setText(displayText(value));
 }
-//******************************************************************************
+
 void CVariantDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                     const QModelIndex &index) const
 {
@@ -236,7 +234,7 @@ void CVariantDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   model->setData(index, displayText(value), Qt::DisplayRole);
   model->setData(index, value, Qt::UserRole);
 }
-//******************************************************************************
+
 bool CVariantDelegate::isSupportedType(QVariant::Type type)
 {
   switch (type) {
@@ -262,7 +260,7 @@ bool CVariantDelegate::isSupportedType(QVariant::Type type)
     return false;
   }
 }
-//******************************************************************************
+
 QString CVariantDelegate::displayText(const QVariant &value)
 {
   switch (value.type()) {
@@ -315,5 +313,5 @@ QString CVariantDelegate::displayText(const QVariant &value)
   }
   return QString("<%1>").arg(value.typeName());
 }
-//******************************************************************************
+
 

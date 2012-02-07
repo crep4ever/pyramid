@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include <QtGui>
 #include <QDebug>
 #include "main-window.hh"
@@ -29,7 +28,6 @@
 #include "file-chooser.hh"
 using namespace Map2d;
 using namespace pyramid;
-//******************************************************************************
 
 CControler::CControler( CMainWindow* AParent )
   : QObject()
@@ -53,7 +51,7 @@ CControler::CControler( CMainWindow* AParent )
 
   readSettings();
 }
-//------------------------------------------------------------------------------
+
 CControler::~CControler()
 {
   if( m_pyramid )
@@ -65,7 +63,7 @@ CControler::~CControler()
       m_pyramid = NULL;
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::readSettings()
 {
   QSettings settings;
@@ -85,7 +83,7 @@ void CControler::readSettings()
 
   settings.endGroup();
 }
-//------------------------------------------------------------------------------
+
 void CControler::writeSettings()
 {
   QSettings settings;
@@ -108,12 +106,12 @@ void CControler::writeSettings()
     }
   settings.endGroup();
 }
-//------------------------------------------------------------------------------
+
 CPyramid * CControler::pyramid()
 {
   return m_pyramid;
 }
-//------------------------------------------------------------------------------
+
 bool CControler::extract( const QString & filename )
 {
   writeSettings();
@@ -157,7 +155,7 @@ bool CControler::extract( const QString & filename )
       return false;
     }
 }
-//------------------------------------------------------------------------------
+
 bool CControler::extract()
 {
   if(m_imageFilename.isEmpty())
@@ -179,7 +177,7 @@ bool CControler::extract()
       return false;
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::open( const QString & path )
 {
   // todo: normalement, pas besoin de charger
@@ -201,7 +199,7 @@ void CControler::open( const QString & path )
   m_pyramid->open(path.toStdString());
   sendStatus(tr("Pyramid successfully opened."));
 }
-//------------------------------------------------------------------------------
+
 void CControler::save( const QString & path )
 {
   QDir dir(imageFilename());
@@ -210,12 +208,12 @@ void CControler::save( const QString & path )
   m_pyramid->save(path.toStdString());
   sendStatus(tr("Pyramid succesfully saved."));
 }
-//------------------------------------------------------------------------------
+
 QString CControler::imageFilename() const
 {
   return m_imageFilename;
 }
-//------------------------------------------------------------------------------
+
 void CControler::setImageFilename( const QString & str)
 {
   if(str != m_imageFilename)
@@ -231,58 +229,58 @@ void CControler::setImageFilename( const QString & str)
 	fc->lineEdit()->setStyleSheet("border: 1px solid green;border-radius: 3px;");
     }
 }
-//------------------------------------------------------------------------------
+
 int CControler::nbLevels() const
 {
   return m_nbLevels;
 }
-//------------------------------------------------------------------------------
+
 int CControler::tileWidth() const
 {
   return m_tileWidth;
 }
-//------------------------------------------------------------------------------
+
 int CControler::tileHeight() const
 {
   return m_tileHeight;
 }
-//------------------------------------------------------------------------------
+
 int CControler::extractMode() const
 {
   return m_extractMode;
 }
-//------------------------------------------------------------------------------
+
 int CControler::segmentationMode() const
 {
   return m_segmentationMode;
 }
-//------------------------------------------------------------------------------
+
 int CControler::projectionMode() const
 {
   return m_projectionMode;
 }
-//------------------------------------------------------------------------------
+
 int CControler::focusAttentionMode() const
 {
   return m_focusAttentionMode;
 }
-//------------------------------------------------------------------------------
+
 int CControler::detectFictiveBordersMode() const
 {
   return m_detectFictiveBordersMode;
 }
-//------------------------------------------------------------------------------
+
 int CControler::mergeThreshold(int pos)
 {
   assert(pos<m_merge.size());
   return m_merge.at(pos).toUInt();
 }
-//------------------------------------------------------------------------------
+
 QList<QVariant> CControler::merge() const
 {
   return m_merge;
 }
-//------------------------------------------------------------------------------
+
 void CControler::setNbLevels( int nbLevels )
 {
   if(m_nbLevels != nbLevels)
@@ -291,7 +289,7 @@ void CControler::setNbLevels( int nbLevels )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setTileWidth( int width )
 {
   if(m_tileWidth != width)
@@ -300,7 +298,7 @@ void CControler::setTileWidth( int width )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setTileHeight( int height )
 {
   if(m_tileHeight != height)
@@ -309,7 +307,7 @@ void CControler::setTileHeight( int height )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setExtractMode( int value )
 {
   if(m_extractMode != value)
@@ -318,7 +316,7 @@ void CControler::setExtractMode( int value )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setSegmentationMode( int value )
 {
   if (m_segmentationMode != value)
@@ -327,7 +325,7 @@ void CControler::setSegmentationMode( int value )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setProjectionMode( int value )
 {
   if(m_projectionMode != value)
@@ -336,7 +334,7 @@ void CControler::setProjectionMode( int value )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setFocusAttentionMode( int value )
 {
   if (m_focusAttentionMode != value)
@@ -345,7 +343,7 @@ void CControler::setFocusAttentionMode( int value )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setDetectFictiveBordersMode( int value )
 {
   if(value>1) value=1;
@@ -355,7 +353,7 @@ void CControler::setDetectFictiveBordersMode( int value )
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setMergeThreshold(int pos, int value)
 {
   if (m_merge[pos] != value)
@@ -364,14 +362,14 @@ void CControler::setMergeThreshold(int pos, int value)
       //emit wasModified();
     }
 }
-//------------------------------------------------------------------------------
+
 void CControler::setMerge(QList<QVariant>& values)
 {
   m_merge.clear();
   m_merge = values;
   //emit wasModified();
 }
-//------------------------------------------------------------------------------
+
 void CControler::extractProgressBar()
 {
   CChrono chrono;
@@ -432,7 +430,7 @@ void CControler::extractProgressBar()
   parent()->progressBar()->hide();
   sendStatus(tr("Success"));
 }
-//------------------------------------------------------------------------------
+
 uint CControler::getNbRegions(int ALevel) const
 {
   if(m_pyramid==NULL)
@@ -440,7 +438,7 @@ uint CControler::getNbRegions(int ALevel) const
 
   return m_pyramid->level(ALevel)->nbRegions();
 }
-//------------------------------------------------------------------------------
+
 uint CControler::getNbDarts(int ALevel) const
 {
   if(m_pyramid==NULL)
@@ -448,7 +446,7 @@ uint CControler::getNbDarts(int ALevel) const
 
   return m_pyramid->level(ALevel)->nbDarts();
 }
-//------------------------------------------------------------------------------
+
 void CControler::exportSvg()
 {
   if(!m_pyramid)
@@ -517,7 +515,7 @@ void CControler::exportSvg()
   m_dialogSvg->setLayout(layout);
   m_dialogSvg->show();
 }
-//------------------------------------------------------------------------------
+
 void CControler::exportPyramidSVG()
 {
   assert(m_pyramid!=NULL);
@@ -526,7 +524,7 @@ void CControler::exportPyramidSVG()
   exporter.drawPyramid(m_pyramid, m_perspective->checkState(), m_topology->checkState(), m_geometry->checkState());
   sendStatus(tr("Pyramid successfully exported to svg in ./output/."));
 }
-//------------------------------------------------------------------------------
+
 void CControler::exportLevelsSVG()
 {
   assert(m_pyramid!=NULL);
@@ -535,7 +533,6 @@ void CControler::exportLevelsSVG()
   sendStatus(tr("Levels successfully exported to svg in ./output/."));
 }
 
-//------------------------------------------------------------------------------
 void CControler::resetSVG()
 {
   m_perspective->setChecked(Qt::Unchecked);
@@ -545,28 +542,28 @@ void CControler::resetSVG()
   m_topology2->setChecked(Qt::Checked);
   m_geometry2->setChecked(Qt::Checked);
 }
-//------------------------------------------------------------------------------
+
 void CControler::closeSVG()
 {
   resetSVG();
   m_dialogSvg->close();
 }
-//------------------------------------------------------------------------------
+
 CMainWindow * CControler::parent() const
 {
   return m_parent;
 }
-//------------------------------------------------------------------------------
+
 void CControler::setParent(CMainWindow* AParent)
 {
   m_parent = AParent;
 }
-//------------------------------------------------------------------------------
+
 void CControler::sendStatus(const QString & msg)
 {
   parent()->statusBar()->showMessage(msg);
 }
-//------------------------------------------------------------------------------
+
 void CControler::infos() const
 {
   qDebug() << "Pyramid info: "

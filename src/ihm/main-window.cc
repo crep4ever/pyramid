@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "config.hh"
 #include "main-window.hh"
 #include "controler.hh"
@@ -28,7 +27,6 @@
 #include "settings-tree.hh"
 #include "tab-controler.hh"
 #include "panel.hh"
-//******************************************************************************
 
 CMainWindow::CMainWindow()
   : QMainWindow()
@@ -80,10 +78,10 @@ CMainWindow::CMainWindow()
   addDockWidget(Qt::LeftDockWidgetArea, dock);
   connect(m_buildButton, SIGNAL(clicked()), this, SLOT(newTab()));
 }
-//------------------------------------------------------------------------------
+
 CMainWindow::~CMainWindow()
 {}
-//------------------------------------------------------------------------------
+
 void CMainWindow::readSettings()
 {
   QSettings settings;
@@ -94,7 +92,7 @@ void CMainWindow::readSettings()
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
   settings.endGroup();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::writeSettings()
 {
   QSettings settings;
@@ -105,7 +103,7 @@ void CMainWindow::writeSettings()
   settings.setValue("toolBar", isToolBarDisplayed());
   settings.endGroup();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::createActions()
 {
   m_newAct = new QAction(tr("New"), this);
@@ -198,7 +196,7 @@ void CMainWindow::createActions()
   m_cascadeViewAct->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_C) );
   m_cascadeViewAct->setStatusTip(tr("Cascade all the windows"));
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::createMenus()
 {
   menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
@@ -232,7 +230,7 @@ void CMainWindow::createMenus()
   m_helpMenu->addAction(m_documentationAct);
   m_helpMenu->addAction(m_aboutAct);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::createToolBar()
 {
   m_toolBar->setMovable(false);
@@ -246,13 +244,13 @@ void CMainWindow::createToolBar()
   addToolBar(m_toolBar);
   setUnifiedTitleAndToolBarOnMac(true);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::closeEvent(QCloseEvent * AEvent)
 {
   writeSettings();
   AEvent->accept();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::open()
 {
   QString path = QFileDialog::getExistingDirectory(NULL, tr("Select New Directory"),
@@ -266,13 +264,13 @@ void CMainWindow::open()
     }
   currentTab()->controler()->open(path);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::save()
 {
   //todo
   saveAs();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::saveAs()
 {
 
@@ -287,12 +285,12 @@ void CMainWindow::saveAs()
     }
   currentTab()->controler()->save(path);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::documentation()
 {
   QDesktopServices::openUrl(QUrl(QString("./doc/html/index.html")));
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::about()
 {
   QString title = QString(tr("About Tiled top-down pyramids"));
@@ -310,7 +308,7 @@ void CMainWindow::about()
 					     "<p><b>Authors:</b> %3</p>"))
 		     .arg(description).arg(version).arg(authors));
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::setToolBarDisplayed(bool value)
 {
   if (m_isToolBarDisplayed != value && m_toolBar)
@@ -319,24 +317,23 @@ void CMainWindow::setToolBarDisplayed(bool value)
       m_toolBar->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 bool CMainWindow::isToolBarDisplayed( )
 {
   return m_isToolBarDisplayed;
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::setStatusBarDisplayed(bool value)
 {
   m_isStatusBarDisplayed = value;
   statusBar()->setVisible(value);
 }
-//------------------------------------------------------------------------------
+
 bool CMainWindow::isStatusBarDisplayed( )
 {
   return m_isStatusBarDisplayed;
 }
 
-//------------------------------------------------------------------------------
 bool CMainWindow::loadScript()
 {
   QString filename = QFileDialog::getOpenFileName(NULL,tr("Import script"),
@@ -349,17 +346,17 @@ bool CMainWindow::loadScript()
   CScriptEngine::engine()->execute( filename );
   return true;
 }
-//------------------------------------------------------------------------------
+
 QProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
 }
-//------------------------------------------------------------------------------
+
 QTabWidget * CMainWindow::centralWidget() const
 {
   return m_centralWidget;
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::preferences()
 {
   readSettings();
@@ -388,26 +385,26 @@ void CMainWindow::preferences()
    m_preferences->setLayout(layout);
    m_preferences->show();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::acceptSettings()
 {
   readSettings();
   writeSettings();
   m_preferences->close();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::cancelSettings()
 {
   writeSettings();
   m_preferences->close();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::resetSettings()
 {
   QSettings settings;
   settings.clear();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::exportPng()
 {
   if(!currentTab() || !currentTab()->view())
@@ -423,7 +420,7 @@ void CMainWindow::exportPng()
   if(!filename.isEmpty())
     currentTab()->view()->exportPng(filename);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::exportSvg()
 {
   if(!currentTab() || !currentTab()->controler())
@@ -433,7 +430,7 @@ void CMainWindow::exportSvg()
     }
   currentTab()->controler()->exportSvg();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::newTab()
 {
   if (centralWidget()->count() > 0)
@@ -448,7 +445,7 @@ void CMainWindow::newTab()
       centralWidget()->setCurrentWidget(tab);
     }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::addScene()
 {
   currentTab()->addScene();
@@ -459,12 +456,12 @@ void CMainWindow::addScene()
   connect( currentTab()->view(), SIGNAL(positionChanged(QPoint)),
 	   this, SLOT(updatePositionDisplay(QPoint)) );
 }
-//------------------------------------------------------------------------------
+
 CTabControler* CMainWindow::currentTab() const
 {
   return (CTabControler*) centralWidget()->currentWidget();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::changeTab(int index)
 {
   if (CTabControler* tab = (CTabControler*) centralWidget()->widget(index))
@@ -494,17 +491,17 @@ void CMainWindow::changeTab(int index)
       m_panel->changeControler(m_controler);
     }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::updateZoomDisplay( qreal zoom )
 {
   m_zoomDisplay->setText( QString("%1").arg(zoom) );
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::updatePositionDisplay( QPoint position )
 {
   m_positionDisplay->setText( QString("%1x%2").arg(position.x()).arg(position.y()) );
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::closeTab(int index)
 {
   if (CTabControler *tab = qobject_cast< CTabControler* >(m_centralWidget->widget(index)))

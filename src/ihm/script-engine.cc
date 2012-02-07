@@ -16,11 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "script-engine.hh"
 #include "controler.hh"
 #include <QDebug>
-//******************************************************************************
 
 /// Meta types used by the script engine
 Q_DECLARE_METATYPE(CControler*)
@@ -36,9 +34,9 @@ void controlerFromScriptValue( const QScriptValue & object,
 {
   out = qobject_cast<CControler*>(object.toQObject());
 }
-//-----------------------------------------------------------------------------
+
 CScriptEngine * CScriptEngine::m_engine = NULL;
-//-----------------------------------------------------------------------------
+
 CScriptEngine::CScriptEngine( QObject * AParent )
   : QScriptEngine( AParent )
 {
@@ -51,17 +49,17 @@ CScriptEngine::CScriptEngine( QObject * AParent )
 			   controlerFromScriptValue );
 
 }
-//-----------------------------------------------------------------------------
+
 CScriptEngine::~CScriptEngine()
 {}
-//-----------------------------------------------------------------------------
+
 CScriptEngine * CScriptEngine::engine()
 {
   if( m_engine == NULL )
     m_engine = new CScriptEngine();
   return m_engine;
 }
-//-----------------------------------------------------------------------------
+
 void CScriptEngine::execute( QTextStream & stream, const QString & filename )
 {
   QScriptValue result = evaluate( stream.readAll(), filename );
@@ -73,13 +71,13 @@ void CScriptEngine::execute( QTextStream & stream, const QString & filename )
 	       << result.toString();
     }
 }
-//-----------------------------------------------------------------------------
+
 void CScriptEngine::execute( QFile & file )
 {
   QTextStream stream( &file );
   execute( stream, file.fileName() );
 }
-//-----------------------------------------------------------------------------
+
 void CScriptEngine::execute( const QString & filename )
 {
   QFile file( filename );
@@ -90,4 +88,4 @@ void CScriptEngine::execute( const QString & filename )
   execute( file );
   file.close();
 }
-//-----------------------------------------------------------------------------
+

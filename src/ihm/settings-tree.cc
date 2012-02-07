@@ -38,11 +38,9 @@
  **
  ****************************************************************************/
 
-//******************************************************************************
 #include <QtGui>
 #include "settings-tree.hh"
 #include "variant-delegate.hh"
-//******************************************************************************
 
 CSettingsTree::CSettingsTree(QWidget *parent)
   : QTreeWidget(parent)
@@ -67,7 +65,7 @@ CSettingsTree::CSettingsTree(QWidget *parent)
 
   connect(&refreshTimer, SIGNAL(timeout()), this, SLOT(maybeRefresh()));
 }
-//******************************************************************************
+
 void CSettingsTree::setSettingsObject(QSettings *settings)
 {
   delete this->settings;
@@ -83,12 +81,12 @@ void CSettingsTree::setSettingsObject(QSettings *settings)
     refreshTimer.stop();
   }
 }
-//******************************************************************************
+
 QSize CSettingsTree::sizeHint() const
 {
   return QSize(800, 600);
 }
-//******************************************************************************
+
 void CSettingsTree::setAutoRefresh(bool autoRefresh)
 {
   this->autoRefresh = autoRefresh;
@@ -101,7 +99,7 @@ void CSettingsTree::setAutoRefresh(bool autoRefresh)
     }
   }
 }
-//******************************************************************************
+
 void CSettingsTree::setFallbacksEnabled(bool enabled)
 {
   if (settings) {
@@ -109,13 +107,13 @@ void CSettingsTree::setFallbacksEnabled(bool enabled)
     refresh();
   }
 }
-//******************************************************************************
+
 void CSettingsTree::maybeRefresh()
 {
   if (state() != EditingState)
     refresh();
 }
-//******************************************************************************
+
 void CSettingsTree::refresh()
 {
   if (!settings)
@@ -130,7 +128,7 @@ void CSettingsTree::refresh()
   connect(this, SIGNAL(itemChanged(QTreeWidgetItem *, int)),
 	  this, SLOT(updateSetting(QTreeWidgetItem *)));
 }
-//******************************************************************************
+
 bool CSettingsTree::event(QEvent *event)
 {
   if (event->type() == QEvent::WindowActivate) {
@@ -139,7 +137,7 @@ bool CSettingsTree::event(QEvent *event)
   }
   return QTreeWidget::event(event);
 }
-//******************************************************************************
+
 void CSettingsTree::updateSetting(QTreeWidgetItem *item)
 {
   QString key = item->text(0);
@@ -153,7 +151,7 @@ void CSettingsTree::updateSetting(QTreeWidgetItem *item)
   if (autoRefresh)
     refresh();
 }
-//******************************************************************************
+
 void CSettingsTree::updateChildItems(QTreeWidgetItem *parent)
 {
   int dividerIndex = 0;
@@ -210,7 +208,7 @@ void CSettingsTree::updateChildItems(QTreeWidgetItem *parent)
   while (dividerIndex < childCount(parent))
     delete childAt(parent, dividerIndex);
 }
-//******************************************************************************
+
 QTreeWidgetItem *CSettingsTree::createItem(const QString &text,
 					  QTreeWidgetItem *parent, int index)
 {
@@ -228,7 +226,7 @@ QTreeWidgetItem *CSettingsTree::createItem(const QString &text,
   item->setFlags(item->flags() | Qt::ItemIsEditable);
   return item;
 }
-//******************************************************************************
+
 QTreeWidgetItem *CSettingsTree::childAt(QTreeWidgetItem *parent, int index)
 {
   if (parent)
@@ -236,7 +234,7 @@ QTreeWidgetItem *CSettingsTree::childAt(QTreeWidgetItem *parent, int index)
   else
     return topLevelItem(index);
 }
-//******************************************************************************
+
 int CSettingsTree::childCount(QTreeWidgetItem *parent)
 {
   if (parent)
@@ -244,7 +242,7 @@ int CSettingsTree::childCount(QTreeWidgetItem *parent)
   else
     return topLevelItemCount();
 }
-//******************************************************************************
+
 int CSettingsTree::findChild(QTreeWidgetItem *parent, const QString &text,
 			    int startIndex)
 {
@@ -254,12 +252,10 @@ int CSettingsTree::findChild(QTreeWidgetItem *parent, const QString &text,
   }
   return -1;
 }
-//******************************************************************************
+
 void CSettingsTree::moveItemForward(QTreeWidgetItem *parent, int oldIndex,
 				   int newIndex)
 {
   for (int i = 0; i < oldIndex - newIndex; ++i)
     delete childAt(parent, newIndex);
 }
-//******************************************************************************
-//******************************************************************************

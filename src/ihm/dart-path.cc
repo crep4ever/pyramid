@@ -16,30 +16,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "dart-path.hh"
 #include "topological-map.hh"
 #include <cassert>
 #include <QPainter>
 #include <QSettings>
 using namespace Map2d;
-//******************************************************************************
+
+
 CDartPath::CDartPath( )
 {}
-//******************************************************************************
+
 CDartPath::~CDartPath()
 {}
-//******************************************************************************
+
 CDart* CDartPath::dart()
 {
   return m_dart;
 }
-//******************************************************************************
+
 void CDartPath::setDart( CDart* ADart )
 {
   m_dart = ADart;
 }
-//******************************************************************************
+
 void CDartPath::addArrow(const CDoublet& ADirection )
 {
   QPointF end = currentPosition();
@@ -81,5 +81,3 @@ void CDartPath::addArrow(const CDoublet& ADirection )
   arrow << p1 << end << p2;
   addPolygon(arrow);
 }
-//******************************************************************************
-//******************************************************************************

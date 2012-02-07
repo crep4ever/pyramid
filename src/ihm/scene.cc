@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include <QtGui>
 #include "scene.hh"
 #include "controler.hh"
@@ -32,7 +31,7 @@
 using namespace Map2d;
 using namespace pyramid;
 using namespace fogrimmi;
-//******************************************************************************
+
 CScene::CScene( CControler * AControler, uint ALevel )
   : QGraphicsScene( )
   , m_controler(AControler)
@@ -85,15 +84,14 @@ CScene::CScene( CControler * AControler, uint ALevel )
   update();
 }
 
-//------------------------------------------------------------------------------
 CScene::~CScene()
 {}
-//------------------------------------------------------------------------------
+
 CControler * CScene::controler() const
 {
   return m_controler;
 }
-//------------------------------------------------------------------------------
+
 void CScene::readSettings()
 {
   QSettings settings;
@@ -109,7 +107,7 @@ void CScene::readSettings()
   setFilter(settings.value("opacity",m_filter).toUInt());
   settings.endGroup();
 }
-//------------------------------------------------------------------------------
+
 void CScene::writeSettings()
 {
   QSettings settings;
@@ -126,14 +124,12 @@ void CScene::writeSettings()
   settings.endGroup();
 }
 
-//------------------------------------------------------------------------------
 void CScene::initialize( CView * view )
 {
   connect( view, SIGNAL(zoomChanged(qreal)), SLOT(autoHideOnZoom(qreal)) );
   setBackgroundBrush(Qt::white);
 }
 
-//------------------------------------------------------------------------------
 void CScene::setActions()
 {
   QAction * action = NULL;
@@ -200,7 +196,7 @@ void CScene::setActions()
   connect(action, SIGNAL(triggered()), SLOT(update()));
   addAction( action, true );
 }
-//------------------------------------------------------------------------------
+
 void CScene::empty()
 {
   clear();
@@ -231,7 +227,7 @@ void CScene::empty()
   m_bordersItem->setVisible(isBordersToDisplay());
   m_labelsItem->setVisible(isLabelsToDisplay());
 }
-//------------------------------------------------------------------------------
+
 void CScene::update()
 {
   empty();
@@ -243,52 +239,52 @@ void CScene::update()
     }
   drawCurrentLevel();
 }
-//------------------------------------------------------------------------------
+
 bool CScene::isImageToDisplay() const
 {
   return m_isImageToDisplay;
 }
-//------------------------------------------------------------------------------
+
 bool CScene::isInterpixelToDisplay() const
 {
   return m_isInterpixelToDisplay;
 }
-//------------------------------------------------------------------------------
+
 bool CScene::isMapToDisplay() const
 {
   return m_isMapToDisplay;
 }
-//------------------------------------------------------------------------------
+
 bool CScene::isBordersToDisplay() const
 {
   return m_isBordersToDisplay;
 }
-//------------------------------------------------------------------------------
+
 bool CScene::isLabelsToDisplay() const
 {
   return m_isLabelsToDisplay;
 }
-//------------------------------------------------------------------------------
+
 uint CScene::level() const
 {
   return m_level;
 }
-//------------------------------------------------------------------------------
+
 bool CScene::autoHide() const
 {
   return m_autoHide;
 }
-//------------------------------------------------------------------------------
+
 qreal CScene::autoHideThreshold() const
 {
   return m_autoHideThreshold;
 }
-//------------------------------------------------------------------------------
+
 uint CScene::filter() const
 {
   return m_filter;
 }
-//------------------------------------------------------------------------------
+
 void CScene::setImageToDisplay( bool value )
 {
   if( isImageToDisplay() != value )
@@ -297,7 +293,7 @@ void CScene::setImageToDisplay( bool value )
       m_imageItem->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setInterpixelToDisplay( bool value )
 {
   if( isInterpixelToDisplay() != value )
@@ -306,7 +302,7 @@ void CScene::setInterpixelToDisplay( bool value )
       m_interpixelItem->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setMapToDisplay( bool value )
 {
   if( isMapToDisplay() != value )
@@ -315,7 +311,7 @@ void CScene::setMapToDisplay( bool value )
       m_mapItem->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setBordersToDisplay( bool value )
 {
   if( m_isBordersToDisplay != value )
@@ -324,7 +320,7 @@ void CScene::setBordersToDisplay( bool value )
       m_bordersItem->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setLabelsToDisplay( bool value )
 {
   if( m_isLabelsToDisplay != value )
@@ -333,7 +329,7 @@ void CScene::setLabelsToDisplay( bool value )
       m_labelsItem->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setFictiveBordersToDisplay( bool value )
 {
   if( m_isFictiveBordersToDisplay != value )
@@ -342,7 +338,7 @@ void CScene::setFictiveBordersToDisplay( bool value )
       m_fictiveBorders->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setLevel( uint ALevel )
 {
   if( level() != ALevel )
@@ -352,22 +348,22 @@ void CScene::setLevel( uint ALevel )
       update();
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::setAutoHide( bool value )
 {
   m_autoHide = value;
 }
-//------------------------------------------------------------------------------
+
 void CScene::setAutoHideThreshold( qreal threshold )
 {
   m_autoHideThreshold = threshold;
 }
-//------------------------------------------------------------------------------
+
 void CScene::setFilter( uint value )
 {
   m_filter = value;
 }
-//------------------------------------------------------------------------------
+
 void CScene::setOpacity()
 {
   if(m_imageItem==NULL)
@@ -375,7 +371,7 @@ void CScene::setOpacity()
 
   m_imageItem->setOpacity( filter()/255.0 );
 }
-//------------------------------------------------------------------------------
+
 void CScene::autoHideOnZoom( qreal zoom )
 {
   if( autoHide() )
@@ -406,7 +402,7 @@ void CScene::autoHideOnZoom( qreal zoom )
       update();
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawImage()
 {
   CPyramid * a_pyramid = controler()->pyramid();
@@ -447,7 +443,6 @@ void CScene::drawImage()
   setOpacity();
 }
 
-//------------------------------------------------------------------------------
 void CScene::drawInterpixel(CTile* a_tile, QGraphicsItemGroup * group)
 {
   if( a_tile == NULL ) return;
@@ -478,7 +473,7 @@ void CScene::drawInterpixel(CTile* a_tile, QGraphicsItemGroup * group)
 	  drawLinel(x, y, 2, false, group);
       }
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawMap(CTopologicalMap* a_map, QGraphicsItemGroup * group)
 {
   assert(false); //use drawOpenMap instead
@@ -486,7 +481,7 @@ void CScene::drawMap(CTopologicalMap* a_map, QGraphicsItemGroup * group)
   for( CDynamicCoverageAll it(a_map); it.cont(); ++it)
     drawDart(a_map, *it, group);
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawOpenMap(CTile* a_tile, QGraphicsItemGroup* group,
 				QGraphicsItemGroup* fictiveGroup)
 {
@@ -495,7 +490,7 @@ void CScene::drawOpenMap(CTile* a_tile, QGraphicsItemGroup* group,
     if(!a_tile->getRegion(*it)->isInfiniteRegion())
       drawDart(a_tile, *it, group, fictiveGroup);
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawBorders(CTopologicalMap* a_map, QGraphicsItemGroup * group,
 				QGraphicsItemGroup * fictiveGroup)
 {
@@ -507,7 +502,7 @@ void CScene::drawBorders(CTopologicalMap* a_map, QGraphicsItemGroup * group,
   group->setHandlesChildEvents(false);
   fictiveGroup->setHandlesChildEvents(false);
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawLabels(CTile* a_map, QGraphicsItemGroup * group)
 {
   if( a_map == NULL ) return;
@@ -584,7 +579,7 @@ void CScene::drawLabels(CTile* a_map, QGraphicsItemGroup * group)
   group->setHandlesChildEvents(false);
 
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
 			      QGraphicsItemGroup* group,
 			      QGraphicsItemGroup* fictiveGroup)
@@ -674,7 +669,7 @@ void CScene::drawDart( CTopologicalMap* a_map, CDart* a_dart,
   tmp->setZValue(3);
 
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawEdge( CTopologicalMap* a_map,
 			      CDart* a_dart,
 			      QGraphicsItemGroup* group,
@@ -720,7 +715,7 @@ void CScene::drawEdge( CTopologicalMap* a_map,
   else  if( group != NULL)
     group->addToGroup(tmp);
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawPointel( const CDoublet& a_doublet,
 					QGraphicsItemGroup* group )
 {
@@ -737,7 +732,7 @@ void CScene::drawPointel( const CDoublet& a_doublet,
 
   group->setHandlesChildEvents(false);
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawLinel( uint x, uint y, uint orientation, bool fictive,
 				      QGraphicsItemGroup* group )
 {
@@ -765,7 +760,7 @@ void CScene::drawLinel( uint x, uint y, uint orientation, bool fictive,
 
   group->setHandlesChildEvents(false);
 }
-//------------------------------------------------------------------------------
+
 QPointF CScene::calculateGap( const QPointF & point,
 					    const CDoublet & current,
 					    const CDoublet & next )
@@ -792,7 +787,7 @@ QPointF CScene::calculateGap( const QPointF & point,
 
   return point + QPointF(gapx,gapy);
 }
-//------------------------------------------------------------------------------
+
 void CScene::drawCurrentLevel()
 {
   CPyramid * a_pyramid = controler()->pyramid();
@@ -860,7 +855,7 @@ void CScene::drawCurrentLevel()
       drawImage();
     }
 }
-//------------------------------------------------------------------------------
+
 void CScene::levelSelector()
 {
   CPyramid * pyramid = controler()->pyramid();
@@ -876,13 +871,13 @@ void CScene::levelSelector()
   connect(m_levelSelector, SIGNAL(valueChanged(int)),
 	  this, SLOT(sliderChanged(int)));
 }
-//------------------------------------------------------------------------------
+
 void CScene::sliderChanged(int ALevel)
 {
   setLevel(ALevel);
   m_levelSelector->setValue(level());
 }
-//------------------------------------------------------------------------------
+
 void CScene::addAction(QAction* action, bool value)
 {
   if(value)
@@ -890,12 +885,12 @@ void CScene::addAction(QAction* action, bool value)
 
   m_actions.append( action );
 }
-//------------------------------------------------------------------------------
+
 QWidget* CScene::drawToolBar()
 {
   return m_drawToolBar;
 }
-//------------------------------------------------------------------------------
+
 QList< QAction* > CScene::actions() const
 {
   return m_actions;

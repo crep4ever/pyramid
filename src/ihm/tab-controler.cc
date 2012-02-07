@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "tab-controler.hh"
 #include "view.hh"
 #include "view-decorator.hh"
@@ -24,7 +23,7 @@
 #include "controler.hh"
 #include <QtGui>
 #include <QDebug>
-//******************************************************************************
+
 CTabControler::CTabControler(CControler * AControler)
   : QMdiArea()
   , m_controler(AControler)
@@ -36,31 +35,31 @@ CTabControler::CTabControler(CControler * AControler)
   if(m_controler->extract())
     addScene();
 }
-//------------------------------------------------------------------------------
+
 CTabControler::~CTabControler()
 {}
-//------------------------------------------------------------------------------
+
 CControler * CTabControler::controler() const
 {
   return m_controler;
 }
-//------------------------------------------------------------------------------
+
 CScene * CTabControler::scene() const
 {
   return m_scene;
 }
-//------------------------------------------------------------------------------
+
 CView * CTabControler::view() const
 {
   return m_view;
 }
-//------------------------------------------------------------------------------
+
 void CTabControler::addScene()
 {
   m_scene = new CScene(m_controler);
   addView(m_scene)->showMaximized();
 }
-//------------------------------------------------------------------------------
+
 QMdiSubWindow * CTabControler::addView(CScene * scene)
 {
   m_view = new CView( m_scene );
