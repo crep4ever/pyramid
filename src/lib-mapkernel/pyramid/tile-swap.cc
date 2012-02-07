@@ -52,53 +52,53 @@ void CTile::saveProperties()
 {
   //std::cout<<"[start] CTile::saveProperties"<<std::endl;
   assert(isOk());
-  FProperties = new SProperties[1];
+  m_properties = new SProperties[1];
 
-  FProperties->id          = id();
-  FProperties->bottomRight = bottomRight();
-  FProperties->indexI      = index(0);
-  FProperties->indexJ      = index(1);
-  FProperties->indexK      = index(2);
-  FProperties->nbDarts     = getNbDarts();
-  FProperties->nbRegions   = getNbRegions();
+  m_properties->id          = id();
+  m_properties->bottomRight = bottomRight();
+  m_properties->indexI      = index(0);
+  m_properties->indexJ      = index(1);
+  m_properties->indexK      = index(2);
+  m_properties->nbDarts     = getNbDarts();
+  m_properties->nbRegions   = getNbRegions();
 
   if(existTileUp())
-    FProperties->up = tileUp()->id();
-  else if(FFirst)
-    FProperties->up = 0;
-  else FProperties->up = FOldProperties->up;
+    m_properties->up = tileUp()->id();
+  else if(m_first)
+    m_properties->up = 0;
+  else m_properties->up = m_oldProperties->up;
 
   if(existTileDown())
-    FProperties->down = tileDown()->id();
-  else if(FFirst)
-    FProperties->down = 0;
+    m_properties->down = tileDown()->id();
+  else if(m_first)
+    m_properties->down = 0;
   else
-    FProperties->down = FOldProperties->down;
+    m_properties->down = m_oldProperties->down;
 
   //std::cout<<"[end] CTile::saveProperties"<<std::endl;
 }
 
 void CTile::loadProperties()
 {
-  setId(FProperties->id);
-  setBottomRight(FProperties->bottomRight);
-  setIndex(0, FProperties->indexI);
-  setIndex(1, FProperties->indexJ);
-  setIndex(2, FProperties->indexK);
+  setId(m_properties->id);
+  setBottomRight(m_properties->bottomRight);
+  setIndex(0, m_properties->indexI);
+  setIndex(1, m_properties->indexJ);
+  setIndex(2, m_properties->indexK);
   assert(width()!=0 && height()!=0);
 }
 
 void CTile::loadEmptyTopology()
 {
   //std::cout<<"[start] CTile::loadEmptyTopology"<<std::endl;
-  FMapDarts.clear();
+  m_mapDarts.clear();
   CPyramidalDart* newDart = NULL;
-  unsigned int nbDarts = FProperties->nbDarts;
+  unsigned int nbDarts = m_properties->nbDarts;
 
   for (unsigned int i = 0; i < nbDarts; ++i)
     {
       newDart = static_cast<CPyramidalDart*>(addMapDart());
-      FMapDarts[FDartFields[i].id] = newDart;
+      m_mapDarts[m_dartFields[i].id] = newDart;
     }
 
   //std::cout<<"[end] CTile::loadEmptyTopology"<<std::endl;
@@ -112,18 +112,18 @@ void CTile::loadTopology()
   std::map<TDartId, CPyramidalDart*>::iterator itd;
   std::map<TRegionId, CRegion*>::iterator itr;
 
-  uint nbDarts = FProperties->nbDarts;
+  uint nbDarts = m_properties->nbDarts;
 
   for(uint i = 0; i < nbDarts; ++i, newDart=NULL)
     {
-      itd = FMapDarts.find(FDartFields[i].id);
-      assert(itd!=FMapDarts.end());
+      itd = m_mapDarts.find(m_dartFields[i].id);
+      assert(itd!=m_mapDarts.end());
       newDart = itd->second;
       newDart->setId(itd->first);
 
-      itd = FMapDarts.find(FDartFields[i].beta1); //On cherche le beta1
+      itd = m_mapDarts.find(m_dartFields[i].beta1); //On cherche le beta1
       assert(itd->first!=0);
-      assert(itd!=FMapDarts.end());
+      assert(itd!=m_mapDarts.end());
 
       assert(itd->second!=NULL);
       newDart->setBeta1(itd->second); //le beta1 a déjà été crée
@@ -132,8 +132,8 @@ void CTile::loadTopology()
 
       assert(newDart->getBeta1()!=NULL);
 
-      setDoublet(newDart, FDartFields[i].doublet);
-      newDart->setFictive(FDartFields[i].fictive);
+      setDoublet(newDart, m_dartFields[i].doublet);
+      newDart->setFictive(m_dartFields[i].fictive);
 
       // Coutures beta2
       // Pour un brin du bord, on ne fait pas la couture mais on renseigne la
@@ -144,32 +144,32 @@ void CTile::loadTopology()
       CDoublet doublet = newDart->doublet();
       if( (doublet.getX() == 0 && doublet.getLinel() == YNEG) ||
 	  (doublet.getY() == 0 && doublet.getLinel() == XPOS) )
-	FMapBeta2[FDartFields[i].id] = FDartFields[i].beta2;
+	m_mapBeta2[m_dartFields[i].id] = m_dartFields[i].beta2;
       else
 	{
-	  itd = FMapDarts.find(FDartFields[i].beta2);
-	  assert( itd!=FMapDarts.end() );
+	  itd = m_mapDarts.find(m_dartFields[i].beta2);
+	  assert( itd!=m_mapDarts.end() );
 
 	  newDart->setBeta2(itd->second);
 	  itd->second->setBeta2(newDart);
 	}
 
-      itr = FMapRegions.find(FDartFields[i].region); //On cherche la région
+      itr = m_mapRegions.find(m_dartFields[i].region); //On cherche la région
 
-      assert( itr!=FMapRegions.end() );
+      assert( itr!=m_mapRegions.end() );
       newDart->setRegion(itr->second);
 
-      if( FDartFields[i].up!=0 && existTileUp() )
+      if( m_dartFields[i].up!=0 && existTileUp() )
 	{
-	  itd = tileUp()->FMapDarts.find(FDartFields[i].up);
-	  assert( itd != tileUp()->FMapDarts.end() );
+	  itd = tileUp()->m_mapDarts.find(m_dartFields[i].up);
+	  assert( itd != tileUp()->m_mapDarts.end() );
 	  linkDartUpDown(itd->second, newDart);
 	}
 
-      if( FDartFields[i].down!=0 && existTileDown() )
+      if( m_dartFields[i].down!=0 && existTileDown() )
 	{
-	  itd = tileDown()->FMapDarts.find(FDartFields[i].down);
-	  assert( itd != tileDown()->FMapDarts.end() );
+	  itd = tileDown()->m_mapDarts.find(m_dartFields[i].down);
+	  assert( itd != tileDown()->m_mapDarts.end() );
 	  tileDown()->linkDartUpDown(newDart,itd->second);
 	}
     }
@@ -185,40 +185,40 @@ void CTile::saveTopology()
   CPyramidalDart* current = NULL;
   unsigned int count = 0;
   assert(getNbDarts()>0);
-  assert(FDartFields==NULL);
-  FDartFields = new SDart[getNbDarts()];
+  assert(m_dartFields==NULL);
+  m_dartFields = new SDart[getNbDarts()];
 
   for( CDynamicCoverageAll it(this); it.cont(); ++it)
     {
       current = static_cast<CPyramidalDart*>(*it);
 
-      FDartFields[count].id    = current->id();
-      FDartFields[count].beta1 = current->getBeta1()->id();
+      m_dartFields[count].id    = current->id();
+      m_dartFields[count].beta1 = current->getBeta1()->id();
 
-      it2 = FMapBeta2.find(current->id());
+      it2 = m_mapBeta2.find(current->id());
 
-      if(it2 != FMapBeta2.end())
-	FDartFields[count].beta2 = it2->second;
+      if(it2 != m_mapBeta2.end())
+	m_dartFields[count].beta2 = it2->second;
       else
-	FDartFields[count].beta2 = current->getBeta2()->id();
+	m_dartFields[count].beta2 = current->getBeta2()->id();
 
-      FDartFields[count].doublet = current->doublet();
-      FDartFields[count].fictive  = current->isFictive();
-      FDartFields[count].region  = getRegion(current)->id();
+      m_dartFields[count].doublet = current->doublet();
+      m_dartFields[count].fictive  = current->isFictive();
+      m_dartFields[count].region  = getRegion(current)->id();
 
       if(current->existUp())
-	FDartFields[count].up = current->up()->id();
-      else if(FFirst)
-	FDartFields[count].up = 0;
+	m_dartFields[count].up = current->up()->id();
+      else if(m_first)
+	m_dartFields[count].up = 0;
       else
-	FDartFields[count].up = FOldDarts[count].up;
+	m_dartFields[count].up = m_oldDarts[count].up;
 
       if(current->existDown())
-	FDartFields[count].down = current->down()->id();
-      else if(FFirst)
-	FDartFields[count].down = 0;
+	m_dartFields[count].down = current->down()->id();
+      else if(m_first)
+	m_dartFields[count].down = 0;
       else
-	FDartFields[count].down = FOldDarts[count].down;
+	m_dartFields[count].down = m_oldDarts[count].down;
 
       ++count;
     }
@@ -234,13 +234,13 @@ void CTile::loadEmptyTree()
 {
   //std::cout<<"[start] CTile::loadEmptyTree"<<std::endl;
 
-  FMapRegions.clear();
+  m_mapRegions.clear();
   CPyramidalRegion* newRegion = NULL;
-  unsigned int nbRegions = FProperties->nbRegions;
+  unsigned int nbRegions = m_properties->nbRegions;
 
   for (unsigned int i = 0; i < nbRegions; ++i)
     {
-      if(FRegionFields[i].infinite)
+      if(m_regionFields[i].infinite)
 	{
 	  newRegion = addMapInfiniteRegion();
 	  setInclusionTreeRoot(newRegion);
@@ -250,7 +250,7 @@ void CTile::loadEmptyTree()
 	  newRegion = addMapRegion();
 	}
 
-      FMapRegions[FRegionFields[i].id] = newRegion;
+      m_mapRegions[m_regionFields[i].id] = newRegion;
     }
   //std::cout<<"[end] CTile::loadEmptyTree"<<std::endl;
 }
@@ -261,31 +261,31 @@ void CTile::loadTree()
 
   CPyramidalRegion* newRegion = NULL;
   std::map<TRegionId, CRegion*>::iterator itr;
-  unsigned int nbRegions = FProperties->nbRegions;
+  unsigned int nbRegions = m_properties->nbRegions;
 
   for (unsigned int i=0; i < nbRegions; ++i)
     {
       // La région a déjà été créée: on remplit juste ses champs
-      newRegion = static_cast<CPyramidalRegion*>(FMapRegions.find(FRegionFields[i].id)->second);
+      newRegion = static_cast<CPyramidalRegion*>(m_mapRegions.find(m_regionFields[i].id)->second);
       assert(newRegion!=NULL);
 
-      newRegion->setId(FRegionFields[i].id);
-      newRegion->setFirstPixel(FRegionFields[i].firstPixel);
-      newRegion->setNbPixels(FRegionFields[i].nbPixels);
-      newRegion->setGreySum(FRegionFields[i].greySum);
-      newRegion->setGreySquareSum(FRegionFields[i].greySquareSum);
+      newRegion->setId(m_regionFields[i].id);
+      newRegion->setFirstPixel(m_regionFields[i].firstPixel);
+      newRegion->setNbPixels(m_regionFields[i].nbPixels);
+      newRegion->setGreySum(m_regionFields[i].greySum);
+      newRegion->setGreySquareSum(m_regionFields[i].greySquareSum);
 
       if(!newRegion->isInfiniteRegion())
 	{
-	  if( FRegionFields[i].up != 0 && existTileUp() )
+	  if( m_regionFields[i].up != 0 && existTileUp() )
 	    {
-	      itr = tileUp()->FMapRegions.find( FRegionFields[i].up );
+	      itr = tileUp()->m_mapRegions.find( m_regionFields[i].up );
 	      linkRegionUpDown(itr->second, newRegion);
 	    }
 
-	  if( FRegionFields[i].down != 0 && existTileDown() )
+	  if( m_regionFields[i].down != 0 && existTileDown() )
 	    {
-	      itr = tileDown()->FMapRegions.find( FRegionFields[i].down );
+	      itr = tileDown()->m_mapRegions.find( m_regionFields[i].down );
 	      tileDown()->linkRegionUpDown(newRegion, itr->second);
 	    }
 	}
@@ -310,24 +310,24 @@ void CTile::loadTree()
 	    }
 	}
 
-      newRegion->setGreyMin(FRegionFields[i].greyMin);
-      newRegion->setGreyMax(FRegionFields[i].greyMax);
-      newRegion->setLabel((CPyramidalRegion::Label)FRegionFields[i].label);
+      newRegion->setGreyMin(m_regionFields[i].greyMin);
+      newRegion->setGreyMax(m_regionFields[i].greyMax);
+      newRegion->setLabel((CPyramidalRegion::Label)m_regionFields[i].label);
 
-      if( FRegionFields[i].father != 0 )
-	newRegion->setFather(FMapRegions.find(FRegionFields[i].father)->second);
+      if( m_regionFields[i].father != 0 )
+	newRegion->setFather(m_mapRegions.find(m_regionFields[i].father)->second);
 
-      if( FRegionFields[i].son != 0 )
-	newRegion->setFirstSon(FMapRegions.find(FRegionFields[i].son)->second);
+      if( m_regionFields[i].son != 0 )
+	newRegion->setFirstSon(m_mapRegions.find(m_regionFields[i].son)->second);
 
-      if( FRegionFields[i].brother != 0 )
-	newRegion->setBrother(FMapRegions.find(FRegionFields[i].brother)->second);
+      if( m_regionFields[i].brother != 0 )
+	newRegion->setBrother(m_mapRegions.find(m_regionFields[i].brother)->second);
 
-      if( FRegionFields[i].cc != 0 )
-	newRegion->setNextSameCC(FMapRegions.find(FRegionFields[i].cc)->second);
+      if( m_regionFields[i].cc != 0 )
+	newRegion->setNextSameCC(m_mapRegions.find(m_regionFields[i].cc)->second);
 
-      assert( FRegionFields[i].representative != 0 );
-      newRegion->setRepresentativeDart((FMapDarts.find(FRegionFields[i].representative))->second);
+      assert( m_regionFields[i].representative != 0 );
+      newRegion->setRepresentativeDart((m_mapDarts.find(m_regionFields[i].representative))->second);
     }
   //std::cout<<"[end] CTile::loadTree"<<std::endl;
 }
@@ -339,7 +339,7 @@ void CTile::saveTree()
   CPyramidalRegion* current = NULL;
   unsigned int count = 0;
   assert(getNbRegions()>0);
-  FRegionFields = new SRegion[getNbRegions()];
+  m_regionFields = new SRegion[getNbRegions()];
 
   for( CDynamicCoverageAllRegions it(this); it.cont(); ++it)
     {
@@ -348,69 +348,69 @@ void CTile::saveTree()
 	  current = static_cast<CPyramidalRegion*>(*it);
 
 	  if(current->existUp())
-	    FRegionFields[count].up = current->up()->id();
-	  else if (FFirst)
-	    FRegionFields[count].up = 0;
-	  else FRegionFields[count].up = FOldRegions[count].up;
+	    m_regionFields[count].up = current->up()->id();
+	  else if (m_first)
+	    m_regionFields[count].up = 0;
+	  else m_regionFields[count].up = m_oldRegions[count].up;
 
 
 	  if(current->existDown())
-	    FRegionFields[count].down = current->down()->id();
-	  else if(FFirst)
-	    FRegionFields[count].down = 0;
+	    m_regionFields[count].down = current->down()->id();
+	  else if(m_first)
+	    m_regionFields[count].down = 0;
 	  else
-	    FRegionFields[count].down = FOldRegions[count].down;
+	    m_regionFields[count].down = m_oldRegions[count].down;
 
-	  FRegionFields[count].id            = current->id();
-	  FRegionFields[count].firstPixel    = current->firstPixel();
-	  FRegionFields[count].nbPixels      = current->getNbPixels();
-	  FRegionFields[count].greySum       = current->getGreySum();
-	  FRegionFields[count].greySquareSum = current->getGreySquareSum();
-	  FRegionFields[count].greyMin       = current->getGreyMin();
-	  FRegionFields[count].greyMax       = current->getGreyMax();
-	  FRegionFields[count].label         = current->label();
-	  FRegionFields[count].infinite      = false;
+	  m_regionFields[count].id            = current->id();
+	  m_regionFields[count].firstPixel    = current->firstPixel();
+	  m_regionFields[count].nbPixels      = current->getNbPixels();
+	  m_regionFields[count].greySum       = current->getGreySum();
+	  m_regionFields[count].greySquareSum = current->getGreySquareSum();
+	  m_regionFields[count].greyMin       = current->getGreyMin();
+	  m_regionFields[count].greyMax       = current->getGreyMax();
+	  m_regionFields[count].label         = current->label();
+	  m_regionFields[count].infinite      = false;
 	}
       else
 	{
 	  current = static_cast<CInfinitePyramidalRegion*>(*it);
-	  FRegionFields[count].id = 1;
-	  FRegionFields[count].up = 1;
-	  FRegionFields[count].down = 1;
-	  FRegionFields[count].infinite = true;
-	  FRegionFields[count].firstPixel    = CPoint2D(0,0);
-	  FRegionFields[count].nbPixels      = 0;
-	  FRegionFields[count].greySum       = 0;
-	  FRegionFields[count].greySquareSum = 0;
-	  FRegionFields[count].greyMin       = 0;
-	  FRegionFields[count].greyMax       = 0;
-	  FRegionFields[count].label         = CPyramidalRegion::Invalid;
+	  m_regionFields[count].id = 1;
+	  m_regionFields[count].up = 1;
+	  m_regionFields[count].down = 1;
+	  m_regionFields[count].infinite = true;
+	  m_regionFields[count].firstPixel    = CPoint2D(0,0);
+	  m_regionFields[count].nbPixels      = 0;
+	  m_regionFields[count].greySum       = 0;
+	  m_regionFields[count].greySquareSum = 0;
+	  m_regionFields[count].greyMin       = 0;
+	  m_regionFields[count].greyMax       = 0;
+	  m_regionFields[count].label         = CPyramidalRegion::Invalid;
 	}
 
 
       if(current->existFather())
-	FRegionFields[count].father = current->getFather()->id();
+	m_regionFields[count].father = current->getFather()->id();
       else
-	FRegionFields[count].father = 0;
+	m_regionFields[count].father = 0;
 
       if(current->existSon())
-	FRegionFields[count].son = current->getFirstSon()->id();
+	m_regionFields[count].son = current->getFirstSon()->id();
       else
-	FRegionFields[count].son = 0;
+	m_regionFields[count].son = 0;
 
       if(current->existBrother())
-	FRegionFields[count].brother = current->getBrother()->id();
+	m_regionFields[count].brother = current->getBrother()->id();
       else
-	FRegionFields[count].brother = 0;
+	m_regionFields[count].brother = 0;
 
       if(current->existNextSameCC())
-	FRegionFields[count].cc = current->getNextSameCC()->id();
+	m_regionFields[count].cc = current->getNextSameCC()->id();
       else
-	FRegionFields[count].cc = 0;
+	m_regionFields[count].cc = 0;
 
       //static_cast<CPyramidalDart*>(current->getRepresentativeDart())->printInfos();
       assert( static_cast<CPyramidalDart*>(current->getRepresentativeDart())->id()!=0 );
-      FRegionFields[count].representative = static_cast<CPyramidalDart*>(current->getRepresentativeDart())->id();
+      m_regionFields[count].representative = static_cast<CPyramidalDart*>(current->getRepresentativeDart())->id();
 
       ++count;
     }
@@ -428,33 +428,33 @@ void CTile::write()
   setFilename(index(0), index(1), index(2));
 
   unsigned int header[3];
-  FFirst = !fileExist(FFilename.c_str());
+  m_first = !fileExist(m_filename.c_str());
 
   // La tuile existait déjà, on récupère les infos du fichier
   // dans les structures "old"
-  if ( !FFirst )
+  if ( !m_first )
     {
       FILE * file = NULL;
-      file = fopen(FFilename.c_str(), "rb");
+      file = fopen(m_filename.c_str(), "rb");
       assert(file!=NULL);
 
       UNUSED(fread(static_cast<void*>(header), sizeof(header), 1, file));
 
-      FOldProperties = new SProperties[1];
-      UNUSED(fread( static_cast<void*>(FOldProperties), sizeof(SProperties), 1, file ));
+      m_oldProperties = new SProperties[1];
+      UNUSED(fread( static_cast<void*>(m_oldProperties), sizeof(SProperties), 1, file ));
 
-      FOldDarts = new SDart[header[1]/sizeof(SDart)];
+      m_oldDarts = new SDart[header[1]/sizeof(SDart)];
       unsigned int offset = sizeof(header)+sizeof(SProperties)+header[0];
       fseek(file, offset, SEEK_SET);
-      UNUSED(fread( static_cast<void*>(FOldDarts), header[1], 1, file ));
+      UNUSED(fread( static_cast<void*>(m_oldDarts), header[1], 1, file ));
 
-      FOldRegions = new SRegion[header[2]/sizeof(SRegion)];
-      UNUSED(fread( static_cast<void*>(FOldRegions), header[2], 1, file ));
+      m_oldRegions = new SRegion[header[2]/sizeof(SRegion)];
+      UNUSED(fread( static_cast<void*>(m_oldRegions), header[2], 1, file ));
 
       fclose(file);
     }
 
-  FMatrix = getKhalimsky()->getMatrix();
+  m_matrix = getKhalimsky()->getMatrix();
   header[0] = getKhalimskySizeX()*getKhalimskySizeY();
   header[1] = getNbDarts()*sizeof(SDart);
   header[2] = getNbRegions()*sizeof(SRegion);
@@ -462,28 +462,28 @@ void CTile::write()
   saveTopology();
   saveTree();
 
-  if (!FFirst)
+  if (!m_first)
     {
-      delete [] FOldDarts;      FOldDarts=NULL;
-      delete [] FOldRegions;    FOldRegions=NULL;
-      delete [] FOldProperties; FOldProperties=NULL;
+      delete [] m_oldDarts;      m_oldDarts=NULL;
+      delete [] m_oldRegions;    m_oldRegions=NULL;
+      delete [] m_oldProperties; m_oldProperties=NULL;
     }
 
-  UNUSED(remove ( FFilename.c_str() ));
+  UNUSED(remove ( m_filename.c_str() ));
   FILE * pFile;
-  pFile = fopen ( FFilename.c_str(), "wb" );
+  pFile = fopen ( m_filename.c_str(), "wb" );
   assert(pFile!=NULL);
 
   UNUSED(fwrite( static_cast<void*>(header), sizeof(header), 1, pFile ));
-  UNUSED(fwrite( static_cast<void*>(FProperties), sizeof(SProperties), 1, pFile ));
-  UNUSED(fwrite( static_cast<void*>(FMatrix), header[0], 1, pFile ));
-  UNUSED(fwrite( static_cast<void*>(FDartFields), header[1], 1, pFile ));
-  UNUSED(fwrite( static_cast<void*>(FRegionFields), header[2], 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(m_properties), sizeof(SProperties), 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(m_matrix), header[0], 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(m_dartFields), header[1], 1, pFile ));
+  UNUSED(fwrite( static_cast<void*>(m_regionFields), header[2], 1, pFile ));
   fclose (pFile);
 
-  delete [] FProperties;   FProperties=NULL;
-  delete [] FDartFields;   FDartFields=NULL;
-  delete [] FRegionFields; FRegionFields=NULL;
+  delete [] m_properties;   m_properties=NULL;
+  delete [] m_dartFields;   m_dartFields=NULL;
+  delete [] m_regionFields; m_regionFields=NULL;
 
   //std::cout<<"[end] CTile::write"<<std::endl;
 }
@@ -495,38 +495,38 @@ void CTile::load(unsigned int Ai, unsigned int Aj, unsigned int Ak)
 
   unsigned int header[3];
   FILE * file;
-  file = fopen ( FFilename.c_str(), "rb" );
-  if (file==NULL) {std::cout<<"CTile::load() : unable to open file "<<FFilename<<std::endl; assert(false);}
+  file = fopen ( m_filename.c_str(), "rb" );
+  if (file==NULL) {std::cout<<"CTile::load() : unable to open file "<<m_filename<<std::endl; assert(false);}
 
   // Lecture du header qui permet de récupérer les tailles
   UNUSED(fread( static_cast<void*>(header), sizeof(header), 1, file ));
 
   // Lecture des propriétés
-  FProperties = new SProperties[1];
-  UNUSED(fread( static_cast<void*>(FProperties), sizeof(SProperties), 1, file ));
+  m_properties = new SProperties[1];
+  UNUSED(fread( static_cast<void*>(m_properties), sizeof(SProperties), 1, file ));
 
   loadProperties();
-  //printPropertiesStruct(FProperties);
+  //printPropertiesStruct(m_properties);
 
   // Lecture de la matrice
   CKhalimsky* khalimsky = new CKhalimsky(width(), height());
-  FMatrix = khalimsky->getMatrix();
+  m_matrix = khalimsky->getMatrix();
   //on s'assure que la taille de la matrice est équivalente à celle lue sur le disque
   assert( (width()+1)*(height()+1)==header[0] );
-  UNUSED(fread( static_cast<void*>(FMatrix), header[0], 1, file ));
+  UNUSED(fread( static_cast<void*>(m_matrix), header[0], 1, file ));
 
-  khalimsky->setMatrix(FMatrix);
+  khalimsky->setMatrix(m_matrix);
   setKhalimsky(khalimsky);
 
   // Lecture des brins
-  FDartFields = new SDart[FProperties->nbDarts];
-  UNUSED(fread( static_cast<void*>(FDartFields), header[1], 1, file ));
+  m_dartFields = new SDart[m_properties->nbDarts];
+  UNUSED(fread( static_cast<void*>(m_dartFields), header[1], 1, file ));
 
   loadEmptyTopology();
 
   // Lecture des régions
-  FRegionFields = new SRegion[FProperties->nbRegions];
-  UNUSED(fread( static_cast<void*>(FRegionFields), header[2], 1, file ));
+  m_regionFields = new SRegion[m_properties->nbRegions];
+  UNUSED(fread( static_cast<void*>(m_regionFields), header[2], 1, file ));
 
   loadEmptyTree();
 
@@ -535,9 +535,9 @@ void CTile::load(unsigned int Ai, unsigned int Aj, unsigned int Ak)
   loadTopology();
   loadTree();
 
-  delete [] FDartFields;   FDartFields = NULL;
-  delete [] FRegionFields; FRegionFields = NULL;
-  delete [] FProperties;   FProperties = NULL;
+  delete [] m_dartFields;   m_dartFields = NULL;
+  delete [] m_regionFields; m_regionFields = NULL;
+  delete [] m_properties;   m_properties = NULL;
 
   assert(isOk());
 

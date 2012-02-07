@@ -26,17 +26,17 @@ namespace pyramid
 
   INLINE
   CLevel::CLevel():
-    FDepth(0),
-    FMergeThreshold(0),
-    FTileWidth(0),
-    FTileHeight(0),
-    FTileCounter(0),
-    FImage(NULL),
-    FLevelUp(NULL),
-    FLevelDown(NULL),
-    FClassif(NULL),
-    FHisto(NULL),
-    FAssignment(NULL)
+    m_depth(0),
+    m_mergeThreshold(0),
+    m_tileWidth(0),
+    m_tileHeight(0),
+    m_tileCounter(0),
+    m_image(NULL),
+    m_levelUp(NULL),
+    m_levelDown(NULL),
+    m_classif(NULL),
+    m_histo(NULL),
+    m_assignment(NULL)
   { }
 
   //******************************************************************************
@@ -46,123 +46,123 @@ namespace pyramid
   INLINE
   CLevel* CLevel::levelUp() const
   {
-    return FLevelUp;
+    return m_levelUp;
   }
 
   INLINE
   void CLevel::setLevelUp(CLevel* ALevel)
   {
     //if(ALevel) std::cout<<"setLevelUp= "<<ALevel->id()<<" down = "<<id()<<std::endl;
-    FLevelUp = ALevel;
+    m_levelUp = ALevel;
   }
 
   INLINE
   CLevel* CLevel::levelDown() const
   {
-    return FLevelDown;
+    return m_levelDown;
   }
 
   INLINE
   void CLevel::setLevelDown(CLevel* ALevel)
   {
     //if(ALevel) std::cout<<"setLevelUp= "<<ALevel->id()<<" down = "<<id()<<std::endl;
-    FLevelDown = ALevel;
+    m_levelDown = ALevel;
   }
 
   INLINE
   CImageTiff* CLevel::image() const
   {
-    return FImage;
+    return m_image;
   }
 
   INLINE
   void CLevel::setImage(CImageTiff* AImage)
   {
     assert( AImage!=NULL );
-    FImage = AImage;
+    m_image = AImage;
   }
 
   INLINE
   std::deque<CTile*> CLevel::tiles() const
   {
-    return FTiles;
+    return m_tiles;
   }
 
   INLINE
   void CLevel::setTiles(std::deque<CTile*>& ATiles)
   {
     assert( !ATiles.empty() );
-    FTiles = ATiles;
+    m_tiles = ATiles;
   }
 
   INLINE
   uint CLevel::mergeThreshold() const
   {
-    return FMergeThreshold;
+    return m_mergeThreshold;
   }
 
   INLINE
   void CLevel::setMergeThreshold(uint AMergeThreshold)
   {
-    FMergeThreshold = AMergeThreshold;
+    m_mergeThreshold = AMergeThreshold;
   }
 
   INLINE
   uint CLevel::depth() const
   {
-    return FDepth;
+    return m_depth;
   }
 
   INLINE
   void CLevel::setDepth(uint ADepth)
   {
-    FDepth = ADepth;
+    m_depth = ADepth;
   }
 
   INLINE
   uint CLevel::tileHeight() const
   {
-    return FTileHeight;
+    return m_tileHeight;
   }
 
   INLINE
   void CLevel::setTileHeight(uint ATileHeight)
   {
     if(ATileHeight>imageHeight())
-      FTileHeight = imageHeight();
+      m_tileHeight = imageHeight();
     else
-      FTileHeight = ATileHeight;
+      m_tileHeight = ATileHeight;
   }
 
   INLINE
   uint CLevel::tileWidth() const
   {
-    return FTileWidth;
+    return m_tileWidth;
   }
 
   INLINE
   void CLevel::setTileWidth(uint ATileWidth)
   {
     if(ATileWidth > imageWidth())
-      FTileWidth = imageWidth();
+      m_tileWidth = imageWidth();
     else
-      FTileWidth = ATileWidth;
+      m_tileWidth = ATileWidth;
   }
 
 
   INLINE
   CPoint2D CLevel::upRatios() const
   {
-    if(FDepth==0) return CPoint2D(1,1);
-    return CPoint2D( imageWidth()/image()->getXSize(FDepth-1),
-		     imageHeight()/image()->getYSize(FDepth-1) );
+    if(m_depth==0) return CPoint2D(1,1);
+    return CPoint2D( imageWidth()/image()->getXSize(m_depth-1),
+		     imageHeight()/image()->getYSize(m_depth-1) );
   }
 
   INLINE
   CPoint2D CLevel::downRatios() const
   {
-    return CPoint2D( image()->getXSize(FDepth+1)/imageWidth(),
-		     image()->getYSize(FDepth+1)/imageHeight() );
+    return CPoint2D( image()->getXSize(m_depth+1)/imageWidth(),
+		     image()->getYSize(m_depth+1)/imageHeight() );
   }
 
   //******************************************************************************
@@ -179,59 +179,59 @@ namespace pyramid
   INLINE
   uint CLevel::imageWidth() const
   {
-    assert( FImage!=NULL);
-    return FImage->getXSize(depth());
+    assert( m_image!=NULL);
+    return m_image->getXSize(depth());
   }
 
   INLINE
   uint CLevel::imageHeight() const
   {
-    assert( FImage!=NULL);
-    return FImage->getYSize(depth());
+    assert( m_image!=NULL);
+    return m_image->getYSize(depth());
   }
 
   INLINE
   uint CLevel::componentWidth() const
   {
-    assert( FImage!=NULL);
-    return FImage->getProperties().componentWidth;
+    assert( m_image!=NULL);
+    return m_image->getProperties().componentWidth;
   }
 
   INLINE
   uint CLevel::componentHeight() const
   {
-    assert( FImage!=NULL);
-    return FImage->getProperties().componentHeight;
+    assert( m_image!=NULL);
+    return m_image->getProperties().componentHeight;
   }
 
   INLINE
   uint CLevel::nbComponentsWidth() const
   {
-    assert( FImage!=NULL);
-    return FImage->getProperties().width/FImage->getProperties().componentWidth;
+    assert( m_image!=NULL);
+    return m_image->getProperties().width/m_image->getProperties().componentWidth;
   }
 
   INLINE
   uint CLevel::nbComponentsHeight() const
   {
-    assert( FImage!=NULL);
-    return FImage->getProperties().height/FImage->getProperties().componentHeight;
+    assert( m_image!=NULL);
+    return m_image->getProperties().height/m_image->getProperties().componentHeight;
   }
 
   INLINE
   uint CLevel::nbTilesWidth() const
   {
     uint width = imageWidth();
-    uint truncated = (width%FTileWidth > 0)?1:0;
-    return width/FTileWidth + truncated;
+    uint truncated = (width%m_tileWidth > 0)?1:0;
+    return width/m_tileWidth + truncated;
   }
 
   INLINE
   uint CLevel::nbTilesHeight() const
   {
     uint height = imageHeight();
-    uint truncated = (height%FTileHeight > 0)?1:0;
-    return height/FTileHeight + truncated;
+    uint truncated = (height%m_tileHeight > 0)?1:0;
+    return height/m_tileHeight + truncated;
   }
 
 
@@ -376,7 +376,7 @@ namespace pyramid
   INLINE
   CTile* CLevel::tile(const CPoint2D & APos)
   {
-    for(it = FTiles.begin(); it!=FTiles.end(); ++it)
+    for(it = m_tiles.begin(); it!=m_tiles.end(); ++it)
       if( (*it)->index(0) == APos.getX() && (*it)->index(1) == APos.getY())
 	return *it;
 
@@ -388,7 +388,7 @@ namespace pyramid
   {
     assert( ATile!=NULL );
     //assert( ATile->isOk());
-    FTiles.push_back(ATile);
+    m_tiles.push_back(ATile);
   }
 
   INLINE
@@ -415,12 +415,12 @@ namespace pyramid
   CTile* CLevel::loadTile(const CPoint2D & APos)
   {
     //std::cout<<" CLevel::loadTile ("<<APos.getX()<<","<<APos.getY()<<","<<depth()<<")"<<std::endl;
-    //std::cout<<" w = "<<FTileWidth<<" h = "<<FTileHeight<<std::endl;
-    assert(FTileWidth!=0 && FTileHeight!=0);
-    CTile* newTile = new CTile(FTileWidth, FTileHeight);
+    //std::cout<<" w = "<<m_tileWidth<<" h = "<<m_tileHeight<<std::endl;
+    assert(m_tileWidth!=0 && m_tileHeight!=0);
+    CTile* newTile = new CTile(m_tileWidth, m_tileHeight);
 
-    newTile->setMergeThreshold(FMergeThreshold);
-    newTile->setImage(FImage);
+    newTile->setMergeThreshold(m_mergeThreshold);
+    newTile->setImage(m_image);
     newTile->setPixelMark();
     newTile->load(APos.getX(), APos.getY(), depth());
     addTile(newTile);
@@ -440,11 +440,11 @@ namespace pyramid
   bool CLevel::unloadTile(const CPoint2D & APos)
   {
     // On cherche la tuile dans le vecteur et on la supprime
-    for(it = FTiles.begin(); it!=FTiles.end();++it)
+    for(it = m_tiles.begin(); it!=m_tiles.end();++it)
       if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
 	{
 	  CTile* tmp = *it;
-	  it = FTiles.erase(it);
+	  it = m_tiles.erase(it);
 	  delTile(tmp);
 	  return true;
 	}
@@ -455,7 +455,7 @@ namespace pyramid
   INLINE
   bool CLevel::isTileLoaded(const CPoint2D & APos)
   {
-    for(it = FTiles.begin(); it!=FTiles.end(); ++it)
+    for(it = m_tiles.begin(); it!=m_tiles.end(); ++it)
       if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
 	return true;
 
@@ -465,12 +465,12 @@ namespace pyramid
   INLINE
   void CLevel::unloadAllTiles()
   {
-    //std::cout<<"[start] CLevel::unloadAllTiles lvl "<<FDepth<<std::endl;
-    for(uint i=0; i<FTiles.size(); ++i)
-      delTile(FTiles[i]);
+    //std::cout<<"[start] CLevel::unloadAllTiles lvl "<<m_depth<<std::endl;
+    for(uint i=0; i<m_tiles.size(); ++i)
+      delTile(m_tiles[i]);
 
-    FTiles.clear();
-    assert(FTiles.empty());
+    m_tiles.clear();
+    assert(m_tiles.empty());
     //std::cout<<"[end] CLevel::unloadAllTiles"<<std::endl;
   }
 
@@ -489,9 +489,9 @@ namespace pyramid
     image()->close();
     image()->unload();
     image()->open();
-    if(FClassif) delete FClassif; FClassif=NULL;
-    if(FAssignment) delete FAssignment; FAssignment=NULL;
-    FHisto=NULL;
+    if(m_classif) delete m_classif; m_classif=NULL;
+    if(m_assignment) delete m_assignment; m_assignment=NULL;
+    m_histo=NULL;
   }
 
   //******************************************************************************
@@ -551,8 +551,8 @@ namespace pyramid
   INLINE
   void CLevel::histogram()
   {
-    FHisto = new CVolume<uint>(256,256,256);
-    FHisto->fill(0);
+    m_histo = new CVolume<uint>(256,256,256);
+    m_histo->fill(0);
 
     CTile* tile;  IM_Box box;
     uint ratiox = upRatios().x(); uint ratioy = upRatios().y();
@@ -570,9 +570,9 @@ namespace pyramid
 	  image()->read(box, depth());
 
 	  //append histogram
-	  tile->histogram(FHisto);
+	  tile->histogram(m_histo);
 	  levelUp()->unloadTile(CPoint2D(i,j));
 	}
-    assert(FHisto);
+    assert(m_histo);
   }
 } // namespace pyramid

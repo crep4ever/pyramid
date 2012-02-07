@@ -43,7 +43,7 @@ namespace clustering
   INLINE
   bool CSplitHole::isRegionToSplit()
   {
-    return static_cast<pyramid::CPyramidalRegion*>(FRegion)->up()->existSon();
+    return static_cast<pyramid::CPyramidalRegion*>(m_region)->up()->existSon();
   }
 
   //******************************************************************************

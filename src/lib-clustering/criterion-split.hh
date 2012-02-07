@@ -36,7 +36,7 @@ namespace clustering
   class CCriterionSplit
   {
   protected:
-    CRegion* FRegion; //La région à splitter
+    CRegion* m_region; //La région à splitter
 
   public :
     // Constructeurs

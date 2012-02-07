@@ -16,7 +16,7 @@ namespace clustering
   class CRegion;
   class CSplitHisto : public CCriterionSplit
   {
-    int FDepth;
+    int m_depth;
 
   public:
     // Constructeurs

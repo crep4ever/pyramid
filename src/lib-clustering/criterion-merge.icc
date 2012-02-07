@@ -8,8 +8,8 @@ namespace clustering
 {
   INLINE
   CCriterionMerge::CCriterionMerge() :
-    FRegion1 ( NULL),
-    FRegion2 ( NULL )
+    m_region1 ( NULL),
+    m_region2 ( NULL )
   {}
 
   //------------------------------------------------------------------------------
@@ -19,8 +19,8 @@ namespace clustering
   INLINE
   CCriterionMerge::CCriterionMerge(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2)
   {
-    FRegion1 = ARegion1;
-    FRegion2 = ARegion2;
+    m_region1 = ARegion1;
+    m_region2 = ARegion2;
   }
 
   //******************************************************************************
@@ -29,24 +29,24 @@ namespace clustering
 
   INLINE
   Map2d::CRegion* CCriterionMerge::getRegion1() const
-  { return FRegion1; }
+  { return m_region1; }
   //------------------------------------------------------------------------------
   INLINE
   void CCriterionMerge::setRegion1(Map2d::CRegion* ARegion)
   {
     assert(ARegion!=NULL);
-    FRegion1 = ARegion;
+    m_region1 = ARegion;
   }
   //------------------------------------------------------------------------------
   INLINE
   Map2d::CRegion* CCriterionMerge::getRegion2() const
-  { return FRegion2; }
+  { return m_region2; }
   //------------------------------------------------------------------------------
   INLINE
   void CCriterionMerge::setRegion2(Map2d::CRegion* ARegion)
   {
     assert(ARegion!=NULL);
-    FRegion2 = ARegion;
+    m_region2 = ARegion;
   }
 } // end namespace clustering
 //******************************************************************************

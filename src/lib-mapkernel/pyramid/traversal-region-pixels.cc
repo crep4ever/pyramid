@@ -24,93 +24,93 @@ using namespace pyramid;
 
 CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
 					       CPyramidalRegion* ARegion):
-  FTile(ATile),
-  FRegion(ARegion),
-  FStop(false)
+  m_tile(ATile),
+  m_region(ARegion),
+  m_stop(false)
 {
   if( ARegion->isInfiniteRegion() ) return;
 
-  FPixelsStack.push(static_cast<CPyramidalRegion*>(ARegion)->firstPixel());
+  m_pixelsStack.push(static_cast<CPyramidalRegion*>(ARegion)->firstPixel());
   this->operator++();
-  FTile->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
+  m_tile->markPixel(m_currentPixel.getX(),m_currentPixel.getY());
 }
 
 CTraversalRegionPixels::~CTraversalRegionPixels()
 {
-  FTile->unmarkAllPixels();
+  m_tile->unmarkAllPixels();
 }
 
 void CTraversalRegionPixels::reinit()
 {
-  FStop = false;
-  FTile->unmarkAllPixels();
-  while(!FPixelsStack.empty())
+  m_stop = false;
+  m_tile->unmarkAllPixels();
+  while(!m_pixelsStack.empty())
     {
-      FPixelsStack.pop();
+      m_pixelsStack.pop();
     }
-  FPixelsStack.push(static_cast<CPyramidalRegion*>(FRegion)->firstPixel());
+  m_pixelsStack.push(static_cast<CPyramidalRegion*>(m_region)->firstPixel());
   this->operator++();
-  FTile->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
+  m_tile->markPixel(m_currentPixel.getX(),m_currentPixel.getY());
 }
 
 void CTraversalRegionPixels::operator++()
 {
-  if( FPixelsStack.empty() )
+  if( m_pixelsStack.empty() )
     {
-      FStop = true;
+      m_stop = true;
       return;
     }
 
-  FCurrentPixel = FPixelsStack.top();
-  FPixelsStack.pop();
+  m_currentPixel = m_pixelsStack.top();
+  m_pixelsStack.pop();
 
-  CDoublet t(FCurrentPixel.getX(),FCurrentPixel.getY());
+  CDoublet t(m_currentPixel.getX(),m_currentPixel.getY());
   t.setLinel(XPOS);
-  if( !FTile->isLCell(t) )
+  if( !m_tile->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
-      n.setY(FCurrentPixel.getY()-1);
-      if(!FTile->isPixelMarked(n.getX(),n.getY()))
+      CPoint2D n(m_currentPixel);
+      n.setY(m_currentPixel.getY()-1);
+      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
 	{
-	  FTile->markPixel(n.getX(),n.getY());
-	  FPixelsStack.push(n);
+	  m_tile->markPixel(n.getX(),n.getY());
+	  m_pixelsStack.push(n);
 	}
     }
 
   t.setLinel(YPOS);
-  if( !FTile->isLCell(t) )
+  if( !m_tile->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
-      n.setX(FCurrentPixel.getX()-1);
-      if(!FTile->isPixelMarked(n.getX(),n.getY()))
+      CPoint2D n(m_currentPixel);
+      n.setX(m_currentPixel.getX()-1);
+      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
 	{
-	  FTile->markPixel(n.getX(),n.getY());
-	  FPixelsStack.push(n);
+	  m_tile->markPixel(n.getX(),n.getY());
+	  m_pixelsStack.push(n);
 	}
     }
 
- t = CDoublet(FCurrentPixel.getX()+1,FCurrentPixel.getY()+1);
+ t = CDoublet(m_currentPixel.getX()+1,m_currentPixel.getY()+1);
  t.setLinel(XNEG);
-  if( !FTile->isLCell(t) )
+  if( !m_tile->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
-      n.setY(FCurrentPixel.getY()+1);
-      if(!FTile->isPixelMarked(n.getX(),n.getY()))
+      CPoint2D n(m_currentPixel);
+      n.setY(m_currentPixel.getY()+1);
+      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
 	{
-	  FTile->markPixel(n.getX(),n.getY());
-	  FPixelsStack.push(n);
+	  m_tile->markPixel(n.getX(),n.getY());
+	  m_pixelsStack.push(n);
 	}
     }
 
   t.setLinel(YNEG);
-  if( !FTile->isLCell(t) )
+  if( !m_tile->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
-      n.setX(FCurrentPixel.getX()+1);
-      if(!FTile->isPixelMarked(n.getX(),n.getY()))
+      CPoint2D n(m_currentPixel);
+      n.setX(m_currentPixel.getX()+1);
+      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
 	{
-	  FTile->markPixel(n.getX(),n.getY());
-	  FPixelsStack.push(n);
+	  m_tile->markPixel(n.getX(),n.getY());
+	  m_pixelsStack.push(n);
 	}
     }
 }
@@ -118,16 +118,16 @@ void CTraversalRegionPixels::operator++()
 const CPoint2D & CTraversalRegionPixels::operator++(int)
 {
   this->operator ++();
-  return FCurrentPixel;
+  return m_currentPixel;
 }
 
 bool CTraversalRegionPixels::cont() const
 {
-  return !FStop;
+  return !m_stop;
 }
 
 const CPoint2D & CTraversalRegionPixels::operator*()
 {
-  return FCurrentPixel;
+  return m_currentPixel;
 }
 

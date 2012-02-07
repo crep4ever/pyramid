@@ -51,33 +51,33 @@ namespace pyramid
 
   private:
     // L'image
-    CImageTiff* FImage;
+    CImageTiff* m_image;
 
   protected:
-    uint FNbPixels; //split crit
-    float FDeviation;
-    uint FTileWidth;
-    uint FTileHeight;
-    uint FNbLevels;
-    uint FExtractMode;
-    uint FSegmentationMode;
-    uint FProjectionMode;
-    uint FFocusAttentionMode;
-    uint FDetectFictiveBordersMode;
+    uint m_nbPixels; //split crit
+    float m_deviation;
+    uint m_tileWidth;
+    uint m_tileHeight;
+    uint m_nbLevels;
+    uint m_extractMode;
+    uint m_segmentationMode;
+    uint m_projectionMode;
+    uint m_focusAttentionMode;
+    uint m_detectFictiveBordersMode;
 
   public:
-    uint FTileTotal;
-    uint FTileCounter;
-    uint FLevelCounter;
-    uint FMaxMemory;
+    uint m_tileTotal;
+    uint m_tileCounter;
+    uint m_levelCounter;
+    uint m_maxMemory;
 
   public:
     // Niveaux de la pyramide
-    std::deque<CLevel*> FLevels;
+    std::deque<CLevel*> m_levels;
     std::deque<CLevel*>::iterator it;
 
     //Seuil de merge des niveaux
-    std::vector<uint> FMergeThresholds;
+    std::vector<uint> m_mergeThresholds;
 
     /// Constructeur depuis une image
     /// @param AFilename : le fichier image
@@ -202,7 +202,7 @@ namespace pyramid
     void linkTileUpDown(CTile* ATileUp, CTile* ATileDown);
 
     /// Retourne la tuile de coordonnées (i,j) du level k
-    /// directement depuis le vecteur FTiles si elle est en mémoire ou
+    /// directement depuis le vecteur m_tiles si elle est en mémoire ou
     /// depuis un load si elle a été swappé.
     CTile* tile(const CPoint3D & APos);
 
@@ -224,7 +224,7 @@ namespace pyramid
     /// Charge toutes les tuiles en mémoire
     void loadAllTiles();
 
-    /// Supprime la tuile (Ai,Aj,Ak) de la mémoire (du veteur FTiles)
+    /// Supprime la tuile (Ai,Aj,Ak) de la mémoire (du veteur m_tiles)
     /// @return true si la tuile a bien été supprimée
     bool unloadTile(uint Ai, uint Aj, uint Ak);
 

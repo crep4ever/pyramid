@@ -29,13 +29,13 @@ void CTile::createMask(std::vector<CDoublet>& AMask)
 {
   //std::cout<<"[start] CTile::createMask"<<std::endl;
 
-  //std::cout<<"FRatioX = "<<FRatioX<<std::endl;
-  //std::cout<<"FRatioY = "<<FRatioY<<std::endl;
+  //std::cout<<"m_ratioX = "<<m_ratioX<<std::endl;
+  //std::cout<<"m_ratioY = "<<m_ratioY<<std::endl;
 
   // les aretes verticales
-  for(unsigned int i=0; i<FRatioX-1; ++i)
+  for(unsigned int i=0; i<m_ratioX-1; ++i)
     {
-      CDoublet doublet(getWidth()/FRatioX*(i+1),0,YPOS);
+      CDoublet doublet(getWidth()/m_ratioX*(i+1),0,YPOS);
       for(unsigned int j=0; j<getHeight(); ++j)
 	{
 	  doublet.setY(j);
@@ -44,9 +44,9 @@ void CTile::createMask(std::vector<CDoublet>& AMask)
     }
 
   // les aretes horizontales
-  for(unsigned int j=0; j<FRatioY-1; ++j)
+  for(unsigned int j=0; j<m_ratioY-1; ++j)
     {
-      CDoublet doublet(0, getHeight()/FRatioY*(j+1), XPOS);
+      CDoublet doublet(0, getHeight()/m_ratioY*(j+1), XPOS);
       for(unsigned int i=0; i<getWidth(); ++i)
 	{
 	  doublet.setX(i);
@@ -272,15 +272,15 @@ void CTile::createSons()
 
 
   //  unsigned int count = 0;
-  for(unsigned int i=0; i<FRatioX; ++i)
-    for(unsigned int j=0; j<FRatioY; ++j)
+  for(unsigned int i=0; i<m_ratioX; ++i)
+    for(unsigned int j=0; j<m_ratioY; ++j)
       {
 	// Nouvelle tuile fille
 	CTile* son = new CTile(getWidth(), getHeight());
-	son->setMergeThresholds(FMergeThresholds);
+	son->setMergeThresholds(m_mergeThresholds);
 	son->setOrigine(getX()*(i+1), getY()*(j+1));
-	son->setRatioX(FRatioX);
-	son->setRatioY(FRatioY);
+	son->setRatioX(m_ratioX);
+	son->setRatioY(m_ratioY);
 	son->setIndex(2, getIndex(2));
 
 	// La matrice
@@ -362,8 +362,8 @@ void CTile::shareDartsWithSon(CTile* ASon)
 
   std::cout<<" récupération des brins"<<std::endl;
   assert(isMapOk());
-  std::cout<<" ratio X = "<<FRatioX<<std::endl;
-  std::cout<<" ratio Y = "<<FRatioY<<std::endl;
+  std::cout<<" ratio X = "<<m_ratioX<<std::endl;
+  std::cout<<" ratio Y = "<<m_ratioY<<std::endl;
 
   std::cout<<" xmin = "<<ASon->getXmin()<<std::endl;
   std::cout<<" xmax = "<<ASon->getXmax()<<std::endl;
@@ -375,40 +375,40 @@ void CTile::shareDartsWithSon(CTile* ASon)
     {
       CDoublet doublet = getDoublet(*it);
       //les brins de l'intérieur
-      if( doublet.getX()*FRatioX >= ASon->getXmin() && doublet.getX()*FRatioX <= ASon->getXmax() &&
-	  doublet.getY()*FRatioY >= ASon->getYmin() && doublet.getY()*FRatioY <= ASon->getYmax() )
+      if( doublet.getX()*m_ratioX >= ASon->getXmin() && doublet.getX()*m_ratioX <= ASon->getXmax() &&
+	  doublet.getY()*m_ratioY >= ASon->getYmin() && doublet.getY()*m_ratioY <= ASon->getYmax() )
 	{
-	  if( doublet.getX()*FRatioX > ASon->getXmin() && doublet.getX()*FRatioX < ASon->getXmax() &&
-	      doublet.getY()*FRatioY > ASon->getYmin() && doublet.getY()*FRatioY < ASon->getYmax() )
+	  if( doublet.getX()*m_ratioX > ASon->getXmin() && doublet.getX()*m_ratioX < ASon->getXmax() &&
+	      doublet.getY()*m_ratioY > ASon->getYmin() && doublet.getY()*m_ratioY < ASon->getYmax() )
 	    {
 
 	      std::cout<<"bah"<<std::endl;
 	      CPyramidalDart* dart = static_cast<CPyramidalDart*>(ASon->addMapDart());
 	      CDoublet tmp = doublet;
-	      tmp.setX(doublet.getX()*FRatioX);
-	      tmp.setY(doublet.getY()*FRatioY);
+	      tmp.setX(doublet.getX()*m_ratioX);
+	      tmp.setY(doublet.getY()*m_ratioY);
 	      ASon->setDoublet(dart, tmp);
 	      ASon->linkDartUpDown(static_cast<CPyramidalDart*>(*it), dart);
 	    }
 
-	  if( (doublet.getX()*FRatioX==ASon->getXmin() &&
-	       doublet.getY()*FRatioY==ASon->getYmin() &&
+	  if( (doublet.getX()*m_ratioX==ASon->getXmin() &&
+	       doublet.getY()*m_ratioY==ASon->getYmin() &&
 	       (doublet.getLinel()==XPOS || doublet.getLinel()==YPOS)) ||
-	      (doublet.getX()*FRatioX==ASon->getXmax() &&
-	       doublet.getY()*FRatioY==ASon->getYmin() &&
+	      (doublet.getX()*m_ratioX==ASon->getXmax() &&
+	       doublet.getY()*m_ratioY==ASon->getYmin() &&
 	       (doublet.getLinel()==XNEG || doublet.getLinel()==YPOS)) ||
-	      (doublet.getY()*FRatioY==ASon->getYmax() &&
-	       doublet.getX()*FRatioX==ASon->getXmin() &&
+	      (doublet.getY()*m_ratioY==ASon->getYmax() &&
+	       doublet.getX()*m_ratioX==ASon->getXmin() &&
 	       (doublet.getLinel()==XPOS || doublet.getLinel()==YNEG)) ||
-	      (doublet.getY()*FRatioY==ASon->getYmax() &&
-	       doublet.getX()*FRatioX==ASon->getXmax() &&
+	      (doublet.getY()*m_ratioY==ASon->getYmax() &&
+	       doublet.getX()*m_ratioX==ASon->getXmax() &&
 	       (doublet.getLinel()==XNEG || doublet.getLinel()==YNEG)) )
 	    {
 	      std::cout<<"bih: "<<doublet<<std::endl;
 	      CPyramidalDart* dart = static_cast<CPyramidalDart*>(ASon->addMapDart());
 	      CDoublet tmp = doublet;
-	      tmp.setX(doublet.getX()*FRatioX);
-	      tmp.setY(doublet.getY()*FRatioY);
+	      tmp.setX(doublet.getX()*m_ratioX);
+	      tmp.setY(doublet.getY()*m_ratioY);
 	      ASon->setDoublet(dart, tmp);
 	      ASon->linkDartUpDown(static_cast<CPyramidalDart*>(*it), dart);
 	    }

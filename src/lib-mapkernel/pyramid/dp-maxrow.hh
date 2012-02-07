@@ -44,9 +44,9 @@ namespace pyramid
   class CMaxRow
   {
   protected:
-    CDoublet FDoublet1;
-    uint FValue;
-    CDoublet FDoublet2;
+    CDoublet m_doublet1;
+    uint m_value;
+    CDoublet m_doublet2;
 
   public:
     /// Constructeur

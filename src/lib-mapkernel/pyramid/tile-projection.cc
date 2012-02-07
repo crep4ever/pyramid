@@ -127,7 +127,7 @@ void CTile::projectionDijkstraConstant()
   up->negateMaskMark(done);
   up->freeMark(done);
 
-  setId(++(up->FCount));
+  setId(++(up->m_dartCount));
   //std::cout<<"\n[end] CTile::projectionDijkstraConstant"<<std::endl;
 }
 
@@ -196,7 +196,7 @@ void CTile::projectionDijkstra()
   up->negateMaskMark(done);
   up->freeMark(done);
 
-  setId(++(up->FCount));
+  setId(++(up->m_dartCount));
   //std::cout<<"\n[end] CTile::projectionDijkstra"<<std::endl;
 }
 

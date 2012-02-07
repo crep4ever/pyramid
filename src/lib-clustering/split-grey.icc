@@ -29,14 +29,14 @@ namespace clustering
   INLINE
   CSplitGrey::CSplitGrey() :
     CCriterionSplit (),
-    FMergeThreshold  ( 0 ) // On n'éclate pas les régions homogènes
+    m_mergeThreshold  ( 0 ) // On n'éclate pas les régions homogènes
   {}
   //------------------------------------------------------------------------------
   INLINE
   CSplitGrey::CSplitGrey(Map2d::CRegion* ARegion, unsigned int AMergeThreshold) :
     CCriterionSplit(ARegion)
   {
-    FMergeThreshold = AMergeThreshold;
+    m_mergeThreshold = AMergeThreshold;
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -48,21 +48,21 @@ namespace clustering
 
   INLINE
   unsigned int CSplitGrey::getMergeThreshold() const
-  { return FMergeThreshold; }
+  { return m_mergeThreshold; }
   //------------------------------------------------------------------------------
   INLINE
   void CSplitGrey::setMergeThreshold(unsigned int AMergeThreshold){
-    FMergeThreshold = AMergeThreshold;
+    m_mergeThreshold = AMergeThreshold;
   }
   //------------------------------------------------------------------------------
   INLINE
   bool CSplitGrey::isRegionToSplit()
   {
-    int diff = static_cast<pyramid::CPyramidalRegion*>(FRegion)->getGreyMax() -
-      static_cast<pyramid::CPyramidalRegion*>(FRegion)->getGreyMin();
+    int diff = static_cast<pyramid::CPyramidalRegion*>(m_region)->getGreyMax() -
+      static_cast<pyramid::CPyramidalRegion*>(m_region)->getGreyMin();
     assert(diff>=0);
 
-    //std::cout<<"différence min / max de la région "<<FRegion->getId()<<" = "<<diff<<std::endl;
+    //std::cout<<"différence min / max de la région "<<m_region->getId()<<" = "<<diff<<std::endl;
     //std::cout<<"Comparaison par rapport au seuil de merge = "<<getMergeThreshold()<<std::endl;
     return (unsigned int)diff > getMergeThreshold() ;
   }

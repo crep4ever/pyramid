@@ -149,35 +149,35 @@ namespace pyramid
     CArray* m_matrixLignelDart; ///< association between a lignel and its dart 
 
   private:
-    uint FId; ///< the tile unique identifier
-    CPoint2D FBottomRight; ///< the bottom-right corner coordinates
-    uint FWidth;  ///< the tile width
-    uint FHeight; ///< the tile height
+    uint m_id; ///< the tile unique identifier
+    CPoint2D m_bottomRight; ///< the bottom-right corner coordinates
+    uint m_width;  ///< the tile width
+    uint m_height; ///< the tile height
 
-    CTile* FTileUp;   ///< the tile up in previous level
-    CTile* FTileDown; ///< the tile down in next level
+    CTile* m_tileUp;   ///< the tile up in previous level
+    CTile* m_tileDown; ///< the tile down in next level
 
   public:
     // Swap
-    struct SProperties* FProperties;    ///< tile current properties to be swapped/loaded
-    struct SProperties* FOldProperties; ///< tile properties on disk (may differ from current properties)
-    TKhalimskyElt*  FMatrix; ///< tile geometrical matrix
-    struct SDart*   FDartFields;   ///< tile's darts current properties to be swapped/loaded
-    struct SDart*   FOldDarts;     ///< tile's darts properties on disk (may differ from current properties)
-    struct SRegion* FRegionFields; ///< tile's regions current properties to be swapped/loaded
-    struct SRegion* FOldRegions;   ///< tile's regions properties on disk (may differ from current properties)
-    bool FFirst; ///< true if the tile has never be saved on disk before
-    std::string FFilename; ///< the filename for storing the tile on disk
+    struct SProperties* m_properties;    ///< tile current properties to be swapped/loaded
+    struct SProperties* m_oldProperties; ///< tile properties on disk (may differ from current properties)
+    TKhalimskyElt*  m_matrix; ///< tile geometrical matrix
+    struct SDart*   m_dartFields;   ///< tile's darts current properties to be swapped/loaded
+    struct SDart*   m_oldDarts;     ///< tile's darts properties on disk (may differ from current properties)
+    struct SRegion* m_regionFields; ///< tile's regions current properties to be swapped/loaded
+    struct SRegion* m_oldRegions;   ///< tile's regions properties on disk (may differ from current properties)
+    bool m_first; ///< true if the tile has never be saved on disk before
+    std::string m_filename; ///< the filename for storing the tile on disk
 
     //Extraction
-    uint8* FClassif; ///< result of the tile's pixels classification
-    CVolume<uint8_t>* FAssignment; ///< assigns tile's pixels to a region label
+    uint8* m_classif; ///< result of the tile's pixels classification
+    CVolume<uint8_t>* m_assignment; ///< assigns tile's pixels to a region label
 
-    std::vector<CDart*> FCorners; ///< the 4 darts incident the vertices on tiles' corners
-    std::map<TDartId, CPyramidalDart*> FMapDarts; ///< association between a dart and its identifier
-    std::map<TRegionId, CRegion*> FMapRegions; ///< association between a region and its identifier
-    std::map<TDartId, TDartId> FMapBeta2; ///< used for phi operator on darts incident to the tile's borders
-    uint FIndex[3]; ///< stores the 3 coordiantes (i,j,k) of the tile within the top-down pyramid
+    std::vector<CDart*> m_corners; ///< the 4 darts incident the vertices on tiles' corners
+    std::map<TDartId, CPyramidalDart*> m_mapDarts; ///< association between a dart and its identifier
+    std::map<TRegionId, CRegion*> m_mapRegions; ///< association between a region and its identifier
+    std::map<TDartId, TDartId> m_mapBeta2; ///< used for phi operator on darts incident to the tile's borders
+    uint m_index[3]; ///< stores the 3 coordiantes (i,j,k) of the tile within the top-down pyramid
 
     /// Constructor
     CTile(uint AWidth, uint AHeight);
@@ -246,6 +246,7 @@ namespace pyramid
     void setKhalimsky( CKhalimsky* AKhalimsky );
 
     CPyramidalRegion* getInclusionTreeRoot() const;
+    CPyramidalRegion* inclusionTreeRoot() const;
     void setInclusionTreeRoot(CRegion* ARegion);
 
     /// Accesseur sur les marques des pixels
@@ -635,14 +636,14 @@ namespace pyramid
     //******************************************************************************
 
     /**
-     *  Crée un tableau de FSizeDartArray CDart.
+     *  Crée un tableau de m_sizeDartArray CDart.
      *  Cette méthode doit être redéfinie à chaque fois que l'on
      *  surcharge la classe brin.
      */
     virtual CDart* newTabDarts();
 
     /**
-     *  Détruit le tableau de FSizeDartArray CDart.
+     *  Détruit le tableau de m_sizeDartArray CDart.
      *  Cette méthode doit être redéfinie à chaque fois que l'on
      *  surcharge la classe brin.
      */

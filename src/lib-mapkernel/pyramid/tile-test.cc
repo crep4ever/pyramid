@@ -60,8 +60,8 @@ void CTile::print()
 void CTile::printCorners()
 {
   std::cout << "\n[start] CTile: printCorners " << std::endl;
-  for ( uint i = 0; i < FCorners.size(); ++i )
-    static_cast<CPyramidalDart*>(FCorners[i])->print();
+  for ( uint i = 0; i < m_corners.size(); ++i )
+    static_cast<CPyramidalDart*>(m_corners[i])->print();
 
   std::cout << "[end] CTile: printCorners\n" << std::endl;
 }
@@ -70,12 +70,12 @@ void CTile::printMapDarts()
 {
   std::cout << "\n[start] CTile::printMapDarts  " << std::endl;
 
-  if(FMapDarts.empty())
-    std::cout << "WARNING: CTile::printMapDarts FMapDarts is empty" << std::endl;
+  if(m_mapDarts.empty())
+    std::cout << "WARNING: CTile::printMapDarts m_mapDarts is empty" << std::endl;
   else
     {
       std::map<TDartId, CPyramidalDart*>::iterator it;
-      for ( it=FMapDarts.begin(); it!=FMapDarts.end(); ++it )
+      for ( it=m_mapDarts.begin(); it!=m_mapDarts.end(); ++it )
 	std::cout << " Key (dart id) = " << it->first
 		  << " Value (dart*) = " << it->second << std::endl;
     }
@@ -86,12 +86,12 @@ void CTile::printMapRegions()
 {
   std::cout << "\n[start] CTile::printMapRegions  " << std::endl;
 
-  if(FMapRegions.empty())
-    std::cout << "WARNING: CTile::printMapRegions FMapRegions is empty" << std::endl;
+  if(m_mapRegions.empty())
+    std::cout << "WARNING: CTile::printMapRegions m_mapRegions is empty" << std::endl;
   else
     {
       std::map<TRegionId, CRegion*>::iterator it;
-      for ( it=FMapRegions.begin(); it!=FMapRegions.end(); ++it )
+      for ( it=m_mapRegions.begin(); it!=m_mapRegions.end(); ++it )
       std::cout << " Key (region id) = " << (*it).first
 	        << " Value (region*) = " << (*it).second << std::endl;
     }
@@ -102,12 +102,12 @@ void CTile::printMapBeta2()
 {
   std::cout << "\n[start] CTile::printMapBeta2  " << std::endl;
 
-  if(FMapBeta2.empty())
-    std::cout << "WARNING: CTile::printMapBeta2 FMapBeta2 is empty" << std::endl;
+  if(m_mapBeta2.empty())
+    std::cout << "WARNING: CTile::printMapBeta2 m_mapBeta2 is empty" << std::endl;
   else
     {
       std::map<TDartId, TDartId>::iterator it;
-      for ( it=FMapBeta2.begin(); it!=FMapBeta2.end(); ++it )
+      for ( it=m_mapBeta2.begin(); it!=m_mapBeta2.end(); ++it )
 	std::cout << " Key (dart id in current tile) = " << (*it).first
 		  << " Value (dart id in adjacent tile (beta2')) = " << (*it).second << std::endl;
 
@@ -790,14 +790,14 @@ unsigned long int CTile::getMemoryForTile() const
 
   unsigned long int result = sizeof(CTile);
 
-  //std::cout << " size map darts = " << FMapDarts.size() << std::endl;
+  //std::cout << " size map darts = " << m_mapDarts.size() << std::endl;
   //std::cout << " size TDartId = " << sizeof(TDartId) << std::endl;
   //std::cout << " size CPyramidalDart* = " << sizeof(CPyramidalDart*) << std::endl;
 
-  result += sizeof(std::map<TDartId, CPyramidalDart*>::value_type)*FMapDarts.size();
-  result += sizeof(std::map<TRegionId, CRegion*>::value_type)*FMapRegions.size();
-  result += sizeof(std::map<TDartId, TDartId>::value_type)*FMapBeta2.size();
-  result += sizeof(std::vector<CDart*>::value_type)*FCorners.size();
+  result += sizeof(std::map<TDartId, CPyramidalDart*>::value_type)*m_mapDarts.size();
+  result += sizeof(std::map<TRegionId, CRegion*>::value_type)*m_mapRegions.size();
+  result += sizeof(std::map<TDartId, TDartId>::value_type)*m_mapBeta2.size();
+  result += sizeof(std::vector<CDart*>::value_type)*m_corners.size();
 
   return result;
 }

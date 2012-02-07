@@ -38,14 +38,14 @@ void CTile::createTopTile()
   CRegion* infRegion = getInclusionTreeRoot();
   CRegion* region = infRegion->getFirstSon();
 
-  FMapRegions[infRegion->getId()] = infRegion;
-  FMapRegions[region->getId()] = region;
+  m_mapRegions[infRegion->getId()] = infRegion;
+  m_mapRegions[region->getId()] = region;
 
   CPyramidalDart* inf  = static_cast<CPyramidalDart*>(infRegion->getRepresentativeDart());
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(region->getRepresentativeDart());
 
-  FMapDarts[inf->id()]  = inf;
-  FMapDarts[dart->id()] = dart;
+  m_mapDarts[inf->id()]  = inf;
+  m_mapDarts[dart->id()] = dart;
 
   //loadImage();
   traversePixelsSingleRegion();
@@ -130,7 +130,6 @@ void CTile::splitSingleRegion(uint AWidth, uint AHeight)
 void CTile::traversePixelsSingleRegion()
 {
   assert(getNbRegions()==2);
-  FPixIndex=0;
   image()->setDepth(0);
   image()->setCurrentBox(boundingBox());
   uint8* data = image()->getData();
@@ -282,13 +281,13 @@ void CTile::relabelDarts()
     }
 
   // 2. On parcours maintenant les régions à partir de la première région
-  //    contenue dans le fils de FInclusioTreeRoot.
+  //    contenue dans le fils de m_inclusioTreeRoot.
   //    On supprime toutes celles qui sont inutiles et on met à jour
   //    la liste chainée des régions
 
-  //vaiable de parcours de la chaine
-  FInclusionTreeRoot->setNextSameCC(NULL);
-  CRegion* currentRegion = FInclusionTreeRoot->getFirstSon();
+  //variable de parcours de la chaine
+  getInclusionTreeRoot()->setNextSameCC(NULL);
+  CRegion* currentRegion = getInclusionTreeRoot()->getFirstSon();
   while (currentRegion != NULL)
     {
       assert(currentRegion->getNextSameCC()!=NULL);
@@ -400,7 +399,7 @@ void CTile::exportRegionToPng(CPyramidalRegion* ARegion, const std::string & ADi
   std::ostringstream oss;
   oss << ADirname << "/region_"
       << index(0) << "-"<< index(1) << "-" << index(2)
-      << "_" << FCount++ << ".png";
+      << "_" << m_dartCount++ << ".png";
 
   std::vector<uint> tab;
   getRegionBoundingBox(ARegion->getRepresentativeDart(), tab);
@@ -428,7 +427,7 @@ void CTile::saveMitosis()
 {
   //std::cout<<" [start] CTile::saveMitosis "<<std::endl;
   //image()->regularization(boundingBox(), depth(), 10, 2, 0.1, 1);
-  FCount = 0;
+  m_dartCount = 0;
   for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
     {
       CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);

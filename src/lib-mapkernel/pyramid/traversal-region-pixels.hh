@@ -81,15 +81,15 @@ namespace pyramid
 
   protected:
     /// Pointeur sur les données topologique.
-    CTile *      FTile;
+    CTile *      m_tile;
     /// Pointeur sur la région parcourue.
-    CPyramidalRegion *              FRegion;
+    CPyramidalRegion *              m_region;
     /// Pile des pixels que l'on doit traiter et parcourir.
-    std::stack<CPoint2D>     FPixelsStack;
+    std::stack<CPoint2D>     m_pixelsStack;
     /// Pixel en cours.
-    CPoint2D            FCurrentPixel;
+    CPoint2D            m_currentPixel;
     /// Flag de fin de parcours.
-    bool                   FStop;
+    bool                   m_stop;
   };
 
 } // namespace pyramid

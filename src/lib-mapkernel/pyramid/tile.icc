@@ -33,43 +33,42 @@ namespace pyramid
     //std::cout<<"\n[start] CTile::destructeur() tile "<<getId()<<std::endl;
     removeAllRegions();
     empty();
-    delete FMark;
-    FMark = NULL;
-    FClassif = NULL;
-    FProperties = NULL;
-    FAssignment = NULL;
+    delete m_mark;
+    m_mark = NULL;
+    m_classif = NULL;
+    m_properties = NULL;
+    m_assignment = NULL;
     //std::cout<<"\n[end] CTile::destructeur()"<<std::endl;
   }
 
   INLINE
   CTile::CTile(uint AWidth, uint AHeight) :
     CTopologicalMap(512),
-    FMergeThreshold(0),
-    FCount(0),
-    FRegionCount(0),
-    FPixIndex(0),
-    FMark(NULL),
-    FId(0),
-    FBottomRight(CPoint2D(0,0)),
-    FWidth(AWidth),
-    FHeight(AHeight),
-    FTileUp(NULL),
-    FTileDown(NULL),
-    FProperties(NULL),
-    FOldProperties(NULL),
-    FMatrix(NULL),
-    FDartFields(NULL),
-    FOldDarts(NULL),
-    FRegionFields(NULL),
-    FOldRegions(NULL),
-    FFirst(true),
-    FFilename(""),
-    FClassif(NULL),
-    FAssignment(NULL)
+    m_mergeThreshold(0),
+    m_dartCount(0),
+    m_regionCount(0),
+    m_mark(NULL),
+    m_id(0),
+    m_bottomRight(CPoint2D(0,0)),
+    m_width(AWidth),
+    m_height(AHeight),
+    m_tileUp(NULL),
+    m_tileDown(NULL),
+    m_properties(NULL),
+    m_oldProperties(NULL),
+    m_matrix(NULL),
+    m_dartFields(NULL),
+    m_oldDarts(NULL),
+    m_regionFields(NULL),
+    m_oldRegions(NULL),
+    m_first(true),
+    m_filename(""),
+    m_classif(NULL),
+    m_assignment(NULL)
   {
     //coordonnées de la tuile
     for(int i=0;i<3;++i)
-      FIndex[i]=0;
+      m_index[i]=0;
 
     assert(getNbRegions()==0);
   }
@@ -77,87 +76,87 @@ namespace pyramid
   INLINE
   uint CTile::id() const
   {
-    return FId;
+    return m_id;
   }
 
   INLINE
   void CTile::setId(uint AId)
   {
-    FId = AId;
+    m_id = AId;
   }
 
   INLINE
   CPoint2D CTile::bottomRight() const
   {
-    return FBottomRight;
+    return m_bottomRight;
   }
 
   INLINE
   void CTile::setBottomRight(const CPoint2D& ABottomRight)
   {
-    FBottomRight = ABottomRight;
+    m_bottomRight = ABottomRight;
   }
 
   INLINE
   uint CTile::width() const
   {
-    return FWidth;
+    return m_width;
   }
 
   INLINE
   void CTile::setWidth(uint AWidth)
   {
     assert(false);
-    FWidth = AWidth;
+    m_width = AWidth;
   }
 
   INLINE
   uint CTile::height() const
   {
-    return FHeight;
+    return m_height;
   }
 
   INLINE
   void CTile::setHeight(uint AHeight)
   {
     assert(false);
-    FHeight = AHeight;
+    m_height = AHeight;
   }
 
   INLINE
   CTile* CTile::tileUp() const
   {
-    return FTileUp;
+    return m_tileUp;
   }
 
   INLINE
   void CTile::setTileUp(CTile* ATile)
   {
-    FTileUp = ATile;
+    m_tileUp = ATile;
   }
 
   INLINE
   CTile* CTile::tileDown() const
   {
-    return FTileDown;
+    return m_tileDown;
   }
 
   INLINE
   void CTile::setTileDown(CTile* ATile)
   {
-    FTileDown = ATile;
+    m_tileDown = ATile;
   }
 
   INLINE
   uint CTile::mergeThreshold() const
   {
-    return FMergeThreshold;
+    return m_mergeThreshold;
   }
 
   INLINE
   void CTile::setMergeThreshold(uint AMergeThreshold)
   {
-    FMergeThreshold = AMergeThreshold;
+    m_mergeThreshold = AMergeThreshold;
   }
 
   INLINE
@@ -199,6 +198,13 @@ namespace pyramid
   }
 
   INLINE
+  CPyramidalRegion* CTile::inclusionTreeRoot() const
+  {
+    assert(FInclusionTreeRoot || static_cast<CPyramidalRegion*>(FInclusionTreeRoot)->isInfiniteRegion());
+    return static_cast<CPyramidalRegion*>(FInclusionTreeRoot);
+  }
+
+  INLINE
   void CTile::setInclusionTreeRoot(CRegion* ARegion)
   {
     FInclusionTreeRoot = ARegion;
@@ -207,70 +213,70 @@ namespace pyramid
   INLINE
   std::vector<CDart*> CTile::corners() const
   {
-    return FCorners;
+    return m_corners;
   }
 
   INLINE
   void CTile::addCorner(CDart* ADart)
   {
     assert( ADart!=NULL );
-    FCorners.push_back(ADart);
+    m_corners.push_back(ADart);
   }
 
   INLINE
   void CTile::setCorners(std::vector<CDart*>& ACorners)
   {
     assert( !ACorners.empty() );
-    FCorners = ACorners;
+    m_corners = ACorners;
   }
 
   INLINE
   std::map<TDartId, CPyramidalDart*> CTile::mapDarts() const
   {
-    return FMapDarts;
+    return m_mapDarts;
   }
 
   INLINE
   void CTile::setMapDarts(std::map<TDartId, CPyramidalDart*>& AMap)
   {
-    FMapDarts = AMap;
+    m_mapDarts = AMap;
   }
 
   INLINE
   std::map<TRegionId, CRegion*> CTile::mapRegions() const
   {
-    return FMapRegions;
+    return m_mapRegions;
   }
 
   INLINE
   void CTile::setMapRegions(std::map<TRegionId, CRegion*>& AMap)
   {
-    FMapRegions = AMap;
+    m_mapRegions = AMap;
   }
 
   INLINE
   std::map<TDartId, TDartId> CTile::mapBeta2() const
   {
-    return FMapBeta2;
+    return m_mapBeta2;
   }
 
   INLINE
   void CTile::setMapBeta2(std::map<TDartId, TDartId>& AMap)
   {
-    FMapBeta2 = AMap;
+    m_mapBeta2 = AMap;
   }
 
   INLINE
   uint CTile::index(uint APos) const
   {
-    return FIndex[APos];
+    return m_index[APos];
   }
 
   INLINE
   void CTile::setIndex(uint APos, uint AValue)
   {
     assert(APos<3);
-    FIndex[APos] = AValue;
+    m_index[APos] = AValue;
   }
 
   //******************************************************************************
@@ -282,7 +288,7 @@ namespace pyramid
   {
     std::ostringstream filename;
     filename<<".//output//tile-"<<Ai<<"-"<<Aj<<"-"<<Ak;
-    FFilename =  filename.str();
+    m_filename =  filename.str();
   }
 
   INLINE
@@ -302,8 +308,8 @@ namespace pyramid
   INLINE
   uint CTile::xmin(const SystemMode & ASystem) const
   {
-    assert( FWidth!=0 );
-    return (ASystem==Absolute) ? bottomRight().getX() - FWidth : 0;
+    assert( m_width!=0 );
+    return (ASystem==Absolute) ? bottomRight().getX() - m_width : 0;
   }
 
   INLINE
@@ -315,8 +321,8 @@ namespace pyramid
   INLINE
   uint CTile::ymin(const SystemMode & ASystem) const
   {
-    assert( FHeight!=0);
-    return (ASystem==Absolute)? bottomRight().getY() - FHeight : 0;
+    assert( m_height!=0);
+    return (ASystem==Absolute)? bottomRight().getY() - m_height : 0;
   }
 
   INLINE
@@ -394,13 +400,13 @@ namespace pyramid
   INLINE
   bool CTile::existTileUp() const
   {
-    return(FTileUp != NULL);
+    return(m_tileUp != NULL);
   }
 
   INLINE
   bool CTile::existTileDown() const
   {
-    return(FTileDown != NULL);
+    return(m_tileDown != NULL);
   }
 
   INLINE
@@ -651,7 +657,7 @@ namespace pyramid
   INLINE
   unsigned long int CTile::getMemoryForInclusionTree() const
   {
-    assert( FInclusionTreeRoot!=NULL );
+    assert( inclusionTreeRoot()!=NULL );
     //std::cout<<"size of CPyramidalRegion : "<<sizeof(CPyramidalRegion)<<std::endl;
     //std::cout<<"nombre de régions : "<<getNbRegions()<<std::endl;
     return getNbRegions()*sizeof(CPyramidalRegion)+sizeof(CInfinitePyramidalRegion);
@@ -667,9 +673,9 @@ namespace pyramid
   INLINE
   void CTile::setPixelMark()
   {
-    assert(FMark==NULL);
+    assert(m_mark==NULL);
     assert(width()!=0 && height()!=0);
-    FMark = new CMatrix< bool >( width(), height() );
+    m_mark = new CMatrix< bool >( width(), height() );
   }
 
   INLINE
@@ -684,31 +690,31 @@ namespace pyramid
   INLINE
   bool  CTile::isPixelMarked(uint Ax, uint Ay) const
   {
-    return FMark->getValue(Ax, Ay);
+    return m_mark->getValue(Ax, Ay);
   }
 
   INLINE
   void  CTile::setPixelMark(uint Ax, uint Ay, bool AOn)
   {
-    FMark->setValue(Ax, Ay, AOn);
+    m_mark->setValue(Ax, Ay, AOn);
   }
 
   INLINE
   void CTile:: markPixel(uint Ax, uint Ay)
   {
-    FMark->setValue(Ax, Ay, true);
+    m_mark->setValue(Ax, Ay, true);
   }
 
   INLINE
   void  CTile::unmarkPixel(uint Ax, uint Ay)
   {
-    FMark->setValue(Ax, Ay, false);
+    m_mark->setValue(Ax, Ay, false);
   }
 
   INLINE
   void CTile:: unmarkAllPixels()
   {
-    FMark->fill();
+    m_mark->fill();
   }
 
   //******************************************************************************
@@ -719,7 +725,7 @@ namespace pyramid
   CDart* CTile::addMapDart()
   {
     CPyramidalDart* result = static_cast<CPyramidalDart*>(CMapBasic::addMapDart());
-    result->setId(++FCount);
+    result->setId(++m_dartCount);
     result->setUp(NULL);
     result->setDown(NULL);
     return result;
@@ -762,8 +768,8 @@ namespace pyramid
     assert( FKhalimsky!=NULL );
     CPyramidalDart* result = static_cast<CPyramidalDart*>
       (CTopologicalMap::addMapDart(ADoublet, ARegion));
-    ++FCount;
-    result->setId(FCount);
+    ++m_dartCount;
+    result->setId(m_dartCount);
     result->setUp(NULL);
     result->setDown(NULL);
     return result;
@@ -910,10 +916,10 @@ namespace pyramid
   INLINE
   CInfinitePyramidalRegion* CTile::addMapInfiniteRegion()
   {
-    assert(FInclusionTreeRoot == NULL );
+    assert(inclusionTreeRoot() == NULL );
     ++FNbRegions;
     CInfinitePyramidalRegion* result = new CInfinitePyramidalRegion();
-    result->setId(++FRegionCount);
+    result->setId(++m_regionCount);
     return result;
   }
 
@@ -922,7 +928,7 @@ namespace pyramid
   {
     ++FNbRegions;
     CPyramidalRegion* result = new CPyramidalRegion();
-    result->setId(++FRegionCount);
+    result->setId(++m_regionCount);
     return result;
   }
 
@@ -932,7 +938,7 @@ namespace pyramid
     assert( ARegion!=NULL );
     ++FNbRegions;
     CPyramidalRegion* result = new CPyramidalRegion(*static_cast<CPyramidalRegion*>(ARegion));
-    result->setId(++FRegionCount);
+    result->setId(++m_regionCount);
     return result;
   }
 
@@ -947,9 +953,9 @@ namespace pyramid
   //  void CTile::addPixel2(uint8* data, CRegion* ARegion)
   //  {
   //    if( image()->colorMode() == CImageTiff::RGB )
-  //      ARegion->addPixel( (data[FPixIndex++] + data[FPixIndex++] + data[FPixIndex++])/3 );
+  //      ARegion->addPixel( (data[m_pixIndex++] + data[m_pixIndex++] + data[m_pixIndex++])/3 );
   //    else if(image()->colorMode() == CImageTiff::Grey)
-  //      ARegion->addPixel( data[FPixIndex++] );
+  //      ARegion->addPixel( data[m_pixIndex++] );
   //  }
 
   //******************************************************************************
@@ -1000,17 +1006,17 @@ namespace pyramid
 	      case FocusHisto:
 		if(depth()==1)
 		  {
-		    if(!FClassif) return;
-		    value = FClassif[pos2];
+		    if(!m_classif) return;
+		    value = m_classif[pos2];
 		    region->setLabel(intToLabel(value));
 		  }
 		else
 		  {
-		    if(!FAssignment) return;
+		    if(!m_assignment) return;
 		    pix.x = pixel.x()+xmin();
 		    pix.y = pixel.y()+ymin();
 		    image()->getPixel( pix, depth() );
-		    value = FAssignment->getValue( pix.value[0], pix.value[1], pix.value[2]);
+		    value = m_assignment->getValue( pix.value[0], pix.value[1], pix.value[2]);
 		    region->setLabel(intToLabel(value));
 		    //std::cout<<"value = " << value << std::endl;
 		  }
@@ -1019,8 +1025,8 @@ namespace pyramid
 	      default:
 		if(region->up()->down()==region)
 		  region->setLabel( (CPyramidalRegion::Label) ((int) region->up()->label()+2) );
-		else if(FClassif)
-		  region->setLabel( (CPyramidalRegion::Label)FClassif[pos2] );
+		else if(m_classif)
+		  region->setLabel( (CPyramidalRegion::Label)m_classif[pos2] );
 		break;
 	      }
 	  }

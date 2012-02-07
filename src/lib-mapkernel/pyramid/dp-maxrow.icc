@@ -21,54 +21,54 @@ namespace pyramid
 
   INLINE
   CMaxRow::CMaxRow():
-    FDoublet1 ( CDoublet() ),
-    FValue    ( 0 ),
-    FDoublet2 ( CDoublet() )
+    m_doublet1 ( CDoublet() ),
+    m_value    ( 0 ),
+    m_doublet2 ( CDoublet() )
   { }
 
   INLINE
   CMaxRow::CMaxRow(const CDoublet & ADoublet1,
 		   uint AValue,
 		   const CDoublet & ADoublet2):
-    FDoublet1 (ADoublet1),
-    FValue    (AValue),
-    FDoublet2 (ADoublet2)
+    m_doublet1 (ADoublet1),
+    m_value    (AValue),
+    m_doublet2 (ADoublet2)
   { }
 
   INLINE
   CDoublet CMaxRow::doublet1() const
   {
-    return FDoublet1;
+    return m_doublet1;
   }
 
   INLINE
   void CMaxRow::setDoublet1(const CDoublet & ADoublet1)
   {
-    FDoublet1 = ADoublet1;
+    m_doublet1 = ADoublet1;
   }
 
   INLINE
   uint CMaxRow::value() const
   {
-    return FValue;
+    return m_value;
   }
 
   INLINE
   void CMaxRow::setValue(uint  AValue)
   {
-    FValue = AValue;
+    m_value = AValue;
   }
 
   INLINE
   CDoublet CMaxRow::doublet2() const
   {
-    return FDoublet2;
+    return m_doublet2;
   }
 
   INLINE
   void CMaxRow::setDoublet2(const CDoublet & ADoublet2)
   {
-    FDoublet2 = ADoublet2;
+    m_doublet2 = ADoublet2;
   }
 } //namespace pyramid
 

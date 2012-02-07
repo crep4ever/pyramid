@@ -55,7 +55,7 @@ namespace clustering
     bool isRegionToSplit();
 
   protected:
-    unsigned int FMergeThreshold; //Le seuil de merge
+    unsigned int m_mergeThreshold; //Le seuil de merge
 
   };
 } // namespace clustering

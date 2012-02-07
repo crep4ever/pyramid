@@ -136,7 +136,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
 	      CPoint2D up = coordinateInParent(x, y, Relative);
 	      CPyramidalRegion* downRegion = static_cast<CPyramidalRegion*>(currentRegion);
 	      CPyramidalRegion* upRegion   = static_cast<CPyramidalRegion*>
-		(FMatrixPixelRegion->getValue( up.getX(), up.getY() ));
+		(m_matrixPixelRegion->getValue( up.getX(), up.getY() ));
 
 	      downRegion->setUp(upRegion);
 	      if(upRegion)
@@ -147,13 +147,13 @@ void CTile::extractMapMainLoop( CDart* ALast,
 
 	      downRegion->setFirstPixel(CPoint2D(x,y));
 	      downRegion->setLabel((CPyramidalRegion::Label) upRegion->label());
-	      //On initialise le pointeur des fusions (FNextSameCC)
+	      //On initialise le pointeur des fusions (m_nextSameCC)
 	      //Par defaut, la region pointe sur elle même.
 	      currentRegion->setNextSameCC(currentRegion);
 
 	      // Et on la rajoute à  la fin de la liste.
 	      // Rappel, la dernière cellule est désigné par le frère
-	      // de FInclusionTreeRoot, et le chainage s'effectue
+	      // de m_inclusionTreeRoot, et le chainage s'effectue
 	      // par les pointeurs fils et frère.
 	      getInclusionTreeRoot()->getBrother()->setFirstSon(currentRegion); // next
 	      currentRegion->setBrother(getInclusionTreeRoot()->getBrother()); // prev
@@ -287,8 +287,8 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
 
   // les structures de la tuile mère
   loadImage();
-  FMatrixPixelRegion = createPixelRegionMatrix();
-  FMatrixLignelDart  = createLignelDartMatrix();
+  m_matrixPixelRegion = createPixelRegionMatrix();
+  m_matrixLignelDart  = createLignelDartMatrix();
 
   //Box correspondant à l'ensemble des tuiles filles
   IM_Box box;
@@ -307,45 +307,45 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
     {
     case Classif:
       //classif sur l'ensemble des tuiles filles
-      FClassif = image()->kmeans(2);
+      m_classif = image()->kmeans(2);
       break;
 
     case SegmentationOff:
       if(depth()==0)
 	//classif sur l'ensemble des tuiles filles
-	FClassif = image()->kmeans(3);
+	m_classif = image()->kmeans(3);
       break;
 
     case Histology:
       if(depth()==0)
-	assert(FClassif);
+	assert(m_classif);
 //      	{
-//      	  FClassif = image()->kmeans(box, depth()+1, 3);
-//      	  image()->moveClasses(FClassif, size);
-//      	  image()->mergeClasses(2,3, FClassif, size);
+//      	  m_classif = image()->kmeans(box, depth()+1, 3);
+//      	  image()->moveClasses(m_classif, size);
+//      	  image()->mergeClasses(2,3, m_classif, size);
 //      	}
 
 //      if(depth()==1)
 //	{
 //	  data = regionsData();
-//	  FClassif = image()->kmeansMitosis(data, size, 3);
-//	  	  if(FClassif)
+//	  m_classif = image()->kmeansMitosis(data, size, 3);
+//	  	  if(m_classif)
 //	  	    {
 //	  	      std::cout<<"merge and move mitoses classes"<<std::endl;
-//	  	      image()->moveClasses(FClassif, size/3, 1);
-//	  	      image()->mergeClasses(3,4, FClassif, size/3);
-//	  	      image()->mergeClasses(2,3, FClassif, size/3);
+//	  	      image()->moveClasses(m_classif, size/3, 1);
+//	  	      image()->mergeClasses(3,4, m_classif, size/3);
+//	  	      image()->mergeClasses(2,3, m_classif, size/3);
 //	  	    }
 //	}
       //classif sur les régions d'intérêt des tuiles filles
       //      if(depth()==2)
-      //	assert(FAssignment);
+      //	assert(m_assignment);
       //      data = regionsData();
-      //      FClassif = image()->kmeansRegions(data, size, 3);
-      //      if(FClassif)
+      //      m_classif = image()->kmeansRegions(data, size, 3);
+      //      if(m_classif)
       //	{
-      //	  image()->moveClasses(FClassif, size);
-      //	  image()->mergeClasses(2,3, FClassif, size);
+      //	  image()->moveClasses(m_classif, size);
+      //	  image()->mergeClasses(2,3, m_classif, size);
       //	}
       break;
 
@@ -364,12 +364,12 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
       {
       	CTile* downTile = new CTile(width(), height());
 	downTile->setImage(image());
-	downTile->setMergeThreshold(FMergeThreshold);
+	downTile->setMergeThreshold(m_mergeThreshold);
 	downTile->setPixelMark();
-	downTile->FClassif = FClassif;
-	downTile->FAssignment = FAssignment;
-	downTile->FMatrixPixelRegion = FMatrixPixelRegion;
-	downTile->FMatrixLignelDart  = FMatrixLignelDart;
+	downTile->m_classif = m_classif;
+	downTile->m_assignment = m_assignment;
+	downTile->m_matrixPixelRegion = m_matrixPixelRegion;
+	downTile->m_matrixLignelDart  = m_matrixLignelDart;
 
 	//coordonnées
 	downTile->setBottomRight
@@ -404,10 +404,10 @@ void CTile::extractChildren(std::deque<CTile*>& AChildren,
   assert(AChildren.size()==ratiox*ratioy);
 
   if(ASegmentationMode == Classif)
-    delete [] FClassif;
+    delete [] m_classif;
 
-  delete FMatrixPixelRegion;
-  delete FMatrixLignelDart;
+  delete m_matrixPixelRegion;
+  delete m_matrixLignelDart;
   //std::cout<<"[end] CTile::extract\n"<<std::endl;
 }
 
@@ -426,7 +426,7 @@ bool CTile::sameRegions(IM_Pixel & APixel1, IM_Pixel & APixel2,
   // 2. Focus of attention: if the parent region is not a region of interest,
   //    its projection is not refined
   CPoint2D up = coordinateInParent(APixel1.x, APixel1.y, Absolute);
-  CRegion* upRegion = FMatrixPixelRegion->getValue( up.x(), up.y() );
+  CRegion* upRegion = m_matrixPixelRegion->getValue( up.x(), up.y() );
   if(!tileUp()->isRegionToSplit(upRegion, AFocusAttentionMode))
     return true; //focus of attention
 
@@ -440,7 +440,7 @@ bool CTile::sameRegions(IM_Pixel & APixel1, IM_Pixel & APixel2,
 CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
 			       CRegion* ARegion)
 {
-  assert(FMatrixLignelDart);
+  assert(m_matrixLignelDart);
   CDoublet doublet(ADoublet);
 
   CPoint2D up = coordinateInParent(doublet.getX(), doublet.getY(), Relative);
@@ -449,7 +449,7 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
   CPyramidalDart* first  = static_cast<CPyramidalDart*>(addMapDart(ADoublet, ARegion));
   CPyramidalDart* prev   = first;
   CPyramidalDart* actu   = NULL;
-  CPyramidalDart* upDart = static_cast<CPyramidalDart*>(FMatrixLignelDart->getDart(upDoublet));
+  CPyramidalDart* upDart = static_cast<CPyramidalDart*>(m_matrixLignelDart->getDart(upDoublet));
 
   first->setUp(upDart);
   if(upDart!=NULL )
@@ -462,7 +462,7 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
       up = coordinateInParent(doublet.getX(), doublet.getY(), Relative);
       upDoublet.setDoublet(up.getX(), up.getY(), doublet.getLinel());
       actu = static_cast<CPyramidalDart*>(addMapDart(doublet, ARegion));
-      upDart = static_cast<CPyramidalDart*>(FMatrixLignelDart->getDart(upDoublet));
+      upDart = static_cast<CPyramidalDart*>(m_matrixLignelDart->getDart(upDoublet));
 
       actu->setUp(upDart);
       if(upDart!=NULL)
@@ -482,7 +482,7 @@ void CTile::linkInfiniteUpDown()
 {
   if(!existTileUp())
     return;
-  assert(FMatrixLignelDart);
+  assert(m_matrixLignelDart);
 
   for( CDynamicCoverage1 it( this, getInclusionTreeRoot()->getRepresentativeDart() ); it.cont(); ++it)
     {
@@ -490,7 +490,7 @@ void CTile::linkInfiniteUpDown()
       //TODO ??
       CDoublet down = downDart->doublet();
       CDoublet up = CDoublet(down.getX()/upRatioX(), down.getY()/upRatioY());
-      CPyramidalDart* upDart = 	static_cast<CPyramidalDart*>(FMatrixLignelDart->getDart(up));
+      CPyramidalDart* upDart = 	static_cast<CPyramidalDart*>(m_matrixLignelDart->getDart(up));
 
       downDart->setUp(upDart);
       if(upDart!=NULL)

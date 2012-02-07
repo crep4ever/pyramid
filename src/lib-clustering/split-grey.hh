@@ -35,7 +35,7 @@ namespace clustering
   class CSplitGrey : public CCriterionSplit
   {
   protected:
-    unsigned int FMergeThreshold; //Le seuil de merge
+    unsigned int m_mergeThreshold; //Le seuil de merge
 
   public:
     // Constructeurs

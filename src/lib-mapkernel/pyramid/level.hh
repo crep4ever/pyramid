@@ -48,29 +48,29 @@ namespace pyramid
   {
     protected:
     // Profondeur dans la pyramide
-    uint FDepth;
+    uint m_depth;
     // Seuil de merge
-    uint FMergeThreshold;
+    uint m_mergeThreshold;
     // Dimensions d'une tuile
-    uint FTileWidth;
-    uint FTileHeight;
+    uint m_tileWidth;
+    uint m_tileHeight;
     //Compteur de tuiles
-    uint FTileCounter;
+    uint m_tileCounter;
     // L'image
-    CImageTiff* FImage;
+    CImageTiff* m_image;
     // Hiérarchie
-    CLevel* FLevelUp;
-    CLevel* FLevelDown;
+    CLevel* m_levelUp;
+    CLevel* m_levelDown;
     // Tuiles du niveau
-    std::deque<CTile*> FTiles;
+    std::deque<CTile*> m_tiles;
 
     // Compteur mémoire
-    uint FMemory;
+    uint m_memory;
 
   public:
-    uint8* FClassif;
-    CVolume<uint>* FHisto;
-    CVolume<uint8_t>* FAssignment;
+    uint8* m_classif;
+    CVolume<uint>* m_histo;
+    CVolume<uint8_t>* m_assignment;
 
   private:
     // Iterateur pour le parcours des tuiles
@@ -281,14 +281,14 @@ namespace pyramid
     /// @param Ai, Aj, Ak : les coordonnées de la tuile
     void splitTileBorder(const CPoint2D & APos);
 
-    /// Renseigne le vector FCorners d'une tuile en définissant
+    /// Renseigne le vector m_corners d'une tuile en définissant
     /// les brins left/up/right/down correspondant aux 4 coins du bord
     /// externe de la tuile avec les plongements suivantes
     /// left: (0,0,YPOS), up: (1,0,XNEG), right: (width,1,YNEG), down: (0,height,XPOS)
     /// @param ATile: la tuile
     void retrieveTileCorners(CTile* ATile) const;
 
-    /// Renseigne le vector FCorners d'une tuile en définissant
+    /// Renseigne le vector m_corners d'une tuile en définissant
     /// les brins left/up/right/down correspondant aux 4 coins du bord
     /// externe de la tuile
     /// @param Ai, Aj, Ak : les coordonnées de la tuile
@@ -331,7 +331,7 @@ namespace pyramid
     //******************************************************************************
 
     /// Retourne la tuile de coordonnées (i,j)
-    /// directement depuis le vecteur FTiles si elle est en mémoire ou
+    /// directement depuis le vecteur m_tiles si elle est en mémoire ou
     /// depuis un load si elle a été swappée.
     CTile* tile(const CPoint2D & APos);
 
@@ -360,7 +360,7 @@ namespace pyramid
     /// Charge toutes les tuiles en mémoire
     void loadAllTiles();
 
-    /// Supprime la tuile (Ai,Aj,Ak) de la mémoire (du veteur FTiles)
+    /// Supprime la tuile (Ai,Aj,Ak) de la mémoire (du veteur m_tiles)
     /// @return true si la tuile a bien été supprimée
     bool unloadTile(const CPoint2D & APos);
     bool unloadTile(uint i, uint j);

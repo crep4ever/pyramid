@@ -32,7 +32,7 @@ CLevel::~CLevel()
 {
   //std::cout<<"[destructeur] CLevel \n";
   unloadAllTiles();
-  FHisto=NULL;
+  m_histo=NULL;
 }
 
 
@@ -46,42 +46,42 @@ void CLevel::createTopLevel()
   std::cout<<"[start] CLevel::createTopLevel"<<std::endl;
   assert(depth()==0);
 
-  FTileCounter  = nbTilesWidth() * nbTilesHeight();
+  m_tileCounter  = nbTilesWidth() * nbTilesHeight();
   uint width  = imageWidth();
   uint height = imageHeight();
 
-  uint tileWidth=FTileWidth;
-  uint tileHeight=FTileHeight;
+  uint tileWidth=m_tileWidth;
+  uint tileHeight=m_tileHeight;
 
   //  #pragma omp parallel for
-  for(uint i=0; i<FTileCounter; ++i)
+  for(uint i=0; i<m_tileCounter; ++i)
     {
-      assert(FTileWidth!=0 && FTileHeight!=0);
+      assert(m_tileWidth!=0 && m_tileHeight!=0);
       uint l,c,x,y;
       l = i / nbTilesWidth();
       c = i % nbTilesWidth();
-      x = (c+1) * FTileWidth;
-      y = (l+1) * FTileHeight;
+      x = (c+1) * m_tileWidth;
+      y = (l+1) * m_tileHeight;
 
       if(x>width)
 	{
 	  x = width;
-	  tileWidth = width % FTileWidth;
+	  tileWidth = width % m_tileWidth;
 	}
 
       if(y>height)
 	{
 	  y = height;
-	  tileHeight = height % FTileHeight;
+	  tileHeight = height % m_tileHeight;
 	}
       CTile* tile = new CTile(tileWidth, tileHeight);
       tile->setBottomRight(CPoint2D(x, y));
       tile->setId(i+1);
-      tile->setIndex( 0, xmin(tile)/FTileWidth  );
-      tile->setIndex( 1, ymin(tile)/FTileHeight );
+      tile->setIndex( 0, xmin(tile)/m_tileWidth  );
+      tile->setIndex( 1, ymin(tile)/m_tileHeight );
       tile->setIndex( 2, 0 );
-      tile->setImage(FImage);
-      tile->setMergeThreshold(FMergeThreshold);
+      tile->setImage(m_image);
+      tile->setMergeThreshold(m_mergeThreshold);
       tile->setPixelMark();
       tile->createTopTile();
       tile->write();
@@ -97,14 +97,14 @@ void CLevel::extract(const ExtractMode & AExtractMode,
 		     const DetectFictiveBordersMode & ADetectFictiveBordersMode )
 {
   assert(levelUp()!=NULL);
-  assert(this!=NULL && FDepth>0); // il faut qu'il y ait au moins un niveau de fait
-  std::cout<<"[start] CLevel::extract level "<< FDepth<< "\n";
+  assert(this!=NULL && m_depth>0); // il faut qu'il y ait au moins un niveau de fait
+  std::cout<<"[start] CLevel::extract level "<< m_depth<< "\n";
 
   // Parcours des tuiles du niveau précédent
   uint nbWidth  = levelUp()->nbTilesWidth();
   uint nbHeight = levelUp()->nbTilesHeight();
-  uint memory = 0; FMemory = 0;
-  FTileCounter += levelUp()->FTileCounter;
+  uint memory = 0; m_memory = 0;
+  m_tileCounter += levelUp()->m_tileCounter;
 
   CChrono levelChrono;
   CChrono segmentationChrono;
@@ -132,15 +132,15 @@ void CLevel::extract(const ExtractMode & AExtractMode,
 	    std::cout<<"CLevel::extract error extractMode not supported"<<std::endl;
 	    assert(false);
 	  }
-	FMemory = (FMemory <= memory)? memory : FMemory;
+	m_memory = (m_memory <= memory)? memory : m_memory;
 	levelUp()->unloadTile(pos); // Swap tile up
       }
   unload();
-  if(FClassif) delete FClassif;
-  if(FAssignment) delete FAssignment;
-  FClassif=NULL;
-  FHisto=NULL;
-  FAssignment=NULL;
+  if(m_classif) delete m_classif;
+  if(m_assignment) delete m_assignment;
+  m_classif=NULL;
+  m_histo=NULL;
+  m_assignment=NULL;
   segmentationChrono.display("segmentation du niveau");
   levelChrono.stop();
   levelChrono.display("extraction du niveau");
@@ -149,7 +149,7 @@ void CLevel::extract(const ExtractMode & AExtractMode,
   if(FILE* fd = fopen("./qscripts/raffinement.dat","a"))
     {
       std::ostringstream res;
-      res << "\n" << nbHeight*nbWidth << "  " << levelChrono.realTime() << "  " << FMemory/1000000.0 << "\n";
+      res << "\n" << nbHeight*nbWidth << "  " << levelChrono.realTime() << "  " << m_memory/1000000.0 << "\n";
       fputs(res.str().c_str(),fd);
       fclose(fd);
     }
@@ -162,7 +162,7 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
 				const FocusAttentionMode & AFocusAttentionMode,
 				const DetectFictiveBordersMode & ADetectFictiveBordersMode )
 {
-  //std::cout<<"[start] CLevel::burstAndMergeTile "<<APos<<" for level "<<FDepth<<"\n";
+  //std::cout<<"[start] CLevel::burstAndMergeTile "<<APos<<" for level "<<m_depth<<"\n";
   uint memory = 0;
   uint i = APos.getX(); uint j = APos.getY();
   if(i>0) memory += loadTile(CPoint2D(i-1, j))->memory(); // Load tile left
@@ -170,12 +170,12 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   memory+=levelUp()->tile(APos)->memory();
 
   CTile* parent = levelUp()->tile(APos);
-  parent->FAssignment = FAssignment;
-  parent->FClassif = FClassif;
+  parent->m_assignment = m_assignment;
+  parent->m_classif = m_classif;
 
   CTile* newTile = parent->createChildByCopy(AProjectionMode);
-  newTile->setId(++FTileCounter);
-  newTile->setMergeThreshold(FMergeThreshold);
+  newTile->setId(++m_tileCounter);
+  newTile->setMergeThreshold(m_mergeThreshold);
 
   // On éclate le bord de la tuile de façon à récupérer les coins et les beta2
   newTile->splitBorder();
@@ -186,14 +186,14 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
   IM_Box box;
   box.XTop = xmin(newTile);  box.YTop = ymin(newTile);
   box.XBtm = xmax(newTile);  box.YBtm = ymax(newTile);
-  image()->setDepth(FDepth);
+  image()->setDepth(m_depth);
   image()->setCurrentBox(box);
-  newTile->FClassif = image()->kmeans(3);
+  newTile->m_classif = image()->kmeans(3);
 
   // Split de la tuile par burst/merge
   newTile->burstAndMerge(AFocusAttentionMode, ASegmentationMode);
   memory += newTile->memory();
-  delete [] newTile->FClassif;
+  delete [] newTile->m_classif;
 
   // Simplification des sommets de degré 2
   newTile->simplifyMap();
@@ -228,11 +228,11 @@ uint CLevel::extractTile(const CPoint2D & APos,
 			 const DetectFictiveBordersMode & ADetectFictiveBordersMode,
 			 CChrono & AChrono)
 {
-  //std::cout<<"\r [start] CLevel::extractTile "<<APos<<" for level "<<FDepth << "\n";
+  //std::cout<<"\r [start] CLevel::extractTile "<<APos<<" for level "<<m_depth << "\n";
   //std::cout<<"this depth = "<<depth()<<" up depth() = "<<ALevelUp->depth()<<" \n";
   CTile* parent = levelUp()->tile(APos);
-  parent->FAssignment = FAssignment;
-  parent->FClassif = FClassif;
+  parent->m_assignment = m_assignment;
+  parent->m_classif = m_classif;
   std::deque<CTile*> children;
 
   parent->extractChildren(children, ASegmentationMode, AProjectionMode, AFocusAttentionMode, AChrono);
@@ -244,7 +244,7 @@ uint CLevel::extractTile(const CPoint2D & APos,
       uint childrenMemory = 0;
       CTile* tile = children[k];
       assert(tile->isOk());
-      tile->setId(++FTileCounter);
+      tile->setId(++m_tileCounter);
       uint i = tile->index(0);  uint j = tile->index(1);
       if(i>0) childrenMemory += loadTile( CPoint2D(i-1,j) )->memory(); // Load tile left
       if(j>0) childrenMemory += loadTile( CPoint2D(i,j-1) )->memory(); // Load tile top
@@ -285,7 +285,7 @@ CTile* CLevel::tileTop(CTile* ATile)
   if( ymin(ATile) == 0 )
     return NULL; // Pas de tuile up
 
-  for(it=FTiles.begin(); it!=FTiles.end(); ++it)
+  for(it=m_tiles.begin(); it!=m_tiles.end(); ++it)
     {
       current = *it;
       if(xmin(current) == xmin(ATile) && ymax(current) == ymin(ATile))
@@ -302,7 +302,7 @@ CTile* CLevel::tileLeft(CTile* ATile)
   if( xmin(ATile) == 0 )
     return NULL; // Pas de tuile left
 
-  for(it=FTiles.begin(); it!=FTiles.end(); ++it)
+  for(it=m_tiles.begin(); it!=m_tiles.end(); ++it)
     {
       current = *it;
       if(ymin(current) == ymin(ATile) && xmax(current) == xmin(ATile))
@@ -314,7 +314,7 @@ CTile* CLevel::tileLeft(CTile* ATile)
 void CLevel::delTile(CTile* ATile)
 {
   //on s'assure de bien supprimer une tuile appartenant à ce niveau
-  assert(ATile->index(2)==FDepth);
+  assert(ATile->index(2)==m_depth);
   //std::cout<<" [start] CLevel::delTile ("<<ATile->index(0)<<","<<ATile->index(1)<<","<<ATile->index(2)<<")"<<std::endl;
 
   // les brins et régions des tuiles up et down ne peuvent plus pointer sur this
@@ -522,7 +522,7 @@ void CLevel::simplifyTileBorder(CTile* ATile)
 
 void CLevel::retrieveTileCorners(CTile* ATile) const
 {
-  ATile->FCorners.clear();
+  ATile->m_corners.clear();
   //std::cout<<"[start] CLevel::retrieveCorners"<<std::endl;
   CDart* left  = NULL;
   CDart* up    = NULL;
@@ -581,8 +581,8 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
   //std::cout<<"*** [start] CLevel::retrieveBeta2 ***"<<std::endl;
   //std::cout<<"detect fictive borders = "<<ADetectFictiveBordersMode<<std::endl;
   assert(ATile!=NULL);
-  ATile->FMapBeta2.clear();
-  assert(ATile->FMapBeta2.empty());
+  ATile->m_mapBeta2.clear();
+  assert(ATile->m_mapBeta2.empty());
 
   CTile* currentTile = ATile;
   CTile* leftTile = NULL;
@@ -602,14 +602,14 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
       // right est le brin de gauche de currentTile
       // left et right sont des brins de la région infinie
       retrieveTileCorners(leftTile);
-      left  = leftTile->FCorners[2];
-      right = currentTile->FCorners[0];
+      left  = leftTile->m_corners[2];
+      right = currentTile->m_corners[0];
 
       while(leftTile->getDoublet(left).getLinel() == YNEG)
 	{
 	  nextleft  = beta0(left);
 	  nextright = beta1(right);
-	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(beta2(right))->id()] =
+	  ATile->m_mapBeta2[static_cast<CPyramidalDart*>(beta2(right))->id()] =
 	    static_cast<CPyramidalDart*>(left->getBeta2())->id();
 
 	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)
@@ -646,14 +646,14 @@ void CLevel::retrieveTileBeta2(CTile* ATile,
       // up est le brin down de topTile
       // down et up sont des brins de la région infinie
       retrieveTileCorners(topTile);
-      up   = topTile->FCorners[3];
-      down = currentTile->FCorners[1];
+      up   = topTile->m_corners[3];
+      down = currentTile->m_corners[1];
 
       while(topTile->getDoublet(up).getLinel() == XPOS)
 	{
 	  nextup = up->getBeta1();
 	  nextdown = down->getBeta0();
-	  ATile->FMapBeta2[static_cast<CPyramidalDart*>(down->getBeta2())->id()] =
+	  ATile->m_mapBeta2[static_cast<CPyramidalDart*>(down->getBeta2())->id()] =
 	    static_cast<CPyramidalDart*>(up->getBeta2())->id();
 
 	  if(ADetectFictiveBordersMode == DetectionOn && depth()>0)
@@ -740,7 +740,7 @@ uint CLevel::nbRegions()
 
 void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 {
-  //std::cout<<"[start] CLevel::preprocessing level "<<FDepth<<" \n";
+  //std::cout<<"[start] CLevel::preprocessing level "<<m_depth<<" \n";
   IM_Box box;
   box.XTop = 0;  box.YTop = 0;
   box.XBtm = imageWidth();  box.YBtm = imageHeight();
@@ -752,9 +752,9 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 
   //  if(ASegmentationMode==SegmentationOff && depth()==1)
   //    {
-  //      FClassif = image()->kmeans(box, depth(), 3);
-  //      image()->moveClasses(FClassif, size);
-  //      image()->mergeClasses(2,3, FClassif, size);
+  //      m_classif = image()->kmeans(box, depth(), 3);
+  //      image()->moveClasses(m_classif, size);
+  //      image()->mergeClasses(2,3, m_classif, size);
   //    }
 
   if(ASegmentationMode==Histology)
@@ -763,28 +763,28 @@ void CLevel::preprocessing(const SegmentationMode & ASegmentationMode)
 	{
 	case 1:
 	  std::cout<<" CLevel::preprocessing level 1 \n"<<std::endl;
-	  FClassif = image()->kmeans(3);
-      	  //image()->moveClasses(FClassif, size);
-      	  image()->mergeClasses(1,0, FClassif, size);
+	  m_classif = image()->kmeans(3);
+      	  //image()->moveClasses(m_classif, size);
+      	  image()->mergeClasses(1,0, m_classif, size);
 	  break;
 
 	case 2:
 	  std::cout<<" CLevel::preprocessing level 2 \n"<<std::endl;
 	  histogram();
-	  assert(FHisto);
-	  FAssignment = image()->kmeansHistogram(FHisto);
+	  assert(m_histo);
+	  m_assignment = image()->kmeansHistogram(m_histo);
 	  break;
 
 	case 3:
 	  std::cout<<" CLevel::preprocessing level 3 \n"<<std::endl;
 	  histogram();
-	  FAssignment = image()->kmeansHistogram(FHisto);
+	  m_assignment = image()->kmeansHistogram(m_histo);
 	  break;
 
 	case 4:
 	  std::cout<<" CLevel::preprocessing level 4 \n"<<std::endl;
 	  histogram();
-	  FAssignment = image()->kmeansHistogram(FHisto);
+	  m_assignment = image()->kmeansHistogram(m_histo);
 	  break;
 
 	default:
@@ -799,12 +799,12 @@ void CLevel::printHistogram()
 {
   std::cout<<"[start] CLevel::printHistogram" << std::endl;
   uint sum = 0;
-  for(uint r = 0; r < FHisto->getSizeX(); ++r)
-    for(uint g = 0; g < FHisto->getSizeY(); ++g)
-      for(uint b = 0; b < FHisto->getSizeZ(); ++b)
+  for(uint r = 0; r < m_histo->getSizeX(); ++r)
+    for(uint g = 0; g < m_histo->getSizeY(); ++g)
+      for(uint b = 0; b < m_histo->getSizeZ(); ++b)
 	{
-	  sum += FHisto->getValue(r,g,b);
-	  std::cout<<"color (" << r << "," << g << "," << b << ") counted " << FHisto->getValue(r,g,b) << " times" << std::endl;
+	  sum += m_histo->getValue(r,g,b);
+	  std::cout<<"color (" << r << "," << g << "," << b << ") counted " << m_histo->getValue(r,g,b) << " times" << std::endl;
 	}
 }
 
@@ -812,7 +812,7 @@ void CLevel::print()
 {
 #ifdef DEBUG_PYRAMID
   int sys = 0;
-  std::cout<<"mémoire ram max = " << FMemory << std::endl;
+  std::cout<<"mémoire ram max = " << m_memory << std::endl;
   std::cout<<"mémoire disque = " ;
   sys = system("du -h ./output");
   std::cout << std::endl;

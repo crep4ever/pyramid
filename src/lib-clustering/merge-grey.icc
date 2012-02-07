@@ -28,7 +28,7 @@ namespace clustering
   INLINE
   CMergeGrey::CMergeGrey() :
     CCriterionMerge (),
-    FMergeThreshold  ( 0 ) // On ne merge pas les régions
+    m_mergeThreshold  ( 0 ) // On ne merge pas les régions
   {}
   //------------------------------------------------------------------------------
   INLINE
@@ -38,7 +38,7 @@ namespace clustering
   INLINE
   CMergeGrey::CMergeGrey(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2, unsigned int AMergeThreshold) :
     CCriterionMerge(ARegion1, ARegion2){
-    FMergeThreshold = AMergeThreshold;
+    m_mergeThreshold = AMergeThreshold;
   }
 
   //******************************************************************************
@@ -47,11 +47,11 @@ namespace clustering
 
   INLINE
   unsigned int CMergeGrey::getMergeThreshold() const
-  { return FMergeThreshold; }
+  { return m_mergeThreshold; }
   //------------------------------------------------------------------------------
   INLINE
   void CMergeGrey::setMergeThreshold(unsigned int AMergeThreshold){
-    FMergeThreshold = AMergeThreshold;
+    m_mergeThreshold = AMergeThreshold;
   }
   //------------------------------------------------------------------------------
   INLINE
@@ -59,8 +59,8 @@ namespace clustering
   {
     // Les deux région doivent être issues du même père
     // pour garder la causalité top-down
-    pyramid::CPyramidalRegion* region1 = static_cast<pyramid::CPyramidalRegion*>(FRegion1);
-    pyramid::CPyramidalRegion* region2 = static_cast<pyramid::CPyramidalRegion*>(FRegion2);
+    pyramid::CPyramidalRegion* region1 = static_cast<pyramid::CPyramidalRegion*>(m_region1);
+    pyramid::CPyramidalRegion* region2 = static_cast<pyramid::CPyramidalRegion*>(m_region2);
     //désactivé pour les bords fictifs
     //assert( region1->getRegionUp() ==region2->getRegionUp() );
 
@@ -68,7 +68,7 @@ namespace clustering
     int color2 = (int) region2->getAverageGrey(); //couleur de la région 2
     unsigned int diff = (unsigned int ) abs(color1-color2);
 
-    //std::cout<<"Merge grey entre "<<FRegion1->getId()<<" et "<<FRegion2->getId()<<std::endl;
+    //std::cout<<"Merge grey entre "<<m_region1->getId()<<" et "<<m_region2->getId()<<std::endl;
     //std::cout<<"Diff average gray = "<<diff<<" seuil de merge = "<<getMergeThreshold()<<std::endl;
     return diff < getMergeThreshold();
   }

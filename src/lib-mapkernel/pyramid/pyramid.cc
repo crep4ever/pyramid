@@ -36,39 +36,39 @@ using namespace pyramid;
 //******************************************************************************
 
 CPyramid::CPyramid():
-  FImage(NULL),
-  FNbPixels(2),
-  FDeviation(0),
-  FTileWidth(512),
-  FTileHeight(512),
-  FNbLevels(5),
-  FExtractMode( ConstantTileSize ),
-  FSegmentationMode( Histology ),
-  FProjectionMode( DirectProjection ),
-  FFocusAttentionMode( FocusHisto ),
-  FDetectFictiveBordersMode( DetectionOff ),
-  FTileTotal(0),
-  FTileCounter(0),
-  FLevelCounter(0),
-  FMaxMemory(0)
+  m_image(NULL),
+  m_nbPixels(2),
+  m_deviation(0),
+  m_tileWidth(512),
+  m_tileHeight(512),
+  m_nbLevels(5),
+  m_extractMode( ConstantTileSize ),
+  m_segmentationMode( Histology ),
+  m_projectionMode( DirectProjection ),
+  m_focusAttentionMode( FocusHisto ),
+  m_detectFictiveBordersMode( DetectionOff ),
+  m_tileTotal(0),
+  m_tileCounter(0),
+  m_levelCounter(0),
+  m_maxMemory(0)
 { }
 
 CPyramid::CPyramid(const std::string & AFilename):
-  FImage(NULL),
-  FNbPixels(2),
-  FDeviation(0),
-  FTileWidth(32),
-  FTileHeight(32),
-  FNbLevels(0),
-  FExtractMode( ConstantTileNumber ),
-  FSegmentationMode( Thresholds ),
-  FProjectionMode( DirectProjection ),
-  FFocusAttentionMode( FocusGrey ),
-  FDetectFictiveBordersMode( DetectionOff ),
-  FTileTotal(0),
-  FTileCounter(0),
-  FLevelCounter(0),
-  FMaxMemory(0)
+  m_image(NULL),
+  m_nbPixels(2),
+  m_deviation(0),
+  m_tileWidth(32),
+  m_tileHeight(32),
+  m_nbLevels(0),
+  m_extractMode( ConstantTileNumber ),
+  m_segmentationMode( Thresholds ),
+  m_projectionMode( DirectProjection ),
+  m_focusAttentionMode( FocusGrey ),
+  m_detectFictiveBordersMode( DetectionOff ),
+  m_tileTotal(0),
+  m_tileCounter(0),
+  m_levelCounter(0),
+  m_maxMemory(0)
 {
   init();
   importImTiff(AFilename);
@@ -82,10 +82,10 @@ CPyramid::~CPyramid()
 
   for(uint i=0; i<nbLevels(); ++i)
     delete level(i);
-  FLevels.clear();
+  m_levels.clear();
 
-  if(FImage->isOpen) FImage->close();
-  delete FImage; FImage=NULL;
+  if(m_image->isOpen) m_image->close();
+  delete m_image; m_image=NULL;
 }
 
 //******************************************************************************
@@ -96,7 +96,7 @@ void CPyramid::build()
 {
   //std::cout<<"[start] CPyramid::buildPyramid \n";
   print();
-  FImage->open();
+  m_image->open();
 
   for(uint k=0; k<nbLevels(); ++k)
     addLevel();
@@ -109,7 +109,7 @@ void CPyramid::build()
 		      (FocusAttentionMode) focusAttentionMode(),
 		      (DetectFictiveBordersMode) detectFictiveBordersMode());
 
-  FImage->unload();
+  m_image->unload();
   std::cout<<std::endl<<"success"<<std::endl;
   //std::cout<<"[end] CPyramid::buildPyramid \n";
 }
@@ -147,7 +147,7 @@ void CPyramid::addLevel()
     {
       std::cout<<"CPyramid::addLevel Warning extract mode unsupported"<<std::endl;
     }
-  FLevels.push_back(lvl);
+  m_levels.push_back(lvl);
   //std::cout<<" [end] CPyramid::addLevel"<<std::endl;
 }
 
@@ -174,24 +174,24 @@ void CPyramid::linkTilesUpDown()
 
 	  //si la tuile est chargée, on les relie, sinon, on fait rien
 	  //TileUp
-	  if(res->FProperties->up != 0)
+	  if(res->m_properties->up != 0)
 	    for(it2=level(k-1)->tiles().begin(); it2!=level(k-1)->tiles().end(); ++it2)
-	      if((*it2)->id() == res->FProperties->up)
+	      if((*it2)->id() == res->m_properties->up)
 		{
 		  linkTileUpDown(*it2,res);
 		  break;
 		}
 
 	  //TileDown
-	  if(res->FProperties->down != 0)
+	  if(res->m_properties->down != 0)
 	    for(it2=level(k+1)->tiles().begin(); it2!=level(k+1)->tiles().end(); ++it2)
-	      if((*it2)->id() == res->FProperties->down)
+	      if((*it2)->id() == res->m_properties->down)
 		{
 		  linkTileUpDown(res,*it2);
 		  break;
 		}
-	  delete [] res->FProperties;
-	  res->FProperties = NULL;
+	  delete [] res->m_properties;
+	  res->m_properties = NULL;
 	}
 }
 
@@ -211,7 +211,7 @@ void CPyramid::open(const std::string & APath)
   importImTiff(".//output//image.tif");
   loadAllTiles();
 
-  //std::cout<<" taille de la pyramide ouverte = "<<FTiles.size()<<" tuiles."<<std::endl;
+  //std::cout<<" taille de la pyramide ouverte = "<<m_tiles.size()<<" tuiles."<<std::endl;
 }
 
 void CPyramid::copyImageInWorkingDirectory(const std::string & AImagePath, const std::string & AImageName)
@@ -270,7 +270,7 @@ void CPyramid::printInfosMemory() const
     //std::vector<CTile*>::iterator it;
     std::deque<CTile*>::iterator it;
     uint total = getMemoryForPyramid();
-    for( it = FTiles.begin(); it != FTiles.end(); ++it )
+    for( it = m_tiles.begin(); it != m_tiles.end(); ++it )
     {
     (*it)->printInfosMemory();
     total = total + (*it)->getMemoryForTile() +
@@ -291,7 +291,7 @@ uint CPyramid::getMemoryForLocalPyramid() const
   std::deque<CTile*>::iterator it;
   uint total = getMemoryForPyramid();
 
-  for( it = FTiles.begin(); it != FTiles.end(); ++it )
+  for( it = m_tiles.begin(); it != m_tiles.end(); ++it )
   {
   total = total + (*it)->getMemoryForTile() +
   (*it)->getMemoryForMap() +
@@ -299,7 +299,7 @@ uint CPyramid::getMemoryForLocalPyramid() const
   (*it)->getMemoryForKhalimsky();
   }
 
-  //std::cout<<" Nb de tuiles en mémoire: "<<FTiles.size()<<" Memory: "<<total<<"\n";
+  //std::cout<<" Nb de tuiles en mémoire: "<<m_tiles.size()<<" Memory: "<<total<<"\n";
   return total;
   */
   return 0;
@@ -309,7 +309,7 @@ uint CPyramid::nbDarts()
 {
   unloadAllTiles();
   uint total = 0;
-  for(it=FLevels.begin();it!=FLevels.end();++it)
+  for(it=m_levels.begin();it!=m_levels.end();++it)
     total+=(*it)->nbDarts();
   return total;
 }
@@ -318,7 +318,7 @@ uint CPyramid::nbRegions()
 {
   unloadAllTiles();
   uint total = 0;
-  for(it=FLevels.begin();it!=FLevels.end();++it)
+  for(it=m_levels.begin();it!=m_levels.end();++it)
     total+=(*it)->nbRegions();
   return total;
 }
@@ -364,14 +364,14 @@ void CPyramid::print()
 {
 #ifdef DEBUG_PYRAMID
   std::cout<<" **** Pyramide infos ****"<<std::endl;
-  std::cout<<" FTileWidth = "      <<FTileWidth<<std::endl;
-  std::cout<<" FTileHeight = "     <<FTileHeight<<std::endl;
-  std::cout<<" levels = "          <<FNbLevels<<std::endl;
-  std::cout<<" segmentation = "    <<FSegmentationMode<<std::endl;
-  std::cout<<" projection = "      <<FProjectionMode<<std::endl;
-  std::cout<<" focus = "           <<FFocusAttentionMode<<std::endl;
-  std::cout<<" construction = "    <<FExtractMode<<std::endl;
-  std::cout<<" fictive borders = " <<FDetectFictiveBordersMode<<std::endl;
+  std::cout<<" m_tileWidth = "      <<m_tileWidth<<std::endl;
+  std::cout<<" m_tileHeight = "     <<m_tileHeight<<std::endl;
+  std::cout<<" levels = "          <<m_nbLevels<<std::endl;
+  std::cout<<" segmentation = "    <<m_segmentationMode<<std::endl;
+  std::cout<<" projection = "      <<m_projectionMode<<std::endl;
+  std::cout<<" focus = "           <<m_focusAttentionMode<<std::endl;
+  std::cout<<" construction = "    <<m_extractMode<<std::endl;
+  std::cout<<" fictive borders = " <<m_detectFictiveBordersMode<<std::endl;
 #endif
 }
 

@@ -9,14 +9,14 @@ namespace clustering
   INLINE
   CSplitHisto::CSplitHisto() :
     CCriterionSplit (),
-    FDepth  (-1)
+    m_depth  (-1)
   {}
   //------------------------------------------------------------------------------
   INLINE
   CSplitHisto::CSplitHisto(CRegion* ARegion, uint ADepth) :
     CCriterionSplit(ARegion)
   {
-    FDepth = ADepth;
+    m_depth = ADepth;
   }
   //------------------------------------------------------------------------------
   INLINE

@@ -28,7 +28,7 @@ namespace clustering
 
   INLINE
   CCriterionSplit::CCriterionSplit() :
-    FRegion ( NULL)
+    m_region ( NULL)
   {}
   //------------------------------------------------------------------------------
   INLINE
@@ -36,7 +36,7 @@ namespace clustering
   //------------------------------------------------------------------------------
   INLINE
   CCriterionSplit::CCriterionSplit(CRegion* ARegion)
-  {  FRegion = ARegion; }
+  {  m_region = ARegion; }
 
   //******************************************************************************
   //Accesseurs
@@ -44,12 +44,12 @@ namespace clustering
 
   INLINE
   CRegion* CCriterionSplit::getRegion() const
-  { return FRegion; }
+  { return m_region; }
   //------------------------------------------------------------------------------
   INLINE
   void CCriterionSplit::setRegion(CRegion* ARegion)
   {
-    FRegion = ARegion;
+    m_region = ARegion;
   }
 
   //******************************************************************************

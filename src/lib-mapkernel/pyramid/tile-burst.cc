@@ -71,16 +71,16 @@ CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)
 	  box.XBtm = xmax()*ratiox;  box.YBtm = ymax()*ratioy;
 	  image()->setDepth(depth()+1);
 	  image()->setCurrentBox(box);
-	  FClassif = image()->kmeans(3);
+	  m_classif = image()->kmeans(3);
 	}
 
-      FMatrixPixelRegion = createPixelRegionMatrix();
-      FMatrixLignelDart  = createLignelDartMatrix();
+      m_matrixPixelRegion = createPixelRegionMatrix();
+      m_matrixLignelDart  = createLignelDartMatrix();
 
 
-      downTile->FClassif = FClassif;
-      downTile->FMatrixPixelRegion = FMatrixPixelRegion;
-      downTile->FMatrixLignelDart  = FMatrixLignelDart;
+      downTile->m_classif = m_classif;
+      downTile->m_matrixPixelRegion = m_matrixPixelRegion;
+      downTile->m_matrixLignelDart  = m_matrixLignelDart;
 
       downTile->setKhalimsky(new CKhalimsky(width()*ratiox, height()*ratioy));
       downTile->projectionDijkstraConstant();
@@ -92,11 +92,11 @@ CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)
       downTile->extractMap(this, SegmentationOff, FocusAll);
       assert(downTile->isOk());
       downTile->toSVG();
-      if(FClassif)
-	delete [] FClassif;
+      if(m_classif)
+	delete [] m_classif;
 
-      delete FMatrixPixelRegion;
-      delete FMatrixLignelDart;
+      delete m_matrixPixelRegion;
+      delete m_matrixLignelDart;
     }
 
 
@@ -367,7 +367,7 @@ void CTile::splitEdge( CDart* ADart )
   CDoublet doublet = getDoublet( dart );
 
   if( isEdgeLoop( dart ) )
-    FKhalimsky->setPCell( doublet, true );
+    khalimsky()->setPCell( doublet, true );
 
   // On suit le plongement de l'arête. Tant que le prochain pointel n'est pas
   // actif (i.e. il n'y a pas de sommet), on poursuit la division.
@@ -424,8 +424,8 @@ CDart* CTile::insertEdge( CDart* ADart )
   CDoublet t1 = t.getNextPointel();
 
   // On allume le pointel/lignel de l'arête pendante que l'on insère.
-  FKhalimsky->setLCell(t1,true);
-  FKhalimsky->setPCell(t1,true);
+  khalimsky()->setLCell(t1,true);
+  khalimsky()->setPCell(t1,true);
 
   // Création des nouveaux brins de l'arête.
   CDart* j1 = addMapDart( t, getRegion(b) );
@@ -477,7 +477,7 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
   linkBeta1(i2, j2); linkBeta1(j2, i21);
   linkBeta2(i , j2); linkBeta2(j , i2);
 
-  FKhalimsky->setPCell(getDoublet(j2),true);
+  khalimsky()->setPCell(getDoublet(j2),true);
 
   //std::cout<<"[end] insertVertexOnEdge"<<std::endl;
   return beta1(i);
@@ -808,7 +808,7 @@ void CTile::updateRegionList(CRegion* ARegion,
   if( end->getFirstSon() != NULL )
     end->getFirstSon()->setBrother(end);
   else
-    FInclusionTreeRoot->setBrother(end);
+    inclusionTreeRoot()->setBrother(end);
 
   //std::cout<<"[end] CTile::updateRegionList"<<std::endl;
 }
@@ -975,14 +975,14 @@ void CTile::mergeEdgeRemoval( CDart* ADart, int AMarkNumber )
   // Spécifique à la méthode du burst:
   // comme on a fait une région par pixel,
   // toutes les arêtes ont un plongement d'un seul linel
-  FKhalimsky->setLCell(getDoublet(ADart),false);
+  khalimsky()->setLCell(getDoublet(ADart),false);
 
   // Extinction des pointels
   if( beta0(ADart)==beta2(ADart) )
-    FKhalimsky->setPCell(getDoublet(ADart),false);
+    khalimsky()->setPCell(getDoublet(ADart),false);
 
   if( beta1(ADart)==beta2(ADart) )
-    FKhalimsky->setPCell(getDoublet(beta1(ADart)),false);
+    khalimsky()->setPCell(getDoublet(beta1(ADart)),false);
 
   // La suppression effective.
   linkBeta1( beta20 (ADart), beta1  (ADart) );

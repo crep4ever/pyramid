@@ -36,7 +36,7 @@ namespace clustering
   {
 
   protected:
-    uint8* FData;
+    uint8* m_data;
 
   public:
     // Constructeurs

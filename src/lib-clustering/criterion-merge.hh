@@ -37,8 +37,8 @@ namespace clustering
   {
   public :
 
-    Map2d::CRegion* FRegion1;
-    Map2d::CRegion* FRegion2;
+    Map2d::CRegion* m_region1;
+    Map2d::CRegion* m_region2;
 
     // Constructeurs
     CCriterionMerge(); //par défaut

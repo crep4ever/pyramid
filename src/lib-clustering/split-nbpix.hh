@@ -32,7 +32,7 @@ namespace clustering
   class CSplitNbPix : public CCriterionSplit
   {
   protected:
-    unsigned int FThreshold; //Le seuil (en nombre de pixels)
+    unsigned int m_threshold; //Le seuil (en nombre de pixels)
 
   public:
     // Constructeurs
