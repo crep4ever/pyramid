@@ -76,7 +76,7 @@ namespace pyramid
     TDartId id() const;
 
     /// Setter on the dart identifier
-    /// @param a unique positive integer identifier
+    /// @param id: a unique positive integer identifier
     void setId(TDartId id);
 
     /// Getter on the parent dart (dart up) in previous level
@@ -92,7 +92,7 @@ namespace pyramid
     CPyramidalDart* down() const;
 
     /// Setter on the children representative dart (dart down) in next level
-    /// @param the dart down
+    /// @param dart: the dart down
     void setDown(CPyramidalDart* dart);
 
     /// Getter on the opposite equivalent dart in adjacent tile

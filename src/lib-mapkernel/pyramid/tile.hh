@@ -38,14 +38,6 @@
 #include "chrono.hh"
 #include "macros.hh"
 
-/**
- * \file tile.hh
- *
- * Class for topological tiles
- *
- * \author Romain Goffe
- */
-
 using namespace fogrimmi;
 
 class CImageTiff;
@@ -59,17 +51,15 @@ namespace Map2d
 
 namespace pyramid
 {
-  /**
-   * \class CTile "tile.hh"
-   * \brief CTile is a local topological map which corresponds
-   * to a subdivision of an image
-   */
-
   class CArray;
   class CDkDoublet;
   class CPyramidalDart;
 
-  // Load/Swap related structures
+  /**
+   * \struct SDart
+   * \brief SDart stores a pyramidal dart information
+   * This structure allows to save darts on disk and load them in memory
+   */
   struct SDart
   {
     TDartId id;
@@ -82,6 +72,11 @@ namespace pyramid
     uint down;
   };
 
+  /**
+   * \struct SRegion
+   * \brief SRegion stores a pyramidal region information
+   * This structure allows to save regions on disk and load them in memory
+   */
   struct SRegion
   {
     TRegionId id;
@@ -102,6 +97,11 @@ namespace pyramid
     bool    infinite;
   };
 
+  /**
+   * \struct SProperties
+   * \brief SProperties stores a topological tile information
+   * This structure allows to save regions on disk and load them in memory
+   */
   struct SProperties
   {
     uint id;
@@ -117,71 +117,85 @@ namespace pyramid
 
   typedef std::vector<CDoublet> CEdge;
 
+  /**
+   * \file tile.hh
+   * \class CTile
+   * \brief CTile is a topological tile within a top-down pyramid
+   *
+   * A topological tile acts as a local topological map encoding only a subdivision
+   * (tile) of the image.
+   * A topological tile has parent/child relationships that point to the corresponding tiles
+   * in the previous/next levels of the top-down pyramid.
+   * A topological tile can be loaded into memory or swapped on disk on demand.
+   * Since the tile encodes an arbitrary subdivision of the image, its borders may be fictive
+   * when they do not correspond to the border of a region of the tiled map (level).
+   */
+
   class CTile: public CTopologicalMap
   {
 
   public:
+    /// \enum Label
+    /// SystemMode indicates wether the coordinates are relative or absolute.
+    /// Relative coordinates use the tile top-left corner as origin (0,0).
+    /// Absolute coordinates use the image top-left corner as origin (0,0).
     enum SystemMode {Absolute, Relative};
-    //enum ProjectionMode {Standard, Dijkstra};
-    //enum SubdivisionMode {ConstantTileSize, ConstantTileNumber};
-    //enum SameRegionOracle {GreyValue, Threshold, Classif, Histology, Disabled};
 
+    uint m_mergeThreshold;   ///< a grey value threshold for merging regions
+    TDartId m_dartCount;         ///< a dart counter that is used to set darts identifiers
+    TRegionId m_regionCount; ///< a region counter that is used to set regions identifiers
+    CMatrix<bool>* m_mark;   ///< marks (true/false) on the tile's pixels
+    CMatrix<CRegion*>* m_matrixPixelRegion; ///< association between pixels and their region
+    CArray* m_matrixLignelDart; ///< association between a lignel and its dart 
 
-    uint FMergeThreshold;
-    TDartId FCount;
-    TRegionId FRegionCount; //compteur qui ne décremente pas -> inutile ?
-    uint FPixIndex;
-    CMatrix<bool>* FMark;
-    CMatrix<CRegion*>* FMatrixPixelRegion;
-    CArray* FMatrixLignelDart;
-  protected:
-    // Propriétés
-    uint FId; // Identifiant de la tuile
-    CPoint2D FBottomRight; // Point bas/droite
-    uint FWidth;
-    uint FHeight;
+  private:
+    uint FId; ///< the tile unique identifier
+    CPoint2D FBottomRight; ///< the bottom-right corner coordinates
+    uint FWidth;  ///< the tile width
+    uint FHeight; ///< the tile height
 
-    // Hiérachie
-    CTile* FTileUp;
-    CTile* FTileDown;
+    CTile* FTileUp;   ///< the tile up in previous level
+    CTile* FTileDown; ///< the tile down in next level
 
-    // Swap
   public:
-    struct SProperties* FProperties;
-    struct SProperties* FOldProperties;
-    TKhalimskyElt*  FMatrix;
-    struct SDart*   FDartFields;
-    struct SDart*   FOldDarts;
-    struct SRegion* FRegionFields;
-    struct SRegion* FOldRegions;
-    bool FFirst;
-    std::string FFilename;
+    // Swap
+    struct SProperties* FProperties;    ///< tile current properties to be swapped/loaded
+    struct SProperties* FOldProperties; ///< tile properties on disk (may differ from current properties)
+    TKhalimskyElt*  FMatrix; ///< tile geometrical matrix
+    struct SDart*   FDartFields;   ///< tile's darts current properties to be swapped/loaded
+    struct SDart*   FOldDarts;     ///< tile's darts properties on disk (may differ from current properties)
+    struct SRegion* FRegionFields; ///< tile's regions current properties to be swapped/loaded
+    struct SRegion* FOldRegions;   ///< tile's regions properties on disk (may differ from current properties)
+    bool FFirst; ///< true if the tile has never be saved on disk before
+    std::string FFilename; ///< the filename for storing the tile on disk
 
     //Extraction
-    uint8* FClassif;
-    CVolume<uint8_t>* FAssignment;
-  public:
-    // Informations nécessaires pour certains traitements
-    std::vector<CDart*> FCorners; // Coins de la tuile
-    std::map<TDartId, CPyramidalDart*> FMapDarts; // Association id/brin
-    std::map<TRegionId, CRegion*> FMapRegions; // Association id/region
-    std::map<TDartId, TDartId> FMapBeta2; // Connaitre les beta2 des brins du bord (beta2')
-    uint FIndex[3]; //coordonnées i,j,k
+    uint8* FClassif; ///< result of the tile's pixels classification
+    CVolume<uint8_t>* FAssignment; ///< assigns tile's pixels to a region label
 
-    // Constructeurs
+    std::vector<CDart*> FCorners; ///< the 4 darts incident the vertices on tiles' corners
+    std::map<TDartId, CPyramidalDart*> FMapDarts; ///< association between a dart and its identifier
+    std::map<TRegionId, CRegion*> FMapRegions; ///< association between a region and its identifier
+    std::map<TDartId, TDartId> FMapBeta2; ///< used for phi operator on darts incident to the tile's borders
+    uint FIndex[3]; ///< stores the 3 coordiantes (i,j,k) of the tile within the top-down pyramid
+
+    /// Constructor
     CTile(uint AWidth, uint AHeight);
 
-    // Destructeur
+    /// Destructor
     virtual ~CTile();
-
 
     //******************************************************************************
     //Accesseurs
     //******************************************************************************
 
-
+    /// Getter on the tile identifier
+    /// @return a unique positive integer identifier
     uint id() const;
-    void setId (uint AId);
+
+    /// Setter on the dart identifier
+    /// @param id: a unique positive integer identifier
+    void setId (uint id);
 
     uint width() const;
     void setWidth (uint AWidth);
@@ -901,7 +915,7 @@ namespace pyramid
     void mergeEdgeRemoval( CDart* ADart, int AMarkNumber );
 
 
-   //******************************************************************************
+    //******************************************************************************
     //Opérations de contrôle et de vérification
     //******************************************************************************
 
@@ -1102,15 +1116,10 @@ namespace pyramid
 
     bool oracle(const IM_Pixel & APixel1, const IM_Pixel & APixel2,
 		const SegmentationMode & ASegmentationMode);
-
   };
-
 } // namespace pyramid
-//******************************************************************************
 #include INCLUDE_INLINE("tile.icc")
 #include INCLUDE_INLINE("tile-extract.icc")
 #include INCLUDE_INLINE("tile-projection.icc")
 #include INCLUDE_INLINE("tile-burst.icc")
-//******************************************************************************
 #endif // TILE_HH
-//******************************************************************************
