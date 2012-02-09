@@ -1,0 +1,80 @@
+FIND_PATH(IMTIFF_core_INCLUDE_DIR
+	NAMES IM_Tiff.h
+	PATHS
+	"$ENV{FOGRIMMI_CODE}/libimtiff/src/core"
+)
+
+FIND_PATH(IMTIFF_config_INCLUDE_DIR
+	NAMES IM_Export.h
+	PATHS
+	"$ENV{FOGRIMMI_CODE}/libimtiff/src/config"
+)
+
+FIND_PATH(IMTIFF_debug_INCLUDE_DIR
+	NAMES IM_DebugNew.h
+	PATHS
+	"$ENV{FOGRIMMI_CODE}/libimtiff/src/debug"
+)
+
+FIND_PATH(IMTIFF_transform_INCLUDE_DIR
+	NAMES IM_Transform.h
+	PATHS
+	"$ENV{FOGRIMMI_CODE}/libimtiff/src/transform"
+)
+
+FIND_PATH(IMTIFF_utilities_INCLUDE_DIR
+	NAMES IM_File.h
+	PATHS
+	"$ENV{FOGRIMMI_CODE}/libimtiff/src/utilities"
+)
+
+IF(APPLE)
+	FIND_FILE(IMTIFF_LIBRARY
+		NAMES libIMTiff_test.dylib
+		PATHS 
+		#"$ENV{DYLD_LIBRARY_PATH}"
+		"$ENV{FOGRIMMI_CODE}/libimtiff/debug"
+	)
+ENDIF(APPLE)
+MESSAGE(${IMTIFF_LIBRARY})
+IF(LINUX)
+	FIND_FILE(IMTIFF_LIBRARY
+		NAMES libIMTiff_test.so
+		PATHS
+		"$ENV{FOGRIMMI_CODE}/libimtiff/debug"	
+		"/usr/lib"
+		"/usr/local/lib"
+		"/opt/local/lib"
+	)
+ENDIF(LINUX)
+IF( IMTIFF_config_INCLUDE_DIR
+    AND IMTIFF_debug_INCLUDE_DIR
+    AND IMTIFF_core_INCLUDE_DIR
+    AND IMTIFF_transform_INCLUDE_DIR
+    AND IMTIFF_utilities_INCLUDE_DIR
+    AND IMTIFF_LIBRARY)
+    
+    SET( IMTIFF_FOUND "YES")
+    SET( IMTIFF_INCLUDE_DIR
+    	${IMTIFF_config_INCLUDE_DIR}
+	${IMTIFF_core_INCLUDE_DIR}
+	${IMTIFF_debug_INCLUDE_DIR}
+	${IMTIFF_transform_INCLUDE_DIR}
+	${IMTIFF_utilities_INCLUDE_DIR}
+	
+	)
+MESSAGE(${IMTIFF_INCLUDE_DIR})
+	
+ENDIF(IMTIFF_config_INCLUDE_DIR
+	AND IMTIFF_debug_INCLUDE_DIR
+    	AND IMTIFF_core_INCLUDE_DIR
+   	AND IMTIFF_transform_INCLUDE_DIR
+    	AND IMTIFF_utilities_INCLUDE_DIR
+   	AND IMTIFF_LIBRARY)
+     
+IF(IMTIFF_FOUND)
+		MESSAGE(STATUS "Found IMTIFF : ${IMTIFF_LIBRARY}")
+ELSE(IMTIFF_FOUND)
+		MESSAGE(FATAL_ERROR "Could not find IMTIFF")
+		MESSAGE("SET IMTIFF location by adding -DLIBIMTIFF=<path>")
+ENDIF(IMTIFF_FOUND)
