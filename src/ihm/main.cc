@@ -16,15 +16,34 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
+/*! \mainpage Pyramid Documentation
+ *
+ * \section sec_intro Introduction
+ *
+ * This application provides an implementation of the tiled top-down pyramid model
+ * and a graphical client to perform segmentation operations.
+ *
+ * \section sec_model Model
+ *
+ * A tiled top-down pyramid is a hierarchy of tiled maps
+ * where a tiled map is a model designed for the representation of
+ * topological and geometrical features of large images.
+ *
+ * \section sec_interface Interface
+ *
+ * \image html main-window.png "Main window" width=8cm
+ *
+ *
+ */
+
 #include <QApplication>
 #include "script-engine.hh"
 #include "main-window.hh"
 #include "config.hh"
-//******************************************************************************
+
 void usage( const char * )
 {}
-//------------------------------------------------------------------------------
+
 int main( int argc, char * argv[] )
 {
   QApplication app(argc, argv);
