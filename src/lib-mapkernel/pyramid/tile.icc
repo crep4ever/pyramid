@@ -200,7 +200,6 @@ namespace pyramid
   INLINE
   CPyramidalRegion* CTile::inclusionTreeRoot() const
   {
-    assert(FInclusionTreeRoot || static_cast<CPyramidalRegion*>(FInclusionTreeRoot)->isInfiniteRegion());
     return static_cast<CPyramidalRegion*>(FInclusionTreeRoot);
   }
 
