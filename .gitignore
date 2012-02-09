@@ -1,3 +1,8 @@
-build/
+.build*
 output/
-src/lib-imtiff/lib/
+img/
+doc/html
+src/config.h
+pyramid
+noqt
+
