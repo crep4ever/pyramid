@@ -255,12 +255,12 @@
     <message>
         <location filename="../src/ihm/main-window.cc" line="193"/>
         <source>&amp;Tile</source>
-        <translation type="unfinished">&amp;Tuiles</translation>
+        <translation>&amp;Tuiles</translation>
     </message>
     <message>
         <location filename="../src/ihm/main-window.cc" line="195"/>
         <source>Tile all the windows</source>
-        <translation type="unfinished">Affichage des fenêtres en tuiles</translation>
+        <translation>Affichage des fenêtres en tuiles</translation>
     </message>
     <message>
         <location filename="../src/ihm/main-window.cc" line="197"/>
@@ -270,12 +270,12 @@
     <message>
         <location filename="../src/ihm/main-window.cc" line="199"/>
         <source>Cascade all the windows</source>
-        <translation type="unfinished">Affichage des fenêtre en cascade</translation>
+        <translation>Affichage des fenêtre en cascade</translation>
     </message>
     <message>
         <location filename="../src/ihm/main-window.cc" line="206"/>
         <source>&amp;Pyramid</source>
-        <translation type="unfinished">&amp;Pyramide</translation>
+        <translation>&amp;Pyramide</translation>
     </message>
     <message>
         <location filename="../src/ihm/main-window.cc" line="219"/>
@@ -331,7 +331,7 @@
     <message>
         <location filename="../src/ihm/main-window.cc" line="344"/>
         <source>QT Scripts (*.js *.qs)</source>
-        <translation type="unfinished">QT scripts (*.js *.qs)</translation>
+        <translation>QT scripts (*.js *.qs)</translation>
     </message>
     <message>
         <location filename="../src/ihm/main-window.cc" line="380"/>
@@ -432,148 +432,148 @@
     <message>
         <location filename="../src/ihm/panel.cc" line="91"/>
         <source>Focus of attention:</source>
-        <translation type="unfinished"></translation>
+        <translation>Focus d&apos;attention :</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="98"/>
         <source>Tiled map</source>
-        <translation type="unfinished"></translation>
+        <translation>Carte tuilée</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="105"/>
         <source>Detect fictive borders:</source>
-        <translation type="unfinished"></translation>
+        <translation>Détecter les bords fictifs</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="108"/>
         <source>Grey value</source>
-        <translation type="unfinished"></translation>
+        <translation>Niveau de gris</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="109"/>
         <source>Thresholds</source>
-        <translation type="unfinished"></translation>
+        <translation>Seuils</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="110"/>
         <source>Classif</source>
-        <translation type="unfinished"></translation>
+        <translation>Classification</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="116"/>
         <source>Segmentation oracle:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oracle de segmentation :</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="123"/>
         <source>Topological tile</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuile topologique</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="131"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Largeur :</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="138"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauteur :</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="145"/>
         <location filename="../src/ihm/panel.cc" line="152"/>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Image</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="153"/>
         <source>Images (*.tif)</source>
-        <translation type="unfinished"></translation>
+        <translation>Images (*.tif)</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="192"/>
         <source>Image name : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de l&apos;image : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="193"/>
         <source>Number of pages : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de pages : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="194"/>
         <source>Image width : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Largeur de l&apos;image : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="195"/>
         <source>Image height : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauteur de l&apos;image : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="196"/>
         <source>Component width : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Largeur d&apos;une composante : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="197"/>
         <source>Component height : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauteur d&apos;une composante : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="198"/>
         <source>BPS : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>BPS : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="199"/>
         <source>Color Mode : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de couleurs : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="200"/>
         <source>Compression : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Compression : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="201"/>
         <source>Jpeg quality : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualité JPEG : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="202"/>
         <source>Jpeg cm : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG cm : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="203"/>
         <source>Photomet : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Photométrie : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="204"/>
         <source>Planar : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Représentation planaire : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="205"/>
         <source>Pixel organisation : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Organisation des pixels : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="206"/>
         <source>Horizontal resolution : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Résolution horizontale : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="207"/>
         <source>Vertical resolution : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Résolution verticale : %1</translation>
     </message>
     <message>
         <location filename="../src/ihm/panel.cc" line="208"/>
         <source>Res unit : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unité des résolutions : %1</translation>
     </message>
 </context>
 <context>
@@ -581,82 +581,82 @@
     <message>
         <location filename="../src/ihm/scene.cc" line="140"/>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Image</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="141"/>
         <source>Show or hide the image</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche ou masque l&apos;image</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="148"/>
         <source>Interpixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpixel</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="149"/>
         <source>Show or hide the image interpixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche ou masque les éléments interpixel</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="156"/>
         <source>Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Carte</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="157"/>
         <source>Show or hide the image map</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche ou masque les brins de la carte</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="164"/>
         <source>Borders</source>
-        <translation type="unfinished"></translation>
+        <translation>Bords</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="165"/>
         <source>Show or hide the image borders</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche ou masque les arêtes de la carte</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="172"/>
         <source>Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Labels</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="173"/>
         <source>Show or hide the image region labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Colorise ou non les régions de la carte suivant leurs labels</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="180"/>
         <source>Show fictive borders</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les bords fictifs</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="181"/>
         <source>Show or hide fictive darts on tile&apos;s borders</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche ou masque les brins de la carte incidents à un bord fictif</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="188"/>
         <source>Auto &amp;hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher automatiquement</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="189"/>
         <source>Auto hide interpixel and map depending on zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Masque la matrice des éléments interpixel et les brins suivant la valeur du zoom</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="196"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Rafraichir</translation>
     </message>
     <message>
         <location filename="../src/ihm/scene.cc" line="198"/>
         <source>Destroy and rebuilds the scene</source>
-        <translation type="unfinished"></translation>
+        <translation>Détruit et reconstruit la scène</translation>
     </message>
 </context>
 <context>
@@ -664,17 +664,17 @@
     <message>
         <location filename="../src/ihm/settings-tree.cc" line="53"/>
         <source>Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètre</translation>
     </message>
     <message>
         <location filename="../src/ihm/settings-tree.cc" line="53"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../src/ihm/settings-tree.cc" line="53"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valeur</translation>
     </message>
 </context>
 <context>
@@ -682,42 +682,42 @@
     <message>
         <location filename="../src/ihm/view.cc" line="134"/>
         <source>View origin</source>
-        <translation type="unfinished"></translation>
+        <translation>Vue origine</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="135"/>
         <source>Center the view on the origin</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrer la vue sur l&apos;origine</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="139"/>
         <source>View center</source>
-        <translation type="unfinished"></translation>
+        <translation>Vue centrée</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="140"/>
         <source>Center the view on the middle</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrer la vue sur le milieu de la scène</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="148"/>
         <source>Default zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom par défaut</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="149"/>
         <source>Restore the default zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurer le niveau de zoom par défaut</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="153"/>
         <source>Maximize zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom optimal</translation>
     </message>
     <message>
         <location filename="../src/ihm/view.cc" line="154"/>
         <source>Set the zoom such as all the scene fit in the window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste le niveau de zoom de façon à ce que la scène occupe un maximum de place dans la fenêtre</translation>
     </message>
 </context>
 </TS>
