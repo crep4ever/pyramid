@@ -146,7 +146,7 @@ namespace pyramid
     TRegionId m_regionCount; ///< a region counter that is used to set regions identifiers
     CMatrix<bool>* m_mark;   ///< marks (true/false) on the tile's pixels
     CMatrix<CRegion*>* m_matrixPixelRegion; ///< association between pixels and their region
-    CArray* m_matrixLignelDart; ///< association between a lignel and its dart 
+    CArray* m_matrixLignelDart; ///< association between a lignel and its dart
 
   private:
     uint m_id; ///< the tile unique identifier

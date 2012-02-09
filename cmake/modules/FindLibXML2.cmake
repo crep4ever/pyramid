@@ -42,7 +42,7 @@ else (LibXML2_LIBRARIES AND LibXML2_INCLUDE_DIRS)
     PATH_SUFFIXES
       libxml2
   )
-  
+
   find_library(LibXML2_LIBRARY
     NAMES
       xml2
