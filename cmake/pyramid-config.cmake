@@ -13,7 +13,8 @@ option(RELEASE "release mode" OFF)
 option(PROFILE "profile mode" OFF)
 
 # {{{ CFLAGS
-add_definitions(-DNO_FREETYPE)
+add_definitions(-DNO_FREETYPE -DLIBIMTIFF="${CMAKE_SOURCE_DIR}/lib-imtiff")
+
 if (PROFILE)
   set(RELEASE OFF)
   add_definitions(-DNDEBUG)
@@ -62,6 +63,8 @@ macro(a_find_program var prg req)
 endmacro()
 
 find_package(Magick++ REQUIRED)
+
+find_package(IMTIFF REQUIRED)
 
 if (OPENMP)
   find_package(OpenMP)

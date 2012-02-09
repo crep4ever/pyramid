@@ -36,7 +36,6 @@ add_library (mapkernel SHARED
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-clustering)
 include_directories(${CMAKE_SOURCE_DIR}/lib-image2D)
-include_directories(${Magick++_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/lib-svgcreator)
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel)
@@ -47,11 +46,8 @@ include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/pyramid)
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
 
-include_directories(${IMTIFF_SOURCE_DIR}/src/config)
-include_directories(${IMTIFF_SOURCE_DIR}/src/core)
-include_directories(${IMTIFF_SOURCE_DIR}/src/debug)
-include_directories(${IMTIFF_SOURCE_DIR}/src/transform)
-include_directories(${IMTIFF_SOURCE_DIR}/src/utilities)
+include_directories(${IMTIFF_INCLUDE_DIR})
+include_directories(${Magick++_INCLUDE_DIRS})
 
 #-------------------------------------------------------------------------------
 # Teste si le fichier stdint.h est présent sur le système. 

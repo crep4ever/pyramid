@@ -17,10 +17,14 @@ endif()
 include(${CMAKE_CONFIG_PATH}/pyramid-config.cmake)
 
 #-------------------------------------------------------------------------------
+#Find lib-imtiff
+
+
+#-------------------------------------------------------------------------------
 add_subdirectory (src/lib-utils)
 add_subdirectory (src/lib-kmlocal)
 add_subdirectory (src/lib-clustering)
-add_subdirectory (src/lib-imtiff)
+#add_subdirectory (src/lib-imtiff)
 add_subdirectory (src/lib-image2D)
 add_subdirectory (src/lib-mapkernel)
 add_subdirectory (src/ihm)

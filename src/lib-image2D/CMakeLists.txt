@@ -5,11 +5,7 @@ file(
   ./*
   )
 
-include_directories(${IMTIFF_SOURCE_DIR}/src/config)
-include_directories(${IMTIFF_SOURCE_DIR}/src/core)
-include_directories(${IMTIFF_SOURCE_DIR}/src/debug)
-include_directories(${IMTIFF_SOURCE_DIR}/src/transform)
-include_directories(${IMTIFF_SOURCE_DIR}/src/utilities)
+include_directories(${IMTIFF_INCLUDE_DIR})
 include_directories(${Magick++_INCLUDE_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
@@ -26,12 +22,9 @@ include_directories(
 add_library(image2D SHARED ${sources_image2D})
 
 TARGET_LINK_LIBRARIES(image2D
-#  ${GLIB_LIBRARIES}
-#  ${GLIBMM_LIBRARY}
-#  ${XMLPP_LIBRARY}
-  imtiff
   utils
   kmlocal
+  ${IMTIFF_LIBRARY}
   ${Magick++_LIBRARIES}
   )
 #-------------------------------------------------------------------------------
