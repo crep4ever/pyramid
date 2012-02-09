@@ -1,4 +1,4 @@
-add_library (mapkernel 
+add_library (mapkernel SHARED
   map/coverage.cc 
   map/dart.cc 
   map/edge-attribute.cc 

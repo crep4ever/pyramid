@@ -23,7 +23,7 @@ include_directories(
   ${XMLPP_INCLUDE_LIBDIR}
   )
 
-add_library(image2D ${sources_image2D})
+add_library(image2D SHARED ${sources_image2D})
 
 TARGET_LINK_LIBRARIES(image2D
 #  ${GLIB_LIBRARIES}

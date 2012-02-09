@@ -89,7 +89,7 @@ SET(IMTIFF_SRCS
 SET(LIBRARY_OUTPUT_PATH $ENV{IMTIFF_LIB_DIR})
 
 # Create a Shared library
-add_library(imtiff STATIC ${IMTIFF_SRCS})
+add_library(imtiff SHARED ${IMTIFF_SRCS})
 
 # Link the IMTIff to dependence library.
 target_link_libraries(imtiff ${LINK_CORE_LIBRARIES})
