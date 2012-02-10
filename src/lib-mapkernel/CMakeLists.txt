@@ -1,4 +1,4 @@
-add_library (mapkernel SHARED
+set(SOURCES
   map/coverage.cc 
   map/dart.cc 
   map/edge-attribute.cc 
@@ -18,7 +18,6 @@ add_library (mapkernel SHARED
   topological-map/topological-map.cc 
   #
   pyramid/dk-doublet.cc
-  #pyramid/dp-maxrow.cc
   pyramid/traversal-region-pixels.cc
   pyramid/pyramid.cc 
   pyramid/level.cc 
@@ -32,6 +31,40 @@ add_library (mapkernel SHARED
   pyramid/tile-burst.cc
   pyramid/tile-test.cc
   pyramid/svg-export.cc
+  )
+
+set(HEADERS
+  map/coverage.hh
+  map/static-coverage.hh
+  map/dynamic-coverage.hh
+  map/vertex-coverage.hh
+  map/dart.hh 
+  map/edge-attribute.hh 
+  map/map-basic.hh 
+  map/map.hh
+  map/kernel-types.hh
+  # 
+  map-generic/map-generic.hh 
+  #
+  topological-map/coverage-region-pixels.hh
+  topological-map/region.hh 
+  topological-map/doublet.hh 
+  topological-map/orders.hh 
+  topological-map/tm-extract-images.hh
+  topological-map/tm-deformation.hh
+  topological-map/topological-dart.hh 
+  topological-map/topological-map.hh 
+  topological-map/khalimsky.hh 
+  #
+  pyramid/dk-doublet.hh
+  pyramid/traversal-region-pixels.hh
+  pyramid/pyramid.hh 
+  pyramid/level.hh 
+  pyramid/pyramidal-region.hh
+  pyramid/pyramidal-dart.hh 
+  pyramid/tile.hh 
+  pyramid/array.hh
+  pyramid/svg-export.hh
   )
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-clustering)
@@ -49,14 +82,15 @@ include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
 include_directories(${IMTIFF_INCLUDE_DIR})
 include_directories(${Magick++_INCLUDE_DIRS})
 
-#-------------------------------------------------------------------------------
-# Teste si le fichier stdint.h est présent sur le système. 
-# Si non, on va redéfinir les quelques types qui nous sont nécessaires.
-INCLUDE(CheckIncludeFile)
-CHECK_INCLUDE_FILE(stdint.h HAVE_STD_INT)
+# If file stdint.h does not exist, define some types
+include(CheckIncludeFile)
+check_include_file(stdint.h HAVE_STD_INT)
 if (HAVE_STD_INT)
-  ADD_DEFINITIONS(-DHAVE_STD_INT)
+  add_definitions(-DHAVE_STD_INT)
 endif (HAVE_STD_INT)
-#---------------------------------------------
 
-TARGET_LINK_LIBRARIES(mapkernel utils clustering image2D X11 Xext) 
+add_library (mapkernel SHARED ${SOURCES})
+target_link_libraries(mapkernel utils clustering image2D X11 Xext) 
+install (TARGETS mapkernel DESTINATION bin)
+install (FILES ${HEADERS} DESTINATION include)
+
