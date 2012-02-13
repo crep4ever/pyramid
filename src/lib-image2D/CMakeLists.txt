@@ -17,7 +17,6 @@ coverage-pixels-fishkin-barsky.hh
 coverage-pixels-jou-tsai.hh 
 coverage-pixels-jou-tsai-v2.hh
 imageTiff.hh
-omp_kmeans.hh
 )
 
 include_directories(${IMTIFF_INCLUDE_DIR})

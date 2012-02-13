@@ -50,7 +50,6 @@ set(HEADERS
   topological-map/region.hh 
   topological-map/doublet.hh 
   topological-map/orders.hh 
-  topological-map/tm-extract-images.hh
   topological-map/tm-deformation.hh
   topological-map/topological-dart.hh 
   topological-map/topological-map.hh 
