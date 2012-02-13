@@ -1,9 +1,9 @@
 set(SOURCES
 image2D.cc
-generate-images.cc 
+generate-images.cc
 coverage-pixels.cc
-coverage-pixels-fishkin-barsky.cc 
-coverage-pixels-jou-tsai.cc 
+coverage-pixels-fishkin-barsky.cc
+coverage-pixels-jou-tsai.cc
 coverage-pixels-jou-tsai-v2.cc
 imageTiff.cc
 omp_kmeans.cc
@@ -11,10 +11,10 @@ omp_kmeans.cc
 
 set(HEADERS
 image2D.hh
-generate-images.hh 
+generate-images.hh
 coverage-pixels.hh
-coverage-pixels-fishkin-barsky.hh 
-coverage-pixels-jou-tsai.hh 
+coverage-pixels-fishkin-barsky.hh
+coverage-pixels-jou-tsai.hh
 coverage-pixels-jou-tsai-v2.hh
 imageTiff.hh
 )
