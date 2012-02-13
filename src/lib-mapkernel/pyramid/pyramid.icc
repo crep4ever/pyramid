@@ -47,30 +47,6 @@ namespace pyramid
   }
 
   INLINE
-  uint CPyramid::nbPixels() const
-  {
-    return m_nbPixels;
-  }
-
-  INLINE
-  void CPyramid::setNbPixels(uint ANbPixels)
-  {
-    m_nbPixels = ANbPixels;
-  }
-
-  INLINE
-  float CPyramid::deviation() const
-  {
-    return m_deviation;
-  }
-
-  INLINE
-  void CPyramid::setDeviation(float ADeviation)
-  {
-    m_deviation = ADeviation;
-  }
-
-  INLINE
   uint CPyramid::tileWidth() const
   {
     return m_tileWidth;

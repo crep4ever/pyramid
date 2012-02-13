@@ -137,7 +137,7 @@ void CSvgExporter::addSvgPyramidTopology(CPyramid* APyramid, CSvgCreator& svg, u
 {
   std::deque<CTile*>::iterator it;
   std::deque<CTile*> tiles;
-  CLevel* lvl = APyramid->m_levels[ADepth];
+  CLevel* lvl = APyramid->levels()[ADepth];
 
   for( it = lvl->tiles().begin(); it!=lvl->tiles().end(); ++it)
     {
@@ -153,7 +153,7 @@ void CSvgExporter::addSvgPyramidGeometry(CPyramid* APyramid, CSvgCreator& svg, u
 {
   std::deque<CTile*>::iterator it;
   std::deque<CTile*> tiles;
-  CLevel* lvl = APyramid->m_levels[ADepth];
+  CLevel* lvl = APyramid->levels()[ADepth];
 
   for( it = lvl->tiles().begin(); it!=lvl->tiles().end(); ++it)
     {

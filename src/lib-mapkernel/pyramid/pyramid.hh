@@ -38,9 +38,27 @@ namespace pyramid
 {
   /**
    * \file pyramid.hh
-   * \class CPyramid "pyramid.hh"
-   * \author Romain Goffe
-   * \brief CPyramid is a tiled top-down pyramid
+   * \class CPyramid
+   * \brief CPyramid is a tiled top-down pyramid.
+   *
+   * A tiled top-down pyramid is a combinatorial pyramid of tiled maps
+   * that is built according to a top-down construction scheme.
+   *
+   * The definition of a tiled top-down pyramid is a combination of 3 models:
+   * \li a pyramid of images that correspond to the multi-pages tiff image
+   * \li a pyramid of tiles that is similar to a quadtree structure
+   * \li a pyramid of tiled maps that encode topological information
+   * \image html pyramid.svg "A tiled top-down pyramid: a combination of three hierarchical models" width=4cm
+   *
+   * Tiles, regions and darts have up/down relationships in the previous/next levels.
+   * \image html up-down.svg "Up/down relationships within a tiled top-down pyramid" width=8cm
+   *
+   * The top-down scheme consists in refining regions from a level k to build the level k+1
+   * This operation can be decomposed in two main steps:
+   * \li a projection of regions' borders: a border that exists in level k will exist in level k+1
+   * \li a region split according to a segmentation criterion that is computed on the image
+   *
+   * \image html construction.svg "Top-down construction scheme" width=4cm
    */
 
   class CTile;
@@ -50,265 +68,320 @@ namespace pyramid
   {
 
   private:
-    // L'image
-    CImageTiff* m_image;
-
-  protected:
-    uint m_nbPixels; //split crit
-    float m_deviation;
-    uint m_tileWidth;
-    uint m_tileHeight;
-    uint m_nbLevels;
-    uint m_extractMode;
-    uint m_segmentationMode;
-    uint m_projectionMode;
-    uint m_focusAttentionMode;
-    uint m_detectFictiveBordersMode;
-
-  public:
-    uint m_tileTotal;
-    uint m_tileCounter;
-    uint m_levelCounter;
-    uint m_maxMemory;
+    CImageTiff* m_image; ///< The pyramid of images (a multi-pages tiff)
+    uint m_tileWidth;  ///< tile width in the top level of the pyramid
+    uint m_tileHeight; ///< tile height in the top level of the pyramid
+    uint m_nbLevels;   ///< number of levels in the pyramid
+    uint m_extractMode;      ///< extraction mode: builds topological tiles from image data
+    uint m_segmentationMode; ///< segmentation mode: merging criteria between regions
+    uint m_projectionMode;   ///< projection mode: borders projection from level k onto level k+1
+    uint m_focusAttentionMode; ///< focus of attention mode: determines regions of interest
+    uint m_detectFictiveBordersMode; ///< detect fictive borders on tiles' borders
+    uint m_tileTotal;    ///< total number of tiles in the pyramid
+    uint m_tileCounter;  ///< a tile counter
+    uint m_levelCounter; ///< a level counter
+    uint m_maxMemory;    ///< stores the maximum amount of memory required during the construction
+    std::deque<CLevel*> m_levels; ///< the levels (tiled maps) of the pyramid
+    std::deque<CLevel*>::iterator it; ///< an iterator on the pyramid's levels
+    std::vector<uint> m_mergeThresholds; ///< m_mergeThresholds[k] is a threshold (grey level) to merge regions at level k
 
   public:
-    // Niveaux de la pyramide
-    std::deque<CLevel*> m_levels;
-    std::deque<CLevel*>::iterator it;
-
-    //Seuil de merge des niveaux
-    std::vector<uint> m_mergeThresholds;
-
-    /// Constructeur depuis une image
-    /// @param AFilename : le fichier image
-    CPyramid(const std::string & AFilename);
+    /// Constructor
+    /// @param filename a tiff image
+    CPyramid(const std::string & filename);
     CPyramid();
 
-    // Destructeur
+    // Destructor
     virtual ~CPyramid();
 
-    // Accesseurs
+    /// Getter on the pyramid of images (multi-pages tiff)
+    /// @return the image
     CImageTiff* image() const;
-    void setImage( CImageTiff* AImage );
 
+    /// Setter on the pyramid of images (multi-pages tiff)
+    /// @param image the image
+    void setImage(CImageTiff* image);
+
+    /// Getter on the levels of the pyramid
+    /// @return the levels
     std::deque<CLevel*> levels() const;
-    void setLevels( std::deque<CLevel*>& ALevels );
 
-    uint nbPixels() const;
-    void setNbPixels(uint ANbPixels);
+    /// Setter on the levels of the pyramid
+    /// @param levels the levels
+    void setLevels(std::deque<CLevel*>& levels);
 
-    uint splitOracle() const;
-    void setSplitOracle(uint ASplitOracle);
-
-    float deviation() const;
-    void  setDeviation(float ADeviation);
-
+    /// Getter on the tile width property
+    /// @return the tile width in the top level
     uint tileWidth() const;
-    void setTileWidth(uint ATileWidth);
 
+    /// Setter on the tile width property
+    /// @param value the tile width in the top level
+    void setTileWidth(uint value);
+
+    /// Getter on the tile height property
+    /// @return the tile height in the top level
     uint tileHeight() const;
-    void setTileHeight(uint ATileHeight);
 
+    /// Setter on the tile height property
+    /// @param value the tile height in the top level
+    void setTileHeight(uint value);
+
+    /// Getter on the number of levels of the pyramid
+    /// @return the number of levels of the pyramid
     uint nbLevels() const;
-    void setNbLevels(uint ATileHeight);
 
+    /// Setter on the number of levels of the pyramid
+    /// @param value the number of levels of the pyramid
+    void setNbLevels(uint value);
+
+    /// Getter on the pyramid's extraction mode
+    /// @return the extract mode
     uint extractMode() const;
-    void setExtractMode(const ExtractMode & AMode);
 
+    /// Setter on the pyramid's extract mode
+    /// @param mode the pyramid's extract mode
+    void setExtractMode(const ExtractMode & mode);
+
+    /// Getter on the pyramid's fictive borders detection mode
+    /// @return the fictive borders detection mode
     uint detectFictiveBordersMode() const;
-    void setDetectFictiveBordersMode(const DetectFictiveBordersMode & AMode);
 
-    CLevel* level(uint ALevel) const;
+    /// Setter on the pyramid's fictive borders detection mode
+    /// @param mode the fictive borders detection mode
+    void setDetectFictiveBordersMode(const DetectFictiveBordersMode & mode);
+
+    /// Getter on a pyramid's level
+    /// @param index the index (0 is the top level)
+    /// @return the level corresponding to this index
+    CLevel* level(uint index) const;
+
+    /// Adds a new level in the pyramid in the pyramid of tiles
     void addLevel();
 
+    /// Getter on the pyramid's fictive borders detection mode
+    /// @return the fictive borders detection mode
     uint segmentationMode() const;
-    void setSegmentationMode( const SegmentationMode & AMode );
 
+    /// Setter on the pyramid's segmentation mode
+    /// @param mode the segmentation mode
+    void setSegmentationMode(const SegmentationMode & mode);
+
+    /// Getter on the pyramid's projection mode
+    /// @return the projection mode
     uint projectionMode() const;
-    void setProjectionMode( const ProjectionMode & AMode );
 
+    /// Setter on the pyramid's projection mode
+    /// @param mode the projection mode
+    void setProjectionMode(const ProjectionMode & mode);
+
+    /// Getter on the pyramid's focus of attention mode
+    /// @return the focus of attention mode
     uint focusAttentionMode() const;
-    void setFocusAttentionMode( const FocusAttentionMode & AMode );
 
+    /// Setter on the pyramid's focus of attention mode
+    /// @param mode the focus of attention mode
+    void setFocusAttentionMode(const FocusAttentionMode & mode);
+
+    /// Getter on the levels' merge thresholds
+    /// @return the levels' merge thresholds
     std::vector<uint> mergeThresholds() const;
-    void setMergeThresholds( std::vector<uint> AMergeThresholds );
 
+    /// Setter on the levels' merge thresholds
+    /// @param thresholds the levels' merge thresholds
+    void setMergeThresholds(std::vector<uint> thresholds);
+
+    /// Getter on the total number of tiles within the pyramid
     /// @return the number of topological tiles in the pyramid
     uint nbTiles() const;
 
     //******************************************************************************
-    // Méthodes sur l'image
+    // Image
     //******************************************************************************
 
+    /// Getter on a tiff page width
+    /// @param index a level
+    /// @return image width at index level
+    uint imageWidth(uint index) const;
 
-    /// @return la largeur totale de l'image
-    uint imageWidth(uint ALevel) const;
+    /// Getter on a tiff page height
+    /// @param index a level
+    /// @return image height at index level
+    uint imageHeight(uint index) const;
 
-    /// @return la hauteur totale de l'image
-    uint imageHeight(uint ALevel) const;
+    /// Getter on the number of tiles in a single row
+    /// @param index a level
+    /// @return the number of tiles on width at index level
+    uint nbTilesWidth(uint index) const;
 
-    /// @return le nombre de tuiles topologiques sur la largeur de l'image
-    uint nbTilesWidth(uint APage) const;
-
-    /// @return le nombre de tuiles topologiques sur la hauteur de l'image
+    /// Getter on the number of tiles in a single column
+    /// @param index a level
+    /// @return the number of tiles on height at index level
     uint nbTilesHeight(uint APage) const;
 
-    /// Donne les ratios en x et y d'un niveau par rapport au précédent
+    /// Getter on image ratios between a level and the previous one
+    /// @param index current level
+    /// @return (x,y) ratio between current level and previous level. x and y should be greater than one.
     CPoint2D ratios(uint ALevel) const;
 
     //******************************************************************************
-    // Propriétés sur les tuiles
+    // Tiles
     //******************************************************************************
 
+    /// Maximum abscissa of a tile in the image referential
+    /// @param tile the tile
+    /// @return the tile maximum abscissa
+    uint xmax(CTile* tile) const;
 
-    /// Abscisse maximum d'une tuile
-    /// @param ATile: la tuile
-    /// @return l'abscisse
-    uint xmax(CTile* ATile) const;
+    /// Maximum ordinate of a tile in the image referential
+    /// @param tile the tile
+    /// @return the tile maximum ordinate
+    uint ymax(CTile* tile) const;
 
-    /// Ordonnée maximum d'une tuile
-    /// @param ATile: la tuile
-    /// @return l'ordonnée
-    uint ymax(CTile* ATile) const;
+    /// Minimum abscissa of a tile in the image referential
+    /// @param tile the tile
+    /// @return the tile minimum abscissa
+    uint xmin(CTile* tile) const;
 
-    /// Abscisse minimum d'une tuile
-    /// @param ATile: la tuile
-    /// @return l'abscisse
-    uint xmin(CTile* ATile) const;
+    /// Minimum ordinate of a tile in the image referential
+    /// @param tile the tile
+    /// @return the tile minimum ordinate
+    uint ymin(CTile* tile) const;
 
-    /// Ordonnée minimum d'une tuile
-    /// @param ATile: la tuile
-    /// @return l'ordonnée
-    uint ymin(CTile* ATile) const;
+    /// Getter on a tile's width
+    /// @param tile the tile
+    /// @return the tile's width
+    uint tileWidth(CTile* tile) const;
 
-    /// @return la largeur de la tuile
-    uint tileWidth(CTile* ATile) const;
+    /// Getter on a tile's height
+    /// @param tile the tile
+    /// @return the tile's height
+    uint tileHeight(CTile* tile) const;
 
-    /// @return la hauteur de la tuile
-    uint tileHeight(CTile* ATile) const;
+    /// Add a tile to the pyramid
+    /// @param tile the tile
+    /// @param index the level
+    void addTile(CTile* tile, uint index);
 
-    //******************************************************************************
-    // Opérations sur les tuiles
-    //******************************************************************************
+    /// Link together two tiles up and down
+    /// @param  up the tile up
+    /// @param  down the tile down
+    void linkTileUpDown(CTile* up, CTile* down);
 
+    /// Returns the tile (i,j,k)
+    /// If the tile is swapped, it is loaded into memory
+    /// @param pos (i,j,k) position
+    /// @return the tile
+    CTile* tile(const CPoint3D & pos);
 
-    /// Ajouter une tuile à la pyramide
-    /// @param ATile : la tuile
-    void addTile(CTile* ATile, uint ALevel);
+    /// Saves a tile on disk
+    /// @param pos (i,j,k) position
+    void writeTile(const CPoint3D & pos);
 
-    /// Relie deux tuiles up et down dans les 2 sens
-    /// @param ATileUp: la tuile up
-    /// @param ATileDown: la tuile down
-    void linkTileUpDown(CTile* ATileUp, CTile* ATileDown);
-
-    /// Retourne la tuile de coordonnées (i,j) du level k
-    /// directement depuis le vecteur m_tiles si elle est en mémoire ou
-    /// depuis un load si elle a été swappé.
-    CTile* tile(const CPoint3D & APos);
-
-    /// Enregistre une tuile sur disque dur
-    /// @param Ai, Aj, Ak : les coordonnées de la tuile
-    void writeTile(const CPoint3D & APos);
-
-    /// Charge une tuile en mémoire
-    /// et met à jour les liens up/down entre tuiles s'ils existent
-    /// @param Ai, Aj, Ak : les coordonnées de la tuile
-    /// @return la tuile chargée
+    /// Updates up/down relationships between tiles
+    /// Called when a new level is added to the pyramid of tiles
     void linkTilesUpDown();
 
-    /// Charge les propriétés de la tuile
-    /// @param ATile : la tuile
-    /// @param Ai, Aj, Ak : les coordonnées de la tuile
-    void loadTileUpDown(CTile* ATile);
+    /// Load a tile's properties
+    /// @param tile the tile
+    void loadTileUpDown(CTile* tile);
 
-    /// Charge toutes les tuiles en mémoire
+    /// Load all tiles in memory
+    /// likely to crash with large images
     void loadAllTiles();
 
-    /// Supprime la tuile (Ai,Aj,Ak) de la mémoire (du veteur m_tiles)
-    /// @return true si la tuile a bien été supprimée
-    bool unloadTile(uint Ai, uint Aj, uint Ak);
+    /// Remove the tile (i,j,k) from memory
+    /// @return true if the operation succeeds, flase otherwise
+    bool unloadTile(uint i, uint j, uint k);
 
-    /// Décharge toutes les tuiles en mémoire
+    /// Remove all tiles from memory
+    /// This operation does not save the tiles on disk
     void unloadAllTiles();
 
 
     //******************************************************************************
-    //Opérations de construction
+    // Top-down construction scheme
     //******************************************************************************
 
-    /// Utilise la libImTiff pour l'extraction de l'image
+    /// Construction of the pyramid of images with lib-imtiff
     CImageTiff* importImTiff(const std::string & filename);
 
-    /// Construit la pyramide
+    /// Construction of the pyramid of tiled maps
     void build();
 
-    /// Construction d'un niveau de la pyramide
-    /// @param ALevel: le niveau (0=sommet)
-    uint extractLevel(uint id, uint ALevel);
+    /// Construction a single level
+    /// @param index the level (0 is the top level)
+    uint extractLevel(uint id, uint index);
 
 
     //******************************************************************************
-    // Appels système pour sauvegarde/export
+    // Pyramid Save/Export
     //******************************************************************************
 
-    /// construit une pyramide d'après les fichiers d'un dossier
-    /// @param APath: le chemin d'accès au dossier contenant la pyramide
-    void open(const std::string & APath);
+    /// Opens an already saved pyramid from path location
+    /// @param path the path to the saved pyramid
+    void open(const std::string & path);
 
-    /// Enregistre l'image qui a seri à construire la pyramide
-    /// sous ./result/image.tif
-    /// @param AImagePaht: le chemin absolu de l'image
-    /// @param AImageName: le nom du fichier image (inutilisé)
-    void copyImageInWorkingDirectory(const std::string & AImagePath, const std::string & AImageName);
+    /// Saves the pyramid of images
+    /// @param imagePath absolute path to the image
+    /// @param imageName image filename
+    void copyImageInWorkingDirectory(const std::string & imagePath, const std::string & imageName);
 
-    /// Enregistre la pyramide en copiant le dossier result
-    ///@param APath: le répertoire de destination
-    void save(const std::string & APath);
+    /// Saves the pyramid
+    /// @param path target directory
+    void save(const std::string & path);
 
-    /// Supprime les répertoires de travail "output" et "result"
+    /// Removes directories associated to the current pyramid
+    /// directories are ./result and ./output
     void clear();
 
-    /// Initialise le répertoire de travail "output"
+    /// Initialisation of the working directory
+    /// directory ./output
     void init();
 
-    /// Déplace le répertoire de travail "output" vers "result"
+    /// Move the current working directory from output to result
     void exportData();
 
 
     //******************************************************************************
-    // Opérations de contrôle et de vérification
+    // Checking/Testing operations
     //******************************************************************************
 
-    /// @return true si la tuile (i,j,k) est chargée en mémoire
+    /// Determines if a tile is loaded into memory
+    /// @param (i,j,k) is the position of the tile within the pyramid
+    /// @return true if the tile (i,j,k) is loaded into memory, false otherwise
     bool isTileLoaded(uint Ai, uint Aj, uint Ak);
 
-    /// @return la mémoire occupée par la pyramide (sans le vecteur des tuiles)
+    /// Getter on the amount of memory required by the pyramid
+    /// This amount does not take into account the tiles loaded in memory
+    /// @return the memory in bytes
     unsigned long int getMemoryForPyramid() const;
 
-    /// Affiche la mémoire occupée par la pyramide + les tuiles chargées
+    /// Display the memory required by the pyramid
+    /// and by the tiles loaded in memory
     void printInfosMemory() const;
 
-    /// Empreinte mémoire de la pyramide locale
-    /// @return la taille en Bytes de l'ensemble des tuiles actuellement
-    /// chargées dans la pyramide
+    /// Getter on the memory required by tiles loaded in memory
+    /// @return the memory in bytes
     uint getMemoryForLocalPyramid() const;
 
-    /// @return le nombre total de brins dans la pyramide
+    /// Getter on the total number of darts in the pyramid
+    /// @return the total number of darts in the pyramid
     uint nbDarts();
 
-    /// @return le nombre total de regions dans la pyramide
+    /// Getter on the total number of regions in the pyramid
+    /// @return the total number of regions in the pyramid
     uint nbRegions();
 
-    /// Affiche la mémoire nécessaire si toutes les tuiles étaient chargées
+    /// Estimate the total amount of required memory
+    /// if all the tiles were to be loaded
     void totalMemoryRequired() const;
 
-    /// Vérifie certaines contraintes sur la structure pyramidale
+    /// Display some information about this pyramid
     void print();
 
     /// Vérifie certaines contraintes sur la structure pyramidale
     // bool isPyramidOk();
   };
-
 } // namespace pyramid
 #include INCLUDE_INLINE("pyramid.icc")
 #endif // PYRAMID_HH

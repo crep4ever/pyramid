@@ -35,12 +35,13 @@ namespace pyramid
   /**
    * \file pyramidal-region.hh
    * \class CPyramidalRegion
-   * \brief CPyramidalRegion is a region within a top-down pyramid
+   * \brief CPyramidalRegion is a region of a topological tile within a tiled top-down pyramid.
    *
    * A pyramidal region contains additionnal information such as up/down relationships.
    * The region "up" is the parent region in the previous level.
    * The region "down" is the first child (also called 'representative') in the next level.
    * The region "down" contains the projection of the region's first pixel (top-left).
+   *
    */
 
   class CPyramidalRegion: public CRegion
