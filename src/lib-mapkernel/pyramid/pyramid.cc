@@ -37,8 +37,6 @@ using namespace pyramid;
 
 CPyramid::CPyramid():
   m_image(NULL),
-  m_nbPixels(2),
-  m_deviation(0),
   m_tileWidth(512),
   m_tileHeight(512),
   m_nbLevels(5),
@@ -55,8 +53,6 @@ CPyramid::CPyramid():
 
 CPyramid::CPyramid(const std::string & AFilename):
   m_image(NULL),
-  m_nbPixels(2),
-  m_deviation(0),
   m_tileWidth(32),
   m_tileHeight(32),
   m_nbLevels(0),
@@ -366,7 +362,6 @@ void CPyramid::print()
   std::cout<<" **** Pyramide infos ****"<<std::endl;
   std::cout<<" m_tileWidth = "      <<m_tileWidth<<std::endl;
   std::cout<<" m_tileHeight = "     <<m_tileHeight<<std::endl;
-  std::cout<<" levels = "          <<m_nbLevels<<std::endl;
   std::cout<<" segmentation = "    <<m_segmentationMode<<std::endl;
   std::cout<<" projection = "      <<m_projectionMode<<std::endl;
   std::cout<<" focus = "           <<m_focusAttentionMode<<std::endl;

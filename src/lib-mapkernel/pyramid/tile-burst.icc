@@ -49,7 +49,7 @@ namespace pyramid
 	break;
 
       case FocusHomogeneous:
-	oracle = new clustering::CSplitDeviation(ARegion, mergeThreshold());
+	oracle = new clustering::CSplitDeviation(ARegion, (float) mergeThreshold());
 	break;
 
       case FocusHisto:

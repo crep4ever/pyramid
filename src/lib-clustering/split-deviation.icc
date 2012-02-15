@@ -16,65 +16,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "pyramidal-region.hh"
-//******************************************************************************
+
 namespace clustering
 {
-  //******************************************************************************
-  //Constructeurs
-  //******************************************************************************
-
   INLINE
   CSplitDeviation::CSplitDeviation() :
     CCriterionSplit ()
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   CSplitDeviation::~CSplitDeviation(){}
-  //------------------------------------------------------------------------------
+
   INLINE
-  CSplitDeviation::CSplitDeviation(Map2d::CRegion* ARegion, unsigned int AMergeThreshold) :
+  CSplitDeviation::CSplitDeviation(Map2d::CRegion* ARegion, float threshold) :
     CCriterionSplit(ARegion)
   {
-    m_mergeThreshold = AMergeThreshold;
+    m_threshold = threshold;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   bool CSplitDeviation::isRegionToSplit()
   {
-    //CPyramidalRegion* father = static_cast<CPyramidalRegion*>(m_region)->getRegionUp();
-    //CPyramidalRegion* father2 = static_cast<CPyramidalRegion*>(m_region2)->getRegionUp();
-
-    // Les deux région doivent être issues du même père
-    // pour garder la causalité top-down
-    //if( father1 != father2)
-    //return false;
-
-    //int color1 = (int) static_cast<CPyramidalRegion*>(m_region1)->getAverageGrey(); //couleur de la région 1
-    //int color2 = (int) static_cast<CPyramidalRegion*>(m_region2)->getAverageGrey(); //couleur de la région 2
-    //unsigned int diff = (unsigned int ) abs(color1-color2);
-
-    //Calcul de l'écart type de la région mère
-    float deviation = 0;
-    pyramid::CPyramidalRegion* region = static_cast<pyramid::CPyramidalRegion*>(m_region);
-
-    if(region->getNbPixels() == 0)
-      {
-	std::cout << "CSplitDeviation::isRegionToSplit nb pix = 0" << std::endl;
-	region->print();
-	return false;
-      }
-
-    deviation = sqrt(region->getGreySquareSum()/region->getNbPixels() -
-		     (region->getGreySum()/region->getNbPixels())
-		     *(region->getGreySum()/region->getNbPixels()));
-
-    //std::cout<<"Merge deviation entre "<<m_region1->getId()<<" et "<<m_region2->getId()<<std::endl;
-    //std::cout<<"Ecart-type région mère = "<<deviation<<" diff = "<<diff<<std::endl;
-
-    return m_mergeThreshold < (unsigned int) deviation  +1 ;
+    return m_threshold < static_cast<pyramid::CPyramidalRegion*>(region())->deviation() +1 ;
   }
-  //******************************************************************************
 } // namespace clustering
-//******************************************************************************

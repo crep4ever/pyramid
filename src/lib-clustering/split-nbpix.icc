@@ -16,53 +16,41 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "region.hh"
-//******************************************************************************
+
 namespace clustering
 {
-//******************************************************************************
-//Constructeurs
-//******************************************************************************
+  INLINE
+  CSplitNbPix::CSplitNbPix() :
+    CCriterionSplit (),
+    m_threshold  ( 2 ) //on ne splitte pas les régions d'un pixel
+  {}
 
-INLINE
-CSplitNbPix::CSplitNbPix() :
-CCriterionSplit (),
-m_threshold  ( 2 ) //on ne splitte pas les régions d'un pixel
-{}
-//------------------------------------------------------------------------------
-INLINE
-CSplitNbPix::~CSplitNbPix(){}
-//------------------------------------------------------------------------------
-INLINE
-CSplitNbPix::CSplitNbPix(Map2d::CRegion* ARegion, unsigned int AThreshold) :
-CCriterionSplit(ARegion)
-{
-  m_threshold = AThreshold;
-}
+  INLINE
+  CSplitNbPix::~CSplitNbPix(){}
 
-//******************************************************************************
-//Accesseurs
-//******************************************************************************
+  INLINE
+  CSplitNbPix::CSplitNbPix(Map2d::CRegion* ARegion, unsigned int AThreshold) :
+    CCriterionSplit(ARegion)
+  {
+    m_threshold = AThreshold;
+  }
 
-INLINE
-unsigned int CSplitNbPix::getThreshold() const
-{ return m_threshold; }
-//------------------------------------------------------------------------------
-INLINE
-void CSplitNbPix::setThreshold(unsigned int AThreshold)
-{
-  m_threshold = AThreshold;
-}
-//------------------------------------------------------------------------------
-INLINE
-bool CSplitNbPix::isRegionToSplit()
-{
-  //std::cout<<"nombre de pixels de la région"<<getRegion()->getNbPixels()<<std::endl;
-  //std::cout<<"Valeur du seuil"<<getThreshold()<<std::endl;
-  return (getRegion()->getNbPixels() > getThreshold() );
-}
+  INLINE
+  unsigned int CSplitNbPix::getThreshold() const
+  { return m_threshold; }
 
-//******************************************************************************
+  INLINE
+  void CSplitNbPix::setThreshold(unsigned int AThreshold)
+  {
+    m_threshold = AThreshold;
+  }
+
+  INLINE
+  bool CSplitNbPix::isRegionToSplit()
+  {
+    //std::cout<<"nombre de pixels de la région"<<getRegion()->getNbPixels()<<std::endl;
+    //std::cout<<"Valeur du seuil"<<getThreshold()<<std::endl;
+    return (region()->getNbPixels() > getThreshold() );
+  }
 } // namespace clustering
-//******************************************************************************

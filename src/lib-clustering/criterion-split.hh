@@ -16,50 +16,46 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #ifndef CRITERION_SPLIT_HH
 #define CRITERION_SPLIT_HH
-//******************************************************************************
+
 #include "region.hh"
-using namespace Map2d;
 
 namespace clustering
 {
   /**
    * \file criterion-split.hh
+   * \class CCriterionSplit
    *
-   * Abstract class for splitting criteria of a region.
+   * Abstract class for splitting criteria.
    *
-   * \author Romain Goffe
+   * The method isRegionToSplit must be reimplemented according to
+   * the desired criterion. Thus, it determines whether or not the region
+   * is homogeneous according to this criterion. If the region is not homogeneous
+   * then, it should be refined (split).
+   *
    */
 
   class CCriterionSplit
   {
-  protected:
-    CRegion* m_region; //La région à splitter
-
   public :
-    // Constructeurs
-    CCriterionSplit(); //par défaut
-    CCriterionSplit(CRegion* ARegion);
+    // Constructor
+    CCriterionSplit();
+    CCriterionSplit(Map2d::CRegion* region);
 
-    // Destructeur
+    // Destructor
     virtual ~CCriterionSplit() = 0;
 
-    CRegion* getRegion() const;
-    void setRegion(CRegion* ARegion);
+    Map2d::CRegion* region() const;
+    void setRegion(Map2d::CRegion* region);
 
-    //******************************************************************************
-    //Méthodes
-    //******************************************************************************
-
-    /// Détermine si @param ARegion doit être segmentée ou non
+    /// Determines if the region should be split
+    /// @return true if the region should be split, false otherwise
     virtual bool isRegionToSplit() = 0;
 
+  private:
+    Map2d::CRegion* m_region; ///< the region to be split
   };
 } // namespace clustering
-//******************************************************************************
 #include INCLUDE_INLINE("criterion-split.icc")
-//******************************************************************************
 #endif // CRITERION_SPLIT_HH
-//******************************************************************************

@@ -16,42 +16,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
-#include "region.hh"
-//******************************************************************************
+#include <region.hh>
 
 namespace clustering
 {
-  //******************************************************************************
-  //Constructeurs
-  //******************************************************************************
-
   INLINE
   CCriterionSplit::CCriterionSplit() :
     m_region ( NULL)
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   CCriterionSplit::~CCriterionSplit(){}
-  //------------------------------------------------------------------------------
-  INLINE
-  CCriterionSplit::CCriterionSplit(CRegion* ARegion)
-  {  m_region = ARegion; }
-
-  //******************************************************************************
-  //Accesseurs
-  //******************************************************************************
 
   INLINE
-  CRegion* CCriterionSplit::getRegion() const
+  CCriterionSplit::CCriterionSplit(Map2d::CRegion* region)
+  {  m_region = region; }
+
+  INLINE
+  Map2d::CRegion* CCriterionSplit::region() const
   { return m_region; }
-  //------------------------------------------------------------------------------
-  INLINE
-  void CCriterionSplit::setRegion(CRegion* ARegion)
-  {
-    m_region = ARegion;
-  }
 
-  //******************************************************************************
+  INLINE
+  void CCriterionSplit::setRegion(Map2d::CRegion* region)
+  { m_region = region; }
 } // namespace clustering
-//******************************************************************************

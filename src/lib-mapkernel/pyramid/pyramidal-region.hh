@@ -188,6 +188,10 @@ namespace pyramid
     /// @param value: a number of pixels
     void setNbPixels(uint value);
 
+    /// Getter on the region's standard deviation
+    /// @return the standard deviation
+    float deviation() const;
+
     /// Getter on the region's first pixel
     /// The first pixel (fp) denotes that is at the left of the top line
     /// Note that for each pixel p in the region, y(fp) <= y(p)

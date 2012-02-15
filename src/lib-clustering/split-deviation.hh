@@ -16,51 +16,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #ifndef MERGE_DEVIATION_HH
 #define MERGE_DEVIATION_HH
-//******************************************************************************
+
 #include "criterion-split.hh"
-#include <cmath>
-//******************************************************************************
 
 namespace clustering
 {
-  //class CMergeDeviation;
   /**
-   * Fusionne deux régions adjacentes si l'écart-type de leur région mère
-   * est inférieur à un seuil défini.
-   * Critère top-down: plus la région mère est homogène, plus on va adapter
-   * le seuil pour mettre en évidence les détails. En fait, c'est comme
-   * le critère merge-grey sauf que le seuil n'est pas définit par l'utilisateur
-   * mais par l'écart-type de la région mère.
+   * \file split-deviation.hh
+   * \class CSplitDeviation
+   *
+   * Split a region if its standard deviation is greater than its parent region
+   *
    */
 
   class CSplitDeviation : public CCriterionSplit
   {
   public:
 
-    // Constructeurs
-    CSplitDeviation(); //par défaut
-    CSplitDeviation(Map2d::CRegion* ARegion, unsigned int AMergeThreshold);
+    // Constructor
+    CSplitDeviation();
+    CSplitDeviation(Map2d::CRegion* region, float threshold);
 
-    // Destructeur
+    // Destructor
     virtual ~CSplitDeviation();
 
-    //******************************************************************************
-    //Méthodes
-    //******************************************************************************
-
-    /// Détermine si @param ARegion doit être éclatée ou non
     bool isRegionToSplit();
 
-  protected:
-    unsigned int m_mergeThreshold; //Le seuil de merge
-
+  private:
+    float m_threshold;
   };
 } // namespace clustering
-//******************************************************************************
 #include INCLUDE_INLINE("split-deviation.icc")
-//******************************************************************************
 #endif // MERGE_DEVIATION_HH
-//******************************************************************************

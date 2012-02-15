@@ -16,57 +16,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "pyramidal-region.hh"
 #include <cassert>
-//******************************************************************************
+
 namespace clustering
 {
-  //******************************************************************************
-  //Constructeurs
-  //******************************************************************************
-
   INLINE
   CSplitGrey::CSplitGrey() :
-    CCriterionSplit (),
-    m_mergeThreshold  ( 0 ) // On n'éclate pas les régions homogènes
+    CCriterionSplit  (),
+    m_mergeThreshold (0)
   {}
-  //------------------------------------------------------------------------------
+
   INLINE
   CSplitGrey::CSplitGrey(Map2d::CRegion* ARegion, unsigned int AMergeThreshold) :
     CCriterionSplit(ARegion)
   {
     m_mergeThreshold = AMergeThreshold;
   }
-  //------------------------------------------------------------------------------
+
   INLINE
   CSplitGrey::~CSplitGrey(){}
-
-  //******************************************************************************
-  //Accesseurs
-  //******************************************************************************
 
   INLINE
   unsigned int CSplitGrey::getMergeThreshold() const
   { return m_mergeThreshold; }
-  //------------------------------------------------------------------------------
+
   INLINE
-  void CSplitGrey::setMergeThreshold(unsigned int AMergeThreshold){
-    m_mergeThreshold = AMergeThreshold;
-  }
-  //------------------------------------------------------------------------------
+  void CSplitGrey::setMergeThreshold(unsigned int AMergeThreshold)
+  { m_mergeThreshold = AMergeThreshold; }
+
   INLINE
   bool CSplitGrey::isRegionToSplit()
   {
-    int diff = static_cast<pyramid::CPyramidalRegion*>(m_region)->getGreyMax() -
-      static_cast<pyramid::CPyramidalRegion*>(m_region)->getGreyMin();
+    int diff = static_cast<pyramid::CPyramidalRegion*>(region())->getGreyMax() -
+      static_cast<pyramid::CPyramidalRegion*>(region())->getGreyMin();
     assert(diff>=0);
 
     //std::cout<<"différence min / max de la région "<<m_region->getId()<<" = "<<diff<<std::endl;
     //std::cout<<"Comparaison par rapport au seuil de merge = "<<getMergeThreshold()<<std::endl;
     return (unsigned int)diff > getMergeThreshold() ;
   }
-
-  //******************************************************************************
 } // namespace clustering
-//******************************************************************************

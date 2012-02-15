@@ -124,6 +124,16 @@ namespace pyramid
   { FSquaredColorSum = ASquaredGreySum; }
 
   INLINE
+  float CPyramidalRegion::deviation() const
+  {
+    if(getNbPixels() ==  0)
+      return 0;
+    return
+      sqrt(getGreySquareSum()/getNbPixels() - 
+	   (getGreySum()/getNbPixels())*(getGreySum()/getNbPixels()));
+  }
+
+  INLINE
   CPoint2D CPyramidalRegion::firstPixel() const
   { return m_firstPixel; }
 
