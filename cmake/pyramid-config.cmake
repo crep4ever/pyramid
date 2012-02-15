@@ -9,7 +9,7 @@ set(CODENAME "")
 option(GENERATE_MANPAGES "generate manpages" ON)
 option(COMPRESS_MANPAGES "compress manpages" ON)
 option(OPENMP "multithreading with openmp" ON)
-option(RELEASE "release mode" OFF)
+option(RELEASE "release mode" ON)
 option(PROFILE "profile mode" OFF)
 
 # {{{ CFLAGS
@@ -61,10 +61,6 @@ macro(a_find_program var prg req)
     message(STATUS "${prg} -> ${${var}}")
   endif()
 endmacro()
-
-find_package(Magick++ REQUIRED)
-
-find_package(IMTIFF REQUIRED)
 
 if (OPENMP)
   find_package(OpenMP)
@@ -151,6 +147,10 @@ if(DEFINED PYRAMID_MAN_PATH)
 else()
   set(PYRAMID_MAN_PATH ${PREFIX}/share/man CACHE PATH "pyramid manpage directory")
 endif()
+
+find_package(ImageMagick REQUIRED)
+find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+find_package(IMTIFF REQUIRED)
 
 # Hide to avoid confusion
 mark_as_advanced(CMAKE_INSTALL_PREFIX)

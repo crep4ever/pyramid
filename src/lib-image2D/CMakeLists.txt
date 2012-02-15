@@ -19,10 +19,11 @@ coverage-pixels-jou-tsai-v2.hh
 imageTiff.hh
 )
 
-include_directories(${IMTIFF_INCLUDE_DIR})
-include_directories(${Magick++_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
 include_directories(${CMAKE_SOURCE_DIR}/lib-kmlocal)
+include_directories(${IMTIFF_INCLUDE_DIR})
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
 include_directories(
   ${GLIB2_INCLUDE_DIRS}
   ${GLIBMM_INCLUDE_DIR}
@@ -30,13 +31,13 @@ include_directories(
   ${XMLPP_INCLUDE_DIR}
   ${XMLPP_INCLUDE_LIBDIR}
   )
-
 add_library(image2D SHARED ${SOURCES})
 target_link_libraries(image2D
   utils
   kmlocal
   ${IMTIFF_LIBRARY}
-  ${Magick++_LIBRARIES}
+  ${ImageMagick_LIBRARIES}
+  ${ImageMagick_Magick++_LIBRARIES}
   )
 install (TARGETS image2D DESTINATION bin)
 install (FILES ${HEADERS} DESTINATION include)

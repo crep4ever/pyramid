@@ -43,8 +43,10 @@ include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/pyramid)
 
 include_directories (${CMAKE_SOURCE_DIR}/lib-image2D)
 include_directories (${CMAKE_SOURCE_DIR}/lib-clustering)
+include_directories(${CMAKE_SOURCE_DIR}/lib-kmlocal)
 
-include_directories(${Magick++_INCLUDE_DIRS})
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
 include_directories(${IMTIFF_INCLUDE_DIR})
 
 #-------------------------------------------------------------------------------

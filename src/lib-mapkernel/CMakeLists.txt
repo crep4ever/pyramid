@@ -65,11 +65,9 @@ set(HEADERS
   pyramid/array.hh
   pyramid/svg-export.hh
   )
-
+ 
 include_directories(${CMAKE_SOURCE_DIR}/lib-clustering)
-include_directories(${CMAKE_SOURCE_DIR}/lib-image2D)
-include_directories(${CMAKE_SOURCE_DIR}/lib-svgcreator)
-
+include_directories(${CMAKE_SOURCE_DIR}/lib-kmlocal)
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel)
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map-generic)
@@ -78,8 +76,10 @@ include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/pyramid)
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
 
+include_directories(${CMAKE_SOURCE_DIR}/lib-image2D)
 include_directories(${IMTIFF_INCLUDE_DIR})
-include_directories(${Magick++_INCLUDE_DIRS})
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
 
 # If file stdint.h does not exist, define some types
 include(CheckIncludeFile)
@@ -88,7 +88,7 @@ if (HAVE_STD_INT)
   add_definitions(-DHAVE_STD_INT)
 endif (HAVE_STD_INT)
 
-add_library (mapkernel SHARED ${SOURCES})
+add_library (mapkernel STATIC ${SOURCES})
 target_link_libraries(mapkernel utils clustering image2D X11 Xext) 
 install (TARGETS mapkernel DESTINATION bin)
 install (FILES ${HEADERS} DESTINATION include)

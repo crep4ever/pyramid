@@ -23,10 +23,18 @@ set(HEADERS
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
+include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map-generic)
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/topological-map)
 include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/pyramid)
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
 
-add_library(clustering SHARED ${SOURCES})
+include_directories(${CMAKE_SOURCE_DIR}/lib-image2D)
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
+
+
+add_library(clustering STATIC ${SOURCES})
+target_link_libraries(clustering mapkernel)
+
 install (TARGETS clustering DESTINATION bin)
 install (FILES ${HEADERS} DESTINATION include)
