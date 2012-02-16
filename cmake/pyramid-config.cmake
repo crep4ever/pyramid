@@ -21,7 +21,7 @@ if (PROFILE)
 endif ()
 
 if (RELEASE)
-  add_definitions(-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize)
+  add_definitions(-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize -Wno-unused-result)
   set_property(DIRECTORY PROPERTY
     IMPLICIT_DEPENDS_INCLUDE_TRANSFORM 
     "INCLUDE_INLINE(%)=%")
@@ -31,7 +31,7 @@ else ()
     -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
     -Wunused -Wno-unused-parameter 
     -Wuninitialized -Winit-self -Wpointer-arith 
-    #-Wformat-nonliteral -Wsign-compare -Wredundant-decls -Wmissing-format-attribute
+    -Wformat-nonliteral -Wsign-compare  -Wmissing-format-attribute #-Wredundant-decls
     )
   set_property(DIRECTORY PROPERTY
     IMPLICIT_DEPENDS_INCLUDE_TRANSFORM 
