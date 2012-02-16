@@ -129,7 +129,7 @@ namespace pyramid
     if(getNbPixels() ==  0)
       return 0;
     return
-      sqrt(getGreySquareSum()/getNbPixels() - 
+      sqrt(getGreySquareSum()/getNbPixels() -
 	   (getGreySum()/getNbPixels())*(getGreySum()/getNbPixels()));
   }
 
