@@ -42,11 +42,17 @@ find_path(IMTIFF_utilities_INCLUDE_DIR
   "${CMAKE_SOURCE_DIR}/lib-imtiff/include/utilities"
   )
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+   set(LIBDIR "${CMAKE_SOURCE_DIR}/lib-imtiff/amd64") #64bits
+else()
+  set(LIBDIR "${CMAKE_SOURCE_DIR}/lib-imtiff/x86") #32bits
+endif()
+
 find_file(IMTIFF_LIBRARY
   NAMES libimtiff.so
   PATHS
+  "${LIBDIR}"
   "$ENV{FOGRIMMI_CODE}/libimtiff/debug"
-  "${CMAKE_SOURCE_DIR}/lib-imtiff"
   "/usr/lib"
   "/usr/local/lib"
   "/opt/local/lib"

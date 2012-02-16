@@ -13,7 +13,7 @@ option(RELEASE "release mode" ON)
 option(PROFILE "profile mode" OFF)
 
 # {{{ CFLAGS
-add_definitions(-DNO_FREETYPE -DLIBIMTIFF="${CMAKE_SOURCE_DIR}/lib-imtiff")
+add_definitions(-DNO_FREETYPE)
 
 if (PROFILE)
   set(RELEASE OFF)
