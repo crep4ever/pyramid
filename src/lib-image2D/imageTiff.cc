@@ -78,125 +78,96 @@ CImageTiff::~CImageTiff()
   delete[] FPages;
 }
 
-uint8* CImageTiff::kmeansKMLocal(uint ANbClass)
+uint8* CImageTiff::kmeans(const uint nbClass)
 {
-  //std::cout<<" [start] CImageTiff::kmeans"<<std::endl;
-  // 1. On crée une image et on retrouve les infos qui nous intéressent
   regularization(10, 2, 0.1, 1);
+  int dim = colorMode() == RGB ? 3 : 1;
+  int nPts = nbCurrentBoxPixels();
+  uint8 *output = 0;
+#ifdef OPENMP
+  float** input = getSimpleKmeansData();
+  output = simplekmeans(input, dim, nPts, nbClass);
+  delete [] input;
+#else
+  KMdata input(dim, nPts);
+  getKMLocalData(input);
+  output = kmeansKMLocal(input, dim, nPts, nbClass);
+#endif
+  return output;
+}
 
-  // 2. On convertit les données pour la quantif
-  //todo: pour niveau de gris, faire dim = 1 et pas mettre 3x la même valeur
-  int dim = 3; // dimension
-  int nPts = nbCurrentBoxPixels(); // number of data points
-  KMdata dataPts(dim, nPts);//stockage des points
+uint8* CImageTiff::kmeansKMLocal(KMdata& input, int dim, int nPts, uint nbClass)
+{
+  // 1. Init
   KMterm term(50, 0, 0, 0, // run for 10 stages
 	      0.10, 0.10, 3, // other typical parameter values
 	      0.60, 10, 0.95);
 
-  getKmeansDataRGB(dataPts);
-
-  // 3. Quantification avec kmlocal
-  dataPts.buildKcTree();
-  KMfilterCenters ctrs(ANbClass, dataPts);
-  //KMlocalHybrid kmAlg(ctrs, term); //bug sur petites images
+  // 2. Classification
+  input.buildKcTree();
+  KMfilterCenters ctrs(nbClass, input);
   KMlocalLloyds kmAlg(ctrs, term);
   ctrs = kmAlg.execute();
-  KMctrIdxArray closeCtr = new KMctrIdx[dataPts.getNPts()];
-  double* sqDist = new double[dataPts.getNPts()];
+  KMctrIdxArray closeCtr = new KMctrIdx[input.getNPts()];
+  double* sqDist = new double[input.getNPts()];
   ctrs.getAssignments(closeCtr, sqDist);
-  KMcenterArray centers=ctrs.getCtrPts();
-  std::vector< valarray<double> > v;
-  std::vector<double> d1,d2;
-  d1.resize( ANbClass );
-  d2.resize( ANbClass );
 
-  for(uint b=0;b< ANbClass;b++){
-    v.push_back(valarray<double>(centers[b],dim));
-    d1[b]=d2[b]=((v[v.size()-1] * v[v.size()-1]).sum());
-  }
+  // 3. Sort resulting centers
+  double* sortedCenters = sortKMLocalCenters(ctrs, dim, nbClass);
 
-  std::sort(d2.begin(),d2.end());
-
-  for(uint b=0;b< ANbClass;b++){
-    d1[b]=find(d2.begin(),d2.end(),d1[b])-d2.begin();
-  }
-
-  // 4. On crée l'image de label à partir de la quantification
-  //uint8* result = new uint8[(xstop-xstart)*(ystop-ystart)*3];
+  // 4. Use the classif to provide a labelled image
   uint8* result = new uint8[nPts];
-  uint i = 0; uint j = 0;
-  for(uint y=ystart(); y<ystop(); ++y)
-    for(uint x=xstart(); x<xstop(); ++x)
-      {
-	//result[i++] = centers[closeCtr[j]][0];
-	//result[i++] = centers[closeCtr[j]][1];
-	//result[i++] = centers[closeCtr[j]][2];
-	//++j;
-	//std::cout<< " d1[closeCtr["<<j<<"]] " << d1[closeCtr[j]] << std::endl;
-	result[i++] = d1[closeCtr[j++]];
-	//result[i++] = d1[closeCtr[j]];
-	//result[i++] = d1[closeCtr[j]];
-	//++j;
-      }
+#pragma omp parallel for
+  for(int i = 0; i<nPts; ++i)
+    result[i] = sortedCenters[closeCtr[i]];
+
   delete [] closeCtr;
   delete [] sqDist;
-  //std::cout<<" [end] CImageTiff::kmeans"<<std::endl;
+  delete [] sortedCenters;
   return result;
 }
 
-uint8* CImageTiff::simplekmeans(const uint ANbClass)
+double* CImageTiff::sortKMLocalCenters(KMfilterCenters& input, int dim, uint nbClass)
 {
-  //std::cout<<" [start] CImageTiff::simplekmeans"<<std::endl;
-  // 1. On crée une image et on retrouve les infos qui nous intéressent
-  //read(ABox, ADepth);
-  regularization(10, 2, 0.1, 1);
+  KMcenterArray centers=input.getCtrPts();
+  std::vector< valarray<double> > v;
+  std::vector<double> d2;
+  d2.resize( nbClass );
+  double* d1 = new double[nbClass];
 
-  // 2. simplekmeans parameters
-  //omp_set_num_threads(4);
+  for(uint i=0; i < nbClass; ++i)
+    {
+      v.push_back(valarray<double>(centers[i], dim));
+      d1[i] = d2[i] = ((v[v.size()-1] * v[v.size()-1]).sum());
+    }
+
+  std::sort(d2.begin(),d2.end());
+
+  for(uint i=0; i < nbClass; ++i)
+    d1[i] = find(d2.begin(),d2.end(),d1[i])-d2.begin();
+  return d1;
+}
+
+uint8* CImageTiff::simplekmeans(float** input, int dim, int nPts, uint nbClass)
+{
+  // 1. Init
   double threshold = 0.001;
 
-  int dim = 3; // dimension
-  int nPts = nbCurrentBoxPixels();
+  // 2. Classification
+  int * membership = (int*) malloc(nPts * sizeof(int));
+  float **clusters = omp_kmeans(0, input, dim, nPts,
+				nbClass, threshold, membership);
+  //3. TODO: Sort centers
 
-  float **objects;
-  objects = (float**) malloc(nPts * sizeof(float*));
+  // 4. Use the classif to provide a labelled image
+  uint8* result = new uint8[nPts];
+#pragma omp parallel for
   for(int i = 0; i<nPts; ++i)
-    objects[i] = (float*) malloc(3 * sizeof(float));
+    result[i] = membership[i];
 
-  IM_Pixel pix; uint i = 0; //uint j = 0;
-  for(uint y=ystart(); y<ystop(); ++y)
-      {
-	pix.y=y;
-	for(uint x=xstart(); x<xstop(); ++x)
-	  {
-	    pix.x = x;
-	    getPixel(pix, depth());
-	    objects[i][0] = (float) pix.value[0];
-	    objects[i][1] = (float) pix.value[1];
-	    objects[i][2] = (float) pix.value[2];
-	    ++i;
-	  }
-      }
-
-    // 3. Quantification avec simplekmeans
-    int * membership = (int*) malloc(nPts * sizeof(int));
-    float **clusters = omp_kmeans(0, objects, dim, nPts,
-				  ANbClass, threshold, membership);
-
-    free(objects[0]); free(objects);
-
-//    // 4. On crée l'image de label à partir de la quantification
-//    uint8* result = new uint8[nPts];
-//    i = 0; j = 0;
-//    for(uint y=ystart; y<ystop; ++y)
-//      for(uint x=xstart; x<xstop; ++x)
-//	{
-//	  result[i++] = membership[j++];
-//	}
-//    free(membership);
-    free(clusters[0]); free(clusters);
-    //std::cout<<" [end] CImageTiff::simplekmeans"<<std::endl;
-    return (uint8*) membership;
+  free(clusters[0]); free(clusters);
+  free(membership);
+  return result;
 }
 
 uint8* CImageTiff::kmeansMitosis(uint8* data, uint size, uint ANbClass)

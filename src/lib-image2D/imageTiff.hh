@@ -25,6 +25,7 @@
 #include "macros.hh"
 #include "inline-macro.hh"
 #include "volume.hh"
+#include "config.hh"
 
 /// Type pour stocker la valeur d'un pixel.
 /// Utiliser forcément un non-signé sous peine de problèmes.
@@ -34,6 +35,7 @@ static const double epsilon = 1e-6;
 static const double JND=sqrt(3);
 
 class KMdata;
+class KMfilterCenters;
 
 class CImageTiff : public CImage2D, public fogrimmi::IM_Tiff
 {
@@ -151,15 +153,21 @@ public:
 
   CVolume<uint8_t>* kmeansHistogram(CVolume<uint>* histo);
 
+  double* sortKMLocalCenters(KMfilterCenters& input, int dim, uint nbClass);
+
   /// k-means algorithm with KMLocal library
   /// @param ANbClass : the number of clusters
   /// @return a table with the clustering result
-  uint8* kmeansKMLocal(uint ANbClass);
+  uint8* kmeansKMLocal(KMdata& input, int dim, int nPts, uint nbClass);
 
   /// k-means algorithm on a part of image with simplekmeans library
   /// @param ANbClass : the number of clusters
   /// @return a table with the clustering result
-  uint8* simplekmeans(const uint ANbClass);
+  uint8* simplekmeans(float** input, int dim, int nPts, uint nbClass);
+
+  float** getSimpleKmeansData();
+  void    getSimpleKmeansDataRGB (float** data);
+  void    getSimpleKmeansDataGrey(float** data);
 
   float** omp_kmeans(int, float**, int, int, int, float, int*);
 
@@ -216,10 +224,11 @@ public:
   // ajout d'un canal alpha artificiel pour qt
   uint8* getDataQT();
 
+
   /// Read pixel data from a box and stores it in a structure
   /// that may be used by km-local
-  /// @param data : the data structure where pixel data is storedw
-  void getKmeansData(KMdata& data);
+  /// @param data : the data structure where pixel data is stored
+  void getKMLocalData(KMdata& data);
 
   /// Read pixel value supposing that pixels are stored as (24bits) RGB values
   /// @param data : the data structure where pixel data is stored

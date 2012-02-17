@@ -330,67 +330,6 @@ void CImageTiff::setFilename(const std::string & AFilename)
 }
 
 INLINE
-void CImageTiff::getKmeansData(KMdata& data)
-{
-  if(colorMode() == RGB)
-    getKmeansDataRGB(data);
-  else if(colorMode() == Grey)
-    getKmeansDataRGB(data);
-  else
-    std::cout<<"CImageTiff::kmeans image encoding not supported"<<std::endl;
-}
-
-INLINE
-void CImageTiff::getKmeansDataGrey(KMdata& data)
-{
-  IM_Pixel pix;
-  uint i = 0;
-  for(uint y=ystart(); y<ystop(); ++y)
-    {
-      pix.y = y;
-      for(uint x=xstart(); x<xstop(); ++x)
-	{
-	  pix.x = x;
-	  getPixel(pix, depth());
-	  data[i][0] = pix.value[0];
-	  data[i][1] = pix.value[0];
-	  data[i][2] = pix.value[0];
-	  ++i;
-	}
-    }
-}
-
-INLINE
-void CImageTiff::getKmeansDataRGB(KMdata& data)
-{
-  IM_Pixel pix;
-  uint i = 0;
-  for(uint y=ystart(); y<ystop(); ++y)
-    {
-      pix.y=y;
-      for(uint x=xstart(); x<xstop(); ++x)
-	{
-	  pix.x = x;
-	  getPixel(pix, depth());
-	  data[i][0] = pix.value[0];
-	  data[i][1] = pix.value[1];
-	  data[i][2] = pix.value[2];
-	  ++i;
-	}
-    }
-}
-
-INLINE
-uint8* CImageTiff::kmeans(uint ANbClass)
-{
-#ifdef OPENMP
-  return simplekmeans(ANbClass);
-#else
-  return kmeansKMLocal(ANbClass);
-#endif
-}
-
-INLINE
 uint CImageTiff::xstart() const
 {
   return (uint) currentBox().XTop;
@@ -433,4 +372,108 @@ uint CImageTiff::nbCurrentBoxPixels() const
   assert( xstop() >= xstart() );
   assert( ystop() >= ystart() );
   return ( xstop() - xstart() )*( ystop() - ystart() );
+}
+
+INLINE
+void CImageTiff::getKMLocalData(KMdata& data)
+{
+  if(colorMode() == RGB)
+    getKmeansDataRGB(data);
+  else if(colorMode() == Grey)
+    getKmeansDataRGB(data);
+  else
+    std::cout<<"CImageTiff::kmeans image encoding not supported"<<std::endl;
+}
+
+INLINE
+void CImageTiff::getKmeansDataGrey(KMdata& data)
+{
+  IM_Pixel pix;
+  uint i = 0;
+  for(uint y=ystart(); y<ystop(); ++y)
+    {
+      pix.y = y;
+      for(uint x=xstart(); x<xstop(); ++x)
+	{
+	  pix.x = x;
+	  getPixel(pix, depth());
+	  data[i++][0] = pix.value[0];
+	}
+    }
+}
+
+INLINE
+void CImageTiff::getKmeansDataRGB(KMdata& data)
+{
+  IM_Pixel pix;
+  uint i = 0;
+  for(uint y=ystart(); y<ystop(); ++y)
+    {
+      pix.y=y;
+      for(uint x=xstart(); x<xstop(); ++x)
+	{
+	  pix.x = x;
+	  getPixel(pix, depth());
+	  data[i][0] = pix.value[0];
+	  data[i][1] = pix.value[1];
+	  data[i][2] = pix.value[2];
+	  ++i;
+	}
+    }
+}
+
+INLINE
+float** CImageTiff::getSimpleKmeansData()
+{
+  int nPts = nbCurrentBoxPixels();
+  uint dim = colorMode() == RGB ? 3 : 1;
+  float **data;
+  data = (float**) malloc(nPts * sizeof(float*));
+  for(int i = 0; i<nPts; ++i)
+    data[i] = (float*) malloc(dim * sizeof(float));
+
+  if(colorMode() == RGB)
+    getSimpleKmeansDataRGB(data);
+  else if(colorMode() == Grey)
+    getSimpleKmeansDataGrey(data);
+
+  std::cout<<"CImageTiff::getSimpleKmeansData image encoding not supported"<<std::endl;
+  return data;
+}
+
+INLINE
+void CImageTiff::getSimpleKmeansDataRGB(float** data)
+{
+  uint i = 0;
+  IM_Pixel pix;
+  for(uint y=ystart(); y<ystop(); ++y)
+    {
+      pix.y=y;
+      for(uint x=xstart(); x<xstop(); ++x)
+	{
+	  pix.x = x;
+	  getPixel(pix, depth());
+	  data[i][0] = (float) pix.value[0];
+	  data[i][1] = (float) pix.value[1];
+	  data[i][2] = (float) pix.value[2];
+	  ++i;
+	}
+    }
+}
+
+INLINE
+void CImageTiff::getSimpleKmeansDataGrey(float** data)
+{
+  uint i = 0;
+  IM_Pixel pix;
+  for(uint y=ystart(); y<ystop(); ++y)
+    {
+      pix.y=y;
+      for(uint x=xstart(); x<xstop(); ++x)
+	{
+	  pix.x = x;
+	  getPixel(pix, depth());
+	  data[i++][0] = (float) pix.value[0];
+	}
+    }
 }
