@@ -1,5 +1,6 @@
 set (NOQT_SRCS main.cc)
 
+include_directories (${BUILD_DIR}) #for config.hh
 include_directories (${CMAKE_SOURCE_DIR}/lib-clustering)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map)

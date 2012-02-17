@@ -24,13 +24,8 @@ include_directories(${CMAKE_SOURCE_DIR}/lib-kmlocal)
 include_directories(${IMTIFF_INCLUDE_DIR})
 include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
-include_directories(
-  ${GLIB2_INCLUDE_DIRS}
-  ${GLIBMM_INCLUDE_DIR}
-  ${GLIBMM_INCLUDE_LIBDIR}
-  ${XMLPP_INCLUDE_DIR}
-  ${XMLPP_INCLUDE_LIBDIR}
-  )
+include_directories(${BUILD_DIR}) #for config.hh
+
 add_library(image2D SHARED ${SOURCES})
 target_link_libraries(image2D
   utils
