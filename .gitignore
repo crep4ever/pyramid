@@ -1,8 +1,8 @@
+build
 .build*
 output/
 img/
 doc/html
 src/config.h
-pyramid
-noqt
+*.log
 
