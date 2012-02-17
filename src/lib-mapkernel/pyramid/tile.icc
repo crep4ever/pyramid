@@ -173,12 +173,6 @@ namespace pyramid
   }
 
   INLINE
-  CKhalimsky* CTile::getKhalimsky() const
-  {
-    return FKhalimsky;
-  }
-
-  INLINE
   CKhalimsky* CTile::khalimsky() const
   {
     return FKhalimsky;
@@ -188,13 +182,6 @@ namespace pyramid
   void CTile::setKhalimsky(CKhalimsky* AKhalimsky)
   {
     FKhalimsky = AKhalimsky;
-  }
-
-  INLINE
-  CPyramidalRegion* CTile::getInclusionTreeRoot() const
-  {
-    assert(static_cast<CPyramidalRegion*>(FInclusionTreeRoot)->isInfiniteRegion());
-    return static_cast<CPyramidalRegion*>(FInclusionTreeRoot);
   }
 
   INLINE
@@ -276,6 +263,18 @@ namespace pyramid
   {
     assert(APos<3);
     m_index[APos] = AValue;
+  }
+
+  INLINE
+  SProperties* CTile::properties() const
+  {
+    return m_properties;
+  }
+
+  INLINE
+  void CTile::setProperties(SProperties* properties)
+  {
+    m_properties = properties;
   }
 
   //******************************************************************************

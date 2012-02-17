@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//******************************************************************************
 #include "inline-macro.hh"
 #include "tile.hh"
 #include "pyramidal-dart.hh"
@@ -30,7 +29,6 @@
 using namespace Map2d;
 using namespace pyramid;
 
-//------------------------------------------------------------------------------
 CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)
 {
   //std::cout<<"\n[start] CTile::copyLinkTile()"<<std::endl;
@@ -109,7 +107,7 @@ CTile* CTile::createChildByCopy(const ProjectionMode & AProjectionMode)
 
   return downTile;
 }
-//------------------------------------------------------------------------------
+
 void CTile::copyRegions(CTile* ATileUp)
 {
   //this = ATileDown
@@ -169,7 +167,6 @@ void CTile::copyRegions(CTile* ATileUp)
     }
 }
 
-//------------------------------------------------------------------------------
 void CTile::copyDarts(CTile* ATileUp)
 {
   uint ratiox = upRatioX();
@@ -200,7 +197,7 @@ void CTile::copyDarts(CTile* ATileUp)
       downDart->setBeta2(upDart->getBeta2()->down());
     }
 }
-//------------------------------------------------------------------------------
+
 void CTile::copyKhalimsky(CTile* ATileUp)
 {
   uint ratiox = upRatioX();
@@ -209,7 +206,7 @@ void CTile::copyKhalimsky(CTile* ATileUp)
   // Si la taille de la tuile est la même, on duplique
   if( ratiox==1 && ratioy==1 )
     {
-      CKhalimsky* downKhalimsky = new CKhalimsky(*(ATileUp->getKhalimsky()));
+      CKhalimsky* downKhalimsky = new CKhalimsky(*(ATileUp->khalimsky()));
       setKhalimsky(downKhalimsky);
     }
   else   // sinon, on dilate
@@ -217,8 +214,8 @@ void CTile::copyKhalimsky(CTile* ATileUp)
       CKhalimsky* khalimsky = new CKhalimsky(width(), height());
       CDoublet temp; CDoublet down;
 
-      uint width = ATileUp->getKhalimsky()->getSizeX();
-      uint height = ATileUp->getKhalimsky()->getSizeY();
+      uint width = ATileUp->khalimsky()->getSizeX();
+      uint height = ATileUp->khalimsky()->getSizeY();
 
 
       for(uint y=0; y<height; ++y)
@@ -259,7 +256,7 @@ void CTile::copyKhalimsky(CTile* ATileUp)
       setKhalimsky(khalimsky);
     }
 }
-//------------------------------------------------------------------------------
+
 void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
 			  const SegmentationMode & ASegmentationMode)
 {
@@ -322,7 +319,6 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
   relabelDarts();
 
   //Reconstruction avec ordre total de la chaine
-  //CRegion* region = getInclusionTreeRoot()->getFirstSon();
   CRegion* region = getInclusionTreeRoot()->getFirstSon();
   while( region != NULL )
     {
@@ -334,7 +330,7 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
   std::sort<std::deque<CPyramidalRegion*>::iterator>( allRegions.begin(),
 						      allRegions.end(),
 						      CLessRegionFirstPixel() );
-  allRegions.insert(allRegions.begin(), getInclusionTreeRoot());
+  allRegions.insert(allRegions.begin(), inclusionTreeRoot());
   createChainRegionList(allRegions);
 
   //Suppression des régions qui ont été traitées
@@ -409,7 +405,7 @@ void CTile::splitEdge( CDart* ADart )
     }
   //std::cout<<"[end] splitEdge"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 CDart* CTile::insertEdge( CDart* ADart )
 {
   //std::cout<<"[start] insertEdge"<<std::endl;
@@ -440,7 +436,7 @@ CDart* CTile::insertEdge( CDart* ADart )
   linkBeta1( j, b );
   return beta0( b );
 }
-//------------------------------------------------------------------------------
+
 CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const CDoublet& ADoublet2 )
 {
   //std::cout<<"[start] insertVertexOnEdge"<<std::endl;
@@ -450,18 +446,13 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
   CPyramidalDart* upDart = dart->up();
 
   CDart* i   = ADart;
-  CDart* i1  = NULL;
+  CDart* i1  = beta1(i);
 
-  CDart* i2  = NULL;
-  CDart* i21 = NULL;
+  CDart* i2  = beta2(i);
+  CDart* i21 = beta1(i2);
 
   CDoublet t1 = ADoublet1;
   CDoublet t2 = ADoublet2;
-
-  // Mise en place des nouveaux brins.
-  i1  = beta1(i);
-  i2  = beta2(i);
-  i21 = beta1(i2);
 
   CPyramidalDart* j  = static_cast<CPyramidalDart*>(addMapDart( t1, getRegion(i) ));
   CPyramidalDart* j2 = static_cast<CPyramidalDart*>(addMapDart( t2, getRegion(i2) ));
@@ -482,7 +473,7 @@ CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet1, const
   //std::cout<<"[end] insertVertexOnEdge"<<std::endl;
   return beta1(i);
 }
-//------------------------------------------------------------------------------
+
 void CTile::splitAllEdges()
 {
   //std::cout<<"[start] splitAllEdges"<<std::endl;
@@ -511,7 +502,7 @@ void CTile::splitAllEdges()
   freeMark(mTreated);
   //std::cout<<"[end] splitAllEdges"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::splitAllEdgesRegion(CRegion* ARegion)
 {
   //std::cout<<"[start] splitAllEdgesRegion"<<std::endl;
@@ -557,9 +548,6 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
   //std::cout<<"[end] splitAllEdgesRegion"<<std::endl;
 }
 
-
-
-//------------------------------------------------------------------------------
 void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
 {
   //std::cout<<"[start] CTile::splitRegion"<<std::endl;
@@ -706,8 +694,6 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
   //std::cout<<"[end] CTile::splitRegion"<<std::endl;
 }
 
-
-//------------------------------------------------------------------------------
 void CTile::createNewRegions(CRegion* ARegion,
 			     std::deque< CDart* >& ADartList,
 			     std::deque< CPyramidalRegion* >& ARegionList)
@@ -756,7 +742,7 @@ void CTile::createNewRegions(CRegion* ARegion,
     }
   //std::cout<<"[end] CTile::createNewRegions"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::createChainRegionList(std::deque<CPyramidalRegion*>& AList)
 {
   //std::cout<<"[start] CTile::createChainRegionList"<<std::endl;
@@ -791,7 +777,7 @@ void CTile::createChainRegionList(std::deque<CPyramidalRegion*>& AList)
 
   //std::cout<<"[end] CTile::createChainRegionList"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::updateRegionList(CRegion* ARegion,
 			     std::deque<CPyramidalRegion*>& ANewRegionList)
 {
@@ -894,7 +880,7 @@ void CTile::merge(std::deque<CDart*>& toMerge,
 
   //std::cout<<"[end] CTile::merge\n"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::merge()
 {
   //std::cout<<"\n[start] CTile::merge"<<std::endl;
@@ -962,7 +948,7 @@ void CTile::merge()
 
   //std::cout<<"[end] CTile::merge\n"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::mergeEdgeRemoval( CDart* ADart, int AMarkNumber )
 {
   //std::cout<<"[start] CTile::mergeEdgeRemoval"<<std::endl;
@@ -995,7 +981,7 @@ void CTile::mergeEdgeRemoval( CDart* ADart, int AMarkNumber )
 
   //std::cout<<"[end] CTile::mergeEdgeRemoval"<<std::endl;
 }
-//------------------------------------------------------------------------------
+
 void CTile::extractVertexRemoval( CDart* ADart )
 {
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(ADart);

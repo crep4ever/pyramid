@@ -47,7 +47,6 @@ void CTile::createTopTile()
   m_mapDarts[inf->id()]  = inf;
   m_mapDarts[dart->id()] = dart;
 
-  //loadImage();
   traversePixelsSingleRegion();
 }
 
@@ -72,22 +71,22 @@ void CTile::createSingleRegion(uint AWidth, uint AHeight)
   setRegion(dart, region);
 
   // Plongement de la région
-  getKhalimsky()->setPCell(doublet, true);
+  khalimsky()->setPCell(doublet, true);
 
   for(uint x=0; x<AWidth; ++x)
     {
       doublet.setDoublet(x,0,XPOS);
-      getKhalimsky()->setLCell(doublet, true);
+      khalimsky()->setLCell(doublet, true);
       doublet.setDoublet(x, AHeight, XPOS);
-      getKhalimsky()->setLCell(doublet, true);
+      khalimsky()->setLCell(doublet, true);
     }
 
   for(uint y=0; y<AHeight; ++y)
     {
       doublet.setDoublet(0,y,YPOS);
-      getKhalimsky()->setLCell(doublet, true);
+      khalimsky()->setLCell(doublet, true);
       doublet.setDoublet(AWidth, y, YPOS);
-      getKhalimsky()->setLCell(doublet, true);
+      khalimsky()->setLCell(doublet, true);
     }
 
   //Coutures des brins
@@ -218,7 +217,7 @@ void CTile::simplifyMap()
 	  if( !isEdgeLoop(dart) )
 	    vertexRemoval(dart, toDelete);
 	  else
-	    getKhalimsky()->setPCell(dart->doublet(), false);
+	    khalimsky()->setPCell(dart->doublet(), false);
 	}
     }
 
@@ -341,7 +340,7 @@ void CTile::relabelDarts()
 	}
     }
 }
-//------------------------------------------------------------------------------
+
 void CTile::delRegion(CRegion* ARegion)
 {
   assert( ARegion!=NULL );

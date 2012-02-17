@@ -157,7 +157,6 @@ namespace pyramid
     CTile* m_tileUp;   ///< the tile up in previous level
     CTile* m_tileDown; ///< the tile down in next level
 
-  public:
     // Swap
     struct SProperties* m_properties;    ///< tile current properties to be swapped/loaded
     struct SProperties* m_oldProperties; ///< tile properties on disk (may differ from current properties)
@@ -169,6 +168,7 @@ namespace pyramid
     bool m_first; ///< true if the tile has never be saved on disk before
     std::string m_filename; ///< the filename for storing the tile on disk
 
+  public:
     //Extraction
     uint8* m_classif; ///< result of the tile's pixels classification
     CVolume<uint8_t>* m_assignment; ///< assigns tile's pixels to a region label
@@ -241,11 +241,9 @@ namespace pyramid
     CImageTiff* image() const;
     void setImage( CImageTiff* AImage );
 
-    CKhalimsky* getKhalimsky() const;
     CKhalimsky* khalimsky() const;
     void setKhalimsky( CKhalimsky* AKhalimsky );
 
-    CPyramidalRegion* getInclusionTreeRoot() const;
     CPyramidalRegion* inclusionTreeRoot() const;
     void setInclusionTreeRoot(CRegion* ARegion);
 
@@ -264,6 +262,9 @@ namespace pyramid
     CPoint2D  bottomLeft() const;
     CPoint2D  topRight() const;
     CPoint2D  topLeft() const;
+
+    SProperties* properties() const;
+    void setProperties(SProperties* value);
 
     //******************************************************************************
     // Méthodes utilitaires

@@ -170,24 +170,24 @@ void CPyramid::linkTilesUpDown()
 
 	  //si la tuile est chargée, on les relie, sinon, on fait rien
 	  //TileUp
-	  if(res->m_properties->up != 0)
+	  if(res->properties()->up != 0)
 	    for(it2=level(k-1)->tiles().begin(); it2!=level(k-1)->tiles().end(); ++it2)
-	      if((*it2)->id() == res->m_properties->up)
+	      if((*it2)->id() == res->properties()->up)
 		{
 		  linkTileUpDown(*it2,res);
 		  break;
 		}
 
 	  //TileDown
-	  if(res->m_properties->down != 0)
+	  if(res->properties()->down != 0)
 	    for(it2=level(k+1)->tiles().begin(); it2!=level(k+1)->tiles().end(); ++it2)
-	      if((*it2)->id() == res->m_properties->down)
+	      if((*it2)->id() == res->properties()->down)
 		{
 		  linkTileUpDown(res,*it2);
 		  break;
 		}
-	  delete [] res->m_properties;
-	  res->m_properties = NULL;
+	  delete [] res->properties();
+	  res->setProperties(0);
 	}
 }
 

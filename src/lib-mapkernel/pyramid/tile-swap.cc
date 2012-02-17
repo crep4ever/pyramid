@@ -454,7 +454,7 @@ void CTile::write()
       fclose(file);
     }
 
-  m_matrix = getKhalimsky()->getMatrix();
+  m_matrix = khalimsky()->getMatrix();
   header[0] = getKhalimskySizeX()*getKhalimskySizeY();
   header[1] = getNbDarts()*sizeof(SDart);
   header[2] = getNbRegions()*sizeof(SRegion);
