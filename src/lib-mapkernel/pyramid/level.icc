@@ -552,7 +552,7 @@ namespace pyramid
   void CLevel::histogram()
   {
     m_histo = new CVolume<uint>(256,256,256);
-    m_histo->fill(0);
+    m_histo->fill();
 
     CTile* tile;  IM_Box box;
     uint ratiox = upRatios().x(); uint ratioy = upRatios().y();

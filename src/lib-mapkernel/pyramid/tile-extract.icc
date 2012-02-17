@@ -28,7 +28,7 @@ namespace pyramid
   CMatrix<CRegion*>* CTile::createPixelRegionMatrix()
   {
     CMatrix<CRegion*>* matrix = new CMatrix< CRegion* >(width()+1, height()+1);
-    matrix->fill(NULL);
+    matrix->fill();
 
     for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
       for( CTraversalRegionPixels it2( this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
