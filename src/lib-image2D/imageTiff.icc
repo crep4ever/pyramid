@@ -423,12 +423,8 @@ fogrimmi::IM_Box CImageTiff::currentBox() const
 INLINE
 void CImageTiff::setCurrentBox(const IM_Box & box)
 {
-  if( xstart() != box.XTop || xstop()  != box.XBtm ||
-      ystart() != box.YTop || ystop()  != box.YBtm )
-    {
-      m_currentBox = box;
-      read( currentBox() );
-    }
+  m_currentBox = box;
+  read( currentBox() );
 }
 
 INLINE
