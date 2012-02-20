@@ -21,6 +21,7 @@
 
 #include "topological-dart.hh"
 #include "kernel-types.hh"
+#include "macros.hh"
 
 namespace Map2d
 {
