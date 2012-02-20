@@ -65,7 +65,7 @@ namespace Map2d
      *
      *  Détruit une instance de la classe CDart.
      */
-    virtual ~CDart();
+    ~CDart();
 
     //@}
 

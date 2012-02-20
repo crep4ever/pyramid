@@ -28,17 +28,14 @@
 #include "topological-dart.hh"
 //******************************************************************************
 /**
- * Ordre sur les régions utilisant les ID. Ces ID doivent vérifier la propriété
- * suivante:
- *  r1->getId() < r2->getID() ssi r1 est trouvé avant r2 lors d'un balayage de 
- * l'image de gauche à droite et de haut en bas.
+ * Ordre sur les régions utilisant les first pixel. 
  */
-class orderRegionId:
+class orderRegionFirstPixel:
       public std::binary_function<Map2d::CRegion*, Map2d::CRegion*, bool>
 {
    public:
       bool operator()(Map2d::CRegion* ARegion1, Map2d::CRegion* ARegion2)
-      { return ARegion1->getId() < ARegion2->getId(); }
+      { return ARegion1->getFirstPixel() < ARegion2->getFirstPixel(); }
 };
 //******************************************************************************
 /**
@@ -53,15 +50,42 @@ class orderEdgesInterval:
 {
    public:
       bool operator()(Map2d::CTopologicalDart* ADart1, 
+		      Map2d::CTopologicalDart* ADart2)
+      {
+	assert( ADart1!=NULL );
+	assert( ADart2!=NULL );
+	assert( ADart1->getEdge()!=NULL );
+	assert( ADart2->getEdge()!=NULL );
+
+	TRegionId d1 = ADart1->getRegion()->distanceWith
+               (static_cast<Map2d::CTopologicalDart*>(ADart1->getBeta2())
+		->getRegion());
+	TRegionId d2 = ADart2->getRegion()->distanceWith
+               (static_cast<Map2d::CTopologicalDart*>(ADart2->getBeta2())
+		->getRegion());
+
+	return d1<d2 ||
+	  (d1==d2 && ADart1->getEdge()->getNbLinels() >
+	   ADart2->getEdge()->getNbLinels() );
+      }
+};
+//******************************************************************************
+class orderEdgesLg:
+      public std::binary_function<Map2d::CTopologicalDart*, 
+      Map2d::CTopologicalDart*, bool>
+{
+   public:
+      bool operator()(Map2d::CTopologicalDart* ADart1, 
                     Map2d::CTopologicalDart* ADart2)
       {
+	assert( ADart1!=NULL );
+	assert( ADart2!=NULL );
          return
-               ADart1->getRegion()->distanceWith
-               (static_cast<Map2d::CTopologicalDart*>(ADart1->getBeta2())
-               ->getRegion()) <
-               ADart2->getRegion()->distanceWith
-               (static_cast<Map2d::CTopologicalDart*>(ADart2->getBeta2())
-               ->getRegion());
+	   ADart1->getEdge()->getNbLinels() >
+	   ADart2->getEdge()->getNbLinels() ||
+	   ( ADart1->getEdge()->getNbLinels() ==
+	     ADart2->getEdge()->getNbLinels() &&
+	     orderEdgesInterval()(ADart1,ADart2));
       }
 };
 //******************************************************************************

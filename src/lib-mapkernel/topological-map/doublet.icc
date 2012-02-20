@@ -186,9 +186,3 @@ std::ostream & operator<<(std::ostream & AStream,
   return AStream<<"]";
 }
 //******************************************************************************
-INLINE
-void CDoublet::print(const std::string & APrefix)
-{
-  std::cout<<APrefix<<" "<<(*this)<<std::endl;
-}
-

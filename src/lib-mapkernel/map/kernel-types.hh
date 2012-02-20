@@ -146,15 +146,6 @@ enum
 /// Définition du type TRegionId :
 typedef uint32_t TRegionId;
 //@}
-
-//******************************************************************************
-//@name Types pour les brins
-//@{
-/// Définition du type TDartIdId :
-typedef uint32_t TDartId;
-//@}
-
-
 //****************************************************************************
 #endif // KERNEL_TYPES_HH
 //******************************************************************************

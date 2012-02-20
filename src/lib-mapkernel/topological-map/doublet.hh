@@ -28,7 +28,6 @@
 #include <iostream>
 #include <cassert>
 #include "alt-stdint.hh"
-#include <string>
 //******************************************************************************
 typedef uint16_t TNatural;
 typedef uint8_t  TLinel;
@@ -97,7 +96,7 @@ public:
   //@}
 
   /// @name Destructeur
-  virtual ~CDoublet();
+  ~CDoublet();
 
   /// @name Accesseurs
   //@{
@@ -120,7 +119,7 @@ public:
 
   void setPointel (const CDoublet& ADoublet);
   void setPointel (const TNatural& Ax, const TNatural& Ay);
-
+  
   //@}
 
   /// @name Méthodes pour récupérer un prochain élément
@@ -148,10 +147,6 @@ public:
   /// @see getPrevLinel()
   void setPrevLinel();
 
-  /// Display doublet information on stdout
-  /// @param APrefix : prefix additionnal comment
-  void print(const std::string & APrefix="");
-
   //@}
   
   /**
@@ -168,13 +163,8 @@ public:
   static TLinel getOrthogonalLinel( TLinel L );
   // Donne le lignel orthogonal dans le sens trigo
   static TLinel getOtherOrthogonalLinel( TLinel L );
-
-  static bool isPos( TLinel L );
-  static bool isNeg( TLinel L );
-  static bool isX( TLinel L );
-  static bool isY( TLinel L );
-
-protected:
+  
+private:
   /// @name Attributs privés
   //@{
   TNatural Fx, Fy; //Pointel
@@ -188,14 +178,6 @@ inline TLinel CDoublet::getOrthogonalLinel( TLinel L )
 { return L<3 ? (L+1) : (0); }
 inline TLinel CDoublet::getOtherOrthogonalLinel( TLinel L )
 { return L>0 ? (L-1) : (3); }
-inline bool CDoublet::isPos( TLinel L )
-{ return L%3==0; }
-inline bool CDoublet::isNeg( TLinel L )
-{ return L%3!=0; }
-inline bool CDoublet::isX( TLinel L )
-{ return L%2==0; }
-inline bool CDoublet::isY( TLinel L )
-{ return L%2!=0; }
 //******************************************************************************
 #include INCLUDE_INLINE("doublet.icc")
 //******************************************************************************

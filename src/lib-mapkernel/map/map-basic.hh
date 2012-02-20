@@ -103,7 +103,7 @@ namespace Map2d
     virtual void delMapDart(CDart* ADart);
 
    /** 
-    * @return vrai ssi ADart est marqué supprimé.
+    * @retur vrai ssi ADart est marqué supprimé.
     */
    bool isMarkedDeleted(CDart* ADart) const;
  

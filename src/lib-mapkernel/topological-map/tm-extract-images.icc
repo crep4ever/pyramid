@@ -122,24 +122,6 @@ void CTopologicalMap::vertexRemoval( CDart* ADart, int AMarkNumber )
  
    basicVertexRemoval(ADart,AMarkNumber);
 } 
-//-----------------------------------------------------------------------------
-INLINE
-void CTopologicalMap::vertexRemovalWithUnionFindRegions( CDart* ADart, 
-      int AMarkNumber )
-{
-   assert(ADart!=NULL);
-   
-   CDart* tempDart=beta21(ADart);
-     // On s'assure de conserver les brins représentants...
-   if ( findRegionRoot(getRegion(ADart))->getRepresentativeDart()==ADart )
-      setRepresentativeDart( findRegionRoot(getRegion(ADart)), beta0(ADart) );
-  
-   if( findRegionRoot(getRegion(tempDart))->getRepresentativeDart()==tempDart)
-      setRepresentativeDart(findRegionRoot(getRegion(tempDart)),
-                            beta0(tempDart));  
- 
-   basicVertexRemoval(ADart,AMarkNumber);
-} 
 //*****************************************************************************
 INLINE
 void CTopologicalMap::topoEdgeRemoval( CDart* ADart )
@@ -153,8 +135,10 @@ void CTopologicalMap::topoEdgeRemoval( CDart* ADart )
   linkBeta1( beta20 (ADart), beta1  (ADart) );
   linkBeta1( beta0  (ADart), beta21 (ADart) );
 
-  assert(!isRepresentativeDart(beta2(ADart))); delMapDart(beta2(ADart));
-  assert(!isRepresentativeDart(ADart)); delMapDart(ADart);
+  assert(!isRepresentativeDart(beta2(ADart)));
+  delMapDart(beta2(ADart));
+  assert(!isRepresentativeDart(ADart));
+  delMapDart(ADart);
 }
 //------------------------------------------------------------------------------
 INLINE
@@ -197,13 +181,6 @@ void CTopologicalMap::edgeRemoval( CDart* ADart )
   
    // 2) On supprime l'arête dans la carte.
    topoEdgeRemoval(ADart);
-}
-//-----------------------------------------------------------------------------
-INLINE
-void CTopologicalMap::setRegion(CDart* ADart,CRegion* ARegion) const
-{
-  assert( ADart!=NULL );
-  static_cast<CTopologicalDart*>(ADart)->setRegion(ARegion);
 }
 //*****************************************************************************
 } // namespace Map2d

@@ -1,0 +1,26 @@
+********************************************************************************
+VERSION DU 15/06/2005
+
+********************************************************************************
+DERNIERES MODIFICATIONS
+
+15/06/2005
+----------
+* Ajout des marques
+* Ajout de la classe CColor
+* Ajout du coverage CCoverageRegionVoxel
+
+08/12/2003
+----------
+* Ajout des parcours statiques.
+
+03/11/2003
+----------
+* Première version officielle.
+
+********************************************************************************
+A FAIRE
+
+* !!! LES MARQUES SUR 1 BIT !!!
+* Demarquage avec un memset
+* Gestion d'attributs (cf. gmaps-platform)

@@ -1,6 +1,5 @@
 //*****************************************************************************
 #include "coverage-region-pixels.hh"
-#include "region.hh"
 using namespace Map2d;
 //*****************************************************************************
 CCoverageRegionPixels::CCoverageRegionPixels(CTopologicalMap* ATopologicalMap, 
@@ -11,7 +10,7 @@ CCoverageRegionPixels::CCoverageRegionPixels(CTopologicalMap* ATopologicalMap,
 {
   if( ARegion->isInfiniteRegion() ) return;
 
-  FPixelsStack.push(FTopologicalMap->getFirstPixel(ARegion));
+  FPixelsStack.push(ATopologicalMap->getFirstPixel(ARegion));
   this->operator++();
   FTopologicalMap->markPixel(FCurrentPixel.getX(),FCurrentPixel.getY());
 }
@@ -49,7 +48,7 @@ void CCoverageRegionPixels::operator++()
   t.setLinel(XPOS);
   if( !FTopologicalMap->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
+      CCoordinate n(FCurrentPixel);
       n.setY(FCurrentPixel.getY()-1);
       if(!FTopologicalMap->isPixelMarked(n.getX(),n.getY()))
 	{
@@ -61,7 +60,7 @@ void CCoverageRegionPixels::operator++()
   t.setLinel(YPOS);
   if( !FTopologicalMap->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
+      CCoordinate n(FCurrentPixel);
       n.setX(FCurrentPixel.getX()-1);
       if(!FTopologicalMap->isPixelMarked(n.getX(),n.getY()))
 	{
@@ -74,7 +73,7 @@ void CCoverageRegionPixels::operator++()
  t.setLinel(XNEG);
   if( !FTopologicalMap->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
+      CCoordinate n(FCurrentPixel);
       n.setY(FCurrentPixel.getY()+1);
       if(!FTopologicalMap->isPixelMarked(n.getX(),n.getY()))
 	{
@@ -86,7 +85,7 @@ void CCoverageRegionPixels::operator++()
   t.setLinel(YNEG);
   if( !FTopologicalMap->isLCell(t) )
     {
-      CPoint2D n(FCurrentPixel);
+      CCoordinate n(FCurrentPixel);
       n.setX(FCurrentPixel.getX()+1);
       if(!FTopologicalMap->isPixelMarked(n.getX(),n.getY()))
 	{
@@ -96,7 +95,7 @@ void CCoverageRegionPixels::operator++()
     } 
 }
 //*****************************************************************************
-const CPoint2D & CCoverageRegionPixels::operator++(int)
+const CCoordinate & CCoverageRegionPixels::operator++(int)
 {
   this->operator ++();
   return FCurrentPixel;
@@ -107,7 +106,7 @@ bool CCoverageRegionPixels::cont()
   return !FStop;
 }
 //*****************************************************************************
-const CPoint2D & CCoverageRegionPixels::operator*()
+const CCoordinate & CCoverageRegionPixels::operator*()
 {
   return FCurrentPixel;
 }

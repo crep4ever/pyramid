@@ -47,12 +47,6 @@ public:
 	     TNatural ASizeY);
   //@}
 
-  /** @name Constructeur par recopie
-   */
-  //@{
-  CKhalimsky(const CKhalimsky& AKhalimsky);
-  //@}
-
   /// @name Destructeur
   //@{
   ~CKhalimsky();
@@ -70,14 +64,14 @@ public:
   bool isPCell(const CDoublet& ADoublet) const;
   bool isLCell(const CDoublet& Adoublet) const;
   
-  //bool isFictivePCell(const CDoublet& ADoublet) const;
+  // bool isFictivePCell(const CDoublet& ADoublet) const;
   //bool isFictiveLCell(const CDoublet& ADoublet) const;
 
   void setPCell(const CDoublet& ADoublet, bool AOn = true);
   void setLCell(const CDoublet& ADoublet, bool AOn = true);
   
   //void setFictivePCell(const CDoublet& ADoublet, bool AOn = true);
-  //void setFictiveLCell(const CDoublet& ADoublet, bool AOn = true);
+  // void setFictiveLCell(const CDoublet& ADoublet, bool AOn = true);
 
     
   //@}
@@ -109,10 +103,6 @@ public:
   //@{
   int degreePCell( const CDoublet & APointel ) const;
   //@}
-
-  //RG
-  TKhalimskyElt* getMatrix() const;
-  void setMatrix(TKhalimskyElt* AMatrix); 
 
 protected:
   /// @name Méthodes auxiliaires

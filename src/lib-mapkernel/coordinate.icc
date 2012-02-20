@@ -1,0 +1,122 @@
+//*****************************************************************************
+#include <cassert>
+#include <cmath>
+//*****************************************************************************
+INLINE
+CCoordinate::CCoordinate()
+{
+  FCoord[0] = 0;
+  FCoord[1] = 0;
+
+}
+//-----------------------------------------------------------------------------
+INLINE
+CCoordinate::CCoordinate(int Ax, int Ay)
+{
+  FCoord[0] = Ax;
+  FCoord[1] = Ay;
+
+}
+//-----------------------------------------------------------------------------
+INLINE
+CCoordinate::CCoordinate(int ATab[2])
+{
+  FCoord[0] = ATab[0];
+  FCoord[1] = ATab[1];
+ 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CCoordinate::CCoordinate(const CCoordinate& AVertex)
+{
+  FCoord[0] = AVertex.FCoord[0];
+  FCoord[1] = AVertex.FCoord[1];
+ 
+}
+//-----------------------------------------------------------------------------
+INLINE
+CCoordinate::CCoordinate(const CDoublet& ADoublet)
+{
+  FCoord[0] = ADoublet.getX();
+  FCoord[1] = ADoublet.getY();
+ 
+}
+//*****************************************************************************
+INLINE
+int CCoordinate::getX() const
+{ return FCoord[0]; }
+//-----------------------------------------------------------------------------
+INLINE
+int CCoordinate::getY() const
+{ return FCoord[1]; }
+//-----------------------------------------------------------------------------
+INLINE
+int CCoordinate::getCoord(int ADim) const
+{
+  assert(0<=ADim && ADim<=1);
+  return FCoord[ADim];
+}
+//*****************************************************************************
+INLINE
+void CCoordinate::setX(int ANewX)
+{ FCoord[0] = ANewX; }
+//-----------------------------------------------------------------------------
+INLINE
+void CCoordinate::setY(int ANewY)
+{ FCoord[1] = ANewY; }
+//-----------------------------------------------------------------------------
+INLINE
+void CCoordinate::incX(int AIncX)
+{ FCoord[0] += AIncX; }
+//-----------------------------------------------------------------------------
+INLINE
+void CCoordinate::incY(int AIncY)
+{ FCoord[1] += AIncY; }
+//-----------------------------------------------------------------------------
+INLINE
+void CCoordinate::setCoord(int ADim, int ANewCoord)
+{
+  assert(0<=ADim && ADim<=1);
+  FCoord[ADim] = ANewCoord;
+}
+//-----------------------------------------------------------------------------
+INLINE
+void CCoordinate::setXY(int ANewX, int ANewY)
+{
+  setX(ANewX);
+  setY(ANewY);
+}
+//*****************************************************************************
+INLINE
+CCoordinate& CCoordinate::operator=(const CCoordinate& AVector)
+{
+  setXY(AVector.getX(), AVector.getY());
+  return *this;
+}
+//*****************************************************************************
+INLINE
+bool CCoordinate::operator==(const CCoordinate& AVector) const
+{
+  return
+   ( this->getX() == AVector.getX() &&
+    this->getY() == AVector.getY()) ;    
+}
+//*****************************************************************************
+INLINE
+bool CCoordinate::operator!=(const CCoordinate& AVector) const
+{ return ! (*this == AVector); }
+//*****************************************************************************
+INLINE
+bool operator < (const CCoordinate& u,const CCoordinate& v)
+{
+  return u.getY() <  v.getY() ||
+    ( u.getY() == v.getY() && ( u.getX()  < v.getX()  ) );
+}
+//*****************************************************************************
+INLINE
+std::ostream& operator << (std::ostream& AOs, const CCoordinate& ACoord)
+{
+  AOs<< "("<<ACoord.getX()<<", "<<  ACoord.getY()<<")";
+  return AOs;
+}
+//*****************************************************************************
