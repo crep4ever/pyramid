@@ -441,16 +441,16 @@ protected:
     /// constructeur des brins avex paramètres).
     void initDart(CDart* ADart, const CDoublet & ADoublet, CRegion* ARegion);
 
-private:
+protected:
     /// @name Champs privés
     //@{
     CImage2D*   FImage;
     CKhalimsky* FKhalimsky;
     CRegion*    FInclusionTreeRoot;
-
     /// Compteurs pour le nombre de régions
     unsigned int FNbRegions;
 
+private:
     /// vrai si on est en mode uftree: dans ce cas, le champ Father de chaque
     /// région désigne le père dans l'arbre uf, null pour les racines.
     bool FUFTreeMode;  
