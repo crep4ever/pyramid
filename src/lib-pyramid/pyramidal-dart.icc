@@ -113,6 +113,10 @@ namespace pyramid
   bool CPyramidalDart::existDown()
   { return( m_down != NULL); }
 
+  INLINE
+  void CPyramidalDart::setDoublet(const CDoublet & doublet)
+  { FDoublet = doublet; }
+
   //******************************************************************************
 } // namespace pyramid
 //******************************************************************************
