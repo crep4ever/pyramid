@@ -53,6 +53,7 @@ namespace pyramid
     enum Label {Background, Tissue, DarkTissue, BrightTissue, Lesion, Cancer, Stroma, Mitosis, InSitu, Invalid};
 
   private:
+    TRegionId m_id;
     CPyramidalRegion* m_up;   ///< region up
     CPyramidalRegion* m_down; ///< region down
     Label m_label;            ///< region's label
@@ -223,14 +224,19 @@ namespace pyramid
     /// Getter on the region's identifier
     /// The identifier is a unique positive integer
     /// @return the region's identifier
-    uint id() const;
+    TRegionId id() const;
+
+    /// Setter on the region's identifier
+    /// The identifier is a unique positive integer
+    /// @param the region's identifier
+    void setId(TRegionId id);
 
     //******************************************************************************
     //Opérations sur la région
     //******************************************************************************
-    virtual CRegion* addSon( TRegionId );
-    virtual CRegion* addBrother( TRegionId );
-    virtual CRegion* addSameCC( TRegionId );
+//    virtual CRegion* addSon( TRegionId );
+//    virtual CRegion* addBrother( TRegionId );
+//    virtual CRegion* addSameCC( TRegionId );
     virtual void     addPixels(CRegion* region);
     virtual void addPixel( TRegionId ACoul, CDart* dart=NULL );
     void addGrey(TRegionId AGrey);
