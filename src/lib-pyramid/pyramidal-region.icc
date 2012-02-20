@@ -52,9 +52,8 @@ namespace pyramid
   CPyramidalRegion::CPyramidalRegion(const CPyramidalRegion& region) :
     CRegion            ( )
   {
-    //    std::cout<<"CPyramidalRegion: constructeur 3 "<<std::endl;
-    FId            =  static_cast<TRegionId>(0);
-    FProfondeur    =  region.FProfondeur;
+    setId(static_cast<TRegionId>(0));
+    setProfondeur(region.FProfondeur);
     m_firstPixel   =  region.m_firstPixel;
     FNbPixels      =  region.FNbPixels;
     FMarks         =  region.FMarks;
@@ -199,32 +198,32 @@ namespace pyramid
     return FColorSum/FNbPixels;
   }
 
-  INLINE
-  CRegion* CPyramidalRegion::addSon( TRegionId AId )
-  {
-    CPyramidalRegion* tmp = new CPyramidalRegion(*this);
-    tmp->setId( AId );
-    tmp->setFather( this );
-    CRegion::addSon(tmp);
-    return tmp;
-  }
-
-  INLINE
-  CRegion* CPyramidalRegion::addBrother( TRegionId AId )
-  {
-    assert( getFather()!=NULL );
-    return getFather()->CRegion::addSon(AId);
-  }
-
-  INLINE
-  CRegion* CPyramidalRegion::addSameCC( TRegionId AId )
-  {
-    CPyramidalRegion* tmp = new CPyramidalRegion(*this);
-    tmp->setId( AId );
-    tmp->setFather( getFather() );
-    CRegion::addSameCC(tmp);
-    return tmp;
-  }
+//  INLINE
+//  CRegion* CPyramidalRegion::addSon( TRegionId AId )
+//  {
+//    CPyramidalRegion* tmp = new CPyramidalRegion(*this);
+//    tmp->setId( AId );
+//    tmp->setFather( this );
+//    CRegion::addSon(tmp);
+//    return tmp;
+//  }
+//
+//  INLINE
+//  CRegion* CPyramidalRegion::addBrother( TRegionId AId )
+//  {
+//    assert( getFather()!=NULL );
+//    return getFather()->CRegion::addSon(AId);
+//  }
+//
+//  INLINE
+//  CRegion* CPyramidalRegion::addSameCC( TRegionId AId )
+//  {
+//    CPyramidalRegion* tmp = new CPyramidalRegion(*this);
+//    tmp->setId( AId );
+//    tmp->setFather( getFather() );
+//    CRegion::addSameCC(tmp);
+//    return tmp;
+//  }
 
   INLINE
   void CPyramidalRegion::mergeWith(CPyramidalRegion* region)
@@ -238,7 +237,11 @@ namespace pyramid
 
   INLINE
   uint CPyramidalRegion::id() const
-  { return getId(); }
+  { return m_id; }
+
+  INLINE
+  void CPyramidalRegion::setId(TRegionId id)
+  { m_id = id ; }
 
   INLINE
   CInfinitePyramidalRegion::CInfinitePyramidalRegion() :
