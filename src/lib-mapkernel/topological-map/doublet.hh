@@ -164,6 +164,11 @@ public:
   // Donne le lignel orthogonal dans le sens trigo
   static TLinel getOtherOrthogonalLinel( TLinel L );
   
+  static bool isPos( TLinel L );
+  static bool isNeg( TLinel L );
+  static bool isX( TLinel L );
+  static bool isY( TLinel L );
+
 private:
   /// @name Attributs privés
   //@{
@@ -178,6 +183,14 @@ inline TLinel CDoublet::getOrthogonalLinel( TLinel L )
 { return L<3 ? (L+1) : (0); }
 inline TLinel CDoublet::getOtherOrthogonalLinel( TLinel L )
 { return L>0 ? (L-1) : (3); }
+inline bool CDoublet::isPos( TLinel L )
+{ return L%3==0; }
+inline bool CDoublet::isNeg( TLinel L )
+{ return L%3!=0; }
+inline bool CDoublet::isX( TLinel L )
+{ return L%2==0; }
+inline bool CDoublet::isY( TLinel L )
+{ return L%2!=0; }
 //******************************************************************************
 #include INCLUDE_INLINE("doublet.icc")
 //******************************************************************************
