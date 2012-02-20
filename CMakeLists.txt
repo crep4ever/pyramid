@@ -27,6 +27,7 @@ add_subdirectory (src/lib-clustering)
 #add_subdirectory (src/lib-imtiff)
 add_subdirectory (src/lib-image2D)
 add_subdirectory (src/lib-mapkernel)
+add_subdirectory (src/lib-pyramid)
 add_subdirectory (src/ihm)
 add_subdirectory (src/test)
 #-------------------------------------------------------------------------------
