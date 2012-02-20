@@ -12,6 +12,32 @@ option(OPENMP "multithreading with openmp" ON)
 option(RELEASE "release mode" ON)
 option(PROFILE "profile mode" OFF)
 
+# Pour activer la partition déformable ou la désactiver.
+# 0 : pas de partition déformable
+# 1 : contour energy lignels
+# 2 : contour energy mlp
+# 3 : contour energy dynamic mlp
+# La librairie ImaGene est requise pour que cette option fonctionne;
+SET(DEFORMABLE_METHOD 0)
+
+if (${DEFORMABLE_METHOD} EQUAL 0)
+  message( STATUS "Built-in deformable partition disabled.")
+  ADD_DEFINITIONS(-DCONTOUR_ENERGY_LINEL=1 -DCONTOUR_ENERGY_MLP=2 -DCONTOUR_ENERGY_DMLP=3)
+else (${DEFORMABLE_METHOD} EQUAL 0)
+  ADD_DEFINITIONS(-DDEFORMABLE_METHOD=${DEFORMABLE_METHOD})
+  ADD_DEFINITIONS(-DCONTOUR_ENERGY_LINEL=1 -DCONTOUR_ENERGY_MLP=2 -DCONTOUR_ENERGY_DMLP=3)
+
+  if (NOT ${DEFORMABLE_METHOD} EQUAL 1)
+    set(CMAKE_MODULE_PATH "/home/gdamiand/sources/codes-autres/imagene")
+    message(CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH})
+    find_package(ImaGene REQUIRED)
+    include_directories("${ImaGene_INCLUDE_DIRS}")
+  endif (NOT ${DEFORMABLE_METHOD} EQUAL 1)
+
+  include_directories (${CMAKE_SOURCE_DIR}/src/lib-deformable-partition)
+  message( STATUS "Built-in deformable partition enabled.")
+endif (${DEFORMABLE_METHOD} EQUAL 0)
+
 # {{{ CFLAGS
 add_definitions(-DNO_FREETYPE)
 
