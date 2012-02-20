@@ -115,6 +115,18 @@ public:
   /// Si le chrono est en train de tourner,  l'arête et le réinitialise.
   void setMode( TModeChrono AValue );
 
+  /// Getter on the user time value
+  /// @return user time value (in seconds)
+  float userTime();
+
+  /// Getter on the system time value
+  /// @return system time value (in seconds)
+  float sysTime();
+
+  /// Getter on the real time value
+  /// @return real time value (in seconds)
+  float realTime();
+
 private:
   /// Convertit ATime en format texte, en utilisant FRealTime et
   /// FDisplayReal pour connaitre le mode d'affichage.
@@ -395,6 +407,25 @@ std::ostream& operator<< (std::ostream& os, const CChrono & c )
      <<std::setw(6)<<std::setfill('0')<<c.FTotalReel.tv_usec;
   return os;
 }
+
+inline
+float CChrono::userTime()
+{
+  return FTotalPus.ru_utime.tv_sec + FTotalPus.ru_utime.tv_usec/10000000.0;
+}
+
+inline
+float CChrono::sysTime()
+{
+  return FTotalPus.ru_stime.tv_sec + FTotalPus.ru_stime.tv_usec/10000000.0;
+}
+
+inline
+float CChrono::realTime()
+{
+  return FTotalReel.tv_sec + FTotalReel.tv_usec/(10000000.0);
+}
+
 //******************************************************************************
 #endif // CHRONO_HH
 //******************************************************************************
