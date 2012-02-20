@@ -79,6 +79,18 @@ public:
      */
     void edgeRemoval(CDart* ADart);
 
+    /**
+     *  Calcule l'arbre d'inclusion des régions. La liste AList est la liste
+     *  des régions rencontrées dans l'ordre du balayage
+     *  (haut-bas, derrière-devant et gauche-droite).
+     *   La liste est désignée par :
+     * - 1er élément :   région infinie
+     * - getFirstSon() : région suivante
+     * - getBrother() :  région précédente
+     * - le brother du 1er élément est la dernière région
+     * - le son du dernier élément est NULL
+     */
+    void computeInclusionTree();
 
 private:
     /**
@@ -132,19 +144,6 @@ private:
     CDart* computeUpFromLast(CDart* ADart);
 
     /**
-     *  Calcule l'arbre d'inclusion des régions. La liste AList est la liste
-     *  des régions rencontrées dans l'ordre du balayage
-     *  (haut-bas, derrière-devant et gauche-droite).
-     *   La liste est désignée par :
-     * - 1er élément :   région infinie
-     * - getFirstSon() : région suivante
-     * - getBrother() :  région précédente
-     * - le brother du 1er élément est la dernière région
-     * - le son du dernier élément est NULL
-     */
-    void computeInclusionTree();
-
-    /**
      *  Crée le bord initial supérieur avant l'extraction d'une image 2D.
      *
      *  @param ALargX largeur en X de l'image
@@ -168,4 +167,3 @@ private:
     */
     void simplifyMap();    
     //@}
-
