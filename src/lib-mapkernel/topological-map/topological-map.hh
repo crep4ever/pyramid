@@ -447,10 +447,10 @@ protected:
     CImage2D*   FImage;
     CKhalimsky* FKhalimsky;
     CRegion*    FInclusionTreeRoot;
-private:
     /// Compteurs pour le nombre de régions
     unsigned int FNbRegions;
 
+private:
     /// vrai si on est en mode uftree: dans ce cas, le champ Father de chaque
     /// région désigne le père dans l'arbre uf, null pour les racines.
     bool FUFTreeMode;  
