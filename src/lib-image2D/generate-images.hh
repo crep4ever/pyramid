@@ -32,7 +32,7 @@
 void generateSquares( CImage2D& AImage, unsigned int AWidth );
 
 /// Génère une image ligne
-/// Tout les pixels d'une même ligne ont la même étiquette, chaque ligne
+/// Tout les pixels d'une même ligne ont la même étiquette, chaque ligne 
 /// (excepté éventuellement la dernière) est de hauteur AWidth.
 void generateLines( CImage2D& AImage, unsigned int AWidth );
 

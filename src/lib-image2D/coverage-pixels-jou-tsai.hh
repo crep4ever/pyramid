@@ -68,7 +68,7 @@ public:
     // Return 1,2,3,4 or 5 depending the case (see original paper)
     // and in cases 3 and 4, AIntersection (which is an output paramer)
     // contains the intersection of the test span with the found span.
-    unsigned int checkList(unsigned int Ay,
+    unsigned int checkList(unsigned int Ay, 
                            unsigned int ALeftX, unsigned int ARightX,
                            unsigned int& AIntersection)
     {
@@ -163,7 +163,7 @@ public:
 
 protected:
     /*
-     * Check each pixel of the span given by [ALeftX, ALeftY] in Ay,
+     * Check each pixel of the span given by [ALeftX, ALeftY] in Ay, 
      * and push in the stack FPixelsStack one seed by future span.
      */
     void checkSeed(unsigned int Ay,
@@ -174,7 +174,7 @@ protected:
      * Ay, and depending of this configuration, call checkSeed only onto
      * the part of the span to scan.
      */
-    void checkSpan(unsigned int Ay,
+    void checkSpan(unsigned int Ay, 
                    unsigned int ALeftX, unsigned int ARightX);
 
 protected:
