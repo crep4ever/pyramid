@@ -164,7 +164,7 @@ uint  CLevel::burstAndMergeTile(const CPoint2D & APos,
 {
   //std::cout<<"[start] CLevel::burstAndMergeTile "<<APos<<" for level "<<m_depth<<"\n";
   uint memory = 0;
-  uint i = APos.getX(); uint j = APos.getY();
+  uint i = APos.x(); uint j = APos.y();
   if(i>0) memory += loadTile(CPoint2D(i-1, j))->memory(); // Load tile left
   if(j>0) memory += loadTile(CPoint2D(i, j-1))->memory(); // Load tile top
   memory+=levelUp()->tile(APos)->memory();

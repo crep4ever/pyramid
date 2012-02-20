@@ -32,7 +32,7 @@ namespace pyramid
 
     for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
       for( CTraversalRegionPixels it2( this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
-	matrix->setValue( (*it2).getX(), (*it2).getY(), (*it) );
+	matrix->setValue( (*it2).x(), (*it2).y(), (*it) );
 
     return matrix;
   }

@@ -307,26 +307,26 @@ namespace pyramid
   uint CTile::xmin(const SystemMode & ASystem) const
   {
     assert( m_width!=0 );
-    return (ASystem==Absolute) ? bottomRight().getX() - m_width : 0;
+    return (ASystem==Absolute) ? bottomRight().x() - m_width : 0;
   }
 
   INLINE
   uint CTile::xmax(const SystemMode & ASystem) const
   {
-    return (ASystem==Absolute) ? bottomRight().getX() : width();
+    return (ASystem==Absolute) ? bottomRight().x() : width();
   }
 
   INLINE
   uint CTile::ymin(const SystemMode & ASystem) const
   {
     assert( m_height!=0);
-    return (ASystem==Absolute)? bottomRight().getY() - m_height : 0;
+    return (ASystem==Absolute)? bottomRight().y() - m_height : 0;
   }
 
   INLINE
   uint CTile::ymax(const SystemMode & ASystem) const
   {
-    return (ASystem==Absolute) ? bottomRight().getY() : height();
+    return (ASystem==Absolute) ? bottomRight().y() : height();
   }
 
   INLINE

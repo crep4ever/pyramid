@@ -130,8 +130,8 @@ void CPyramid::addLevel()
   if( extractMode() == ConstantTileNumber )
     {
       //nombre de tuiles constant par niveau
-      lvl->setTileWidth( tileWidth()*ratios(lvl->depth()).getX() );
-      lvl->setTileHeight( tileHeight()*ratios(lvl->depth()).getY() );
+      lvl->setTileWidth( tileWidth()*ratios(lvl->depth()).x() );
+      lvl->setTileHeight( tileHeight()*ratios(lvl->depth()).y() );
     }
   else if( extractMode() == ConstantTileSize )
     {

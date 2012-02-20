@@ -87,8 +87,8 @@ namespace pyramid
 	  int red= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
 	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
 	    {
-	      pix.x=(*it).getX();
-	      pix.y=(*it).getY();
+	      pix.x=(*it).x();
+	      pix.y=(*it).y();
 	      image()->getPixel( pix, index(2) );
 	      ++count;
 	      red += pix.value[0];
@@ -103,8 +103,8 @@ namespace pyramid
 	  int blue= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
 	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
 	    {
-	      pix.x=(*it).getX();
-	      pix.y=(*it).getY();
+	      pix.x=(*it).x();
+	      pix.y=(*it).y();
 	      image()->getPixel( pix, index(2) );
 	      ++count;
 	      blue += pix.value[2];
@@ -135,8 +135,8 @@ namespace pyramid
     CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
     CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);
     uint x1, y1, x2, y2;
-    x1 = region1->firstPixel().getX(); y1 = region1->firstPixel().getY();
-    x2 = region2->firstPixel().getX(); y2 = region2->firstPixel().getY();
+    x1 = region1->firstPixel().x(); y1 = region1->firstPixel().y();
+    x2 = region2->firstPixel().x(); y2 = region2->firstPixel().y();
     uint pos1 = ( (x1) + (width())*(y1) );
     uint pos2 = ( (x2) + (width())*(y2) );
 

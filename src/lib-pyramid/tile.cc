@@ -157,7 +157,7 @@ void CTile::traversePixels()
   for( CDynamicCoverageAllRegions it( this ); it.cont();++it )
     for( CTraversalRegionPixels it2(this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
       {
-	pix.x = (*it2).getX()+xmin(); pix.y = (*it2).getY()+ymin();
+	pix.x = (*it2).x()+xmin(); pix.y = (*it2).y()+ymin();
 	addPixel(pix, *it);
       }
 }

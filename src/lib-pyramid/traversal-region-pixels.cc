@@ -32,7 +32,7 @@ CTraversalRegionPixels::CTraversalRegionPixels(CTile* ATile,
 
   m_pixelsStack.push(static_cast<CPyramidalRegion*>(ARegion)->firstPixel());
   this->operator++();
-  m_tile->markPixel(m_currentPixel.getX(),m_currentPixel.getY());
+  m_tile->markPixel(m_currentPixel.x(),m_currentPixel.y());
 }
 
 CTraversalRegionPixels::~CTraversalRegionPixels()
@@ -50,7 +50,7 @@ void CTraversalRegionPixels::reinit()
     }
   m_pixelsStack.push(static_cast<CPyramidalRegion*>(m_region)->firstPixel());
   this->operator++();
-  m_tile->markPixel(m_currentPixel.getX(),m_currentPixel.getY());
+  m_tile->markPixel(m_currentPixel.x(),m_currentPixel.y());
 }
 
 void CTraversalRegionPixels::operator++()
@@ -64,15 +64,15 @@ void CTraversalRegionPixels::operator++()
   m_currentPixel = m_pixelsStack.top();
   m_pixelsStack.pop();
 
-  CDoublet t(m_currentPixel.getX(),m_currentPixel.getY());
+  CDoublet t(m_currentPixel.x(),m_currentPixel.y());
   t.setLinel(XPOS);
   if( !m_tile->isLCell(t) )
     {
       CPoint2D n(m_currentPixel);
-      n.setY(m_currentPixel.getY()-1);
-      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
+      n.setY(m_currentPixel.y()-1);
+      if(!m_tile->isPixelMarked(n.x(),n.y()))
 	{
-	  m_tile->markPixel(n.getX(),n.getY());
+	  m_tile->markPixel(n.x(),n.y());
 	  m_pixelsStack.push(n);
 	}
     }
@@ -81,23 +81,23 @@ void CTraversalRegionPixels::operator++()
   if( !m_tile->isLCell(t) )
     {
       CPoint2D n(m_currentPixel);
-      n.setX(m_currentPixel.getX()-1);
-      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
+      n.setX(m_currentPixel.x()-1);
+      if(!m_tile->isPixelMarked(n.x(),n.y()))
 	{
-	  m_tile->markPixel(n.getX(),n.getY());
+	  m_tile->markPixel(n.x(),n.y());
 	  m_pixelsStack.push(n);
 	}
     }
 
- t = CDoublet(m_currentPixel.getX()+1,m_currentPixel.getY()+1);
+ t = CDoublet(m_currentPixel.x()+1,m_currentPixel.y()+1);
  t.setLinel(XNEG);
   if( !m_tile->isLCell(t) )
     {
       CPoint2D n(m_currentPixel);
-      n.setY(m_currentPixel.getY()+1);
-      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
+      n.setY(m_currentPixel.y()+1);
+      if(!m_tile->isPixelMarked(n.x(),n.y()))
 	{
-	  m_tile->markPixel(n.getX(),n.getY());
+	  m_tile->markPixel(n.x(),n.y());
 	  m_pixelsStack.push(n);
 	}
     }
@@ -106,10 +106,10 @@ void CTraversalRegionPixels::operator++()
   if( !m_tile->isLCell(t) )
     {
       CPoint2D n(m_currentPixel);
-      n.setX(m_currentPixel.getX()+1);
-      if(!m_tile->isPixelMarked(n.getX(),n.getY()))
+      n.setX(m_currentPixel.x()+1);
+      if(!m_tile->isPixelMarked(n.x(),n.y()))
 	{
-	  m_tile->markPixel(n.getX(),n.getY());
+	  m_tile->markPixel(n.x(),n.y());
 	  m_pixelsStack.push(n);
 	}
     }

@@ -377,7 +377,7 @@ namespace pyramid
   CTile* CLevel::tile(const CPoint2D & APos)
   {
     for(it = m_tiles.begin(); it!=m_tiles.end(); ++it)
-      if( (*it)->index(0) == APos.getX() && (*it)->index(1) == APos.getY())
+      if( (*it)->index(0) == APos.x() && (*it)->index(1) == APos.y())
 	return *it;
 
     return loadTile(APos);
@@ -422,7 +422,7 @@ namespace pyramid
     newTile->setMergeThreshold(m_mergeThreshold);
     newTile->setImage(m_image);
     newTile->setPixelMark();
-    newTile->load(APos.getX(), APos.getY(), depth());
+    newTile->load(APos.x(), APos.y(), depth());
     addTile(newTile);
 
     //todo: tester s'il y une tuile gauche ou haut et faire les coutures par beta2'
@@ -441,7 +441,7 @@ namespace pyramid
   {
     // On cherche la tuile dans le vecteur et on la supprime
     for(it = m_tiles.begin(); it!=m_tiles.end();++it)
-      if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
+      if(tileIndexI(*it) == APos.x() && tileIndexJ(*it) == APos.y())
 	{
 	  CTile* tmp = *it;
 	  it = m_tiles.erase(it);
@@ -456,7 +456,7 @@ namespace pyramid
   bool CLevel::isTileLoaded(const CPoint2D & APos)
   {
     for(it = m_tiles.begin(); it!=m_tiles.end(); ++it)
-      if(tileIndexI(*it) == APos.getX() && tileIndexJ(*it) == APos.getY())
+      if(tileIndexI(*it) == APos.x() && tileIndexJ(*it) == APos.y())
 	return true;
 
     return false;
