@@ -441,13 +441,13 @@ protected:
     /// constructeur des brins avex paramètres).
     void initDart(CDart* ADart, const CDoublet & ADoublet, CRegion* ARegion);
 
-private:
+protected:
     /// @name Champs privés
     //@{
     CImage2D*   FImage;
     CKhalimsky* FKhalimsky;
     CRegion*    FInclusionTreeRoot;
-
+private:
     /// Compteurs pour le nombre de régions
     unsigned int FNbRegions;
 
