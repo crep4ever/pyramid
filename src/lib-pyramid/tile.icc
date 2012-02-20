@@ -826,7 +826,7 @@ namespace pyramid
   void CTile::setDoublet(CDart* ADart, const CDoublet& ADoublet)
   {
     assert( ADart!=NULL );
-    static_cast<CTopologicalDart*>(ADart)->setDoublet(ADoublet);
+    static_cast<CPyramidalDart*>(ADart)->setDoublet(ADoublet);
   }
 
 
@@ -854,7 +854,8 @@ namespace pyramid
   CRegion* CTile::newRegion()
   {
     assert(false);
-    return new CPyramidalRegion(++FNbRegions);
+    ++FNbRegions;
+    return new CPyramidalRegion();
   }
 
   INLINE

@@ -80,6 +80,8 @@ namespace pyramid
   INLINE
   unsigned int CTile::removeSmallRegions(unsigned int AThreshold)
   {
-    return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
+    assert(false);
+    //return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
+    return 0;
   }
 } //namespace pyramid
