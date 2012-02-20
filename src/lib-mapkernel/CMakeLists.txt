@@ -25,3 +25,11 @@ if (HAVE_STD_INT)
 endif (HAVE_STD_INT)
 
 #-------------------------------------------------------------------------------
+
+include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel)
+include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
+include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/map-generic)
+include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/topological-map)
+include_directories(${CMAKE_SOURCE_DIR}/lib-image2D)
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${ImageMagick_Magick++_INCLUDE_DIRS})
