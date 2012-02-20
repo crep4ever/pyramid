@@ -77,27 +77,6 @@ namespace pyramid
   }
 
   INLINE
-  CDkDoublet& CDkDoublet::operator = (const CDkDoublet& ADkDoublet)
-  {
-    Fx = ADkDoublet.Fx;
-    Fy = ADkDoublet.Fy;
-    FL = ADkDoublet.FL;
-    setWeight(ADkDoublet.weight());
-    setPrev(ADkDoublet.prev());
-    return *this;
-  }
-
-  INLINE
-  bool CDkDoublet::operator == (const CDkDoublet & ADkDoublet) const
-  {
-    return ( Fx == ADkDoublet.Fx
-	     && Fy == ADkDoublet.Fy
-	     && FL == ADkDoublet.FL
-	     && weight() == ADkDoublet.weight()
-	     && prev() == ADkDoublet.prev() );
-  }
-
-  INLINE
   bool CDkDoublet::operator != (const CDkDoublet & ADkDoublet) const
   { return ! operator==(ADkDoublet); }
 

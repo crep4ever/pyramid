@@ -56,8 +56,6 @@ namespace pyramid
     CDkDoublet* prev() const;
     void setPrev(CDkDoublet* APrev);
 
-    CDkDoublet& operator = (const CDkDoublet & ADoublet);
-    bool operator == (const CDkDoublet & ADoublet) const;
     bool operator != (const CDkDoublet & ADoublet) const;
     bool operator < (const CDkDoublet & ADoublet) const;
 
