@@ -152,6 +152,10 @@ namespace pyramid
     void print( std::ostream& os = std::cout ) const;
 
     friend std::ostream& operator<<(std::ostream&, const CPyramidalDart &);
+
+    /// Setter on the dart's doublet
+    /// @param doublet the doublet
+    void setDoublet(const CDoublet & doublet);
   };
 
 } // namespace pyramid
