@@ -21,7 +21,7 @@ if (PROFILE)
 endif ()
 
 if (RELEASE)
-  add_definitions(-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -ftree-vectorize -Wno-unused-result)
+  add_definitions(-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native -Wno-unused-result) #-ftree-vectorize)
   set_property(DIRECTORY PROPERTY
     IMPLICIT_DEPENDS_INCLUDE_TRANSFORM 
     "INCLUDE_INLINE(%)=%")
