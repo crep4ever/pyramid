@@ -110,7 +110,7 @@ void CTile::loadTopology()
 
   CPyramidalDart* newDart = NULL;
   std::map<TDartId, CPyramidalDart*>::iterator itd;
-  std::map<TRegionId, CRegion*>::iterator itr;
+  std::map<TRegionId, CPyramidalRegion*>::iterator itr;
 
   uint nbDarts = m_properties->nbDarts;
 
@@ -260,7 +260,7 @@ void CTile::loadTree()
   //std::cout<<"[start] CTile::loadTree"<<std::endl;
 
   CPyramidalRegion* newRegion = NULL;
-  std::map<TRegionId, CRegion*>::iterator itr;
+  std::map<TRegionId, CPyramidalRegion*>::iterator itr;
   unsigned int nbRegions = m_properties->nbRegions;
 
   for (unsigned int i=0; i < nbRegions; ++i)
@@ -389,22 +389,22 @@ void CTile::saveTree()
 
 
       if(current->existFather())
-	m_regionFields[count].father = current->getFather()->id();
+	m_regionFields[count].father = current->father()->id();
       else
 	m_regionFields[count].father = 0;
 
       if(current->existSon())
-	m_regionFields[count].son = current->getFirstSon()->id();
+	m_regionFields[count].son = current->firstSon()->id();
       else
 	m_regionFields[count].son = 0;
 
       if(current->existBrother())
-	m_regionFields[count].brother = current->getBrother()->id();
+	m_regionFields[count].brother = current->brother()->id();
       else
 	m_regionFields[count].brother = 0;
 
       if(current->existNextSameCC())
-	m_regionFields[count].cc = current->getNextSameCC()->id();
+	m_regionFields[count].cc = current->nextSameCC()->id();
       else
 	m_regionFields[count].cc = 0;
 
