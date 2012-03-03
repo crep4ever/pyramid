@@ -981,6 +981,12 @@ namespace pyramid
     region->setBrother(brother);
   }
 
+  INLINE
+  void setNextSameCC(CPyramidalRegion* region, CPyramidalRegion* cc)
+  {
+    region->setNextSameCC(cc);
+  }
+
   //******************************************************************************
   //Opérations sur la géométrie
   //******************************************************************************

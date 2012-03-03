@@ -804,15 +804,23 @@ namespace pyramid
     /// @param dart the representative dart
     void setRepresentativeDart(CPyramidalRegion* region, CPyramidalDart* dart);
 
-    /// Wrapper method that denotes a region as the son of an other
+    /// Wrapper method that denotes a region as the son
+    /// of another region.
     /// @param region a region
     /// @param son a son
     void setFirstSon(CPyramidalRegion* region, CPyramidalRegion* son);
 
-    /// Wrapper method that denotes a region as the brother of an other
+    /// Wrapper method that denotes a region as the brother
+    /// of another region.
     /// @param region a region
     /// @param brother a brother
     void setBrother(CPyramidalRegion* region, CPyramidalRegion* brother);
+
+    /// Wrapper method that denotes a region as the next region in
+    /// the same connected component of another region.
+    /// @param region a region
+    /// @param cc the next connected component
+    void setNextSameCC(CPyramidalRegion* region, CPyramidalRegion* cc);
 
     /// @return true there exist a tile up, false otherwise
     bool existMapUp();
