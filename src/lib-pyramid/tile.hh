@@ -1055,6 +1055,8 @@ namespace pyramid
     //relations up/down
     void relabelDarts();
 
+    CPyramidalRegion* findRegionRoot(CPyramidalRegion* region);
+
     void toSVG();
 
     //******************************************************************************
