@@ -35,11 +35,11 @@ void CTile::createTopTile()
   createSingleRegion( width(), height() );
   splitSingleRegion ( width(), height() );
 
-  CRegion* infRegion = getInclusionTreeRoot();
-  CRegion* region = infRegion->getFirstSon();
+  CPyramidalRegion* infRegion = inclusionTreeRoot();
+  CPyramidalRegion* region = infRegion->firstSon();
 
-  m_mapRegions[infRegion->getId()] = infRegion;
-  m_mapRegions[region->getId()] = region;
+  m_mapRegions[infRegion->id()] = infRegion;
+  m_mapRegions[region->id()] = region;
 
   CPyramidalDart* inf  = static_cast<CPyramidalDart*>(infRegion->getRepresentativeDart());
   CPyramidalDart* dart = static_cast<CPyramidalDart*>(region->getRepresentativeDart());
@@ -94,18 +94,13 @@ void CTile::createSingleRegion(uint AWidth, uint AHeight)
   linkBeta0(inf, inf);   //linkBeta1(inf, inf);
   linkBeta2(dart, inf);
 
-  //todo: déporter ça vers le constructeur par défaut ?
   // Initialisation des régions
-  infRegion->setRepresentativeDart(inf);
-  infRegion->setNextSameCC(infRegion); //on boucle sur soi par défaut
-  infRegion->setFirstSon(region);      //élément suivant
-  infRegion->setBrother(region);       //élément précédent
+  setRepresentativeDart(infRegion, inf);
+  setFirstSon(infRegion, region);      //élément suivant
+  setBrother(infRegion, region);       //élément précédent
 
-  region->setRepresentativeDart(dart);
-  region->setNextSameCC(region);
-  region->setFirstSon(NULL);
-  region->setBrother(infRegion);
-  region->setFirstPixel(CPoint2D(0,0));
+  setRepresentativeDart(region, dart);
+  setBrother(region, infRegion);
 
   // Calcul de l'arbre d'inclusion des régions
   relabelDarts();

@@ -229,13 +229,13 @@ namespace pyramid
   }
 
   INLINE
-  std::map<TRegionId, CRegion*> CTile::mapRegions() const
+  std::map<TRegionId, CPyramidalRegion*> CTile::mapRegions() const
   {
     return m_mapRegions;
   }
 
   INLINE
-  void CTile::setMapRegions(std::map<TRegionId, CRegion*>& AMap)
+  void CTile::setMapRegions(std::map<TRegionId, CPyramidalRegion*>& AMap)
   {
     m_mapRegions = AMap;
   }
@@ -956,6 +956,30 @@ namespace pyramid
   //    else if(image()->colorMode() == CImageTiff::Grey)
   //      ARegion->addPixel( data[m_pixIndex++] );
   //  }
+
+  //INLINE
+  //void setRegion(CPyramidalDart* dart, CPyramidalRegion* region)
+  //{
+  //  CTopologicalMap::setRegion(dart, region);
+  //}
+
+  INLINE
+  void setRepresentativeDart(CPyramidalRegion* region, CPyramidalDart* dart)
+  {
+    region->setRepresentativeDart(dart);
+  }
+
+  INLINE
+  void setFirstSon(CPyramidalRegion* region, CPyramidalRegion* son)
+  {
+    region->setFirstSon(son);
+  }
+
+  INLINE
+  void setBrother(CPyramidalRegion* region, CPyramidalRegion* brother)
+  {
+    region->setBrother(brother);
+  }
 
   //******************************************************************************
   //Opérations sur la géométrie

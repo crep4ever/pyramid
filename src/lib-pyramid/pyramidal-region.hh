@@ -53,7 +53,7 @@ namespace pyramid
     enum Label {Background, Tissue, DarkTissue, BrightTissue, Lesion, Cancer, Stroma, Mitosis, InSitu, Invalid};
 
   private:
-    TRegionId m_id;
+    TRegionId m_id; ///< region identifier
     CPyramidalRegion* m_up;   ///< region up
     CPyramidalRegion* m_down; ///< region down
     Label m_label;            ///< region's label
@@ -118,21 +118,41 @@ namespace pyramid
     /// The brother denotes a region of the same level in the inclusion tree
     /// but from a different connected component
     /// @return the brother region
-    CPyramidalRegion* getBrother()    const;
+    CPyramidalRegion* brother() const;
+
+    /// Setter on the region's brother
+    /// The brother denotes a region of the same level in the inclusion tree
+    /// but from a different connected component
+    /// @param region the brother region
+    void setBrother(CPyramidalRegion* region);
 
     /// Getter on the region's father
     /// The father denotes the parent region within  the inclusion tree
     /// @return the father region
-    CPyramidalRegion* getFather()     const;
+    CPyramidalRegion* father() const;
+
+    /// Setter on the region's father
+    /// The father denotes the parent region within  the inclusion tree
+    /// @param region the father region
+    void setFather(CPyramidalRegion* region);
 
     /// Getter on the region's first son
     /// The first son denotes the first region in the imbricated connected component
     /// @return the first son region
-    CPyramidalRegion* getFirstSon()   const;
+    CPyramidalRegion* firstSon() const;
+
+    /// Getter on the region's first son
+    /// The first son denotes the first region in the imbricated connected component
+    /// @param region the first son region
+    void setFirstSon(CPyramidalRegion* region);
 
     /// Getter on the next region within the same connected component
     /// @return the next region within the same connected component
-    CPyramidalRegion* getNextSameCC() const;
+    CPyramidalRegion* nextSameCC() const;
+
+    /// Setter on the next region within the same connected component
+    /// @param region the next region within the same connected component
+    void setNextSameCC(CPyramidalRegion* region);
 
     /// Getter on the minimum grey level of the pixels of the region
     /// A grey level is stored as a value between 0 and 255

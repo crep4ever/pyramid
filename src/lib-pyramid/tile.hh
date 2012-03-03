@@ -175,7 +175,7 @@ namespace pyramid
 
     std::vector<CDart*> m_corners; ///< the 4 darts incident the vertices on tiles' corners
     std::map<TDartId, CPyramidalDart*> m_mapDarts; ///< association between a dart and its identifier
-    std::map<TRegionId, CRegion*> m_mapRegions; ///< association between a region and its identifier
+    std::map<TRegionId, CPyramidalRegion*> m_mapRegions; ///< association between a region and its identifier
     std::map<TDartId, TDartId> m_mapBeta2; ///< used for phi operator on darts incident to the tile's borders
     uint m_index[3]; ///< stores the 3 coordiantes (i,j,k) of the tile within the top-down pyramid
 
@@ -222,8 +222,8 @@ namespace pyramid
     std::map<TDartId, CPyramidalDart*> mapDarts() const;
     void setMapDarts(std::map<TDartId, CPyramidalDart*>& AMap);
 
-    std::map<TRegionId, CRegion*> mapRegions() const;
-    void setMapRegions(std::map<TRegionId, CRegion*>& AMap);
+    std::map<TRegionId, CPyramidalRegion*> mapRegions() const;
+    void setMapRegions(std::map<TRegionId, CPyramidalRegion*>& AMap);
 
     std::map<TDartId, TDartId> mapBeta2() const;
     void setMapBeta2(std::map<TDartId, TDartId>& AMapBeta2);
@@ -366,6 +366,11 @@ namespace pyramid
     //******************************************************************************
     // Méthodes sur la carte de la tuile
     //******************************************************************************
+
+    /// Associate a dart to a given region.
+    /// @param dart the dart
+    /// @param region the region
+    //void setRegion(CPyramidalDart* dart, CPyramidalRegion* region);
 
     /// Active/désactive un pointel
     /// dans la matrice de Khalimsky de la carte
@@ -794,8 +799,22 @@ namespace pyramid
     //Opérations sur la carte
     //******************************************************************************
 
+    /// Wrapper method that denotes a dart as the main dart of a region.
+    /// @param region the region
+    /// @param dart the representative dart
+    void setRepresentativeDart(CPyramidalRegion* region, CPyramidalDart* dart);
 
-    /// @return true si la carte dispose d'un niveau supérieur
+    /// Wrapper method that denotes a region as the son of an other
+    /// @param region a region
+    /// @param son a son
+    void setFirstSon(CPyramidalRegion* region, CPyramidalRegion* son);
+
+    /// Wrapper method that denotes a region as the brother of an other
+    /// @param region a region
+    /// @param brother a brother
+    void setBrother(CPyramidalRegion* region, CPyramidalRegion* brother);
+
+    /// @return true there exist a tile up, false otherwise
     bool existMapUp();
 
     /// @return true si la carte dispose d'un niveau inférieur

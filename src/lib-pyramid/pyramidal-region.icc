@@ -37,7 +37,10 @@ namespace pyramid
     m_down       ( NULL ),
     m_label      ( Invalid ),
     m_firstPixel ( 0,0 )
-  { }
+  {
+    setNextSameCC(this);
+    setFirstSon(NULL);
+  }
 
   INLINE
   CPyramidalRegion::CPyramidalRegion(const CRegion& region) :
@@ -172,20 +175,36 @@ namespace pyramid
   { return CRegion::setRepresentativeDart(static_cast<CPyramidalDart*>(dart)); }
 
   INLINE
-  CPyramidalRegion* CPyramidalRegion::getFather() const
+  CPyramidalRegion* CPyramidalRegion::father() const
   { return static_cast<CPyramidalRegion*>(CRegion::getFather()); }
 
   INLINE
-  CPyramidalRegion* CPyramidalRegion::getBrother() const
+  void CPyramidalRegion::setFather(CPyramidalRegion* region)
+  {  CRegion::setFather(region); }
+
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::brother() const
   { return static_cast<CPyramidalRegion*>(CRegion::getBrother()); }
 
   INLINE
-  CPyramidalRegion* CPyramidalRegion::getFirstSon() const
+  void CPyramidalRegion::setBrother(CPyramidalRegion* region)
+  {  CRegion::setBrother(region); }
+
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::firstSon() const
   { return static_cast<CPyramidalRegion*>(CRegion::getFirstSon()); }
 
   INLINE
-  CPyramidalRegion* CPyramidalRegion::getNextSameCC() const
+  void CPyramidalRegion::setFirstSon(CPyramidalRegion* region)
+  {  CRegion::setFirstSon(region); }
+
+  INLINE
+  CPyramidalRegion* CPyramidalRegion::nextSameCC() const
   { return static_cast<CPyramidalRegion*>(CRegion::getNextSameCC()); }
+
+  INLINE
+  void CPyramidalRegion::setNextSameCC(CPyramidalRegion* region)
+  {  CRegion::setNextSameCC(region); }
 
   INLINE
   void CPyramidalRegion::addGrey(TRegionId AGrey)
@@ -236,7 +255,7 @@ namespace pyramid
   }
 
   INLINE
-  uint CPyramidalRegion::id() const
+  TRegionId CPyramidalRegion::id() const
   { return m_id; }
 
   INLINE
@@ -252,6 +271,7 @@ namespace pyramid
     setDown( NULL);
     setGreyMin( 255 );
     setGreyMax( 0 );
+    setNextSameCC(this);
   }
 
   INLINE
