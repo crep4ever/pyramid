@@ -964,33 +964,33 @@ namespace pyramid
   //}
 
   INLINE
-  void setRepresentativeDart(CPyramidalRegion* region, CPyramidalDart* dart)
+  void CTile::setRepresentativeDart(CPyramidalRegion* region, CPyramidalDart* dart)
   {
     region->setRepresentativeDart(dart);
   }
 
   INLINE
-  void setFirstSon(CPyramidalRegion* region, CPyramidalRegion* son)
+  void CTile::setFirstSon(CPyramidalRegion* region, CPyramidalRegion* son)
   {
     region->setFirstSon(son);
   }
 
   INLINE
-  void setBrother(CPyramidalRegion* region, CPyramidalRegion* brother)
+  void CTile::setBrother(CPyramidalRegion* region, CPyramidalRegion* brother)
   {
     region->setBrother(brother);
   }
 
   INLINE
-  void setNextSameCC(CPyramidalRegion* region, CPyramidalRegion* cc)
+  void CTile::setNextSameCC(CPyramidalRegion* region, CPyramidalRegion* cc)
   {
     region->setNextSameCC(cc);
   }
 
   INLINE
-  CPyramidalRegion* CPyramidalRegion::findRegionRoot(CPyramidalRegion* region)
+  CPyramidalRegion* CTile::findRegionRoot(CPyramidalRegion* region)
   {
-    static_cast<CPyramidalRegion*>(CTopologicalMap::findRegionRoot(region));
+    return static_cast<CPyramidalRegion*>(CTopologicalMap::findRegionRoot(region));
   }
   //******************************************************************************
   //Opérations sur la géométrie
