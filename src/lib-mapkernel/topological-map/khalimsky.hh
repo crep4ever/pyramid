@@ -59,7 +59,14 @@ public:
   //@{
   TNatural getSizeX() const;
   TNatural getSizeY() const;
- 
+
+  /// Getter on the matrix data
+  /// @return the matrix data
+  TKhalimskyElt* getMatrix() const;
+  
+  /// Setter on the matrix data
+  /// @param AMatrix the matrix data
+  void setMatrix(TKhalimskyElt* AMatrix);
   
   bool isPCell(const CDoublet& ADoublet) const;
   bool isLCell(const CDoublet& Adoublet) const;

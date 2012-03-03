@@ -66,6 +66,14 @@ TNatural  CKhalimsky::getSizeY() const
 { return FSizeY; }
 //------------------------------------------------------------------------------
 INLINE
+TKhalimskyElt*  CKhalimsky::getMatrix() const
+{ return FMatrix; }
+//------------------------------------------------------------------------------
+INLINE
+void CKhalimsky::setMatrix(TKhalimskyElt* AMatrix)
+{ FMatrix = AMatrix; }
+//------------------------------------------------------------------------------
+INLINE
 long int CKhalimsky::getNumberOfByte() const
 { return sizeof(CKhalimsky)+(FSize); } 
 //******************************************************************************
