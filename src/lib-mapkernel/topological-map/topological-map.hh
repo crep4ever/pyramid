@@ -395,11 +395,6 @@ public:
   void exportGraph(std::ostream &os, int amark=-1);
 
 private:
-    /**
-     * Initialise un brin à une région
-     */
-    void setRegion(CDart* ADart, CRegion* ARegion) const;
-
      /**
      * @return vrai ssi ARegion est une racine d'un arbre uf.
      * rmq: On utilise le pointeur FFather pour construire l'arbre
@@ -417,15 +412,6 @@ private:
     bool isRegionRoot(CDart* ADart) const;
 
     /**
-     * Retrouve la  racine de l'arbre correspondant à la région passée en
-     * paramètre
-     * rmq: On utilise le pointeur FFather pour construire l'arbre
-     * d'une composante connexe.
-     * @pre FUFTreeMode
-     */
-    CRegion* findRegionRoot(CRegion* ARegion);
-
-    /**
      * Réalise l'union entre une région et sa racine 
      * si la région est déjà la racine de l'arbre on n'effectue rien...
      * Comme précédemment, on utilise le pointeur FFather pour construire 
@@ -440,6 +426,20 @@ protected:
     /// Initialise un brin donné (nécessaire car on n'utilise plus le
     /// constructeur des brins avex paramètres).
     void initDart(CDart* ADart, const CDoublet & ADoublet, CRegion* ARegion);
+
+    /**
+     * Retrouve la  racine de l'arbre correspondant à la région passée en
+     * paramètre
+     * rmq: On utilise le pointeur FFather pour construire l'arbre
+     * d'une composante connexe.
+     * @pre FUFTreeMode
+     */
+    CRegion* findRegionRoot(CRegion* ARegion);
+
+    /**
+     * Initialise un brin à une région
+     */
+    void setRegion(CDart* ADart, CRegion* ARegion) const;
 
 protected:
     /// @name Champs privés
