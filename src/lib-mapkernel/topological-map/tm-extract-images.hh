@@ -136,14 +136,6 @@ private:
     //@{
 
     /**
-     *  Calcule le brin "up" à partir du brin "last".
-     *
-     *  @param  ADart le brin "last".
-     *  @return Le brin "up".
-     */
-    CDart* computeUpFromLast(CDart* ADart);
-
-    /**
      *  Crée le bord initial supérieur avant l'extraction d'une image 2D.
      *
      *  @param ALargX largeur en X de l'image
@@ -153,6 +145,25 @@ private:
      */
     CDart* makeBorder(int ALargX, int ALargY);
 
+   /**
+    * Effectue la simplification complète de la carte pour supprimer tout les
+    * sommets de degré deux.
+    */
+    void simplifyMap();
+    //@}
+
+    ///@name Méthodes protégées pour l'extraction d'images.
+    //@{
+
+protected:
+    /**
+     *  Calcule le brin "up" à partir du brin "last".
+     *
+     *  @param  ADart le brin "last".
+     *  @return Le brin "up".
+     */
+    CDart* computeUpFromLast(CDart* ADart);
+
     /**
      *  Détruit le bord initial supérieur après l'extraction d'une image 2D.
      *  (ce bord est la surface incidente à ADart).
@@ -160,10 +171,4 @@ private:
      *  @param ADart le dernier last qui appartient au bord à détruire.
      */
     void destroyBorder(CDart* ADart);
-    
-   /**
-    * Effectue la simplification complète de la carte pour supprimer tout les
-    * sommets de degré deux.
-    */
-    void simplifyMap();    
     //@}
