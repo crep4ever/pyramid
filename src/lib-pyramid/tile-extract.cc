@@ -85,7 +85,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
   CDart* nextLast = NULL;
   CDart* vertex   = NULL;  //brin désignant le sommet
 
-  CRegion* currentRegion = NULL;
+  CPyramidalRegion* currentRegion = NULL;
   bool newRegion = false;
   CDoublet current;
 
@@ -113,7 +113,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
 	  bool sameUp   = samePixelActuUp  (pix, ASegmentationMode, AFocusAttentionMode);
 
 	  if( !isPixelInTile(x, y, Relative) )
-	    currentRegion = getInclusionTreeRoot();
+	    currentRegion = inclusionTreeRoot();
 	  else if( sameLeft && sameUp)
 	    {
 	      //si les pixels last et up sont identiques
@@ -134,9 +134,9 @@ void CTile::extractMapMainLoop( CDart* ALast,
 
 	      // Hiérarchie des régions
 	      CPoint2D up = coordinateInParent(x, y, Relative);
-	      CPyramidalRegion* downRegion = static_cast<CPyramidalRegion*>(currentRegion);
+	      CPyramidalRegion* downRegion = currentRegion;
 	      CPyramidalRegion* upRegion   = static_cast<CPyramidalRegion*>
-		(m_matrixPixelRegion->getValue( up.getX(), up.getY() ));
+		(m_matrixPixelRegion->getValue( up.x(), up.y() ));
 
 	      downRegion->setUp(upRegion);
 	      if(upRegion)
@@ -147,17 +147,14 @@ void CTile::extractMapMainLoop( CDart* ALast,
 
 	      downRegion->setFirstPixel(CPoint2D(x,y));
 	      downRegion->setLabel((CPyramidalRegion::Label) upRegion->label());
-	      //On initialise le pointeur des fusions (m_nextSameCC)
-	      //Par defaut, la region pointe sur elle même.
-	      currentRegion->setNextSameCC(currentRegion);
 
 	      // Et on la rajoute à  la fin de la liste.
 	      // Rappel, la dernière cellule est désigné par le frère
 	      // de m_inclusionTreeRoot, et le chainage s'effectue
 	      // par les pointeurs fils et frère.
-	      getInclusionTreeRoot()->getBrother()->setFirstSon(currentRegion); // next
-	      currentRegion->setBrother(getInclusionTreeRoot()->getBrother()); // prev
-	      getInclusionTreeRoot()->setBrother(currentRegion);
+	      setFirstSon(inclusionTreeRoot()->brother(), currentRegion); // next
+	      setBrother(currentRegion, inclusionTreeRoot()->brother()); // prev
+	      setBrother(inclusionTreeRoot(), currentRegion);
 	    }
 
 	  // 2. On crée le doublet correspondant au pixel courant qui
@@ -238,9 +235,9 @@ void CTile::extractMap( CTile* ATileUp,
   assert(getNbRegions()==0);
 
   setInclusionTreeRoot( addMapInfiniteRegion() );
-  assert(getInclusionTreeRoot()!=NULL);
-  getInclusionTreeRoot()->setBrother   ( getInclusionTreeRoot() );
-  getInclusionTreeRoot()->setNextSameCC( getInclusionTreeRoot() );
+  assert(inclusionTreeRoot());
+  setBrother( inclusionTreeRoot(), inclusionTreeRoot() );
+  setNextSameCC( inclusionTreeRoot(), inclusionTreeRoot() );
 
   // 1. On crée le bord supérieur.
   CDart* last = makeTileBorder();
@@ -444,7 +441,7 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
   CDoublet doublet(ADoublet);
 
   CPoint2D up = coordinateInParent(doublet.getX(), doublet.getY(), Relative);
-  CDoublet upDoublet(up.getX(), up.getY(), doublet.getLinel());
+  CDoublet upDoublet(up.x(), up.y(), doublet.getLinel());
 
   CPyramidalDart* first  = static_cast<CPyramidalDart*>(addMapDart(ADoublet, ARegion));
   CPyramidalDart* prev   = first;
@@ -460,7 +457,7 @@ CDart* CTile::createSquareFace(CDart* ALast, CDart* AUp, CDoublet& ADoublet,
       doublet.setNextPointel();
       doublet.setNextLinel();
       up = coordinateInParent(doublet.getX(), doublet.getY(), Relative);
-      upDoublet.setDoublet(up.getX(), up.getY(), doublet.getLinel());
+      upDoublet.setDoublet(up.x(), up.y(), doublet.getLinel());
       actu = static_cast<CPyramidalDart*>(addMapDart(doublet, ARegion));
       upDart = static_cast<CPyramidalDart*>(m_matrixLignelDart->getDart(upDoublet));
 
