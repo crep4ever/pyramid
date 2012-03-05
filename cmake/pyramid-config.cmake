@@ -11,6 +11,8 @@ option(COMPRESS_MANPAGES "compress manpages" ON)
 option(OPENMP "multithreading with openmp" ON)
 option(RELEASE "release mode" ON)
 option(PROFILE "profile mode" OFF)
+option(DEBUG_PYRAMID "debug info for lib-pyramid" OFF)
+
 
 # Pour activer la partition déformable ou la désactiver.
 # 0 : pas de partition déformable
