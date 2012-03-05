@@ -90,7 +90,7 @@ void CTile::printMapRegions()
     std::cout << "WARNING: CTile::printMapRegions m_mapRegions is empty" << std::endl;
   else
     {
-      std::map<TRegionId, CRegion*>::iterator it;
+      std::map<TRegionId, CPyramidalRegion*>::iterator it;
       for ( it=m_mapRegions.begin(); it!=m_mapRegions.end(); ++it )
       std::cout << " Key (region id) = " << (*it).first
 	        << " Value (region*) = " << (*it).second << std::endl;
@@ -175,35 +175,35 @@ void CTile::printTreeStruct(struct SRegion* ARegions, uint ASize)
 //------------------------------------------------------------------------------
 void CTile::printChainRegionList()
 {
-  CRegion* rootRegion = getInclusionTreeRoot();
-  CRegion* tmp = rootRegion;
+  CPyramidalRegion* rootRegion = inclusionTreeRoot();
+  CPyramidalRegion* tmp = rootRegion;
   std::cout << "\n***** Affichage de la liste chainée des régions *****" << std::endl;
-  std::cout << "(" << tmp->getId();
-  while(tmp->getFirstSon() != NULL )
+  std::cout << "(" << tmp->id();
+  while(tmp->firstSon() != NULL )
     {
-      std::cout << ", " << tmp->getFirstSon()->getId();
-      tmp = tmp->getFirstSon();
+      std::cout << ", " << tmp->firstSon()->id();
+      tmp = tmp->firstSon();
     }
   std::cout << ")" << std::endl;
 
   tmp = rootRegion;
   while(tmp != NULL)
     {
-      std::cout << "\n region id: " << tmp->getId() << std::endl;
-      std::cout << " First Pixel: " << static_cast<CPyramidalRegion*>(tmp)->firstPixel() << std::endl;
+      std::cout << "\n region id: " << tmp->id() << std::endl;
+      std::cout << " First Pixel: " << tmp->firstPixel() << std::endl;
       //std::cout << " brin représentant: " << getDoublet(tmp->getRepresentativeDart()) << std::endl;
       // std::cout << " beta0 du brin représentant: " << getDoublet(beta0(tmp->getRepresentativeDart())) << std::endl;
       // std::cout << " id self loop (getNextSameCC) : " << tmp->getNextSameCC()->getId() << std::endl;// !commenter si méthode utilisée après relabelDarts
-      std::cout << " id prev element (getBrother): " << tmp->getBrother()->getId() << std::endl;
-      if( tmp->getFirstSon() != NULL )
+      std::cout << " id prev element (getBrother): " << tmp->brother()->id() << std::endl;
+      if( tmp->firstSon() != NULL )
 	{
-	  std::cout << " id next element (getFirstSon): " << tmp->getFirstSon()->getId() << std::endl;
-	  tmp = tmp->getFirstSon();
+	  std::cout << " id next element (getFirstSon): " << tmp->firstSon()->id() << std::endl;
+	  tmp = tmp->firstSon();
 	}
       else
 	{
 	  std::cout << "***** Fin de la liste chainée des régions *****\n" << std::endl << std::endl;
-	  tmp = tmp->getFirstSon();
+	  tmp = tmp->firstSon();
 	}
     }
 }
@@ -216,7 +216,7 @@ void CTile::printRegionList(std::deque<CPyramidalRegion*>& AList)
   int count = 0;
   for(it=AList.begin(); it != AList.end(); ++it)
     {
-      std::cout << "Region : " << (*it)->getId();
+      std::cout << "Region : " << (*it)->id();
       std::cout << "   FirstPixel : (" << (*it)->firstPixel() << std::endl << std::endl;
       ++count;
     }
@@ -518,19 +518,17 @@ bool CTile::checkNbChainRegions()
 bool CTile::isChainRegionListOk()
 {
   //std::cout << "\n[start] isChainRegionListOk" << std::endl;
-  bool result = true; bool result1=true; bool result2=true; bool result3=true; bool result4=true;
-
-  CRegion* rootRegion = getInclusionTreeRoot();
-  CRegion* tmp = rootRegion;
+  CPyramidalRegion* rootRegion = inclusionTreeRoot();
+  CPyramidalRegion* tmp = rootRegion;
   TRegionId id = 0;
-  CRegion* prev = NULL;
-  CRegion* next = NULL;
+  CPyramidalRegion* prev = NULL;
+  CPyramidalRegion* next = NULL;
 
-  while(tmp != NULL && result)
+  while(tmp)
     {
-      id   = tmp->getId();
-      next = tmp->getFirstSon();
-      prev = tmp->getBrother();
+      id   = tmp->id();
+      next = tmp->firstSon();
+      prev = tmp->brother();
 
       if( !(tmp->getRepresentativeDart() != NULL) )
 	{
@@ -538,32 +536,31 @@ bool CTile::isChainRegionListOk()
 	  return false;
 	}
 
-      if( !(id == tmp->getNextSameCC()->getId()) )
+      if( !(id == tmp->nextSameCC()->id()) )
 	{
 	  std::cerr << "CTile::isChainRegionListOk() : la région " << id << " ne boucle pas sur elle-même." << std::endl;
 	  return false;
 	}
 
       if( next != NULL)
-	if( !(id == next->getBrother()->getId()) )
+	if( !(id == next->brother()->id()) )
 	  {
 	    std::cerr << "CTile::isChainRegionListOk() : la région suivant la région " << id << " est incorrecte." << std::endl;
 	    return false;
 	  }
 
       if( tmp != rootRegion)
-	if( !(id == prev->getFirstSon()->getId()) )
+	if( !(id == prev->firstSon()->id()) )
 	  {
 	    std::cerr << "CTile::isChainRegionListOk() : la région précédant la région " << id << " est incorrecte." << std::endl;
 	    return false;
 	  }
 
-      tmp = tmp->getFirstSon();
-      result = result1 && result2 && result3 && result4;
+      tmp = tmp->firstSon();
     }
 
   //std::cout << "\n[start] isChainRegionListOk" << std::endl;
-  return result;
+  return true;
 }
 //------------------------------------------------------------------------------
 bool CTile::checkLignelDartMatrix(CVolume<CDart*>* AMatrix)
@@ -720,7 +717,8 @@ bool CTile::isOk()
   for(CDynamicCoverageAllRegions it(this); it.cont(); ++it)
     if((*it)->getRepresentativeDart()==NULL)
       {
-	std::cout << "Le brin représentant de la région " << (*it)->getId() << " est NULL" << std::endl;
+	std::cout << "Le brin représentant de la région " <<
+	  static_cast<CPyramidalRegion*>(*it)->id() << " est NULL" << std::endl;
 	return false;
       }
 

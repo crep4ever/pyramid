@@ -157,20 +157,18 @@ void CTile::traversePixels()
       }
 }
 
-int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
+int CTile::unionRegionRoot(CPyramidalRegion* region1, CPyramidalRegion* region2)
 {
   // l'union de deux régions revient à unir leurs racines
-  ARegion1=findRegionRoot(ARegion1);
-  ARegion2=findRegionRoot(ARegion2);
+  region1=findRegionRoot(region1);
+  region2=findRegionRoot(region2);
 
   //si les deux régions racines sont égales on sort de la fonction
-  if(ARegion1==ARegion2)
+  if(region1 == region2)
     return 0;
 
   // sinon on les fusionne en mettant la région d'identifiant le + petit
   // racine de l'arbre (cad la première pour notre ordre de parcours)
-  CPyramidalRegion* region1 = static_cast<CPyramidalRegion*>(ARegion1);
-  CPyramidalRegion* region2 = static_cast<CPyramidalRegion*>(ARegion2);
   if ( region1->firstPixel() < region2->firstPixel() )
     {
       region2->setNextSameCC(region1);
@@ -184,8 +182,8 @@ int CTile::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
       region2->mergeWith( region1 );//maj des paramètres des régions
     }
 
-  assert(ARegion1->getRepresentativeDart()!=NULL ||
-	 ARegion2->getRepresentativeDart() != NULL);
+  assert(region1->getRepresentativeDart()!=NULL ||
+	 region2->getRepresentativeDart() != NULL);
 
   return 1;
 }
@@ -336,24 +334,23 @@ void CTile::relabelDarts()
     }
 }
 
-void CTile::delRegion(CRegion* ARegion)
+void CTile::delRegion(CPyramidalRegion* region)
 {
-  assert( ARegion!=NULL );
-  assert( !static_cast<CPyramidalRegion*>(ARegion)->existUp() ||
-	  !(static_cast<CPyramidalRegion*>(ARegion)->up()->down()==ARegion));
+  assert( region != NULL );
+  assert( !region->existUp() || region->up()->down()!=region);
 
   setNbRegions(getNbRegions()-1);
 
-  if( ARegion->existSon() )
-    delRegion( ARegion->getFirstSon() );
+  if( region->existSon() )
+    delRegion( region->firstSon() );
 
-  if( ARegion->existBrother() )
-    delRegion( ARegion->getBrother() );
+  if( region->existBrother() )
+    delRegion( region->brother() );
 
-  if( ARegion->existNextSameCC() )
-    delRegion( ARegion->getNextSameCC() );
+  if( region->existNextSameCC() )
+    delRegion( region->nextSameCC() );
 
-  delete ARegion;
+  delete region;
 }
 
 void CTile::getRegionBoundingBox(CDart* ADart, std::vector<uint>& tab)

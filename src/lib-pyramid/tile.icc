@@ -619,7 +619,7 @@ namespace pyramid
   void CTile::removeAllRegions()
   {
     assert(getInclusionTreeRoot()->existSon());
-    delRegion(getInclusionTreeRoot());
+    delRegion(inclusionTreeRoot());
     setInclusionTreeRoot(NULL);
     assert(getNbRegions() == 0);
   }

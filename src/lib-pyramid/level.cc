@@ -50,8 +50,8 @@ void CLevel::createTopLevel()
   uint width  = imageWidth();
   uint height = imageHeight();
 
-  uint tileWidth=m_tileWidth;
-  uint tileHeight=m_tileHeight;
+  uint tileWidth  = m_tileWidth;
+  uint tileHeight = m_tileHeight;
 
   //  #pragma omp parallel for
   for(uint i=0; i<m_tileCounter; ++i)

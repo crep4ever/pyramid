@@ -1,6 +1,9 @@
 /*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
  * Copyright (C) Moka Team, moka@sic.univ-poitiers.fr
  *               http://www.sic.univ-poitiers.fr/moka/
+ *
+ * This file is part of lib-mapkernel
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +26,7 @@
 //******************************************************************************
 #include "math-extension.hh"
 #include "inline-macro.hh"
+#include "doublet.hh"
 
 #include <iostream>
 //******************************************************************************
@@ -95,7 +99,7 @@ public:
    *
    * @param ADoublet le doublet à "copier"
    */
-  //CVertex(const CDoublet& ADoublet);
+  CVertex(const CDoublet& ADoublet);
 
   /**
    * Destructeur

@@ -23,6 +23,7 @@ set(HEADERS
   )
 
 include_directories(${CMAKE_SOURCE_DIR}/lib-utils)
+include_directories(${CMAKE_SOURCE_DIR}/lib-mapkernel/topological-map)
 include_directories(${PNG_INCLUDE_DIR})
 
 add_library(utils SHARED ${SOURCES})

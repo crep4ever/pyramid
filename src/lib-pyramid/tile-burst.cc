@@ -150,19 +150,19 @@ void CTile::copyRegions(CTile* ATileUp)
       downRegion->setRepresentativeDart(static_cast<CPyramidalDart*>(upRegion->getRepresentativeDart())->down());
 
       if(upRegion->existNextSameCC())
-	downRegion->setNextSameCC(upRegion->getNextSameCC()->down());
+	downRegion->setNextSameCC(upRegion->nextSameCC()->down());
 
       if(upRegion->existFather() )
-	downRegion->setFather(upRegion->getFather()->down());
+	downRegion->setFather(upRegion->father()->down());
 
       if(upRegion->existBrother() )
-	downRegion->setBrother(upRegion->getBrother()->down());
+	downRegion->setBrother(upRegion->brother()->down());
 
       if(upRegion->existSon())
-	downRegion->setFirstSon(upRegion->getFirstSon()->down());
+	downRegion->setFirstSon(upRegion->firstSon()->down());
 
       CPoint2D upPixel = upRegion->firstPixel();
-      downRegion->setFirstPixel(CPoint2D(upPixel.getX()*ratiox, upPixel.getY()*ratioy));
+      downRegion->setFirstPixel(CPoint2D(upPixel.x()*ratiox, upPixel.y()*ratioy));
       downRegion->setNbPixels(0);
     }
 }
@@ -262,14 +262,14 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
 {
   //std::cout<<" start split"<<std::endl;
   CDart*    currentDart   = NULL;
-  CRegion*  currentRegion = NULL;
+  CPyramidalRegion*  currentRegion = NULL;
   CPyramidalRegion*  tempRegion    = NULL;
 
   std::deque<CPyramidalRegion*> initialRegions; // liste de toutes les régions du niveau avant le split
   std::deque<CPyramidalRegion*> newRegions;     // liste actualisée des régions du niveau
   std::deque<CPyramidalRegion*> allRegions;     // liste finale des régions
   std::deque<CDart*> newDarts;         // liste des brins correspondant aux arêtes insérées
-  std::stack<CRegion*> toDelete;       // liste des régions qui ont été splittées/refusionnées à supprimer
+  std::stack<CPyramidalRegion*> toDelete;       // liste des régions qui ont été splittées/refusionnées à supprimer
 
   std::deque<CPyramidalRegion*>::iterator it;
   std::deque<CPyramidalRegion*>::iterator it2;
@@ -305,8 +305,7 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
 		    tempRegion = *it2;
 		}
 	      updateRegionList(currentRegion, newRegions);
-	      static_cast<CPyramidalRegion*>(currentRegion)->up()
-		->setDown(tempRegion);
+	      currentRegion->up()->setDown(tempRegion);
 
 	      //On indique que la région a été traitée et qu'il faudra la supprimer
 	      toDelete.push(currentRegion);
@@ -319,12 +318,12 @@ void CTile::burstAndMerge(const FocusAttentionMode & AFocusAttentionMode,
   relabelDarts();
 
   //Reconstruction avec ordre total de la chaine
-  CRegion* region = getInclusionTreeRoot()->getFirstSon();
+  CPyramidalRegion* region = inclusionTreeRoot()->firstSon();
   while( region != NULL )
     {
       region->setFather( NULL );
-      allRegions.push_back(static_cast<CPyramidalRegion*>(region));
-      region = region->getFirstSon();
+      allRegions.push_back(region);
+      region = region->firstSon();
     }
 
   std::sort<std::deque<CPyramidalRegion*>::iterator>( allRegions.begin(),
@@ -521,7 +520,7 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
 
   if( current->existSon())
     {
-      CPyramidalRegion* son = current->getFirstSon();
+      CPyramidalRegion* son = current->firstSon();
       CDart* dart = beta2(son->down()->getRepresentativeDart());
       for(CDynamicCoverage1 it(this, dart); it.cont(); ++it)
 	dStack.push(*it);
@@ -530,7 +529,7 @@ void CTile::splitAllEdgesRegion(CRegion* ARegion)
 
       while( current->existBrother() )
 	{
-	  CPyramidalRegion* brother = current->getBrother();
+	  CPyramidalRegion* brother = current->brother();
 	  CDart* dart2 = beta2(brother->down()->getRepresentativeDart());
 	  for(CDynamicCoverage1 it(this, dart2); it.cont(); ++it )
 	    dStack.push(*it);
@@ -581,7 +580,7 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
 
   if(region->existSon())
     {
-      firstSon = region->getFirstSon();
+      firstSon = region->firstSon();
       CDart* dart = beta2(firstSon->down()->getRepresentativeDart());
       for( CDynamicCoverage1 it( this, dart ); it.cont() ; ++it )
 	{
@@ -591,7 +590,7 @@ void CTile::splitRegion( CDart* ADart, std::deque<CDart*>& toLabel )
       region = firstSon;
       while( region->existBrother() )
 	{
-	  brother = region->getBrother();
+	  brother = region->brother();
 	  CDart* dart2 = beta2(brother->down()->getRepresentativeDart());
 	  for( CDynamicCoverage1 it( this, dart2 ) ; it.cont() ; ++it )
 	    {
@@ -754,7 +753,7 @@ void CTile::createChainRegionList(std::deque<CPyramidalRegion*>& AList)
   // - le brother du 1er élément est la dernière région
   // - le son du dernier élément est NULL
 
-  CRegion* prev =  NULL;
+  CPyramidalRegion* prev =  NULL;
   std::deque<CPyramidalRegion*>::iterator it = AList.begin();
   prev = *it;
   prev->setNextSameCC(prev);
@@ -778,21 +777,21 @@ void CTile::createChainRegionList(std::deque<CPyramidalRegion*>& AList)
   //std::cout<<"[end] CTile::createChainRegionList"<<std::endl;
 }
 
-void CTile::updateRegionList(CRegion* ARegion,
-			     std::deque<CPyramidalRegion*>& ANewRegionList)
+void CTile::updateRegionList(CPyramidalRegion* region,
+			     std::deque<CPyramidalRegion*>& regionList)
 {
   //std::cout<<"[start] CTile::updateRegionList"<<std::endl;
-  createChainRegionList(ANewRegionList);
+  createChainRegionList(regionList);
 
-  CRegion* begin = *ANewRegionList.begin();
-  CRegion* end   = begin->getBrother();
+  CPyramidalRegion* begin = *regionList.begin();
+  CPyramidalRegion* end   = begin->brother();
 
-  ARegion->getBrother()->setFirstSon(begin);
-  begin->setBrother( ARegion->getBrother() );
-  end->setFirstSon( ARegion->getFirstSon() );
+  region->brother()->setFirstSon(begin);
+  begin->setBrother( region->brother() );
+  end->setFirstSon( region->firstSon() );
 
-  if( end->getFirstSon() != NULL )
-    end->getFirstSon()->setBrother(end);
+  if( end->firstSon() != NULL )
+    end->firstSon()->setBrother(end);
   else
     inclusionTreeRoot()->setBrother(end);
 
@@ -811,8 +810,8 @@ void CTile::merge(std::deque<CDart*>& toMerge,
   //std::cout<<"\n[start] CTile::merge"<<std::endl;
 
   CDart* dart       = NULL;
-  CRegion* parent1  = NULL;
-  CRegion* parent2  = NULL;
+  CPyramidalRegion* parent1  = NULL;
+  CPyramidalRegion* parent2  = NULL;
   int toDelete = getNewMark();
   std::deque<CDart*>::iterator it;
 
@@ -886,8 +885,8 @@ void CTile::merge()
   //std::cout<<"\n[start] CTile::merge"<<std::endl;
 
   CDart* dart       = NULL;
-  CRegion* parent1  = NULL;
-  CRegion* parent2  = NULL;
+  CPyramidalRegion* parent1  = NULL;
+  CPyramidalRegion* parent2  = NULL;
   int toDelete = getNewMark();
 
 

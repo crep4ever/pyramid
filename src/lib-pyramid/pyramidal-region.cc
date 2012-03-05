@@ -18,6 +18,7 @@
 
 #include "inline-macro.hh"
 #include "pyramidal-region.hh"
+#include "config.hh"
 #include INCLUDE_NON_INLINE("pyramidal-region.icc")
 
 using namespace Map2d;
@@ -72,40 +73,40 @@ void CPyramidalRegion::print()
 
   if(isInfiniteRegion())
     {
-      std::cout << " Région Infinie:   Id: " << getId() << std::endl;
+      std::cout << " Région Infinie:   Id: " << id() << std::endl;
 
       std::cout << "  Représentant: "
 	        << static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet()
 	        << "   Region Up: ";
       if(existUp())
-	std::cout << up()->getId();
+	std::cout << up()->id();
       else
 	std::cout << sVoid;
       std::cout << "   Region Down: ";
       if(existDown())
-	std::cout  <<  down()->getId();
+	std::cout  <<  down()->id();
       else
 	std::cout << sVoid;
       std::cout << std::endl;
 
       std::cout << "  Father: ";
       if(existFather())
-	std::cout << getFather()->getId();
+	std::cout << father()->id();
       else
 	std::cout << sVoid;
       std::cout << "   First Son: ";
       if(existSon())
-	std::cout << getFirstSon()->getId();
+	std::cout << firstSon()->id();
       else
 	std::cout << sVoid;
       std::cout << "   Brother: ";
       if(existBrother())
-	std::cout << getBrother()->getId();
+	std::cout << brother()->id();
       else
 	std::cout << sVoid;
       std::cout << "   Next Same CC: ";
       if(existNextSameCC())
-	std::cout << getNextSameCC()->getId();
+	std::cout << nextSameCC()->id();
       else
 	std::cout << sVoid;
       std::cout << std::endl;
@@ -113,10 +114,10 @@ void CPyramidalRegion::print()
     }
   else
     {
-      std::cout << " Région pyramidale:   Id: " << getId() << std::endl;
+      std::cout << " Région pyramidale:   Id: " << id() << std::endl;
 
       std::cout << "  Paramètres: ";
-      std::cout << "   First Pixel: "   << getFirstPixel();
+      std::cout << "   First Pixel: "   << firstPixel();
       std::cout << "   Profondeur: "    << getProfondeur();
       std::cout << "   Nb pixels: "     << getNbPixels();
       std::cout << std::endl;
@@ -138,34 +139,34 @@ void CPyramidalRegion::print()
       std::cout << "  Représentant: " << static_cast<CPyramidalDart*>(getRepresentativeDart())->doublet();
       std::cout << "   Region Up: ";
       if(existUp())
-	std::cout << up()->getId();
+	std::cout << up()->id();
       else
 	std::cout << sVoid;
       std::cout << "   Region Down: ";
       if(existDown())
-	std::cout << down()->getId();
+	std::cout << down()->id();
       else
 	std::cout << sVoid;
       std::cout << std::endl;
 
       std::cout << "  Father: ";
       if(existFather())
-	std::cout << getFather()->getId();
+	std::cout << father()->id();
       else
 	std::cout << sVoid;
       std::cout << "   First Son: ";
       if(existSon())
-	std::cout << getFirstSon()->getId();
+	std::cout << firstSon()->id();
       else
 	std::cout << sVoid;
       std::cout << "   Brother: ";
       if(existBrother())
-	std::cout << getBrother()->getId();
+	std::cout << brother()->id();
       else
 	std::cout << sVoid;
       std::cout << "   Next Same CC: ";
       if(existNextSameCC())
-	std::cout << getNextSameCC()->getId();
+	std::cout << nextSameCC()->id();
       else
 	std::cout << sVoid;
       std::cout << std::endl;

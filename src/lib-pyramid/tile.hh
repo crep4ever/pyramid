@@ -271,7 +271,7 @@ namespace pyramid
     //******************************************************************************
 
     /// Supprime une région
-    virtual void delRegion(CRegion* ARegion);
+    void delRegion(CPyramidalRegion* ARegion);
 
     /// Vide la carte associée à la tuile
     void emptyMap();
@@ -907,10 +907,10 @@ namespace pyramid
     /// @param AList: une liste de régions
     void createChainRegionList(std::deque<CPyramidalRegion*>& AList);
 
-    /// Prépare la liste une liste de régions avant un relabel
-    /// @param ARegion la région à partir de laquelle on doit insérer
-    /// @param ANewRegionList la liste des régions
-    void updateRegionList(CRegion* ARegion,
+    /// Updates a list of regions before relabeling
+    /// @param region the first region
+    /// @param regionList the list of regions
+    void updateRegionList(CPyramidalRegion* ARegion,
 			  std::deque<CPyramidalRegion*>& ANewRegionList);
 
 
@@ -1049,7 +1049,7 @@ namespace pyramid
 
     // on est obligé de redéfinir le unionRegionRoot pour trier
     // les régions par first pixel et pas par id
-    int unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2);
+    int unionRegionRoot(CPyramidalRegion* ARegion1, CPyramidalRegion* ARegion2);
 
     // on est obligé de redéfinir le relabelDarts pour les
     //relations up/down

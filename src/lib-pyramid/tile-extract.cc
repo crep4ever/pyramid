@@ -215,7 +215,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
 	      if( beta02(vertex) == beta21(vertex) &&
 		  beta0(vertex) != beta2(vertex) &&
 		  !isPixelOnBorder(x,y,Relative) )
-		vertexRemovalWithUnionFindRegions(vertex);
+		vertexRemoval(vertex);
 	      else
 		setPCell(current,true);
 	    }
@@ -241,7 +241,7 @@ void CTile::extractMap( CTile* ATileUp,
 
   // 1. On crée le bord supérieur.
   CDart* last = makeTileBorder();
-  setRepresentativeDart(getInclusionTreeRoot(), last);
+  setRepresentativeDart(inclusionTreeRoot(), static_cast<CPyramidalDart*>(last));
 
   // 2. On parcours l'image en faisant les fusions nécessaires.
   extractMapMainLoop( last, ASegmentationMode, AFocusAttentionMode );
@@ -540,7 +540,7 @@ mergeRegions(bool (CRegion::*AMethod)(CRegion*,int)const, int AThreshold)
       {
          if (r1!=r2)
          {
-            unionRegionRoot(r1,r2);
+	   unionRegionRoot(static_cast<CPyramidalRegion*>(r1),static_cast<CPyramidalRegion*>(r2));
             ++nbMerged;
          }
          edgeRemoval(currentDart);
