@@ -34,7 +34,6 @@
 #include "coordinate.hh"
 
 #ifdef CONTOUR_SIMPLIFICATION
-#include "topological-dart.hh"
 #include "moments2D.hh"
 #endif // CONTOUR_SIMPLIFICATION
 

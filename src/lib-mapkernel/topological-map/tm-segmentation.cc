@@ -25,6 +25,7 @@
 #include "topological-map.hh"
 #include "orders.hh"
 #include "coverage-edge-linels.hh"
+#include "chrono.hh"
 using namespace std;
 using namespace Map2d;
 //******************************************************************************

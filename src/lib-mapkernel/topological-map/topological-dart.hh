@@ -27,12 +27,12 @@
 #include "dart.hh"
 #include "doublet.hh"
 #include <vector>
+#include "edge.hh"
 //******************************************************************************
 namespace Map2d
 {
   class CRegion;
   class CContour;
-  class CEdge;
   
   class CTopologicalDart: public CDart
   {

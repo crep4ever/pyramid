@@ -24,6 +24,7 @@
 #include <iostream>
 #include <cassert>
 #include "topological-map.hh"
+#include "topological-dart.hh"
 #include "edge.hh"
 //******************************************************************************
 namespace Map2d

@@ -23,6 +23,8 @@
 //******************************************************************************
 #include "inline-macro.hh"
 #include "topological-map.hh"
+#include "chrono.hh"
+#include "region.hh"
 using namespace std;
 using namespace Map2d;
 //******************************************************************************
