@@ -48,6 +48,8 @@ namespace pyramid
     m_dartCount(0),
     m_regionCount(0),
     m_mark(NULL),
+    m_matrixPixelRegion(NULL),
+    m_matrixLignelDart(NULL),
     m_id(0),
     m_bottomRight(CPoint2D(0,0)),
     m_width(AWidth),
