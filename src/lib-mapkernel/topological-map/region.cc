@@ -27,14 +27,6 @@
 
 using namespace Map2d;
 //******************************************************************************
-CRegion::~CRegion()
-{
-  if ( existSon()        ) delete getFirstSon  ();
-  if ( existBrother()    ) delete getBrother   ();
-  if ( existNextSameCC() ) delete getNextSameCC();
-  
-}
-//------------------------------------------------------------------------------
 CInfiniteRegion::~CInfiniteRegion()
 {}
 //------------------------------------------------------------------------------

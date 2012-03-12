@@ -116,6 +116,15 @@ CRegion::CRegion(const CCoordinate& ACoord, CRegion* AFather) :
 #endif // DEFORMABLE_METHOD
 {}
 //******************************************************************************
+
+INLINE
+CRegion::~CRegion()
+{
+  if ( existSon()        ) delete getFirstSon  ();
+  if ( existBrother()    ) delete getBrother   ();
+  if ( existNextSameCC() ) delete getNextSameCC();
+}
+
 INLINE
 CRegion* CRegion::getFather() const
 { return FFather; }
