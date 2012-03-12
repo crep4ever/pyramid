@@ -805,41 +805,6 @@ CDynamicCoverageAllRegions::CDynamicCoverageAllRegions(CTopologicalMap* AMap) :
 {}
 //******************************************************************************
 INLINE
-void CRegion::draw()
-{
-   std::cout << "================= Arbre d'inclusion =================" 
-             << std::endl;
-
-   std::cout << "région de départ de l'arbre d'inclusion: " << this 
-            << std::endl;
-
-   CDynamicCoverageRegions it(this);
-   while (it.cont())
-   {
-      if (it->isInfiniteRegion()) std::cout << "Infinite region : ";
-      else std::cout << it->getFirstPixel() << " : ";
-
-      CRegion* prev = NULL;
-      std::cout << "( ";
-      for (CDynamicCoverageSons it2(*it); it2.cont(); ++it2)
-      {
-         if (prev != NULL && prev->getNextSameCC() != *it2)
-            std::cout << ") ( ";
-
-         std::cout << it2->getFirstPixel() << " ";
-
-         prev = *it2;
-      }
-
-      std::cout << ")\n";
-
-      ++it;
-   }
-   std::cout << "============== Fin d'affichage de l'arbre ===========" 
-             << std::endl;
-}
-//******************************************************************************
-INLINE
 CRegion* CRegion::find(CRegion* ARegion)
 {
    for (CDynamicCoverageRegions it(this); it.cont(); ++it)
