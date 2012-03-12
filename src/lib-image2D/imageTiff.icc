@@ -38,7 +38,7 @@ void CImageTiff::read(const IM_Box& ABox, int ADepth)
 }
 
 INLINE
-int CImageTiff::colorMode() const
+CImageTiff::ColorMode CImageTiff::colorMode() const
 {
   return FColorMode;
 }
@@ -147,11 +147,11 @@ void CImageTiff::unload()
 INLINE
 uint8* CImageTiff::getData()
 {
-  uint mode = colorMode() == RGB ? 3 : 1;
+  uint dim = colorMode() == RGB ? 3 : 1;
   IM_Pixel pix;
   unsigned long int n = 0;
 
-  uint8* data = new uint8[nbCurrentBoxPixels()*mode*sizeof(uint8)];
+  uint8* data = new uint8[nbCurrentBoxPixels()*dim*sizeof(uint8)];
   for( uint y = ystart(); y < ystop(); ++y)
     {
       pix.y = y;
@@ -160,7 +160,7 @@ uint8* CImageTiff::getData()
 	  pix.x = x;
 	  getPixel(pix, depth());
 
-	  for(uint i=0; i<mode; ++i)
+	  for(uint i=0; i<dim; ++i)
 	    data[n++] = pix.value[i];
 	}
     }
@@ -436,8 +436,9 @@ float** CImageTiff::getSimpleKmeansData()
     getSimpleKmeansDataRGB(data);
   else if(colorMode() == Grey)
     getSimpleKmeansDataGrey(data);
+  else
+    std::cout<<"CImageTiff::getSimpleKmeansData image encoding not supported"<<std::endl;
 
-  std::cout<<"CImageTiff::getSimpleKmeansData image encoding not supported"<<std::endl;
   return data;
 }
 
