@@ -27,7 +27,6 @@ void generateSquares(CImage2D & AImage, unsigned int AWidth)
 {
    if (!AImage.isOk()) return;
    
-   TLabel val = 0;
    unsigned x,y;
    for (y=0;y<AImage.getYSize();++y)   
       for (x=0;x<AImage.getXSize();++x)
