@@ -270,6 +270,13 @@ namespace pyramid
     // Méthodes utilitaires
     //******************************************************************************
 
+  private:
+    /// Decrease the number of regions in the tile
+    /// following the inclusion tree from a given region.
+    /// @param region : the starting point in the inclusion tree
+    void decreaseRegionCount(CPyramidalRegion* region);
+
+  public:
     /// Supprime une région
     void delRegion(CPyramidalRegion* ARegion);
 

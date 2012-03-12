@@ -334,22 +334,25 @@ void CTile::relabelDarts()
     }
 }
 
+void CTile::decreaseRegionCount(CPyramidalRegion* region)
+{
+  setNbRegions(getNbRegions()-1);
+
+  if( region->existSon() )
+    decreaseRegionCount( region->firstSon() );
+
+  if( region->existBrother() )
+    decreaseRegionCount( region->brother() );
+
+  if( region->existNextSameCC() )
+    decreaseRegionCount( region->nextSameCC() );
+}
+
 void CTile::delRegion(CPyramidalRegion* region)
 {
   assert( region != NULL );
   assert( !region->existUp() || region->up()->down()!=region);
-
-  setNbRegions(getNbRegions()-1);
-
-  if( region->existSon() )
-    delRegion( region->firstSon() );
-
-  if( region->existBrother() )
-    delRegion( region->brother() );
-
-  if( region->existNextSameCC() )
-    delRegion( region->nextSameCC() );
-
+  decreaseRegionCount(region);
   delete region;
 }
 
