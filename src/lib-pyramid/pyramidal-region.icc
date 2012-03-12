@@ -35,8 +35,7 @@ namespace pyramid
     CRegion      (  ),
     m_up         ( NULL ),
     m_down       ( NULL ),
-    m_label      ( Invalid ),
-    m_firstPixel ( 0,0 )
+    m_label      ( Invalid )
   {
     setNextSameCC(this);
     setFirstSon(NULL);
@@ -47,8 +46,7 @@ namespace pyramid
     CRegion      (  ),
     m_up         ( NULL ),
     m_down       ( NULL ),
-    m_label      ( Invalid ),
-    m_firstPixel ( 0,0 )
+    m_label      ( Invalid )
   { }
 
   INLINE
@@ -57,7 +55,6 @@ namespace pyramid
   {
     setId(static_cast<TRegionId>(0));
     setProfondeur(region.FProfondeur);
-    m_firstPixel   =  region.m_firstPixel;
     FNbPixels      =  region.FNbPixels;
     FMarks         =  region.FMarks;
     m_up           =  NULL;
@@ -137,11 +134,11 @@ namespace pyramid
 
   INLINE
   CPoint2D CPyramidalRegion::firstPixel() const
-  { return m_firstPixel; }
+  { return CPoint2D( getFirstPixel().getX(), getFirstPixel().getY() ); }
 
   INLINE
   void CPyramidalRegion::setFirstPixel(const CPoint2D& pixel)
-  { m_firstPixel = pixel; }
+  { CRegion::setFirstPixel(CCoordinate(pixel.x(), pixel.y())); }
 
   INLINE
   unsigned int CPyramidalRegion::getNbPixels() const

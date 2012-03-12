@@ -57,7 +57,6 @@ namespace pyramid
     CPyramidalRegion* m_up;   ///< region up
     CPyramidalRegion* m_down; ///< region down
     Label m_label;            ///< region's label
-    CPoint2D  m_firstPixel;   ///< first pixel (top-left) of the region
 
   public:
     /// Default constructor
