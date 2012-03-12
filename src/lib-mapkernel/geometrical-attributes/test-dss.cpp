@@ -35,7 +35,7 @@ CDss computeDss( char* dir,
       if ( !inv_xy ) point.y += ( negy ? -1 : +1 );
       else           point.x += ( negx ? -1 : +1 );
     }
-  
+
   res.init(APoint.x,APoint.y,point.x,point.y);
 
   if ( trace ) cout<<"Init : "<<res<<endl;
@@ -95,7 +95,7 @@ CDss computeDssLeft( char* dir,
       if ( !inv_xy ) point.y += ( negy ? -1 : +1 );
       else           point.x += ( negx ? -1 : +1 );
     }
-  
+
   res.init(point.x,point.y,APoint.x,APoint.y);
 
   if ( trace ) cout<<"Init : "<<res<<endl;
@@ -127,7 +127,7 @@ void testDssAllCases( char* dir, const Point<int> & APoint=Point<int>(0,0),
 		      bool trace=false )
 {
   CDss res;
-  
+
   res=computeDss(dir,APoint,trace,false,false,false); if ( !trace ) cout<<res<<endl;
   res=computeDss(dir,APoint,trace,true ,false,false); if ( !trace ) cout<<res<<endl;
   res=computeDss(dir,APoint,trace,false,true ,false); if ( !trace ) cout<<res<<endl;
@@ -144,15 +144,15 @@ void testDssBothDir( char* dir, const Point<int> & APoint=Point<int>(0,0),
 		      bool trace=false )
 {
   CDss res,res2,res3;
-  
+
   // On fait la reconnaissance dans le sens +x,+y à partir de APoint
   cout<<(res=computeDss(dir,APoint,trace,false,false,false))<<endl;
   res.drawPixels(cout);
-  
+
   // On affiche le dss inversé par la méthode reverse
   res.reverse();cout<<res<<endl;
   res.drawPixels(cout);
-  
+
   // Et on fait la reconnaissance dans le sens -x -y à partir de la
   // fin de la reconnaissance précédente.
   char dirRev[strlen(dir)];
@@ -162,7 +162,7 @@ void testDssBothDir( char* dir, const Point<int> & APoint=Point<int>(0,0),
   dirRev[j]=0;
 
   cout<<"dir="<<dir<<"  dirRev="<<dirRev<<endl;
-  
+
   cout<<(res2=computeDss(dirRev,res.FStartingPoint,trace,true,true,false))<<endl;
   res2.drawPixels(cout);
 
@@ -181,38 +181,38 @@ void testDssBothDirQuadrant( char* dir, const Point<int> & APoint=Point<int>(0,0
   // On fait la reconnaissance dans le sens +x,+y à partir de APoint
   cout<<(res=computeDss(dir,APoint,trace,false,false,false))<<endl;
     res.drawPixels(cout);
-  
+
 	res.rotateFirstQuadrant();
 	cout <<"Rotated DSS: "<<res<<endl;
 	res.drawPixels(cout);
-	
+
 	cout<<"************"<<endl;
 	// On fait la reconnaissance dans le sens -x,+y à partir de APoint
   cout<<(res=computeDss(dir,APoint,trace,true,false,false))<<endl;
     res.drawPixels(cout);
-  
+
 	res.rotateFirstQuadrant();
 	cout <<"Rotated DSS: "<<res<<endl;
 	res.drawPixels(cout);
-	
+
 	cout<<"************"<<endl;
 	// On fait la reconnaissance dans le sens -x,-y à partir de APoint
   cout<<(res=computeDss(dir,APoint,trace,true,true,false))<<endl;
     res.drawPixels(cout);
-  
+
 	res.rotateFirstQuadrant();
 	cout <<"Rotated DSS: "<<res<<endl;
 	res.drawPixels(cout);
-	
+
 	cout<<"************"<<endl;
 	// On fait la reconnaissance dans le sens x,-y à partir de APoint
   cout<<(res=computeDss(dir,APoint,trace,false,true,false))<<endl;
     res.drawPixels(cout);
-  
+
 	res.rotateFirstQuadrant();
 	cout <<"Rotated DSS: "<<res<<endl;
 	res.drawPixels(cout);
-	
+
 }
 
 //Fonction pour tester l'union de 2 dss puis l'union dans l'autre sens
@@ -230,8 +230,8 @@ void testUnionBothDir( const CDss& ADss1, const CDss& ADss2 )
   CDss dss2(ADss1); dss2.reverse();
 
   cout<<"dss1 = "<<dss1<<endl; // dss1.drawPixels(cout);
-  cout<<"dss2 = "<<dss2<<endl; // dss2.drawPixels(cout);  
-  
+  cout<<"dss2 = "<<dss2<<endl; // dss2.drawPixels(cout);
+
   cout <<"\t Union out="<<(int)dss1.unionDSS(dss2)<<endl;
   cout <<"New parameters = "<<dss1<<endl;
 }
@@ -250,7 +250,7 @@ void test_klette()
 void test_klette_et_inv()
 {
   cout << "########### TEST Klette et inverse"<<endl;
-  
+
   testDssBothDir("010001000100100001",Point<int>(-5,0),false);
 
   cout << "########### FIN TEST Klette et inverse"<<endl;
@@ -259,11 +259,11 @@ void test_klette_et_inv()
 void test_rotateFirstQuadrant()
 {
 	cout << "########### TEST rotateFirstQuadrant"<<endl;
-  
+
   testDssBothDirQuadrant("010001000100100001",Point<int>(-5,0),false);
 
   cout << "########### FIN TEST rotateFirstQuadrant"<<endl;
-	
+
 }
 
 
@@ -272,7 +272,7 @@ void test_reco()
   cout << "########### TEST Reco"<<endl;
 
   testDssAllCases("01001",Point<int>(10,10),false);
-  
+
   cout << "########### FIN TEST Reco"<<endl;
 }
 
@@ -281,7 +281,7 @@ void test_staircase()
   cout << "########### TEST Staircase"<<endl;
 
   testDssAllCases("01011",Point<int>(5,-8),false);
-  
+
   cout << "########### FIN Staircase"<<endl;
 }
 
@@ -290,18 +290,18 @@ void test_staircase2()
   cout << "########### TEST Staircase 2"<<endl;
 
   testDssAllCases("00101");
-  
+
   cout << "########### FIN Staircase 2"<<endl;
 }
 
 void test_vertical_length2()
 {
   //On teste le démarrage avec un segment vertical de longueur 2 puis octant 1
-  
+
   cout << "########### TEST Vertical 2"<<endl;
 
   testDssAllCases("1100",Point<int>(10,10));
-  
+
   cout << "########### FIN TEST Vertical 2"<<endl;
 }
 
@@ -312,7 +312,7 @@ void test_L()
   testDssBothDir("01");
 
   //  testDssBothDir("10");
-  
+
   cout << "########### FIN L"<<endl;
 }
 
@@ -326,7 +326,7 @@ void test_union()
   CDss dss2 = computeDss("00100",Point<int>(14,11));
 
   testUnionBothDir(dss1,dss2);
-  
+
   cout <<"########### FIN Union simple"<<endl;
 }
 
@@ -362,17 +362,17 @@ main()
                           // inverse à partir de la fin du premier => OK
 
   // test_rotateFirstQuadrant();
-	
+
   // test_L(); // test d'un L dans les 2 sens : OK
 
   // test_reco(); // OK
-  
+
   // test_staircase(); // OK
   // test_staircase2(); // OK
 
   // test_vertical_length2(); // OK
 
-  
+
   test_union(); // OK
   //  test_union2(); // OK
 

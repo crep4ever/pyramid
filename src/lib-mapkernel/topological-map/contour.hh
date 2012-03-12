@@ -29,14 +29,14 @@ namespace ImaGene { class GridCurve; }
 namespace Map2d
 {
   class CDart;
-  
+
   /// Un contour, c'est :
   ///   - un brin représentant.
   ///   - des attributs
   class CContour
   {
     friend class CTopologicalMap;
-    
+
   public:
 
     CContour() : FDart(NULL)
@@ -50,7 +50,7 @@ namespace Map2d
 	       , FExternalContour(false)
 #endif // DEFORMABLE_METHOD
     {}
-    
+
     CContour( CDart* ADart ) : FDart(ADart)
 #if DEFORMABLE_METHOD==CONTOUR_ENERGY_LINEL
 	       , FNbLinels(0)
@@ -60,17 +60,17 @@ namespace Map2d
 	       , FLengthMLP(0)
 	       , FDynamicMLP(NULL)
 	       , FExternalContour(false)
-#endif // DEFORMABLE_METHOD			       
+#endif // DEFORMABLE_METHOD
     {}
-    
+
     ~CContour()
     {}
-  
+
     void   setDart( CDart* ADart )
     { FDart = ADart; }
-    
+
     CDart* getDart() const
-    { return FDart; }    
+    { return FDart; }
 
     /// Return the energy saved with this contour.
     /// This is not necessarilly the current energy of the contour if
@@ -83,9 +83,9 @@ namespace Map2d
       return FLengthMLP;
 #else
       return 0.0;
-#endif // DEFORMABLE_METHOD			       
+#endif // DEFORMABLE_METHOD
     }
-    
+
   protected:
     /// Un brin du contour
     CDart* FDart;
@@ -94,21 +94,21 @@ namespace Map2d
   protected:
     /// Le nombre de lignels du contour actuel
     unsigned int FNbLinels;
-    
+
   public:
     unsigned int getNbLinels() const
     { return FNbLinels; }
-    
+
     void setNbLinels(unsigned int AValue)
     { FNbLinels=AValue; }
-    
+
     void incNbLinels( int ANb=1 )
     {
       assert(ANb>0 || FNbLinels>=(unsigned int)-ANb);
       FNbLinels+= ANb;
     }
 #endif // DEFORMABLE_METHOD
-    
+
 #if DEFORMABLE_METHOD==CONTOUR_ENERGY_MLP  || DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
   protected:
     double FLengthMLP;
@@ -135,7 +135,7 @@ namespace Map2d
     bool FExternalContour;
 #endif // DEFORMABLE_METHOD
   };
-  
+
 } // namespace Map2d
 //******************************************************************************
 #endif // CONTOUR_HH

@@ -43,7 +43,7 @@ bool CTopologicalMap::findMotifFrom(CDart* AStartDart,
 
    if ( ANbMatched!=NULL) *ANbMatched = 0;
 
-   if (!isMarked(AStartDart, AMarkToTest) || 
+   if (!isMarked(AStartDart, AMarkToTest) ||
        !AMap->isMarked(ADestDart, AMarkToTest2))
      return false;
 
@@ -70,8 +70,8 @@ bool CTopologicalMap::findMotifFrom(CDart* AStartDart,
       if ( isMarked(current, AMarkToTest) && !isMarked(current, AMarkTreated) )
       {
 	if ( ANbMatched!=NULL) ++(*ANbMatched);
-	
-	if (AMap->isMarked(other, AMarkTreated2) || 
+
+	if (AMap->isMarked(other, AMarkTreated2) ||
 	    !AMap->isMarked(other, AMarkToTest2))
             match = false;
          else
@@ -117,7 +117,7 @@ int CTopologicalMap::findMotif(unsigned int AMarkToTest,
 {
    unsigned int oneMatching;
    unsigned int * ptrOneMatching=NULL;
-   
+
    if ( ANbMatched!=NULL )
      {
        *ANbMatched=0; ptrOneMatching = &oneMatching;
@@ -139,12 +139,12 @@ int CTopologicalMap::findMotif(unsigned int AMarkToTest,
    bool match = false;
 
    // Now we mark each infinite face inside the map.
-   AMap->markOrbit(AMap->getInclusionTreeRoot()->getRepresentativeDart(), 
+   AMap->markOrbit(AMap->getInclusionTreeRoot()->getRepresentativeDart(),
 		   ORBIT_FACE, markToTest2);
    for (CDynamicCoverageCCRegions itr(AMap->getInclusionTreeRoot());
         itr.cont(); ++itr)
      {
-       AMap->markOrbit(AMap->beta2(itr->getRepresentativeDart()), 
+       AMap->markOrbit(AMap->beta2(itr->getRepresentativeDart()),
 		       ORBIT_FACE, markToTest2);
      }
 
@@ -156,12 +156,12 @@ int CTopologicalMap::findMotif(unsigned int AMarkToTest,
    for (CDynamicCoverageAll it2(AMap); !match && it2.cont(); ++it2)
    {
      match = findMotifFrom(*it1, index, AMarkToTest, markTreated,
-			   AMap, *it2,markToTest2, markTreated2, 
+			   AMap, *it2,markToTest2, markTreated2,
 			   ptrOneMatching, AMirror);
-     
+
      unmarkMotifMark(*it1, markTreated, (match ? -1 : index), -1,
 		     AMap, *it2, markTreated2, AMirror);
-     
+
      if ( ANbMatched!=NULL && oneMatching>(*ANbMatched) )
        (*ANbMatched) = oneMatching;
    }
@@ -186,13 +186,13 @@ int CTopologicalMap::findMotif(unsigned int AMarkToTest,
 //******************************************************************************
 unsigned int CTopologicalMap::countNumberOfMotifs(unsigned int AMarkToTest,
 						  CTopologicalMap* AMap,
-						  unsigned int* ANbMatched, 
+						  unsigned int* ANbMatched,
 						  bool AMirror)
 {
   unsigned int res = 0;
   unsigned int oneMatching;
   unsigned int * ptrOneMatching=NULL;
-   
+
    if ( ANbMatched!=NULL )
      {
        *ANbMatched=0; ptrOneMatching = &oneMatching;
@@ -214,12 +214,12 @@ unsigned int CTopologicalMap::countNumberOfMotifs(unsigned int AMarkToTest,
    bool match = false;
 
    // Now we mark each infinite face inside the map.
-   AMap->markOrbit(AMap->getInclusionTreeRoot()->getRepresentativeDart(), 
+   AMap->markOrbit(AMap->getInclusionTreeRoot()->getRepresentativeDart(),
 		   ORBIT_FACE, markToTest2);
    for (CDynamicCoverageCCRegions itr(AMap->getInclusionTreeRoot());
         itr.cont(); ++itr)
      {
-       AMap->markOrbit(AMap->beta2(itr->getRepresentativeDart()), 
+       AMap->markOrbit(AMap->beta2(itr->getRepresentativeDart()),
 		       ORBIT_FACE, markToTest2);
      }
 
@@ -229,15 +229,15 @@ unsigned int CTopologicalMap::countNumberOfMotifs(unsigned int AMarkToTest,
    for (CDynamicCoverageAll it2(AMap); it2.cont(); ++it2)
    {
      match = findMotifFrom(*it1, index, AMarkToTest, markTreated,
-			   AMap, *it2,markToTest2, markTreated2, 
+			   AMap, *it2,markToTest2, markTreated2,
 			   ptrOneMatching, AMirror);
-     
+
      unmarkMotifMark(*it1, markTreated, (match ? -1 : index), -1,
 		     AMap, *it2, markTreated2, AMirror);
-     
+
      if ( ANbMatched!=NULL && oneMatching>(*ANbMatched) )
        (*ANbMatched) = oneMatching;
-     
+
      if ( match ) ++res;
    }
 
@@ -365,7 +365,7 @@ unsigned int CTopologicalMap::findMaximalMotif2From(CDart * AFromDart,
       if (!isMarked(current, AMarkTreated))
       {
          setMark(current, AMarkTreated);
-         
+
          if (!AMap->isMarked(other, AMarkTreated2))
          {
             AMap->setMark(other, AMarkTreated2);
@@ -439,7 +439,7 @@ void CTopologicalMap::unmarkMotifMark(CDart* ADart, int AMark, int AIndex,
 
    stack<CDart*> toTreat;
    stack<CDart*> toTreat2;
-   
+
    toTreat.push(ADart);
    if (AMark2!=-1)
    {
@@ -447,7 +447,7 @@ void CTopologicalMap::unmarkMotifMark(CDart* ADart, int AMark, int AIndex,
       assert(ADart2!=NULL);
       toTreat2.push(ADart2);
    }
-   
+
    CDart* current=NULL;
    CDart* other=NULL;
    int i,j;
@@ -455,32 +455,32 @@ void CTopologicalMap::unmarkMotifMark(CDart* ADart, int AMark, int AIndex,
    while (!toTreat.empty())
    {
       current = toTreat.top(); toTreat.pop();
-      
+
       if ( AMark2!=-1 )
          { other = toTreat2.top(); toTreat2.pop(); }
 
       if ( isMarked(current, AMark) )
       {
          for (i = 0; i <= 2; ++i)
-         {         
-            j = (AMirror && (i == 0 || i == 1)) ? (i + 1) % 2 : i;         
-            
-            toTreat.push(beta(current, i));   
-            if ( AMark2!=-1 )         
+         {
+            j = (AMirror && (i == 0 || i == 1)) ? (i + 1) % 2 : i;
+
+            toTreat.push(beta(current, i));
+            if ( AMark2!=-1 )
                   toTreat2.push(AMap->beta(other, j));
          }
          if (AIndex != -1)
          {
             if (AIndexCopy!=-1)
-               setDirectInfo(current, AIndexCopy, 
+               setDirectInfo(current, AIndexCopy,
                              getDirectInfo(current, AIndex));
-            
+
             setDirectInfo(current, AIndex, NULL);
          }
-         unsetMark(current, AMark);         
-         if ( AMark2!=-1 ) AMap->unsetMark(other, AMark2);   
+         unsetMark(current, AMark);
+         if ( AMark2!=-1 ) AMap->unsetMark(other, AMark2);
       }
-   }   
+   }
 }
 //******************************************************************************
 unsigned int CTopologicalMap::findMaximalMotif(int AIndex,
@@ -523,7 +523,7 @@ unsigned int CTopologicalMap::findMaximalMotif(int AIndex,
 
          unmarkMotifMark(*it1, treatedMark, index2, (newMax?AIndex:-1));
          // Bug bizarre....  //   AMap, *it2, treatedMark2);
-         AMap->unmarkMotifMark(*it2, treatedMark2); 
+         AMap->unmarkMotifMark(*it2, treatedMark2);
       }
       ++nbDarts;
       if (nbDarts == onePercent && it1.cont())

@@ -71,7 +71,7 @@ INLINE
 void CTopologicalDart::setRegion(CRegion* ARegion)
 {
   assert( ARegion!=NULL );
-  
+
   FRegion=ARegion;
 }
 //******************************************************************************

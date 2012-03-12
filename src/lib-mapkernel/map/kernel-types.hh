@@ -62,7 +62,7 @@ enum
   ORBIT_NONE = -1,
   ORBIT_SELF,
   ORBIT_0,
-  ORBIT_1,      // Face  
+  ORBIT_1,      // Face
   ORBIT_2,      // Arête
   ORBIT_VERTEX, // Sommet
   ORBIT_12   	// CC
@@ -118,19 +118,19 @@ enum
   OP_BETA1,
   /// L'opération précédente était un operator++ de type beta2.
   OP_BETA2,
- 
+
   /// L'opération précédente était un operator++ de type beta02.
   OP_BETA02,
- 
+
   /// L'opération précédente était un operator++ de type beta21.
   OP_BETA21,
- 
+
   /// Pour les templates de parcours, les beta relatifs utilisés sont betai
   /// pour le premier,
   OP_BETAI,
   /// betaj pour le second.
   OP_BETAJ,
-  
+
   /// Opération de saut (pour les parcours qui utilisent une pile)
   OP_JUMP,
   /// End of op ???....

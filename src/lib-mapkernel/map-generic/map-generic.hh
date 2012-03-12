@@ -98,8 +98,8 @@ namespace Map2d
     CDart* beta20   (CDart* ADart) const;
     CDart* beta21   (CDart* ADart) const;
     CDart* beta212  (CDart* ADart) const;
-    
-    
+
+
     /** getDirectInfoAsDart
      *
      *  @param ADart Un brin de la carte
@@ -371,7 +371,7 @@ namespace Map2d
      * @precondition 0 <= ACellDim < 2
      */
     int degree(CDart* ADart, int ACellDim);
-    
+
     /**
      * Calcule le degré local d'une cellule de dimension ACellDim, c'est-à-dire le
      * nombre de cellules de dimension ACellDim+1 qui lui sont incidentes sans tenir
@@ -379,7 +379,7 @@ namespace Map2d
      *
      * Par exemple le degré d'un sommet incident à une boucle est 1 car il y a une
      * seule arête qui lui est incidente, alors que son degré local est 2 car on
-     * ne tient pas compte de Beta1. 
+     * ne tient pas compte de Beta1.
      *
      * @param ADart Un brin de la carte
      * @param ACellDim Une dimension
@@ -388,7 +388,7 @@ namespace Map2d
      * @precondition 0 <= ACellDim < 2
      */
     //int localDegree(CDart* ADart, int ACellDim);
-    
+
     /** countCells
      *
      *  @param AMarkNumber Un numéro de marque

@@ -26,24 +26,24 @@
 
 public:
     /**
-     * Transforme l'arbre d'inclusion en la liste de régions ordonnées (en 
+     * Transforme l'arbre d'inclusion en la liste de régions ordonnées (en
      * utilisant les champs de la manière expliquée pour computeInclusionTree)
      * C'est la méthode "inverse" de computeInclusionTree.
      */
     void transformInclusionTreeInOrderedList();
-    
+
     /**
-     * Parcours toute la carte en fusionnant les couples r1,r2 de régions 
-     * voisines vérifiant r1->AMethod(r2,AThreshold). 
+     * Parcours toute la carte en fusionnant les couples r1,r2 de régions
+     * voisines vérifiant r1->AMethod(r2,AThreshold).
      * @param AThreshold le seuil en dessous duquel on fusionne
      * @param ASort un booléen pour trier les arêtes par gradient croissant
      *       si vrai (si faux les arêtes sont randomisées).
      * @return le nombre de régions fusionnées
      */
     unsigned int mergeRegions(bool (CRegion::*AMethod)
-                              (CTopologicalMap*,CRegion*,int), 
+                              (CTopologicalMap*,CRegion*,int),
                               int AThreshold, bool ASort=true);
-    
+
     /**
      * Parcours toute la carte en fusionnant les couples r1,r2 de
      * régions voisines vérifiant r1->AMethod(r2,AThreshold) et
@@ -63,22 +63,22 @@ public:
     /// @param ASort un booléen pour trier les arêtes par gradient croissant
     ///        si vrai (si faux les arêtes sont randomisées).
     /// @return le nombre de régions fusionnées
-    unsigned int segment(unsigned int AThreshold, bool ASort=true);    
-  
+    unsigned int segment(unsigned int AThreshold, bool ASort=true);
+
     /// Segmente la carte en fusionnant les régions proche selon AThreshold,
     /// le seuil est pondéré par la longueur des arêtes
     /// @param AThreshold le seuil en dessous duquel on fusionne
     /// @param ASort un booléen pour trier les arêtes par gradient croissant
     ///        si vrai (si faux les arêtes sont randomisées).
     /// @return le nombre de régions fusionnées
-    unsigned int segmentWithPonderation(unsigned int AThreshold, 
+    unsigned int segmentWithPonderation(unsigned int AThreshold,
 				      bool ASort=true);
 
-    /// Supprime les petites régions (de taille < à AThreshold) en les 
+    /// Supprime les petites régions (de taille < à AThreshold) en les
     /// fusionnants avec leur région voisine la plus proche en terme de couleur.
     /// @return le nombre de petites régions supprimées
     unsigned int removeSmallRegions(unsigned int AThreshold);
-   
+
     /**
      * Fonction relabélisant les brins après la fusion de régions pour qu'ils
      * appartiennent tous à la région mère dans les arbres union-find

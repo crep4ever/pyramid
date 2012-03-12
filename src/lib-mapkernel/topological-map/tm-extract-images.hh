@@ -47,7 +47,7 @@ public:
      *  Cette méthode fonctionne uniquement si le sommet est de degré 2, cad
      *  incident uniquement à deux arêtes.
      *  Attention : Ne met pas à jour les brins représentants
-     * 
+     *
      *  @precondition Le sommet incident à ADart est de degré 2
      *  @param  ADart Un brin de la carte
      *  @param  AMarkNumber Un numéro de marque pour marquer les brins
@@ -58,12 +58,12 @@ public:
     /**
      * Supprime le sommet en utilisant la méthode basicVertexRemoval et en
      * ajoutant la mise à jour des brins représentants si besoin
-     */ 
+     */
     void vertexRemoval(CDart* ADart, int AMarkNumber = -1);
-   
+
     /**
      *  Supprime l'arête incidente à ADart en "recollant" les deux faces
-     *  autour de cette arête. Seul la topologie (les brins) sont supprimés, 
+     *  autour de cette arête. Seul la topologie (les brins) sont supprimés,
      *  la matrice d'éléments interpixel n'est pas mise à jour (i.e. les linels)
      *
      *  @param  ADart       Un brin de la carte

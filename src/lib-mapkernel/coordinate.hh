@@ -116,7 +116,7 @@ public:
    */
   void incY(int AIncY);
 
- 
+
   /**
    * Change la valeur de la composante ADim du sommet.
    *
@@ -151,29 +151,29 @@ public:
 // @}
 // @name Constantes
 // @{
-  
+
 /**
  * Le sommet de cordonnées (0,0).
  */
 static const CCoordinate COORDINATE_ORIGIN(0,0);
-  
+
 /**
  * Le vecteur de composantes (1,0).
  */
 static const CCoordinate COORDINATE_OX(1,0);
-  
+
 /**
  * Le vecteur de composantes (0,1).
  */
 static const CCoordinate COORDINATE_OY(0,1);
-  
-  
+
+
 /** BASE
  * Les trois vecteurs de base OX et OY placés dans un tableau.
  */
-static const CCoordinate COORDINATE_BASE[2] = { COORDINATE_OX, 
+static const CCoordinate COORDINATE_BASE[2] = { COORDINATE_OX,
 						COORDINATE_OY };
-  
+
 // @}
 
 //******************************************************************************

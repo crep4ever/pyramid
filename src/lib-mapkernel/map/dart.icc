@@ -30,7 +30,7 @@ namespace Map2d
 // On initialise pas les champs FMarks car tout les bits sont
 // initialisées à faux par défaut (constructeur de bitset).
 INLINE
-CDart::CDart() 
+CDart::CDart()
 #ifdef CONTOUR_SIMPLIFICATION
   : FEdgeAttribute (NULL)
 #endif
@@ -45,11 +45,11 @@ void CDart::init(const std::bitset<NB_MARKS> & AMarks)
 {
   FBeta[0]   = NULL;
   FBeta[1]   = NULL;
-  FBeta[2]   = NULL;  
+  FBeta[2]   = NULL;
   FMarks     = AMarks;
 #ifdef CONTOUR_SIMPLIFICATION
   FEdgeAttribute = NULL;
-#endif  
+#endif
 }
 //******************************************************************************
 INLINE
@@ -63,21 +63,21 @@ void CDart::copy( CDart* ADart )
 
   for ( int i=0; i<NB_DIRECT_INFO; ++i )
     FDirectInfo[i] = ADart->FDirectInfo[i];
-  
+
 #ifdef CONTOUR_SIMPLIFICATION
   FEdgeAttribute = ADart->FEdgeAttribute;
-#endif  
+#endif
 }
 //******************************************************************************
 // Destructeur
-// Attention, si le brin n'a pas été préalablement décousu alors ses brins 
+// Attention, si le brin n'a pas été préalablement décousu alors ses brins
 // voisins pointent désormais vers une adresse invalide.
 INLINE
 CDart::~CDart()
 {
 #ifdef CONTOUR_SIMPLIFICATION
   CEdgeAttribute* toDelete = FEdgeAttribute;
-  FEdgeAttribute=NULL;  delete toDelete; 
+  FEdgeAttribute=NULL;  delete toDelete;
 #endif // CONTOUR_SIMPLIFICATION
 }
 //******************************************************************************
@@ -97,7 +97,7 @@ INLINE
 CDart* CDart::getBeta(int AIndex) const
 {
   assert( 0<=AIndex && AIndex<=2);
-  
+
   return FBeta[AIndex];
 }
 //******************************************************************************
@@ -117,7 +117,7 @@ INLINE
 void CDart::setBeta(CDart* ADart, int AIndex)
 {
   assert( 0<=AIndex && AIndex<=2);
-  
+
   FBeta[AIndex] = ADart;
 }
 //******************************************************************************
@@ -223,11 +223,11 @@ INLINE
 CEdgeAttribute* CDart::removeEdgeAttribute()
 {
   CEdgeAttribute* res = NULL;
-  
+
   if ( FEdgeAttribute!=NULL )
     {
       res        = FEdgeAttribute;
-      FEdgeAttribute = NULL;      
+      FEdgeAttribute = NULL;
     }
   else
     {
@@ -246,14 +246,14 @@ void CDart::orientEdgesAttribute( CDart* ADart )
   assert( ADart->getEdgeAttribute()!=NULL );
   assert( !isFree2() );
   assert( !ADart->isFree2() );
-     
+
   if ( FEdgeAttribute==NULL )
     {
       FEdgeAttribute = getBeta2()->FEdgeAttribute;
       getBeta2()->FEdgeAttribute = NULL;
       FEdgeAttribute->FDss.reverse();
     }
-  
+
   if ( ADart->FEdgeAttribute==NULL )
     {
       ADart->FEdgeAttribute = ADart->getBeta2()->FEdgeAttribute;

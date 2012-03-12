@@ -30,7 +30,7 @@
 using namespace Map2d;
 using namespace std;
 //******************************************************************************
-int CTopologicalMap::deformationApply( CDart * ADart, 
+int CTopologicalMap::deformationApply( CDart * ADart,
                                        const CDoublet & ALinel,
                                        CDoublet & ARevert )
 {
@@ -140,7 +140,7 @@ int CTopologicalMap::deformationApply( CDart * ADart,
 			  t1.setNextPointel();
 			  t1 = getOtherLinel(t1);
 			}
-		      while( !isPCell( t1 ) );		      
+		      while( !isPCell( t1 ) );
 		    }
 		  else
 		    {
@@ -151,8 +151,8 @@ int CTopologicalMap::deformationApply( CDart * ADart,
 			  t1 = getOtherLinel(t1);
 			  t1.setNextPointel();
 			}
-		      while( !isPCell( t1 ) ); 
-		    }		  
+		      while( !isPCell( t1 ) );
+		    }
 		  setDoublet( dEdge, t1 );
 		  dEdge = beta02( dEdge );
 		}
@@ -194,7 +194,7 @@ int CTopologicalMap::deformationApply( CDart * ADart,
 			  t2.setNextPointel();
 			  t2 = getOtherLinel(t2);
 			}
-		      while( !isPCell( t2 ) );		      
+		      while( !isPCell( t2 ) );
 		    }
 		  else
 		    {
@@ -205,8 +205,8 @@ int CTopologicalMap::deformationApply( CDart * ADart,
 			  t2 = getOtherLinel(t2);
 			  t2.setNextPointel();
 			}
-		      while( !isPCell( t2 ) ); 
-		    }		  
+		      while( !isPCell( t2 ) );
+		    }
 		  setDoublet( dEdge2, t2 );
 		  dEdge2 = beta02( dEdge2 );
 		}

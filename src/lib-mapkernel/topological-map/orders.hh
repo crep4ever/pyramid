@@ -28,7 +28,7 @@
 #include "topological-dart.hh"
 //******************************************************************************
 /**
- * Ordre sur les régions utilisant les first pixel. 
+ * Ordre sur les régions utilisant les first pixel.
  */
 class orderRegionFirstPixel:
       public std::binary_function<Map2d::CRegion*, Map2d::CRegion*, bool>
@@ -45,11 +45,11 @@ class orderRegionFirstPixel:
  * différence pour l'autre brin.
  */
 class orderEdgesInterval:
-      public std::binary_function<Map2d::CTopologicalDart*, 
+      public std::binary_function<Map2d::CTopologicalDart*,
       Map2d::CTopologicalDart*, bool>
 {
    public:
-      bool operator()(Map2d::CTopologicalDart* ADart1, 
+      bool operator()(Map2d::CTopologicalDart* ADart1,
 		      Map2d::CTopologicalDart* ADart2)
       {
 	assert( ADart1!=NULL );
@@ -71,11 +71,11 @@ class orderEdgesInterval:
 };
 //******************************************************************************
 class orderEdgesLg:
-      public std::binary_function<Map2d::CTopologicalDart*, 
+      public std::binary_function<Map2d::CTopologicalDart*,
       Map2d::CTopologicalDart*, bool>
 {
    public:
-      bool operator()(Map2d::CTopologicalDart* ADart1, 
+      bool operator()(Map2d::CTopologicalDart* ADart1,
                     Map2d::CTopologicalDart* ADart2)
       {
 	assert( ADart1!=NULL );

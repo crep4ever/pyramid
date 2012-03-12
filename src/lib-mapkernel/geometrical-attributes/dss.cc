@@ -84,7 +84,7 @@ CDss &CDss::operator=(const CDss &ADss)
   Fc		 = ADss.Fc;
   FLastDir       = ADss.FLastDir;
 
-  
+
   return *this;
 }
 //******************************************************************************
@@ -104,22 +104,22 @@ bool CDss::init(const Point<int> &APoint1, const  Point<int> &APoint2)
   Fb             = APoint2.y-APoint1.y;
   Fc             = Fa*FLowerRight.y-Fb*FLowerRight.x;
   FLastDir       = FDir1;
-  
+
   return true;
 }
 //------------------------------------------------------------------------------
 bool CDss::init(int Ax1, int Ay1, int Ax2, int Ay2)
-{ 
+{
   return init(Point<int>(Ax1,Ay1),Point<int>(Ax2,Ay2));
 }
 //******************************************************************************
 void CDss::reverse()
 {
   { // On échange le point de départ et le point d'arrivée.
-    Point<int> tmp(FStartingPoint); 
+    Point<int> tmp(FStartingPoint);
     FStartingPoint = FEndPoint;
     FEndPoint      = tmp;
-  }   
+  }
 
   {
     Point<int> tmp1(FLowerLeft);
@@ -131,11 +131,11 @@ void CDss::reverse()
     FUpperLeft  = tmp2;
     FUpperRight = tmp1;
   }
-  
+
   Fa = -Fa;
   Fb = -Fb;
-  Fc = Fa*FLowerRight.y-Fb*FLowerRight.x;    
-  
+  Fc = Fa*FLowerRight.y-Fb*FLowerRight.x;
+
   if ( FDir2==0 )
     { // On n'a qu'une direction, il suffit de l'inverser.
       FDir1    = -FDir1;
@@ -168,7 +168,7 @@ bool CDss::addPointRight(const Point<int> &APoint)
     return false;
 
   int dir = FEndPoint.getDirection(APoint);
-  
+
   // 1) On n'est pas encore dans un quadrant précis,
   //    i.e. on est horizontal ou vertical.
   //    Si la direction reste la même, on prolonge le DSS
@@ -179,23 +179,23 @@ bool CDss::addPointRight(const Point<int> &APoint)
       FLowerRight.shiftInDirection(FDir1);
       FUpperRight.shiftInDirection(FDir1);
       FEndPoint = APoint;
-      return true;      
+      return true;
     }
 
   // 2) Ici soit on est déjà dans un quadrant, i.e. on est en
   // diagonale, soit on vient juste de changer de direction.
   if ( FDir2==0 )
     { // On vient de changer de direction : ce point sera forcément accepté
-      FDir2 = dir; 
+      FDir2 = dir;
     }
   else
     { // Vérification de la compatibilité avec les 2 directions courantes
       if ( dir!=FDir1 && dir!=FDir2 ) return false;
     }
-  
+
   // Test du cas courant et mis à jour des paramètres.
   int h = Fb*APoint.x - Fa*APoint.y + Fc;
-  
+
   // Si on est dans la droite, il n'y a rien à mettre à jour
   if ( 0<h && h<abs(Fa)+abs(Fb)-1 )
     {}
@@ -205,13 +205,13 @@ bool CDss::addPointRight(const Point<int> &APoint)
     }
   else if ( h==abs(Fa)+abs(Fb)-1 )
     {
-      FUpperRight = APoint; 
+      FUpperRight = APoint;
     }
   else if ( h==-1 )
     {
       FLowerRight = APoint;
       FUpperLeft = FUpperRight;
-      
+
       Fa = APoint.x - FLowerLeft.x;
       Fb = APoint.y - FLowerLeft.y;
       Fc = Fa*FLowerRight.y - Fb*FLowerRight.x;
@@ -219,20 +219,20 @@ bool CDss::addPointRight(const Point<int> &APoint)
   else if ( h==abs(Fa)+abs(Fb) )
     {
       assert( h==abs(Fa)+abs(Fb) );
-      
-      FUpperRight = APoint; 
+
+      FUpperRight = APoint;
       FLowerLeft = FLowerRight;
-      
+
       Fa = APoint.x - FUpperLeft.x;
       Fb = APoint.y - FUpperLeft.y;
       Fc = Fa*FLowerRight.y - Fb*FLowerRight.x;
     }
   else
     return false; // Le point est rejeté.
-  
+
   FEndPoint = APoint; // On décale le dernier point
   FLastDir  = dir; // On met à jour la dernière direction utilisée
-  
+
   return true;
 }
 //******************************************************************************
@@ -244,7 +244,7 @@ bool CDss::addPointLeft ( const Point<int> &APoint )
     return false;
 
   int dir = APoint.getDirection(FStartingPoint);
-  
+
   // 1) On n'est pas encore dans un quadrant précis,
   //    i.e. on est horizontal ou vertical.
   //    Si la direction reste la même, on prolonge le DSS
@@ -255,23 +255,23 @@ bool CDss::addPointLeft ( const Point<int> &APoint )
       FLowerLeft.shiftInReverseDirection(FDir1);
       FUpperLeft.shiftInReverseDirection(FDir1);
       FStartingPoint = APoint;
-      return true;      
+      return true;
     }
 
   // 2) Ici soit on est déjà dans un quadrant, i.e. on est en
   // diagonale, soit on vient juste de changer de direction.
   if ( FDir2==0 )
     { // On vient de changer de direction : ce point sera forcément accepté
-      FDir2 = dir; 
+      FDir2 = dir;
     }
   else
     { // Vérification de la compatibilité avec les 2 directions courantes
       if ( dir!=FDir1 && dir!=FDir2 ) return false;
     }
-  
+
   // Test du cas courant et mis à jour des paramètres.
-  int h = Fb*APoint.x - Fa*APoint.y + Fc;  
-  
+  int h = Fb*APoint.x - Fa*APoint.y + Fc;
+
   // Si on est dans la droite, il n'y a rien à mettre à jour
   if ( 0<h && h<abs(Fa)+abs(Fb)-1 )
     {}
@@ -281,13 +281,13 @@ bool CDss::addPointLeft ( const Point<int> &APoint )
     }
   else if ( h==abs(Fa)+abs(Fb)-1 )
     {
-      FUpperLeft = APoint; 
+      FUpperLeft = APoint;
     }
   else if ( h==-1 )
     {
       FLowerLeft  = APoint;
       FUpperRight = FUpperLeft;
-      
+
       Fa = FLowerRight.x - APoint.x;
       Fb = FLowerRight.y - APoint.y;
       Fc = Fa*FLowerRight.y - Fb*FLowerRight.x;
@@ -295,10 +295,10 @@ bool CDss::addPointLeft ( const Point<int> &APoint )
   else if ( h==abs(Fa)+abs(Fb) )
     {
       assert( h==abs(Fa)+abs(Fb) );
-      
-      FUpperLeft  = APoint; 
+
+      FUpperLeft  = APoint;
       FLowerRight = FLowerLeft;
-      
+
       Fa = FUpperRight.x - APoint.x;
       Fb = FUpperRight.y - APoint.y;
       Fc = Fa*FLowerRight.y - Fb*FLowerRight.x;
@@ -308,14 +308,14 @@ bool CDss::addPointLeft ( const Point<int> &APoint )
 
   FStartingPoint = APoint; // On décale le premier point
   FLastDir	 = dir; // On met à jour la dernière direction utilisée
-  
+
   return true;
 }
 //******************************************************************************
 bool CDss::unionDSS(const CDss &ADss)
 {
   if( FEndPoint!=ADss.FStartingPoint ) return false;
-  
+
   CDss localdss;
 
   ///Test Unimodularité
@@ -363,7 +363,7 @@ bool CDss::unionDSS(const CDss &ADss)
 //******************************************************************************
 /**  Define the preimage based on CDss parameters
  *
- *  A = Dual (FUpperRight, FLowerLeft) 
+ *  A = Dual (FUpperRight, FLowerLeft)
  *  D = (Fb/Fa,Fc/Fa)
  *  C = Dual (FUpperLeft, FLowerRight)
  *  B = (Fb/Fa,(Fc-|Fb|-|Fa|+1)/Fa);
@@ -391,7 +391,7 @@ void switchPoint(Point<int> &A, Point<int> &B)
 //Rotate a DSS to the first Quadrant
 void CDss::rotateFirstQuadrant()
 {
-	
+
 	if (Fa<0)
 	{
 		Fa = abs(Fa);
@@ -401,7 +401,7 @@ void CDss::rotateFirstQuadrant()
 		FLowerRight.x = - FLowerRight.x;
 		switchPoint(FUpperLeft,FLowerLeft);
 		switchPoint(FUpperRight,FLowerRight);
-		
+
 		FStartingPoint.x = -FStartingPoint.x;
 		FEndPoint.x = -FEndPoint.x;
 		if (abs(FDir1) == 1)
@@ -411,7 +411,7 @@ void CDss::rotateFirstQuadrant()
 		if (abs(FLastDir) == 1)
 			FLastDir = -FLastDir;
 	}
-	
+
 	if (Fb<0)
 	{
 		Fb = abs(Fb);
@@ -419,11 +419,11 @@ void CDss::rotateFirstQuadrant()
 		FUpperRight.y = -FUpperRight.y;
 		FLowerLeft.y = -FLowerLeft.y;
 		FLowerRight.y = - FLowerRight.y;
-		
+
 		switchPoint(FUpperLeft,FLowerLeft);
 		switchPoint(FUpperRight,FLowerRight);
-		
-		
+
+
 		FStartingPoint.y = -FStartingPoint.y;
 		FEndPoint.y = -FEndPoint.y;
 		if (abs(FDir1) == 2)
@@ -433,7 +433,7 @@ void CDss::rotateFirstQuadrant()
 		if (abs(FLastDir) == 2)
 			FLastDir = -FLastDir;
 	}
-	
+
 	//We update Fc
 	Fc = -Fb*FLowerLeft.x + Fa*FLowerLeft.y;
 }
@@ -448,10 +448,10 @@ Point<int> CDss::prevPoint(Point<int> &APoint) const
 {
   assert ( FDir1!=0 );
   assert ( APoint!=FStartingPoint );
-  
+
   //We test the point in direction FDir1 in first
   Point<int> res(APoint.getPointInDirection(-FDir1));
-  int r = res.x*Fb - res.y*Fa + Fc;    
+  int r = res.x*Fb - res.y*Fa + Fc;
 
   if ( (r>=0) and (r<abs(Fa)+abs(Fb)) )
     return res;
@@ -461,10 +461,10 @@ Point<int> CDss::prevPoint(Point<int> &APoint) const
       res = APoint.getPointInDirection(-FDir2);
       r = res.x*Fb - res.y*Fa + Fc;
       assert ( (r>=0) and (r<abs(Fa)+abs(Fb)) );
-      
+
       return res;
     }
-  
+
   assert(false);
   return APoint;
 }
@@ -473,10 +473,10 @@ Point<int> CDss::nextPoint(Point<int> &APoint) const
 {
   assert ( FDir1!=0 );
   assert ( APoint!=FEndPoint );
-  
+
   //We test the point in direction FDir1 in first
   Point<int> res(APoint.getPointInDirection(FDir1));
-  int r = res.x*Fb - res.y*Fa + Fc;    
+  int r = res.x*Fb - res.y*Fa + Fc;
 
 	if ( (r>=0) and (r<abs(Fa)+abs(Fb)) )
     return res;
@@ -486,10 +486,10 @@ Point<int> CDss::nextPoint(Point<int> &APoint) const
       res = APoint.getPointInDirection(FDir2);
       r = res.x*Fb - res.y*Fa + Fc;
       assert ( (r>=0) and (r<abs(Fa)+abs(Fb)) );
-      
+
       return res;
     }
-  
+
   assert(false);
   return APoint;
 }
@@ -499,7 +499,7 @@ void CDss::drawPixels(ostream& AOs) const
   Point<int> p(FStartingPoint);
 
   AOs << "Pixels : "<<p;
-  
+
   while ( p!=FEndPoint )
     {
       p	= nextPoint(p);
@@ -507,13 +507,13 @@ void CDss::drawPixels(ostream& AOs) const
     }
 
 
-  
+
   AOs<<endl;
 }
 //------------------------------------------------------------------------------
 int CDss::getNbPixels() const
 {
-  Point<int> tmp(FEndPoint-FStartingPoint);  
+  Point<int> tmp(FEndPoint-FStartingPoint);
   return abs(tmp.x)+abs(tmp.y)+1;
 }
 //------------------------------------------------------------------------------

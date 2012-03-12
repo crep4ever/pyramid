@@ -27,8 +27,8 @@ namespace Map2d
 {
 //******************************************************************************
 INLINE
-CCoverageEdgeLinels::CCoverageEdgeLinels( CTopologicalMap * AMap, 
-					  const CDoublet & ADoublet ) 
+CCoverageEdgeLinels::CCoverageEdgeLinels( CTopologicalMap * AMap,
+					  const CDoublet & ADoublet )
   : FMap( AMap )
   , lFirst( ADoublet )
   , lCur( lFirst )
@@ -79,7 +79,7 @@ void CCoverageEdgeLinels::operator++()
 //******************************************************************************
 INLINE
 CDoublet CCoverageEdgeLinels::operator++( int )
-{ 
+{
   CDoublet lTmp = lCur;
   operator ++();
   return lTmp;
@@ -108,7 +108,7 @@ void CCoverageEdgeLinels::operator--()
 //******************************************************************************
 INLINE
 CDoublet CCoverageEdgeLinels::operator--( int )
-{ 
+{
   CDoublet lTmp = lCur;
   operator --();
   return lTmp;
@@ -128,13 +128,13 @@ bool CCoverageEdgeLinels::reverseCont() const
 //******************************************************************************
 INLINE
 int CCoverageEdgeLinels::getMove() const
-{ 
+{
   return FMove;
 }
 //******************************************************************************
 INLINE
 void CCoverageEdgeLinels::reinit()
-{ 
+{
   lCur = lFirst;
   FStop = false;
 }

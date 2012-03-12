@@ -88,7 +88,7 @@ public:
    * @return the current designated linel
    */
   CDoublet operator*() const;
-  
+
   /** Reinitialize the coverage to the starting position.
    */
   void reinit();

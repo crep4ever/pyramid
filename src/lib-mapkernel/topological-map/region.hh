@@ -47,7 +47,7 @@ namespace Map2d
 {
   class CDart;
   class CTopologicalMap;
-  
+
   #define NB_MARKS_REGION (16)
 
   /// Une région, c'est :
@@ -59,7 +59,7 @@ namespace Map2d
   class CRegion
   {
     friend class CTopologicalMap;
-    
+
   public:
 
     CRegion();
@@ -100,13 +100,13 @@ namespace Map2d
     void incNbPixels( unsigned int ANb=1 );
     void decNbPixels( unsigned int ANb=1 );
 
-    // Ajoute le pixel de couleur ACoul et éventuellement représenté par la 
+    // Ajoute le pixel de couleur ACoul et éventuellement représenté par la
     // face carrée désignée par ADart à la région courante.
     void addPixel( TRegionId ACoul, CDart* ADart=NULL );
 
     void removePixel( TRegionId ACoul );
 
-    // Affiche l'arbre d'inclusion sur stdout   
+    // Affiche l'arbre d'inclusion sur stdout
     void draw();
 
     // Remets les informations couleur de la région à zéro
@@ -120,14 +120,14 @@ namespace Map2d
     CDart* getRepresentativeDart() const;
 
     ///@name Accesseurs sur la couleur
-    //@{    
-    TRegionId getColorMean() const; 
+    //@{
+    TRegionId getColorMean() const;
     TRegionId getColorMin()  const;
-    TRegionId getColorMax()  const;             
+    TRegionId getColorMax()  const;
     //@}
 
     ///@name Accesseurs sur la profondeur
-    //@{    
+    //@{
     unsigned int getProfondeur () const;
     void         setProfondeur (unsigned int);
     //@}
@@ -136,15 +136,15 @@ namespace Map2d
     ///         (c'est la distance selon le critère de fusion)
     TRegionId distanceWith(CRegion* ARegion) const;
 
-    /// @return vrai ssi la région this et ARegion satisfont le 
-    /// critère de fusion pour le seul AThreshold donné  
+    /// @return vrai ssi la région this et ARegion satisfont le
+    /// critère de fusion pour le seul AThreshold donné
     bool canMergeWith(CTopologicalMap* AMap,
 		      CRegion* ARegion, int AThreshold);
 
-    /// @return vrai ssi la région this et ARegion satisfont le 
-    /// critère de fusion pour le seul AThreshold donné  
+    /// @return vrai ssi la région this et ARegion satisfont le
+    /// critère de fusion pour le seul AThreshold donné
     bool canMergeWithPonderated(CTopologicalMap* AMap,
-				CRegion* ARegion, int AThreshold);    
+				CRegion* ARegion, int AThreshold);
 
     /// @return vrai ssi la région this ou ARegion sont petites
     /// i.e. de taille <= à AThreshold.
@@ -152,10 +152,10 @@ namespace Map2d
 		     CRegion* ARegion, int AThreshold);
 
     /// Fusionne les paramètres de la région this avec la région ARegion.
-    /// (ie met à jour tout les champs de this pour intégrer les autres champs)   
+    /// (ie met à jour tout les champs de this pour intégrer les autres champs)
     void mergeWith(CRegion* ARegion);
 
-    /// @return vrai ssi la région this et ADart satisfont le 
+    /// @return vrai ssi la région this et ADart satisfont le
     /// critère de fusion sur le nombre de cavité
     bool canMergeWithCavityConstraint(CTopologicalMap* AMap,
 				      CDart* ADart, int ACavity);
@@ -176,13 +176,13 @@ namespace Map2d
     double mse() const;
 
     /// Longueur du contour
-    unsigned int getBoundarySize() const;      
+    unsigned int getBoundarySize() const;
 
     /// Fixer la longueur du contour
-    void setBoundarySize(unsigned int ANb);      
+    void setBoundarySize(unsigned int ANb);
 
     /// Modifier la longueur du contour
-    void incBoundarySize(int ANb=1);      
+    void incBoundarySize(int ANb=1);
 
     unsigned int getCavityCount() const;
     void setCavityCount(unsigned int cavityCount);
@@ -204,7 +204,7 @@ namespace Map2d
   protected:
     /// Premier pixel de la région (ie le plus petit ordre lexico)
     CCoordinate FFirstPixel;
-    
+
     /// Les pointeurs sur les voisins
     CRegion* FFather;     // Le père
     CRegion* FFirstSon;   // Le premier fils
@@ -216,13 +216,13 @@ namespace Map2d
 
     /// Le nombre de pixel de la région
     unsigned int FNbPixels;
-    
+
     /// Valeur des marques booléennes du brin
     std::bitset<NB_MARKS_REGION> FMarks;
 
     /// Profondeur dans l'arbre d'inclusion
     unsigned int FProfondeur;
-    
+
     /// Somme des couleurs des pixels de la region
     TSumColor FColorSum;
 
@@ -231,8 +231,8 @@ namespace Map2d
 
     /// Couleur min de la région
     TRegionId FColorMin;
-       
-    /// Couleur max de la région   
+
+    /// Couleur max de la région
     TRegionId FColorMax;
 
     /// Longueur du contour
@@ -242,7 +242,7 @@ namespace Map2d
     unsigned int FCavityCount;
 
 #ifdef CONTOUR_SIMPLIFICATION
-public:   
+public:
     CMoments2D FMoments;
 #endif // CONTOUR_SIMPLIFICATION
 
@@ -254,7 +254,7 @@ public:
   public:
     CDart* getDeformationDart() const;
     void setDeformationDart( CDart* ADart );
-    
+
     const CDoublet& getDeformationDoublet() const;
     void setDeformationDoublet( const CDoublet& ADoublet );
 
@@ -270,66 +270,66 @@ public:
      ImaGene::GridCurve::Visitor* getDMLPIterator2() const;
      void setDMLPIterator2( ImaGene::GridCurve::Visitor* );
 #endif // DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
-    
-#endif // DEFORMABLE_METHOD    
+
+#endif // DEFORMABLE_METHOD
   };
 
   /// Un itérateur pour parcourir les fils "représentants" d'une région,
   /// cad un fils par composante connexe incluse.
   class CDynamicCoverageCCSons
   {
-  public:  
+  public:
     CDynamicCoverageCCSons( CRegion* ARegion );
     ~CDynamicCoverageCCSons();
-    
-    CRegion* operator ++ ();
-    CRegion* operator ++ ( int );
-    
-    bool cont() const;
-    
-    CRegion* operator -> () const;
-    CRegion* operator *  () const;
-    
-  protected:
-    CRegion* FRegionActu;
-  };
-  
-  /// Un itérateur pour parcourir tout les fils d'une région.
-  class CDynamicCoverageSons : public CDynamicCoverageCCSons
-  {
-  public:  
-    CDynamicCoverageSons( CRegion* ARegion );
-    ~CDynamicCoverageSons();
-    
-    CRegion* operator ++ ();
-    CRegion* operator ++ ( int );
-    
-    bool cont() const;
-    
-    CRegion* operator -> () const;
-    CRegion* operator *  () const;
-    
-  protected:
-    CRegion* FNextCCActu;
-  };
-  
-  
-  /// Un itérateur pour parcourir les première régions de chaque composante
-  /// connexe.
-  class CDynamicCoverageCCRegions
-  { 
-  public:  
-    CDynamicCoverageCCRegions( CRegion* ARegion );
-    ~CDynamicCoverageCCRegions();
-  
+
     CRegion* operator ++ ();
     CRegion* operator ++ ( int );
 
     bool cont() const;
-    
+
     CRegion* operator -> () const;
     CRegion* operator *  () const;
-    
+
+  protected:
+    CRegion* FRegionActu;
+  };
+
+  /// Un itérateur pour parcourir tout les fils d'une région.
+  class CDynamicCoverageSons : public CDynamicCoverageCCSons
+  {
+  public:
+    CDynamicCoverageSons( CRegion* ARegion );
+    ~CDynamicCoverageSons();
+
+    CRegion* operator ++ ();
+    CRegion* operator ++ ( int );
+
+    bool cont() const;
+
+    CRegion* operator -> () const;
+    CRegion* operator *  () const;
+
+  protected:
+    CRegion* FNextCCActu;
+  };
+
+
+  /// Un itérateur pour parcourir les première régions de chaque composante
+  /// connexe.
+  class CDynamicCoverageCCRegions
+  {
+  public:
+    CDynamicCoverageCCRegions( CRegion* ARegion );
+    ~CDynamicCoverageCCRegions();
+
+    CRegion* operator ++ ();
+    CRegion* operator ++ ( int );
+
+    bool cont() const;
+
+    CRegion* operator -> () const;
+    CRegion* operator *  () const;
+
   protected:
     std::list<CRegion*> FRegionsToVisit;
     CRegion*            FRegionActu;
@@ -337,19 +337,19 @@ public:
 
   /// Un itérateur pour parcourir les régions de l'arbre ARegion.
   class CDynamicCoverageRegions : public CDynamicCoverageCCRegions
-  { 
-  public:  
+  {
+  public:
     CDynamicCoverageRegions( CRegion* ARegion );
     ~CDynamicCoverageRegions();
-  
+
     CRegion* operator ++ ();
     CRegion* operator ++ ( int );
 
     bool cont() const;
-    
+
     CRegion* operator -> () const;
     CRegion* operator *  () const;
-    
+
   protected:
     CRegion* FNextCCActu;
   };
@@ -378,20 +378,20 @@ public:
      public:
         CDynamicCoverageNeighbors( CTopologicalMap* AMap, CRegion* ARegion );
         ~CDynamicCoverageNeighbors();
-        
+
         CRegion* operator ++ ();
         CRegion* operator ++ ( int );
-        
+
         bool cont() const;
-        
+
         CRegion* operator -> () const;
         CRegion* operator *  () const;
-        
+
      protected:
         std::set<CRegion*> FRegions;
         std::set<CRegion*>::iterator FItRegions;
   };
-  
+
   /// La classe région infinie. La seule différence concerne la méthode
   /// isInfiniteRegion qui va désormais retourner vrai.
   class CInfiniteRegion : public CRegion
@@ -399,10 +399,10 @@ public:
   public:
     CInfiniteRegion();
     virtual ~CInfiniteRegion();
-    
+
     virtual bool isInfiniteRegion() const;
   };
-  
+
 } // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("region.icc")

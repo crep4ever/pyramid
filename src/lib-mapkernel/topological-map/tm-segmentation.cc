@@ -33,49 +33,49 @@ void CTopologicalMap::transformInclusionTreeInOrderedList()
 {
   CDynamicCoverageAllRegions it(this);
   assert((*it)->isInfiniteRegion());
-   
+
   CRegion* first = it++;
   CRegion* prev  = first;
   CRegion* actu  = NULL;
 
   std::deque< CRegion* > regionQueue;
-         
+
   while ( it.cont() )
     {
       regionQueue.push_front( *it );
-      ++it;   
+      ++it;
     }
   std::sort< std::deque< CRegion* >::iterator >
     ( regionQueue.begin(), regionQueue.end(), orderRegionFirstPixel() );
-   
+
   first->setFather(NULL); // pour les arbres UF
   first->setBrother(NULL); // précédent
-  first->setNextSameCC(NULL); 
-   
+  first->setNextSameCC(NULL);
+
   while ( !regionQueue.empty() )
     {
       actu=regionQueue.front(); regionQueue.pop_front();
-     
-      prev->setFirstSon(actu); // suivant         
+
+      prev->setFirstSon(actu); // suivant
       actu->setBrother(prev);  // précédent
-      
+
       actu->setFather(NULL);
-      actu->setNextSameCC(NULL);   
-        
+      actu->setNextSameCC(NULL);
+
       prev = actu;
     }
-   
+
   prev->setFirstSon(NULL);
-  first->setBrother(prev); 
+  first->setBrother(prev);
 }
 //******************************************************************************
 void CTopologicalMap::relabelDartsFromInclusionTree()
 {
   assert( FUFTreeMode );
-  
+
   CDynamicCoverageAllRegions it(this);
   assert((*it)->isInfiniteRegion());
-   
+
   CRegion* first = it++;
   CRegion* prev  = first;
   CRegion* actu  = NULL;
@@ -94,7 +94,7 @@ void CTopologicalMap::relabelDartsFromInclusionTree()
 
   std::sort< std::deque< CRegion* >::iterator >
     ( regionQueue.begin(), regionQueue.end(), orderRegionFirstPixel() );
-  
+
   // On parcours les brins de la carte pour effectuer une mise à
   //    jour de leur étiquettage
   for (CDynamicCoverageAll It(this);It.cont();++It)
@@ -113,12 +113,12 @@ void CTopologicalMap::relabelDartsFromInclusionTree()
 	    assert(getRegion(*It)->getFirstPixel() <
 		   static_cast<CTopologicalDart*>(*It)->getRegion()
 		   ->getFirstPixel());
-	   
+
 	    //on récupère la région avec laquelle il va falloir étiquetter
 	    //la région courante
 	    setRegion(*It, getRegion(*It));
 	  }
-      
+
       // Au passage, on détruit les arêtes.
       if ( static_cast<CTopologicalDart*>(*It)->getEdge()!=NULL )
 	{
@@ -131,21 +131,21 @@ void CTopologicalMap::relabelDartsFromInclusionTree()
   // On transforme l'arbre d'inclusion en liste de régions.
   first->setFather(NULL); // pour les arbres UF
   first->setBrother(NULL); // précédent
-  first->setNextSameCC(NULL); 
-   
+  first->setNextSameCC(NULL);
+
   while ( !regionQueue.empty() )
     {
       actu=regionQueue.front(); regionQueue.pop_front();
-       
-      prev->setFirstSon(actu); // suivant         
+
+      prev->setFirstSon(actu); // suivant
       actu->setBrother(prev);  // précédent
-       
+
       actu->setFather(NULL);
-      actu->setNextSameCC(NULL);   
-       
+      actu->setNextSameCC(NULL);
+
       prev = actu;
     }
-   
+
   prev->setFirstSon(NULL);
   first->setBrother(prev);
 
@@ -162,9 +162,9 @@ void CTopologicalMap::relabelDartsFromInclusionTree()
       actu->setBrother(NULL);
       actu->setNextSameCC(NULL);
       actu->setFather(NULL);
-       
+
       delete actu;
-       
+
       //on décrémente le nombre de régions de la carte
       --FNbRegions;
     }
@@ -180,7 +180,7 @@ unsigned int CTopologicalMap::mergeRegions
       std::cout<<"Randomize darts."<<std::endl;
       randomizeDarts();
     }
-   
+
   //#ifdef DISPLAY_TIME_EXTRACT_IMAGE
   CChrono c;
   c.start();
@@ -216,16 +216,16 @@ unsigned int CTopologicalMap::mergeRegions
 
   // On passe en mode UFTree
   FUFTreeMode = true;
-  
+
   if ( ASort )
     std::sort< std::deque< CTopologicalDart* >::iterator >
       ( edgeQueue.begin(), edgeQueue.end(),
 	orderEdgesInterval() );
   //	 orderEdgesLg());
-       
-  // 2) On traite chaque arête dans l'ordre croissant pour commencer à 
+
+  // 2) On traite chaque arête dans l'ordre croissant pour commencer à
   //    fusionner les régions les plus proches.
-  CTopologicalDart* currentDart = NULL; 
+  CTopologicalDart* currentDart = NULL;
   CRegion* r1 = NULL;
   CRegion* r2 = NULL;
   while ( !edgeQueue.empty() )
@@ -233,17 +233,17 @@ unsigned int CTopologicalMap::mergeRegions
       currentDart = edgeQueue.front();
       edgeQueue.pop_front();
       assert( !isMarkedDeleted(currentDart) );
-      
+
       r1 = getRegion(currentDart);
       r2 = getRegion(beta2(currentDart));
       if ( r1==r2 || (r1->*AMethod)(this,r2,AThreshold) )
-	{      
+	{
 	  if (r1!=r2)
-	    {               
+	    {
 	      unionRegionRoot(r1,r2);
-	      ++nbMerged;         
+	      ++nbMerged;
 	    }
-	
+
 	  r1->incBoundarySize
 	    (-static_cast<CTopologicalDart*>(currentDart)->getEdge()->getNbLinels());
 
@@ -254,7 +254,7 @@ unsigned int CTopologicalMap::mergeRegions
 	  edgeRemoval(currentDart);
 	}
     }
-   
+
   // 3) On relabel les brins pour que les régions soient les racines des UFTree
   relabelDartsFromInclusionTree();
   // On sort du mode UFTree
@@ -262,7 +262,7 @@ unsigned int CTopologicalMap::mergeRegions
 
   // On simplifie la carte et on calcule l'arbre d'inclusion.
   simplifyMap();
-  computeInclusionTree();      
+  computeInclusionTree();
 
   //#ifdef DISPLAY_TIME_EXTRACT_IMAGE
   c.stop();
@@ -272,23 +272,23 @@ unsigned int CTopologicalMap::mergeRegions
   assert(isMapOk());
 
   return nbMerged;
-}   
+}
 //******************************************************************************
 unsigned int CTopologicalMap::segment(unsigned int AThreshold, bool ASort)
 {
   return mergeRegions(&CRegion::canMergeWith,(int)AThreshold, ASort);
 }
 //******************************************************************************
-unsigned int CTopologicalMap::segmentWithPonderation(unsigned int AThreshold, 
+unsigned int CTopologicalMap::segmentWithPonderation(unsigned int AThreshold,
 						     bool ASort)
-{  
+{
   return mergeRegions(&CRegion::canMergeWithPonderated, (int)AThreshold, ASort);
 }
 //******************************************************************************
 unsigned int CTopologicalMap::removeSmallRegions(unsigned int AThreshold)
 {
   return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
-}   
+}
 //******************************************************************************
 unsigned int CTopologicalMap::segmentWithCavityConstraint
 (unsigned int AThreshold, int ACavity, bool ASort)
@@ -311,7 +311,7 @@ unsigned int CTopologicalMap::mergeRegionsWithEdgeConstraint
     {
       randomizeDarts();
     }
-   
+
   //#ifdef DISPLAY_TIME_EXTRACT_IMAGE
   CChrono c;
   c.start();
@@ -347,16 +347,16 @@ unsigned int CTopologicalMap::mergeRegionsWithEdgeConstraint
 
   // On passe en mode UFTree
   FUFTreeMode = true;
-  
+
   if ( ASort )
     std::sort< std::deque< CTopologicalDart* >::iterator >
       ( edgeQueue.begin(), edgeQueue.end(),
 	orderEdgesInterval() );
   //	 orderEdgesLg());
-       
-  // 2) On traite chaque arête dans l'ordre croissant pour commencer à 
+
+  // 2) On traite chaque arête dans l'ordre croissant pour commencer à
   //    fusionner les régions les plus proches.
-  CTopologicalDart* currentDart = NULL; 
+  CTopologicalDart* currentDart = NULL;
   CRegion* r1 = NULL;
   CRegion* r2 = NULL;
   while ( !edgeQueue.empty() )
@@ -388,15 +388,15 @@ unsigned int CTopologicalMap::mergeRegionsWithEdgeConstraint
 	    }
 	}
     }
-   
+
   // 3) On relabel les brins pour que les régions soient les racines des UFTree
   relabelDartsFromInclusionTree();
   // On sort du mode UFTree
   FUFTreeMode=false;
-  
+
   // On simplifie la carte et on calcule l'arbre d'inclusion.
   simplifyMap();
-  computeInclusionTree();      
+  computeInclusionTree();
 
   //#ifdef DISPLAY_TIME_EXTRACT_IMAGE
   c.stop();
@@ -406,7 +406,7 @@ unsigned int CTopologicalMap::mergeRegionsWithEdgeConstraint
   assert(isMapOk());
 
   return nbMerged;
-}  
+}
 //******************************************************************************
 void CTopologicalMap::initializeCavityCount()
 {

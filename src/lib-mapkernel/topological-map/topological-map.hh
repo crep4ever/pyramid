@@ -221,7 +221,7 @@ public:
     CDoublet getDoublet(CDart* ADart) const;
 
     /**
-     *  Retourne le second doublet associé au même linel que le doublet 
+     *  Retourne le second doublet associé au même linel que le doublet
      * associé au brin.
      *  @param ADart le brin
      *  @return Le doublet.
@@ -321,7 +321,7 @@ public:
 
     /// @name Méthodes pour explorer la géométrie.
     //@{
-     /// @return le degré du pointel ADoublet 
+     /// @return le degré du pointel ADoublet
     ///   (cad incident le nombre de lignels incident).
     unsigned int getPointelDegree(const CDoublet& Adoublet) const;
 
@@ -331,7 +331,7 @@ public:
 
     /**
      *  Retourne l'autre lignel incident au pointel de ADoublet en tournant
-     * dans le sens anti-trigonométrique, ou ADoublet si un tel pointel 
+     * dans le sens anti-trigonométrique, ou ADoublet si un tel pointel
      * n'existe pas.
      *
      *  @return l'autre lignel désigné par un CDoublet.
@@ -363,8 +363,8 @@ public:
      * Marque les faces de la plus grande composante connexe de faces
      * sauf la face infinie et les faces adjacentes.
      */
-    void markBiggestCC(unsigned int AMark);  
-  
+    void markBiggestCC(unsigned int AMark);
+
     ///  Calcule la distance maximale entre tout les pointels de l'arête
     /// incidente à ADart et le segment [AV1, AV2]
     TCoordinate distanceToCurve(CDart* ADart, const CVertex & AV1,
@@ -375,7 +375,7 @@ public:
     /// AThreshold. Dès qu'une distance est >= à AThreshold, s'arrête.
     TCoordinate distanceToCurve(CDart* ADart, const CVertex & AV1,
                                 const CVertex& AV2, TCoordinate AThreshold);
-    
+
     /// Sauve l'image représentée par la partition courante.
     /// La valeur de chaque pixel d'une même région vaut la moyenne des
     /// couleurs de la région
@@ -391,7 +391,7 @@ public:
     /// Export the topomap in a graph format.
     /// if amark!=-1, only vertices and edges having one dart marked are exported.
     /// if amark==-1, the whole map is exported.
-   
+
   void exportGraph(std::ostream &os, int amark=-1);
 
 private:
@@ -412,11 +412,11 @@ private:
     bool isRegionRoot(CDart* ADart) const;
 
     /**
-     * Réalise l'union entre une région et sa racine 
+     * Réalise l'union entre une région et sa racine
      * si la région est déjà la racine de l'arbre on n'effectue rien...
-     * Comme précédemment, on utilise le pointeur FFather pour construire 
+     * Comme précédemment, on utilise le pointeur FFather pour construire
      * l'arbre d'une composante connexe.
-     * @return false si les regions racines de last et up étaient égales 
+     * @return false si les regions racines de last et up étaient égales
      * et true si l'opération de fusion est réalisée.
      * @pre FUFTreeMode
      */
@@ -453,11 +453,11 @@ protected:
 private:
     /// vrai si on est en mode uftree: dans ce cas, le champ Father de chaque
     /// région désigne le père dans l'arbre uf, null pour les racines.
-    bool FUFTreeMode;  
+    bool FUFTreeMode;
 
   unsigned int FLastCavityCount;
     //@}
-  
+
 public:
     unsigned int FMaxLg;
 

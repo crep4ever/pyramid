@@ -117,7 +117,7 @@ void CTopologicalMap::destroyBorder(CDart* ADart)
 void CTopologicalMap::computeInclusionTree()
 {
   assert( !FUFTreeMode );
-  
+
 #ifdef DEBUG_EXTRACT_IMAGE
    std::cout << "\n CTopologicalMap::computeInclusionTree " << std::endl;
 #endif
@@ -135,7 +135,7 @@ void CTopologicalMap::computeInclusionTree()
    FInclusionTreeRoot->setBrother(NULL);
 
    if ( toTreat==NULL ) return;
-   
+
    CRegion* tmp = NULL;
    CRegion* father = FInclusionTreeRoot;
 
@@ -147,12 +147,12 @@ void CTopologicalMap::computeInclusionTree()
      {
       actu = toTreat;
       toTreat = toTreat->getFirstSon(); // La prochaine region
-      
+
       if (actu->getFather() == NULL) // Région pas encore traitée.
       {
          assert(actu->getRepresentativeDart()!=NULL);
          assert(!isMarkedDeleted(actu->getRepresentativeDart()));
-         
+
          father = getRegion(beta2(actu->getRepresentativeDart()));
 	 assert( father->isInfiniteRegion() ||
 		 father->getFirstPixel()<actu->getFirstPixel() );
@@ -166,7 +166,7 @@ void CTopologicalMap::computeInclusionTree()
             {
 	      assert( father->isInfiniteRegion() ||
 		      father->getFirstPixel()<tmp->getFirstPixel() );
-	      
+
               // On va ajouter la région tmp comme fils de father
                // mais avant il faut l'enlever de la "liste" des régions.
 
@@ -203,7 +203,7 @@ void CTopologicalMap::computeInclusionTree()
 
             ++it;
          }
-	 
+
          firstRegion = NULL;
       }
    }
@@ -211,7 +211,7 @@ void CTopologicalMap::computeInclusionTree()
    c.stop();
    c.display("Calcul de l'arbre d'inclusion");
 #endif
-   
+
 #ifdef DEBUG_EXTRACT_IMAGE
    std::cout << "OK." << std::endl;
 #endif
@@ -223,7 +223,7 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
    assert( AImage != NULL );
    assert( AImage->isOk() );
    assert( FUFTreeMode );
-   
+
 #ifdef DISPLAY_TIME_EXTRACT_IMAGE
    chronoShiftEdges.reset();
    chronoIsEdgeToremove.reset();
@@ -330,10 +330,10 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
          /* Si on vient de créer la région, on doit
             initialiser son représentant. */
          if (newRegion)
-         {         
+         {
             currentRegion->setRepresentativeDart(beta2(last));
          }
-         
+
          //3. On conserve un brin (réel) incidents au sommet central.
          vertex = last;
 
@@ -451,7 +451,7 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
 void CTopologicalMap::relabelDarts()
 {
   assert( FUFTreeMode );
-  
+
    // 1. On parcours les brins de la carte pour effectuer une mise à
    //    jour de leur étiquettage
    for (CDynamicCoverageAll It(this);It.cont();++It)
@@ -575,16 +575,16 @@ void CTopologicalMap::extractTopologicalMap(CImage2D* AImage,
 
    // On sort du mode UFTree
    FUFTreeMode = false;
-   
+
    /* 4. On calcule l'arbre d'inclusion des régions. */
    computeInclusionTree();
-   
+
    if (!isMapOk())
-   {   
+   {
       std::cerr << "PROBLEME après extractTopologicalMap" << std::endl;
       assert(false);
    }
-   
+
 #ifdef DEBUG_EXTRACT_IMAGE
    std::cout << "OK...Fin de extractTopologicalMap" << std::endl;
 #endif
@@ -599,7 +599,7 @@ void CTopologicalMap::simplifyMap()
       tmpDart = *it;
 
       assert(!isMarkedDeleted(tmpDart));
-      
+
       //  if (!isMarkedDeleted(tmpDart))
       {
          if (beta21(tmpDart) == beta02(tmpDart))  //sommet de degré 2

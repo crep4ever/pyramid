@@ -44,13 +44,13 @@ class Point {
     Point &operator+=(const Point &);
     Point &operator-=(const Point &);
     Point &operator/=(const T);
-    
+
     // Opérations
     Point operator+ (const Point &) const;
     Point operator- (const Point &) const;
     Point operator* (const Point &) const;
     Point operator/ (const T);
-    
+
     T dot(const Point &) const;
 
     // Tests
@@ -58,7 +58,7 @@ class Point {
     bool operator!=  (const Point &) const;
 
     bool is4Connected(const Point &) const;
-    
+
     //Return the direction between the two points [this->APoint]
     // PRECOND : this and M are 4connected
     // 1=droite; 2=haut; -1=gauche; -2=bas
@@ -71,22 +71,22 @@ class Point {
 
     // Shift the current point in direction ADir.
     void shiftInDirection(int ADir);
-    
+
     // Shift the current point in direction -ADir.
     void shiftInReverseDirection(int ADir);
-    
+
     // Return the neighbor point of this in direction ADir.
     Point getPointInDirection(int ADir) const;
-    	
+
     //Affichage
     template<typename T1>
       friend std::ostream& operator<<(std::ostream&, const Point<T1> &);
-    
+
 //  private:
     // Datas
     T x,y;
 };
- 
+
 //-----------------------------------------------------------------------------------------
 //Implementation
 //-----------------------------------------------------------------------------------------

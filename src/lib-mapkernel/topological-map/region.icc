@@ -341,9 +341,9 @@ INLINE
 void CRegion::addPixel(TRegionId ACoul, CDart* ADart)
 {
    if (FNbPixels == 0)
-   { 
-      FColorMin = FColorMax = ACoul; 
-   }      
+   {
+      FColorMin = FColorMax = ACoul;
+   }
    else
    {
       if (ACoul < FColorMin) FColorMin = ACoul;
@@ -404,14 +404,14 @@ TRegionId CRegion::distanceWith(CRegion* ARegion) const
    if ( (FColorMin>=ARegion->FColorMin && FColorMax<=ARegion->FColorMax) ||
         (ARegion->FColorMin>=FColorMin && ARegion->FColorMax<=FColorMax) )
      return 0;
-   
-   TRegionId oldInterval = std::max( FColorMax-FColorMin, 
+
+   TRegionId oldInterval = std::max( FColorMax-FColorMin,
                                      ARegion->FColorMax-ARegion->FColorMin);
    TRegionId newInterval = std::max(FColorMax, ARegion->FColorMax)-
          std::min(FColorMin,ARegion->FColorMin);
-   
+
    return newInterval-oldInterval;
-}   
+}
 //------------------------------------------------------------------------------
 INLINE
 bool CRegion::canMergeWith(CTopologicalMap* AMap,
@@ -431,7 +431,7 @@ bool CRegion::smallRegion(CTopologicalMap* AMap,
 			  CRegion* ARegion, int AThreshold)
 {
    if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
-   return (int)getNbPixels()<=AThreshold || 
+   return (int)getNbPixels()<=AThreshold ||
          (int)ARegion->getNbPixels()<=AThreshold;
 }
 //------------------------------------------------------------------------------
@@ -476,7 +476,7 @@ bool CRegion::canMergeWithPonderated(CTopologicalMap* AMap,
 	   ++nbedges;
 	 }
      }
-   
+
    if ( perimCommon==0 )
      for (CDynamicCoverage1 it(AMap, ARegion->getRepresentativeDart());
 	  it.cont(); ++it)
@@ -488,13 +488,13 @@ bool CRegion::canMergeWithPonderated(CTopologicalMap* AMap,
 	   }
        }
 
-   double ponderation = (double)perimCommon / 
+   double ponderation = (double)perimCommon /
      double(AMap->FMaxLg*nbedges);
      //     double(std::max(getBoundarySize(),ARegion->getBoundarySize()));
 
    /*   std::cout<<"common="<<perimCommon<<"  perim1="<<getBoundarySize()
 	    <<"  perim2="<<ARegion->getBoundarySize()<<std::endl;
-   
+
    std::cout<<"ponderation="<<ponderation<<"  intervalle="
 	    <<std::max(FColorMax, ARegion->FColorMax)-
      std::min(FColorMin,ARegion->FColorMin)<<"  fusion="<<
@@ -761,7 +761,7 @@ CRegion* CDynamicCoverageNeighbors::operator ++ ()
    assert(cont());
    ++FItRegions;
    if ( !cont() ) return NULL;
-   
+
    return operator*();
 }
 //------------------------------------------------------------------------------
@@ -842,7 +842,7 @@ INLINE
 CInfiniteRegion::CInfiniteRegion() :
       CRegion()
 {
-   // On met 1 pixel dans la région infinie pour pouvoir calculer sa couleur 
+   // On met 1 pixel dans la région infinie pour pouvoir calculer sa couleur
    FNbPixels=1;
 }
 //------------------------------------------------------------------------------

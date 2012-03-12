@@ -54,7 +54,7 @@ public:
 
   /// Empty: vide la matrice.
   void empty();
-  
+
   /// @name Accesseurs
   //@{
   TNatural getSizeX() const;
@@ -63,29 +63,29 @@ public:
   /// Getter on the matrix data
   /// @return the matrix data
   TKhalimskyElt* getMatrix() const;
-  
+
   /// Setter on the matrix data
   /// @param AMatrix the matrix data
   void setMatrix(TKhalimskyElt* AMatrix);
-  
+
   bool isPCell(const CDoublet& ADoublet) const;
   bool isLCell(const CDoublet& Adoublet) const;
-  
+
   // bool isFictivePCell(const CDoublet& ADoublet) const;
   //bool isFictiveLCell(const CDoublet& ADoublet) const;
 
   void setPCell(const CDoublet& ADoublet, bool AOn = true);
   void setLCell(const CDoublet& ADoublet, bool AOn = true);
-  
+
   //void setFictivePCell(const CDoublet& ADoublet, bool AOn = true);
   // void setFictiveLCell(const CDoublet& ADoublet, bool AOn = true);
 
-    
+
   //@}
 
   /// getSize : retourne la taille de la matrice de Khalimsky en octets.
   long int getNumberOfByte() const;
-  
+
   /** Affichage de la matrice de Khalimsky.
    *  @param withKhalymski un entier indiquant comment afficher la matrice de
    *         Khalimsky. 1 : les pointels, 2 : les lignels,
@@ -103,7 +103,7 @@ public:
    */
   CDoublet normaliseDoubletPointel(const CDoublet& ADoublet) const;
   CDoublet normaliseDoubletLinel  (const CDoublet& ADoublet) const;
- 
+
   //@}
 
   /// @name Méthode pour calculer le degré d'un pointel
@@ -113,10 +113,10 @@ public:
 
 protected:
   /// @name Méthodes auxiliaires
-  //@{  
+  //@{
   long int      getIndex(const CDoublet& ADoublet) const;
   TKhalimskyElt getKhalimskyElt(const CDoublet& ADoublet) const;
-  void          setBits(long int AIndex, TKhalimskyElt AMask, bool AOn);  
+  void          setBits(long int AIndex, TKhalimskyElt AMask, bool AOn);
   //@}
 
 private:

@@ -70,7 +70,7 @@ namespace Map2d
 
     //@{
     /// Pour initialiser la DSS la première fois.
-    void initDSS( int, int, int, int );    
+    void initDSS( int, int, int, int );
 
     /** @name Fonction d'accès au mutex afin de protéger l'arête lors
      *        d'accès concurents.

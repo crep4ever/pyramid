@@ -23,7 +23,7 @@ CCoordinate::CCoordinate(int ATab[2])
 {
   FCoord[0] = ATab[0];
   FCoord[1] = ATab[1];
- 
+
 }
 //-----------------------------------------------------------------------------
 INLINE
@@ -31,7 +31,7 @@ CCoordinate::CCoordinate(const CCoordinate& AVertex)
 {
   FCoord[0] = AVertex.FCoord[0];
   FCoord[1] = AVertex.FCoord[1];
- 
+
 }
 //-----------------------------------------------------------------------------
 INLINE
@@ -39,7 +39,7 @@ CCoordinate::CCoordinate(const CDoublet& ADoublet)
 {
   FCoord[0] = ADoublet.getX();
   FCoord[1] = ADoublet.getY();
- 
+
 }
 //*****************************************************************************
 INLINE
@@ -99,7 +99,7 @@ bool CCoordinate::operator==(const CCoordinate& AVector) const
 {
   return
    ( this->getX() == AVector.getX() &&
-    this->getY() == AVector.getY()) ;    
+    this->getY() == AVector.getY()) ;
 }
 //*****************************************************************************
 INLINE

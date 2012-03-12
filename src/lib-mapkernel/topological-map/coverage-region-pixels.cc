@@ -2,7 +2,7 @@
 #include "coverage-region-pixels.hh"
 using namespace Map2d;
 //*****************************************************************************
-CCoverageRegionPixels::CCoverageRegionPixels(CTopologicalMap* ATopologicalMap, 
+CCoverageRegionPixels::CCoverageRegionPixels(CTopologicalMap* ATopologicalMap,
 					     CRegion* ARegion):
   FTopologicalMap(ATopologicalMap),
   FRegion(ARegion),
@@ -40,7 +40,7 @@ void CCoverageRegionPixels::operator++()
       FStop = true;
       return;
     }
-  
+
   FCurrentPixel = FPixelsStack.top();
   FPixelsStack.pop();
 
@@ -55,8 +55,8 @@ void CCoverageRegionPixels::operator++()
 	  FTopologicalMap->markPixel(n.getX(),n.getY());
 	  FPixelsStack.push(n);
 	}
-    }   
-  
+    }
+
   t.setLinel(YPOS);
   if( !FTopologicalMap->isLCell(t) )
     {
@@ -68,7 +68,7 @@ void CCoverageRegionPixels::operator++()
 	  FPixelsStack.push(n);
 	}
     }
-      
+
  t = CDoublet(FCurrentPixel.getX()+1,FCurrentPixel.getY()+1);
  t.setLinel(XNEG);
   if( !FTopologicalMap->isLCell(t) )
@@ -80,8 +80,8 @@ void CCoverageRegionPixels::operator++()
 	  FTopologicalMap->markPixel(n.getX(),n.getY());
 	  FPixelsStack.push(n);
 	}
-    }   
-  
+    }
+
   t.setLinel(YNEG);
   if( !FTopologicalMap->isLCell(t) )
     {
@@ -92,7 +92,7 @@ void CCoverageRegionPixels::operator++()
 	  FTopologicalMap->markPixel(n.getX(),n.getY());
 	  FPixelsStack.push(n);
 	}
-    } 
+    }
 }
 //*****************************************************************************
 const CCoordinate & CCoverageRegionPixels::operator++(int)

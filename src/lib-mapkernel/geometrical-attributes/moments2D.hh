@@ -22,21 +22,21 @@ public:
 
     ~CMoments2D();
 
-    void setMap(Map2d::CTopologicalMap* AMap);    
-    
+    void setMap(Map2d::CTopologicalMap* AMap);
+
     /// Ajoute le pixel représenté par laface carrée désignée par ADart
     void addPixel(Map2d::CDart *ADart);
-       
+
    /// Test if a vertex can be removed and update the internal moments
    /// APercentage is the percentage of acceptable modification
    /// @return true iff the removal is possible and in this case update
    /// the parameters. Otherwise return false
     bool vertexRemoval(Map2d::CDart* ADart, unsigned int APercentage);
 
-    CMoments2D& operator += (const CMoments2D& AMoment);   
+    CMoments2D& operator += (const CMoments2D& AMoment);
 
 #ifdef TBB_ACTIVE
-public:   
+public:
    /// Un mutex pour protéger l'arête des accès concurents.
    tbb::spin_mutex FMutex;
 #endif // TBB_ACTIVE
@@ -48,7 +48,7 @@ private:
    double getEdgeMoment1_1(Map2d::CDart* ADart);
    double getEdgeMoment2_0(Map2d::CDart* ADart);
    double getEdgeMoment0_2(Map2d::CDart* ADart);
-    
+
   /// Calcule les moments des régions associées à ADart et à
   /// beta2(ADart) si l'on supprime le sommet incident à ADart.
   /// Ces moments sont calculés et affectés à AMomentReg1 et
@@ -63,10 +63,10 @@ private:
 private:
   /// La carte d'appartenance
   Map2d::CTopologicalMap* FMap;
-  
+
   /// La région à laquelle ce moment correspond
-  Map2d::CRegion* FRegion;    
-  
+  Map2d::CRegion* FRegion;
+
   /// La matrice 2D contenant les moments de la région courante.
   double FMoments[MOMENT_ORDERS+1][MOMENT_ORDERS+1];
 

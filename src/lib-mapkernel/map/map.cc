@@ -74,7 +74,7 @@ CCoverage* CMap::getStaticCoverage(const CDart* ADart, TOrbit AOrbit)
     case ORBIT_VERTEX: return new CStaticCoverageVertex(this, ADart);
     default: assert(false);
    }
-  
+
   return NULL;
 }
 //******************************************************************************

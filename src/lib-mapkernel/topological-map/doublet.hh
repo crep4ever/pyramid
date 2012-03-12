@@ -90,7 +90,7 @@ public:
    *
    *  @param Ax, Ay     Les coordonnées entières du doublet
    *  @param ALinel     Le type de lignel
-  
+
    */
   CDoublet(TNatural Ax, TNatural Ay, const TLinel& ALinel);
   //@}
@@ -102,24 +102,24 @@ public:
   //@{
   TNatural getX() const;
   TNatural getY() const;
- 
+
   TNatural incX(int ANb = 1);
   TNatural incY(int ANb = 1);
- 
+
   void setX(const TNatural& Ax);
   void setY(const TNatural& Ay);
- 
-  void setDoublet(const TNatural& Ax, const TNatural& Ay, 
+
+  void setDoublet(const TNatural& Ax, const TNatural& Ay,
 		  const TLinel& ALinel);
-  
+
   TLinel getLinel() const;
   void   setLinel(const TLinel& ALinel);
-  
+
   bool samePointel(const CDoublet& ADoublet) const;
 
   void setPointel (const CDoublet& ADoublet);
   void setPointel (const TNatural& Ax, const TNatural& Ay);
-  
+
   //@}
 
   /// @name Méthodes pour récupérer un prochain élément
@@ -148,7 +148,7 @@ public:
   void setPrevLinel();
 
   //@}
-  
+
   /**
    * @param  AStream  Le flot dans lequel afficher le doublet
    * @param  ADoublet Le doublet à afficher
@@ -163,7 +163,7 @@ public:
   static TLinel getOrthogonalLinel( TLinel L );
   // Donne le lignel orthogonal dans le sens trigo
   static TLinel getOtherOrthogonalLinel( TLinel L );
-  
+
   static bool isPos( TLinel L );
   static bool isNeg( TLinel L );
   static bool isX( TLinel L );

@@ -114,7 +114,7 @@ INLINE
 #ifdef CONTOUR_SIMPLIFICATION
    assert(res->FEdgeAttribute == NULL);
 #endif // CONTOUR_SIMPLIFICATION
-    
+
    return res;
 }
 //------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void CTopologicalMap::empty()
     FNbRegions = 0;
     FUFTreeMode = false;
     FLastCavityCount = 0;
-   
+
     // On réserve la marque des brins à détuire.
     FMarkToDelete = getNewMark();
     assert(FMarkToDelete != -1);
@@ -222,19 +222,19 @@ CRegion* CTopologicalMap::findRegionRoot(CRegion* ARegion)
   CRegion* res = ARegion;
   CRegion* tmp = ARegion;
   CRegion* next= NULL;
-  
+
   while (res->getFather() != NULL)
-    {   
+    {
       res = res->getFather();
     }
-  
+
   while (tmp->getFather() != NULL)
     {
-      next=tmp->getFather();   
+      next=tmp->getFather();
       tmp->setFather(res);
       tmp = next;
     }
-  
+
   return res;
 }
 //------------------------------------------------------------------------------
@@ -262,13 +262,13 @@ bool CTopologicalMap::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
   assert( ARegion1!=NULL );
   assert( ARegion2!=NULL );
   assert( FUFTreeMode );
-  
+
   ARegion1 = findRegionRoot(ARegion1);
   ARegion2 = findRegionRoot(ARegion2);
-  
+
   //si les deux régions racines sont égales on sort de la fonction
   if (ARegion1 == ARegion2) return false;
-  
+
   // sinon on les fusionne en mettant la région d'identifiant le + petit
   // racine de l'arbre (cad la première pour notre ordre de parcours)
   if (ARegion1->getFirstPixel() < ARegion2->getFirstPixel())
@@ -284,7 +284,7 @@ bool CTopologicalMap::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
       ARegion1->setRepresentativeDart(NULL);
       ARegion2->mergeWith(ARegion1);
     }
-  
+
   return true;
 }
 //******************************************************************************
@@ -499,7 +499,7 @@ unsigned int CTopologicalMap::getPointelDegree(const CDoublet& ADoublet) const
       doublet.setNextLinel();
    }
    while (doublet != ADoublet);
-      
+
    return count;
 }
 //------------------------------------------------------------------------------
@@ -562,7 +562,7 @@ CDart* CTopologicalMap::createSquareFace(CDart* Alast, CDart* Aup,
 
 	otherDoublet.setNextPointel();
 	otherDoublet.setNextLinel();
-      }    
+      }
 
     linkBeta1(prev, first);
 
@@ -570,7 +570,7 @@ CDart* CTopologicalMap::createSquareFace(CDart* Alast, CDart* Aup,
     linkBeta2(prev, Alast);
     linkBeta2(first, Aup);
 
-    /* Si on veut des attributs sur les arêtes, on les ajoutes. 
+    /* Si on veut des attributs sur les arêtes, on les ajoutes.
      Uniquement sur les brins prev et first car un seul brin par arête porte
      l'attribut. */
 #ifdef CONTOUR_SIMPLIFICATION

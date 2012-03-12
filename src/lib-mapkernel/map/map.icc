@@ -60,7 +60,7 @@ bool CMap::canSew(CDart* d1, CDart* d2, int i)
     return false;
 
   bool res = true;
-  
+
   return res;
 }
 //------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ INLINE
 void CMap::topoSew1(CDart* ADart1, CDart* ADart2)
 {
   assert(canSew1(ADart1,ADart2));
-  
+
   linkBeta1(ADart1,ADart2);
 }
 //******************************************************************************
@@ -97,7 +97,7 @@ INLINE
 void CMap::topoSew2(CDart* ADart1, CDart* ADart2)
 {
   assert(canSew2(ADart1,ADart2));
-  
+
   linkBeta2(ADart1,ADart2);
 }
 //******************************************************************************
@@ -133,7 +133,7 @@ INLINE
 void CMap::topoUnsew2(CDart* ADart)
 {
   assert(!isFree2(ADart));
-  
+
   unlinkBeta2(ADart);
 }
 //******************************************************************************

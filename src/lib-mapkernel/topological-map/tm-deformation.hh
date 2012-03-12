@@ -45,11 +45,11 @@ bool deformationIsSimple( const CDoublet & ALinel ) const;
  * @pre le pixel désigné est IM-Simple
  * @pre l'arête sépare la région du pixel et la région ALabel
  *
- * @return flag indiquant quels sommets ont bougés 
+ * @return flag indiquant quels sommets ont bougés
  *   (0bAB : A=0 ou 1: sommet 1 à bougé, B=0 ou 1: sommet 2 à bougé )
  */
-int deformationApply( CDart * ADart, 
-                      const CDoublet & ALinel, 
+int deformationApply( CDart * ADart,
+                      const CDoublet & ALinel,
                       CDoublet & ARevert );
 
 /** Vérification de la propriété 1 pour un pixel.

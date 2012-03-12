@@ -49,7 +49,7 @@ int CMapGeneric::degree(CDart* ADart, int ACellDim)
   for (; cov->cont(); ++(*cov))
     if (isMarked(**cov, treated))
       unmarkOrbit(**cov, countOrbit, treated);
- 
+
   delete cov;
 
   freeMark(treated);
@@ -73,7 +73,7 @@ int CMapGeneric::degree(CDart* ADart, int ACellDim)
 //     case 2: countOrbit = ORBIT_1; break;
 //     default: assert(false);
 //     }
-  
+
 //   int nbIncident = 0;
 //   int treated = getNewMark();
 
@@ -104,7 +104,7 @@ int CMapGeneric::degree(CDart* ADart, int ACellDim)
 //   assert(nbIncident!=0);
 
 //   return nbIncident;
-//} 
+//}
 //******************************************************************************
 void CMapGeneric::countCells(int AMarkNumber,
 			     unsigned int* ANb0, unsigned int* ANb1,
@@ -117,7 +117,7 @@ void CMapGeneric::countCells(int AMarkNumber,
   int nbAsked = 0;
   unsigned int nbDarts = 0;
   int i;
-  
+
   // Initialisations:
   for (i=0; i<4; ++i)
     if ( count[i]!=NULL )
@@ -144,7 +144,7 @@ void CMapGeneric::countCells(int AMarkNumber,
 	      }
 	}
     }
-  
+
   if (ANbDarts != NULL)
     * ANbDarts = nbDarts;
 
@@ -239,7 +239,7 @@ void CMapGeneric::getGlobalCharacteristics(unsigned int * ANbDarts,
 //   // Réservation des ressources:
 //   int memoBeta3 = getNewDirectInfo();
 //   assert( memoBeta3!=-1 );
-  
+
 //   CDynamicCoverageVolume vol(this, ADart);
 //   // Isolation du volume:
 //   for (; vol.cont(); ++vol)
@@ -247,22 +247,22 @@ void CMapGeneric::getGlobalCharacteristics(unsigned int * ANbDarts,
 //       setDirectInfo(*vol, memoBeta3, beta3(*vol));
 //       (*vol)->setFree3();
 //     }
-  
+
 //   countCells  (ADart, ORBIT_FACE, &nc[1], &nc[2], NULL, NULL, NULL, &nc[0]);
-  
+
 //   // Restauration des 3-coutures:
 //   for (vol.reinit(); vol.cont(); ++vol)
 //     {
 //       if (getDirectInfoAsDart(*vol, memoBeta3)!=NULL)
 // 	(*vol)->setBeta3(getDirectInfoAsDart(*vol, memoBeta3));
 //     }
-  
+
 //   // Libération des ressources:
 //   freeDirectInfo(memoBeta3);
-  
+
 //   if (ANbDarts       != NULL) * ANbDarts    	= nc[0];
 //   if (ANbVertices    != NULL) * ANbVertices 	= nc[1];
-//   if (ANbEdges       != NULL) * ANbEdges    	= nc[2];  
+//   if (ANbEdges       != NULL) * ANbEdges    	= nc[2];
 //}
 //******************************************************************************
 
@@ -272,7 +272,7 @@ bool CMapGeneric::isConnex()
   bool connex = true;
   int  reached = getNewMark();
   bool first = true;
-  
+
   // Parcours des brins de la G-carte:
   for (CDynamicCoverageAll it(this); it.cont() && connex; ++it)
     {
@@ -310,7 +310,7 @@ bool CMapGeneric::checkTopology()
 	  cerr << "CMapGeneric::integrity: Le brin " << *it
 	       << " ne vérifie pas la contrainte "
 	       << "beta10 (brin) == brin." << endl;
-	  
+
 	  return false;
 	}
 
@@ -319,23 +319,23 @@ bool CMapGeneric::checkTopology()
 	  cerr << "CMapGeneric::integrity: Le brin " << *it
 	       << " ne vérifie pas la contrainte "
 	       << "beta01 (brin) == brin." << endl;
-	  
+
 	  return false;
 	}
-    }      
+    }
 
   // 2: On vérifie que pour tout brin B, on beta B == beta(beta(B,i),i)
-  int dim=2; 
+  int dim=2;
     for (CDynamicCoverageAll it(this); it.cont(); ++it)
       if (!isFree(*it, dim) && *it != beta(beta(*it,dim),dim))
 	{
 	  cerr << "CMapGeneric::integrity: Le brin " << *it
 	       << " ne vérifie pas la contrainte "
 	       << "beta" << dim << "(beta" << dim << "(brin)) == brin." << endl;
-	  
+
 	  return false;
 	}
-  
+
   return true;
 }
 //******************************************************************************

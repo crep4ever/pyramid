@@ -75,19 +75,19 @@ void CKhalimsky::setMatrix(TKhalimskyElt* AMatrix)
 //------------------------------------------------------------------------------
 INLINE
 long int CKhalimsky::getNumberOfByte() const
-{ return sizeof(CKhalimsky)+(FSize); } 
+{ return sizeof(CKhalimsky)+(FSize); }
 //******************************************************************************
 INLINE
 CDoublet CKhalimsky::normaliseDoubletPointel(const CDoublet& ADoublet) const
 {
   //  assert( ADoublet.getX()<=FSizeX );
   //  assert( ADoublet.getY()<=FSizeY );
-  
+
   CDoublet res(ADoublet);
-  
+
   // On à le droit de déborder de un autour de la matrice, mais on la replie
   // sur un tore (droit = gauche + 1, devant = derriere + 1).
-  
+
   if ( res.getX()==FSizeX )
     { res.setX(0); res.incY(); }
 
@@ -101,7 +101,7 @@ CDoublet CKhalimsky::normaliseDoubletLinel(const CDoublet& ADoublet) const
   //  assert( ADoublet.getY()<=FSizeY );
 
   CDoublet res(normaliseDoubletPointel(ADoublet));
-  
+
   if ( res.getLinel()==XNEG )
     {
       if ( res.getX()==0 ) res.setX(FSizeX-1);
@@ -109,7 +109,7 @@ CDoublet CKhalimsky::normaliseDoubletLinel(const CDoublet& ADoublet) const
 
       res.setLinel(XPOS);
     }
-  
+
   if ( res.getLinel()==YNEG )
     {
       if ( res.getY()==0 ) res.setY(FSizeY-1);
@@ -117,7 +117,7 @@ CDoublet CKhalimsky::normaliseDoubletLinel(const CDoublet& ADoublet) const
 
       res.setLinel(YPOS);
     }
-  
+
   return res;
 }
 //******************************************************************************
@@ -126,7 +126,7 @@ long int CKhalimsky::getIndex(const CDoublet& ADoublet) const
 {
   assert( ADoublet.getX()<FSizeX );
   assert( ADoublet.getY()<FSizeY );
-      
+
   return
     FDeltaX * ADoublet.getX() +
     FDeltaY * ADoublet.getY();
@@ -157,14 +157,14 @@ void CKhalimsky::setBits(long int AIndex, TKhalimskyElt AMask, bool AOn)
  *
  *  1 : Lignel  x	 4 : Lignel x   fictif
  *  2 : Lignel  y	 5 : Lignel  y  fictif
- *  
+ *
  *
  */
 enum
 {
   POINTEL = 1,
   LIGNELX = 2, LIGNELY = 4,
- 
+
   //POINTEL_FICTIF = 8 ,
  // LIGNELX_FICTIF = 16, LIGNELY_FICTIF = 32
 };
@@ -173,7 +173,7 @@ INLINE
 bool CKhalimsky::isPCell(const CDoublet& ADoublet) const
 {
   CDoublet doublet(normaliseDoubletPointel(ADoublet));
-  
+
   if ( doublet.getX()>=FSizeX ||  doublet.getY()>=FSizeY)
     return false;
 
@@ -189,7 +189,7 @@ bool CKhalimsky::isLCell(const CDoublet& ADoublet) const
     return false;
 
   uint8_t element = getKhalimskyElt(doublet);
-  
+
   switch (ADoublet.getLinel())
     {
     case XNEG:
@@ -213,12 +213,12 @@ bool CKhalimsky::isLCell(const CDoublet& ADoublet) const
 // bool CKhalimsky::isFictiveLCell(const CDoublet& ADoublet) const
 // {
 //   CDoublet doublet(normaliseDoubletPointel(ADoublet));
-  
+
 //   if ( doublet.getX()>=FSizeX || doublet.getY()>=FSizeY)
 //     return false;
 
 //   uint8_t element = getKhalimskyElt(doublet);
-  
+
 //   switch (ADoublet.getLinel())
 //     {
 //     case XNEG:
@@ -243,9 +243,9 @@ void CKhalimsky::setLCell(const CDoublet& ADoublet, bool AOn)
 
   switch (ADoublet.getLinel())
     {
-    case XNEG: 
+    case XNEG:
     case XPOS: setBits(index, LIGNELX, AOn); break;
-    case YNEG: 
+    case YNEG:
     case YPOS: setBits(index, LIGNELY, AOn); break;
     default: assert(false);
     }

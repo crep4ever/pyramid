@@ -47,7 +47,7 @@ bool CTopologicalMap::isMapOk()
    // En premier on teste la topologie cad les contraintes générales des cartes.
    if (!checkTopology())
    {
-      std::cerr << "CTopologicalMap::isMapOk : Problème de topologie." 
+      std::cerr << "CTopologicalMap::isMapOk : Problème de topologie."
             << std::endl;
       return false;
    }
@@ -214,14 +214,14 @@ void CTopologicalMap::displayMapCharacteristics()
    }
    for(CDynamicCoverageAll it(this) ; it.cont() ; it++)
    {
-      std_dev += ((CVertex(getDoublet(*it)) - 
+      std_dev += ((CVertex(getDoublet(*it)) -
             getDoublet(beta0(*it))).norm() - sum_length/nbD) *
-            ((CVertex(getDoublet(*it)) - 
+            ((CVertex(getDoublet(*it)) -
             getDoublet(beta0(*it))).norm() - sum_length/nbD);
    }
    cout << " Longueur moyenne : "<<sum_length/nbD
    << " Std Dev : "<<std_dev/nbD<<endl;
-   
+
    cout << "  Espace mémoire : "
    << "  carte : " << getMemoryForMap()
    << ", arbre : " << getMemoryForInclusionTree()
@@ -249,7 +249,7 @@ void CTopologicalMap::markInteriorWithoutInfiniteFace(unsigned int AMark)
      {
        markOrbit(itr->getRepresentativeDart()->getBeta(2), ORBIT_FACE, AMark);
      }
-   
+
    negateMaskMark(AMark);
 }
 //******************************************************************************
@@ -270,7 +270,7 @@ void CTopologicalMap::markBiggestCC(unsigned int AMark)
 
   std::stack<CDart*> totreat;
   CDart* currentDart=NULL;
-  
+
   for (CDynamicCoverageAll it(this); it.cont(); ++it)
     {
       if (!isMarked(*it, treated))
@@ -315,7 +315,7 @@ void CTopologicalMap::markBiggestCC(unsigned int AMark)
 	      setMark(*it, AMark);
 	      unsetMark(*it, biggestCCMark);
 	    }
-	  else unsetMark(*it, AMark); 
+	  else unsetMark(*it, AMark);
 	  unsetMark(*it,treated);
 	}
       currentmark = biggestCCMark;
@@ -367,7 +367,7 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
 }
 //******************************************************************************
 TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
-                                             const CVertex& AV2, 
+                                             const CVertex& AV2,
                                              TCoordinate AThreshold)
 {
    TCoordinate res = 0;
@@ -379,14 +379,14 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
    res = distancePointToLine(tempDoublet, AV1, AV2);
    if (temp > res) res = temp;
    if (res>=AThreshold) return res;
-   
+
    do
    {
       /*doublet suivant*/
       tempDoublet.setNextPointel();
 
       temp = distancePointToLine(tempDoublet, AV1, AV2);
-      if (temp > res) 
+      if (temp > res)
       {
          res = temp;
          if (res>=AThreshold) return res;
@@ -463,9 +463,9 @@ void CTopologicalMap::randomizeDarts()
       copyDart(destDart, randomDart);
 
       // On met à jour les brins représentants
-      if ( isRepresentativeDart(randomDart) )   
+      if ( isRepresentativeDart(randomDart) )
          setRepresentativeDart(getRegion(randomDart),destDart);
-      
+
 #ifdef CONTOUR_SIMPLIFICATION
       randomDart->setEdgeAttribute(NULL);
 #endif
@@ -529,23 +529,23 @@ bool CTopologicalMap::saveImage(const char* AFilename)
    for ( CDynamicCoverageAllRegions it(this); it.cont(); ++it )
    {
       if (!it->isInfiniteRegion())
-      {         
-      TRegionId val(it->getColorMean());   
-      for (CCoverageRegionPixels pixels(this,*it); 
+      {
+      TRegionId val(it->getColorMean());
+      for (CCoverageRegionPixels pixels(this,*it);
            pixels.cont(); ++pixels)
       {
-         im.setPixel((*pixels).getX(),(*pixels).getY(),val);      
+         im.setPixel((*pixels).getX(),(*pixels).getY(),val);
       }
       }
    }
-   
+
    c.display("Calcul de l'image");
-   
+
    im.setDisplayMinMax(0, 255);
    im.exportWithMagick(AFilename);
    c.display("Sauvegarde");
    return true;
-}      
+}
 //******************************************************************************
 bool CTopologicalMap::savePartition(const char* AFilename)
 {
@@ -608,8 +608,8 @@ void CTopologicalMap::exportGraph(std::ostream &os, int mark)
   int treated = getNewMark();
   //  assert( isWholeMapUnmarked(treated) );
 
-  unsigned int nbv=0;  
-  unsigned int nbe=0;  
+  unsigned int nbv=0;
+  unsigned int nbe=0;
   for (CDynamicCoverageAll it(this); it.cont(); ++it)
     {
       if ( !isMarked(*it, treated) )
@@ -623,7 +623,7 @@ void CTopologicalMap::exportGraph(std::ostream &os, int mark)
 		  setMark(*it2,treated);
 		}
 	    }
-	  else 
+	  else
 	    {
 	      setDirectInfo(*it, index, (void*)0);
 	    }
@@ -635,11 +635,11 @@ void CTopologicalMap::exportGraph(std::ostream &os, int mark)
 
   os<<"#nbv #nbe"<<std::endl;
   os<<nbv<<"  "<<nbe/2<<std::endl;
-  
+
   negateMaskMark(treated);
   for (CDynamicCoverageAll it(this); it.cont(); ++it)
     {
-      if (!isMarked(*it, treated) && 
+      if (!isMarked(*it, treated) &&
 	  (unsigned long)getDirectInfo(*it, index)!=0 )
 	{
 	  os<<getDoublet(*it).getX()<<" "<<getDoublet(*it).getY()<<std::endl;
@@ -650,7 +650,7 @@ void CTopologicalMap::exportGraph(std::ostream &os, int mark)
   negateMaskMark(treated);
   for (CDynamicCoverageAll it(this); it.cont(); ++it)
     {
-      if (!isMarked(*it, treated) && 
+      if (!isMarked(*it, treated) &&
 	  (unsigned long)getDirectInfo(*it, index)!=0 &&
 	  (unsigned long)getDirectInfo((*it)->getBeta2(), index)!=0 )
 	{

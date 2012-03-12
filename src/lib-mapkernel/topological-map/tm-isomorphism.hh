@@ -47,9 +47,9 @@ public:
      * @param AMirror vrai pour tester l'isomorphisme mirroir
      * @return le nombre de fois que le motif est trouvé.
      */
-    unsigned int countNumberOfMotifs(unsigned int AMarkToTest, 
+    unsigned int countNumberOfMotifs(unsigned int AMarkToTest,
 				     CTopologicalMap* AMap,
-				     unsigned int* ANbMatched, 
+				     unsigned int* ANbMatched,
 				     bool AMirror = false);
 
     /**

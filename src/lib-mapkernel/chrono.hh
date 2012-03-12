@@ -43,15 +43,15 @@
  * REEL_AND_PUS_MODE : les 2 en même temps, mode par défaut.
  */
 //******************************************************************************
-/// Type permettant de fixer le mode de chronométrage: REEL_MODE  : mode temps 
-/// réel (temps réel écoulé), PUS_MODE : mode processus (temps consommé par le 
+/// Type permettant de fixer le mode de chronométrage: REEL_MODE  : mode temps
+/// réel (temps réel écoulé), PUS_MODE : mode processus (temps consommé par le
 /// processus), REEL_AND_PUS_MODE : les 2 à la fois.
 typedef enum { REEL_MODE, PUS_MODE, REEL_AND_PUS_MODE } TModeChrono;
 //******************************************************************************
 class CChrono
 {
 public:
-  
+
   /// Construit un chrono initialisé à zéro.
   /// @param AMode mode de chronométrage (@see TModeChrono)
   /// @param ADisplayReal vrai si affichage unité 10-6 ou unité user sinon.
@@ -62,17 +62,17 @@ public:
 
   /// Opérateur d'affectation. *this reçoit AChrono. @return *this.
   CChrono& operator=( const CChrono& AChrono );
-  
+
   /// Opérateur d'addition pour FTotal (les champs FBefore et FAfter
-  /// ne sont pas additionnés). 
+  /// ne sont pas additionnés).
   /// @return *this après sa modification.
   CChrono& operator+=( const CChrono& AChrono );
-  
+
   /// Opérateur d'addition pour FTotal (les champs FBefore et FAfter
-  /// ne sont pas additionnés). 
+  /// ne sont pas additionnés).
   /// @return le temps cumulé de *this et AChrono.
   CChrono operator+( const CChrono& AChrono ) const;
-  
+
   /// Opérateur de soustraction pour FTotal (les champs FBefore et FAfter
   /// ne sont pas soustraits).
   /// @return *this après sa modification.
@@ -130,28 +130,28 @@ public:
 private:
   /// Convertit ATime en format texte, en utilisant FRealTime et
   /// FDisplayReal pour connaitre le mode d'affichage.
-  std::string convertTimeval( const struct timeval& ATimeval ) const;  
-  
+  std::string convertTimeval( const struct timeval& ATimeval ) const;
+
   /// Récupère le temps écoulé en temps réel.
   void pickTimeReel( struct timeval& ATimeval ) const;
-  
+
   /// Récupère le temps écoulé en temps processus.
   void pickTimePus( struct rusage& ARusage ) const;
-  
+
   struct rusage FBeforePus; ///< Temps de départ du start en mode Pus.
   struct rusage FAfterPus;  ///< Temps du stop en mode Pus.
   struct rusage FTotalPus;  ///< Temps cumulé en mode Pus, somme des différents
 			    ///<start-stop.
-  
+
   struct timeval FBeforeReel; ///< Temps de départ du start en mode réel.
   struct timeval FAfterReel; ///< Temps du stop en mode réel.
   struct timeval FTotalReel; ///< Temps cumulé en mode réel.
-  
-  
+
+
   bool FDisplayReal; ///< Booléen à vrai ssi l'affichage est en
                      /// mode réel, faux si mode utilisateur.
   TModeChrono FMode; ///< Mode de chronométrage (@see TModeChrono).
-  bool FRun; ///< Booléen à vrai ssi le crhono est en train de tourner.   
+  bool FRun; ///< Booléen à vrai ssi le crhono est en train de tourner.
 
   friend std::ostream& operator<< (std::ostream&, const CChrono & );
 };
@@ -167,8 +167,8 @@ CChrono::CChrono( TModeChrono AMode, bool ADisplayReal ) :
   FTotalPus.ru_utime.tv_sec  = 0; FTotalPus.ru_utime.tv_usec = 0;
 
   FTotalPus.ru_stime.tv_sec  = 0; FTotalPus.ru_stime.tv_usec = 0;
- 
-  FTotalReel.tv_sec = 0; FTotalReel.tv_usec = 0;  
+
+  FTotalReel.tv_sec = 0; FTotalReel.tv_usec = 0;
 }
 //------------------------------------------------------------------------------
 inline
@@ -226,11 +226,11 @@ CChrono& CChrono::operator=( const CChrono& AChrono )
   FBeforePus   = AChrono.FBeforePus;
   FAfterPus    = AChrono.FAfterPus;
   FTotalPus    = AChrono.FTotalPus;
-  
+
   FBeforeReel  = AChrono.FBeforeReel;
   FAfterReel   = AChrono.FAfterReel;
   FTotalReel   = AChrono.FTotalReel;
-  
+
   FDisplayReal = AChrono.FDisplayReal;
   FMode        = AChrono.FMode;
   FRun	       = AChrono.FRun;
@@ -300,14 +300,14 @@ void CChrono::stop ()
       substractTimeval( FAfterPus.ru_utime, FBeforePus.ru_utime );
       substractTimeval( FAfterPus.ru_stime, FBeforePus.ru_stime );
       substractTimeval( FAfterReel, FBeforeReel );
-      
+
       // Ajout dans FTotal
       addTimeval( FTotalPus.ru_utime, FAfterPus.ru_utime );
       addTimeval( FTotalPus.ru_stime, FAfterPus.ru_stime );
       addTimeval( FTotalReel, FAfterReel );
-      
+
       FRun = false;
-    }  
+    }
 }
 //------------------------------------------------------------------------------
 inline
@@ -316,8 +316,8 @@ void CChrono::reset()
   FTotalPus.ru_utime.tv_sec  = 0; FTotalPus.ru_utime.tv_usec = 0;
 
   FTotalPus.ru_stime.tv_sec  = 0; FTotalPus.ru_stime.tv_usec = 0;
-  
-  FTotalReel.tv_sec = 0; FTotalReel.tv_usec = 0;  
+
+  FTotalReel.tv_sec = 0; FTotalReel.tv_usec = 0;
 
   FRun = false;
 }
@@ -341,7 +341,7 @@ inline
 std::string CChrono::convertTimeval ( const struct timeval & ATimeval ) const
 {
   std::ostringstream res;
-  
+
   if ( FDisplayReal )
     { // Mode réel.
 	  res<<ATimeval.tv_sec<<'.'
@@ -353,7 +353,7 @@ std::string CChrono::convertTimeval ( const struct timeval & ATimeval ) const
       if ( ATimeval.tv_sec!=0 || ATimeval.tv_usec>=150000 )
 	res<<ATimeval.tv_sec<<'.'
 	   <<std::setw(2)<<std::setfill('0')
-	   <<(int)(ATimeval.tv_usec/10000)<<" s";	
+	   <<(int)(ATimeval.tv_usec/10000)<<" s";
 	{ // Ici il y a 0 secondes
 	  if ( ATimeval.tv_usec>1500 )
 		  res<<std::setprecision(2)<<std::fixed
@@ -377,22 +377,22 @@ std::string CChrono::getTime ( const std::string& AMessage )
       rerun = true;
       stop();
     }
-  
+
   res<<AMessage<<" : ";
   if ( FMode==PUS_MODE || FMode==REEL_AND_PUS_MODE )
     {
-      res<<convertTimeval(FTotalPus.ru_utime)<<" user, ";  
+      res<<convertTimeval(FTotalPus.ru_utime)<<" user, ";
       res<<convertTimeval(FTotalPus.ru_stime)<<" sys";
     }
-  
+
 	if ( FMode==REEL_AND_PUS_MODE ) res<<", ";
-	
+
   if ( FMode==REEL_MODE || FMode==REEL_AND_PUS_MODE )
     res<<convertTimeval(FTotalReel)<<" reel";
 
   if ( rerun )
     start();
-  
+
   return res.str();
 }
 //------------------------------------------------------------------------------
