@@ -27,17 +27,19 @@
 #include "dart.hh"
 #include "doublet.hh"
 #include <vector>
+#include "edge.hh"
 //******************************************************************************
 namespace Map2d
 {
   class CRegion;
+  class CContour;
 
   class CTopologicalDart: public CDart
   {
   public:
     // @name Constructeurs et destructeur
     //@{
-    
+
     /** Constructeur par défaut
      *
      *  @return Une instance de la classe
@@ -49,9 +51,9 @@ namespace Map2d
 
     /// Copy les informations du brin ADart
     void copy( CTopologicalDart* ADart );
-    
+
     /// Destructeur
-    virtual ~CTopologicalDart();
+    ~CTopologicalDart();
 
     //@}
 
@@ -60,7 +62,6 @@ namespace Map2d
 
     /// Récupération du doublet.
     CDoublet& doublet();
-    void setDoublet(const CDoublet & ADoublet);
 
     /// Récupération de la région d'appartenance du brin.
     CRegion* getRegion() const;
@@ -73,6 +74,11 @@ namespace Map2d
     void print( std::ostream& AOs ) const;
     friend std::ostream& operator<<(std::ostream&, const CTopologicalDart &);
 
+    Map2d::CEdge* getEdge() const
+    { return FEdge; }
+    void setEdge( Map2d::CEdge* AEdge )
+    { FEdge = AEdge; }
+
   protected:
     // @name Attributs
     //@{
@@ -82,11 +88,23 @@ namespace Map2d
 
     /// La région d'appartenance du brin.
     CRegion* FRegion;
-    
-    //@}
-  };
 
-} // namespace GMap2d
+    //@}
+
+  protected:
+    Map2d::CEdge* FEdge;
+
+#ifdef DEFORMABLE_METHOD
+    Map2d::CContour* FContour;
+  public:
+    Map2d::CContour* getContour() const
+    { return FContour; }
+    void setContour( Map2d::CContour* AContour )
+    { FContour = AContour; }
+#endif // DEFORMABLE_METHOD
+};
+
+} // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("topological-dart.icc")
 //******************************************************************************

@@ -29,7 +29,7 @@ CDoublet::CDoublet() :
 //******************************************************************************
 INLINE
 CDoublet::CDoublet(const CDoublet & ADoublet) :
-  Fx(ADoublet.Fx), Fy(ADoublet.Fy), 
+  Fx(ADoublet.Fx), Fy(ADoublet.Fy),
   FL(ADoublet.FL)
 {}
 //******************************************************************************
@@ -135,7 +135,7 @@ INLINE
 CDoublet CDoublet::getNextPointel() const
 {
   CDoublet res(*this);
-  res.setNextPointel();  
+  res.setNextPointel();
   return res;
 }
 //******************************************************************************
@@ -149,7 +149,7 @@ INLINE
 CDoublet CDoublet::getNextLinel() const
 {
   CDoublet res(*this);
-  res.setNextLinel();  
+  res.setNextLinel();
   return res;
 }
 //******************************************************************************
@@ -182,13 +182,7 @@ std::ostream & operator<<(std::ostream & AStream,
     case XNEG: AStream<<"XNEG "; break;
     case YNEG: AStream<<"YNEG "; break;
     }
-  
+
   return AStream<<"]";
 }
 //******************************************************************************
-INLINE
-void CDoublet::print(const std::string & APrefix)
-{
-  std::cout<<APrefix<<" "<<(*this)<<std::endl;
-}
-

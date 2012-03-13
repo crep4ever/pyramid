@@ -1,0 +1,1175 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <string.h>
+#include <map>
+#include "coverage-region-pixels.hh"
+
+namespace pyramid
+{
+  INLINE
+  CTile::~CTile()
+  {
+    //std::cout<<"\n[start] CTile::destructeur() tile "<<getId()<<std::endl;
+    removeAllRegions();
+    empty();
+    delete m_mark;
+    m_mark = NULL;
+    m_classif = NULL;
+    m_properties = NULL;
+    m_assignment = NULL;
+    //std::cout<<"\n[end] CTile::destructeur()"<<std::endl;
+  }
+
+  INLINE
+  CTile::CTile(uint AWidth, uint AHeight) :
+    CTopologicalMap(512),
+    m_mergeThreshold(0),
+    m_dartCount(0),
+    m_regionCount(0),
+    m_mark(NULL),
+    m_matrixPixelRegion(NULL),
+    m_matrixLignelDart(NULL),
+    m_id(0),
+    m_bottomRight(CPoint2D(0,0)),
+    m_width(AWidth),
+    m_height(AHeight),
+    m_tileUp(NULL),
+    m_tileDown(NULL),
+    m_properties(NULL),
+    m_oldProperties(NULL),
+    m_matrix(NULL),
+    m_dartFields(NULL),
+    m_oldDarts(NULL),
+    m_regionFields(NULL),
+    m_oldRegions(NULL),
+    m_first(true),
+    m_filename(""),
+    m_classif(NULL),
+    m_assignment(NULL)
+  {
+    //coordonnées de la tuile
+    for(int i=0;i<3;++i)
+      m_index[i]=0;
+
+    assert(getNbRegions()==0);
+  }
+
+  INLINE
+  uint CTile::id() const
+  {
+    return m_id;
+  }
+
+  INLINE
+  void CTile::setId(uint AId)
+  {
+    m_id = AId;
+  }
+
+  INLINE
+  CPoint2D CTile::bottomRight() const
+  {
+    return m_bottomRight;
+  }
+
+  INLINE
+  void CTile::setBottomRight(const CPoint2D& ABottomRight)
+  {
+    m_bottomRight = ABottomRight;
+  }
+
+  INLINE
+  uint CTile::width() const
+  {
+    return m_width;
+  }
+
+  INLINE
+  void CTile::setWidth(uint AWidth)
+  {
+    assert(false);
+    m_width = AWidth;
+  }
+
+  INLINE
+  uint CTile::height() const
+  {
+    return m_height;
+  }
+
+  INLINE
+  void CTile::setHeight(uint AHeight)
+  {
+    assert(false);
+    m_height = AHeight;
+  }
+
+  INLINE
+  CTile* CTile::tileUp() const
+  {
+    return m_tileUp;
+  }
+
+  INLINE
+  void CTile::setTileUp(CTile* ATile)
+  {
+    m_tileUp = ATile;
+  }
+
+  INLINE
+  CTile* CTile::tileDown() const
+  {
+    return m_tileDown;
+  }
+
+  INLINE
+  void CTile::setTileDown(CTile* ATile)
+  {
+    m_tileDown = ATile;
+  }
+
+  INLINE
+  uint CTile::mergeThreshold() const
+  {
+    return m_mergeThreshold;
+  }
+
+  INLINE
+  void CTile::setMergeThreshold(uint AMergeThreshold)
+  {
+    m_mergeThreshold = AMergeThreshold;
+  }
+
+  INLINE
+  CImageTiff* CTile::image() const
+  {
+    return static_cast<CImageTiff*>(FImage);
+  }
+
+
+  INLINE
+  void CTile::setImage(CImageTiff* AImage)
+  {
+    FImage = AImage;
+  }
+
+  INLINE
+  CKhalimsky* CTile::khalimsky() const
+  {
+    return FKhalimsky;
+  }
+
+  INLINE
+  void CTile::setKhalimsky(CKhalimsky* AKhalimsky)
+  {
+    FKhalimsky = AKhalimsky;
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::inclusionTreeRoot() const
+  {
+    return static_cast<CPyramidalRegion*>(FInclusionTreeRoot);
+  }
+
+  INLINE
+  void CTile::setInclusionTreeRoot(CRegion* ARegion)
+  {
+    FInclusionTreeRoot = ARegion;
+  }
+
+  INLINE
+  std::vector<CDart*> CTile::corners() const
+  {
+    return m_corners;
+  }
+
+  INLINE
+  void CTile::addCorner(CDart* ADart)
+  {
+    assert( ADart!=NULL );
+    m_corners.push_back(ADart);
+  }
+
+  INLINE
+  void CTile::setCorners(std::vector<CDart*>& ACorners)
+  {
+    assert( !ACorners.empty() );
+    m_corners = ACorners;
+  }
+
+  INLINE
+  std::map<TDartId, CPyramidalDart*> CTile::mapDarts() const
+  {
+    return m_mapDarts;
+  }
+
+  INLINE
+  void CTile::setMapDarts(std::map<TDartId, CPyramidalDart*>& AMap)
+  {
+    m_mapDarts = AMap;
+  }
+
+  INLINE
+  std::map<TRegionId, CPyramidalRegion*> CTile::mapRegions() const
+  {
+    return m_mapRegions;
+  }
+
+  INLINE
+  void CTile::setMapRegions(std::map<TRegionId, CPyramidalRegion*>& AMap)
+  {
+    m_mapRegions = AMap;
+  }
+
+  INLINE
+  std::map<TDartId, TDartId> CTile::mapBeta2() const
+  {
+    return m_mapBeta2;
+  }
+
+  INLINE
+  void CTile::setMapBeta2(std::map<TDartId, TDartId>& AMap)
+  {
+    m_mapBeta2 = AMap;
+  }
+
+  INLINE
+  uint CTile::index(uint APos) const
+  {
+    return m_index[APos];
+  }
+
+  INLINE
+  void CTile::setIndex(uint APos, uint AValue)
+  {
+    assert(APos<3);
+    m_index[APos] = AValue;
+  }
+
+  INLINE
+  SProperties* CTile::properties() const
+  {
+    return m_properties;
+  }
+
+  INLINE
+  void CTile::setProperties(SProperties* properties)
+  {
+    m_properties = properties;
+  }
+
+  //******************************************************************************
+  // Méthodes utilitaires
+  //******************************************************************************
+
+  INLINE
+  void CTile::setFilename(uint Ai, uint Aj, uint Ak)
+  {
+    std::ostringstream filename;
+    filename<<".//output//tile-"<<Ai<<"-"<<Aj<<"-"<<Ak;
+    m_filename =  filename.str();
+  }
+
+  INLINE
+  bool CTile::fileExist(const char* AFilename)
+  {
+    struct stat s;
+    return (stat(AFilename, &s) == 0);
+  }
+
+  INLINE
+  void CTile::loadImage()
+  {
+    assert(image()!=NULL);  assert(image()->isOpen);
+    image()->read(boundingBox(), index(2));
+  }
+
+  INLINE
+  uint CTile::xmin(const SystemMode & ASystem) const
+  {
+    assert( m_width!=0 );
+    return (ASystem==Absolute) ? bottomRight().x() - m_width : 0;
+  }
+
+  INLINE
+  uint CTile::xmax(const SystemMode & ASystem) const
+  {
+    return (ASystem==Absolute) ? bottomRight().x() : width();
+  }
+
+  INLINE
+  uint CTile::ymin(const SystemMode & ASystem) const
+  {
+    assert( m_height!=0);
+    return (ASystem==Absolute)? bottomRight().y() - m_height : 0;
+  }
+
+  INLINE
+  uint CTile::ymax(const SystemMode & ASystem) const
+  {
+    return (ASystem==Absolute) ? bottomRight().y() : height();
+  }
+
+  INLINE
+  CPoint2D CTile::bottomLeft() const
+  {
+    return CPoint2D( xmin(),ymax() );
+  }
+
+  INLINE
+  CPoint2D CTile::topLeft() const
+  {
+    return CPoint2D( xmin(),ymin() );
+  }
+
+  INLINE
+  CPoint2D CTile::topRight() const
+  {
+    return CPoint2D( xmax(),ymin() );
+  }
+
+  INLINE
+  uint CTile::downRatioX() const
+  {
+    assert(( image()->getXSize(index(2)+1) ) / ( image()->getXSize( index(2) ) ) != 0 );
+    return ( image()->getXSize(index(2)+1) ) / ( image()->getXSize( index(2) ) );
+  }
+
+  INLINE
+  uint CTile::downRatioY() const
+  {
+    assert(( image()->getYSize(index(2)+1) ) / ( image()->getYSize( index(2) ) ) != 0);
+    return ( image()->getYSize(index(2)+1) ) / ( image()->getYSize( index(2) ) );
+  }
+
+  INLINE
+  CPoint2D CTile::downRatio() const
+  {
+    return CPoint2D(downRatioX(), downRatioY());
+  }
+
+  INLINE
+  uint CTile::upRatioX() const
+  {
+    assert(( image()->getXSize(index(2)) ) / ( image()->getXSize( index(2)-1 ) ) != 0);
+    return ( image()->getXSize(index(2)) ) / ( image()->getXSize( index(2)-1 ) );
+  }
+
+  INLINE
+  uint CTile::upRatioY() const
+  {
+    assert(( image()->getYSize(index(2)) ) / ( image()->getYSize( index(2)-1 ) ) != 0);
+    return ( image()->getYSize(index(2)) ) / ( image()->getYSize( index(2)-1 ) );
+  }
+
+  INLINE
+  CPoint2D CTile::upRatio() const
+  {
+    return CPoint2D(upRatioX(), upRatioY());
+  }
+
+  INLINE
+  void CTile::linkTileUpDown(CTile* ATileUp, CTile* ATileDown)
+  {
+    assert( ATileUp!=NULL && ATileDown!=NULL);
+    ATileDown->setTileUp(ATileUp);
+    ATileUp->setTileDown(ATileDown);
+  }
+
+  INLINE
+  bool CTile::existTileUp() const
+  {
+    return(m_tileUp != NULL);
+  }
+
+  INLINE
+  bool CTile::existTileDown() const
+  {
+    return(m_tileDown != NULL);
+  }
+
+  INLINE
+  IM_Box CTile::boundingBox(const SystemMode & ASystem)
+  {
+    IM_Box ABox;
+    ABox.XTop = xmin(ASystem); ABox.YTop = ymin(ASystem);
+    ABox.XBtm = xmax(ASystem); ABox.YBtm = ymax(ASystem);
+    return ABox;
+  }
+
+  INLINE
+  bool CTile::isPointelInTile(const CDoublet & ADoublet, bool AStrict, const SystemMode & ASystem) const
+  {
+    if(AStrict)
+      return
+	ADoublet.getX()>xmin(ASystem) && ADoublet.getY()>ymin(ASystem) &&
+	ADoublet.getX()<xmax(ASystem) && ADoublet.getY()<ymax(ASystem) ;
+    else
+      return
+	ADoublet.getX()>=xmin(ASystem) && ADoublet.getY()>=ymin(ASystem) &&
+	ADoublet.getX()<=xmax(ASystem) && ADoublet.getY()<=ymax(ASystem) ;
+  }
+
+  INLINE
+  bool CTile::isDoubletInTile(const CDoublet & ADoublet, bool AStrict, const SystemMode & ASystem) const
+  {
+    if(ADoublet.getX()<xmin(ASystem) || ADoublet.getX()>xmax(ASystem) ||
+       ADoublet.getY()<ymin(ASystem) || ADoublet.getY()>ymax(ASystem))
+      return false;
+
+    if(AStrict)
+      {
+	if(isPointelInTile(ADoublet,true,ASystem))
+	  return true;
+	if(isLinelOnBorder(ADoublet, ASystem))
+	  return false;
+	if(ADoublet.getX()==xmin(ASystem))
+	    return ADoublet.getLinel()==XPOS;
+	else if(ADoublet.getX()==xmax(ASystem))
+	  return ADoublet.getLinel()==XNEG;
+	else if(ADoublet.getY()==ymin(ASystem))
+	  return ADoublet.getLinel()==YPOS;
+	else if(ADoublet.getY()==ymax(ASystem))
+	  return ADoublet.getLinel()==YNEG;
+      }
+
+    return isPointelInTile(ADoublet, true, ASystem) || isLinelOnBorder(ADoublet, ASystem);
+  }
+
+  INLINE
+  bool CTile::isPixelInTile(uint x, uint y, const SystemMode & ASystem) const
+  {
+    return x>=xmin(ASystem) && y>=ymin(ASystem) && x<=xmax(ASystem) && y<=ymax(ASystem) ;
+  }
+
+  INLINE
+  bool CTile::isPixelOnBorder(uint x, uint y, const SystemMode & ASystem) const
+  {
+    return x==xmin(ASystem) || y==ymin(ASystem) || x==xmax(ASystem) || y==ymax(ASystem) ;
+  }
+
+  INLINE
+  bool CTile::isPointelOnBorder(const CDoublet & ADoublet, const SystemMode & ASystem) const
+  {
+    if(ADoublet.getX()<xmin(ASystem) || ADoublet.getX()>xmax(ASystem) ||
+       ADoublet.getY()<ymin(ASystem) || ADoublet.getY()>ymax(ASystem))
+      return false;
+
+    return
+      ADoublet.getX()==xmin(ASystem) || ADoublet.getX()==xmax(ASystem) ||
+      ADoublet.getY()==ymin(ASystem) || ADoublet.getY()==ymax(ASystem) ;
+  }
+
+  INLINE
+  bool CTile::isPointelACorner(const CDoublet & ADoublet, const SystemMode & ASystem) const
+  {
+    return
+      (ADoublet.getX()==xmin(ASystem) || ADoublet.getX()==xmax(ASystem)) &&
+      (ADoublet.getY()==ymin(ASystem) || ADoublet.getY()==ymax(ASystem)) ;
+  }
+
+  INLINE
+  bool CTile::isLinelOnBorder(const CDoublet & ADoublet, const SystemMode & ASystem) const
+  {
+    if( !isPointelOnBorder(ADoublet, ASystem) )
+      return false;
+
+    //Cas des 4 coins
+    if(ADoublet.getX()==xmin(ASystem) && ADoublet.getY()==ymin(ASystem))
+	return ADoublet.isPos(ADoublet.getLinel());
+
+    if(ADoublet.getX()==xmax(ASystem) && ADoublet.getY()==ymax(ASystem))
+      return ADoublet.isNeg(ADoublet.getLinel());
+
+    if(ADoublet.getX()==xmin(ASystem) && ADoublet.getY()==ymax(ASystem))
+      return ADoublet.getLinel()==XPOS || ADoublet.getLinel()==YNEG;
+
+    if(ADoublet.getX()==xmax(ASystem) && ADoublet.getY()==ymin(ASystem))
+      return ADoublet.getLinel()==XNEG || ADoublet.getLinel()==YPOS;
+
+    //Cas du pointel sur le bord (coins exclus)
+    if(ADoublet.getX()==xmin(ASystem) || ADoublet.getX()==xmax(ASystem))
+	return ADoublet.isY(ADoublet.getLinel());
+
+    if(ADoublet.getY()==ymin(ASystem) || ADoublet.getY()==ymax(ASystem))
+	return ADoublet.isX(ADoublet.getLinel());
+
+    assert(false); return false;
+  }
+
+  INLINE
+  void CTile::incidentPixelsForLinel(const CDoublet & ADoublet,
+				     IM_Pixel& pix1, IM_Pixel& pix2,
+				     const SystemMode & ASystemMode)
+  {
+    assert(!isLinelOnBorder(ADoublet, ASystemMode));
+    CDoublet doublet(ADoublet);
+
+    if(doublet.isNeg(doublet.getLinel()))
+      doublet = doublet.getNextPointel();
+
+    pix1.x = doublet.getX();
+    pix1.y = doublet.getY();
+
+    if(doublet.isX(doublet.getLinel()))
+      {
+	pix2.x = doublet.getX();
+	pix2.y = doublet.getY()-1;
+      }
+    else
+      {
+	pix2.x = doublet.getX()-1;
+	pix2.y = doublet.getY();
+      }
+  }
+
+
+  INLINE
+  uint CTile::gradient(const CDoublet & ADoublet, const SystemMode & ASystem)
+  {
+    //std::cout<<"[start] CTile::gradient on linel "<<ADoublet<<std::endl;
+    if(isLinelOnBorder(ADoublet, ASystem))
+      return 255;
+
+    IM_Pixel pix1, pix2;
+    incidentPixelsForLinel(ADoublet, pix1, pix2, ASystem);
+
+    image()->getPixel( pix1, index(2) );
+    image()->getPixel( pix2, index(2) );
+
+    //cout<<"[end] CTile::gradient = "<<abs(image()->getPixelGreyValue(pix1)-image()->getPixelGreyValue(pix2))<<endl;
+    return (uint) abs(image()->getPixelGreyValue(pix1) - image()->getPixelGreyValue(pix2));
+  }
+
+
+  INLINE
+  CPoint2D CTile::coordinateInParent(uint x, uint y, const SystemMode & ASystem) const
+  {
+    return (ASystem==Relative) ?
+      CPoint2D( (x+xmin())/upRatioX() - tileUp()->xmin(), (y+ymin())/upRatioY() - tileUp()->ymin() ):
+      CPoint2D( x/upRatioX() - tileUp()->xmin(), y/upRatioY() - tileUp()->ymin() );
+  }
+
+  INLINE
+  CPoint2D CTile::coordinateInParent(const CPoint2D& APoint, const SystemMode & ASystem) const
+  {
+    return coordinateInParent(APoint.x(), APoint.y(), ASystem);
+  }
+
+  INLINE
+  CPoint2D CTile::coordinateFromParent(uint x, uint y, SystemMode ASystem) const
+  {
+    return (ASystem==Relative) ?
+      CPoint2D( ((x+tileUp()->xmin())*upRatioX() - xmin()), ((y+tileUp()->ymin())*upRatioY() - ymin()) ):
+      CPoint2D( (x*upRatioX() - xmin()), (y*upRatioY() - ymin()) );
+  }
+
+  INLINE
+  CPoint2D CTile::coordinateFromParent(const CPoint2D& APoint, SystemMode ASystem) const
+  {
+    return coordinateFromParent(APoint.x(), APoint.y(), ASystem);
+  }
+
+  INLINE
+  CPoint2D CTile::coordinateFromParent(const CDoublet& ADoublet, SystemMode ASystem) const
+  {
+    return coordinateFromParent(ADoublet.getX(), ADoublet.getY(), ASystem);
+  }
+
+  //******************************************************************************
+  // Méthodes sur la carte
+  //******************************************************************************
+
+
+  INLINE
+  void CTile::emptyMap()
+  {
+    //removeAllDarts();
+    removeAllRegions();
+    empty();
+    assert( getNbRegions() == 0 && getNbDarts() == 0 );
+  }
+
+  INLINE
+  void CTile::empty()
+  {
+    CTopologicalMap::empty();
+  }
+
+  INLINE
+  void CTile::removeAllRegions()
+  {
+    assert(getInclusionTreeRoot()->existSon());
+    delRegion(inclusionTreeRoot());
+    setInclusionTreeRoot(NULL);
+    assert(getNbRegions() == 0);
+  }
+
+  INLINE
+  bool CTile::isDartOnBorder(CTopologicalDart* ADart, int AMethod)
+  {
+    if(AMethod==0)
+      return getRegion(beta2(ADart))->isInfiniteRegion() ||
+	getRegion(ADart)->isInfiniteRegion();
+    const uint x = ADart->doublet().getX();
+    const uint y = ADart->doublet().getY();
+    return (x == 0 || x == width() || y == 0 || y == height());
+  }
+
+  INLINE
+  void CTile::splitBorder()
+  {
+    CDart* rep = getInclusionTreeRoot()->getRepresentativeDart();
+    for(CDynamicCoverage1 it(this, rep); it.cont(); ++it)
+      splitEdge(beta2(*it));
+  }
+
+  INLINE
+  unsigned long int CTile::getMemoryForMap() const
+  {
+    //std::cout<<"size of CTile : "<<sizeof(CTile)<<std::endl;
+    //std::cout<<"size of CPyramidalDart : "<<sizeof(CPyramidalDart)<<std::endl;
+    //std::cout<<"nombre de brins : "<<getNbDarts()<<std::endl;
+    return sizeof(CTile)+getNbDarts()*sizeof(CPyramidalDart);
+  }
+
+  INLINE
+  unsigned long int CTile::getMemoryForInclusionTree() const
+  {
+    assert( inclusionTreeRoot()!=NULL );
+    //std::cout<<"size of CPyramidalRegion : "<<sizeof(CPyramidalRegion)<<std::endl;
+    //std::cout<<"nombre de régions : "<<getNbRegions()<<std::endl;
+    return getNbRegions()*sizeof(CPyramidalRegion)+sizeof(CInfinitePyramidalRegion);
+  }
+
+
+
+  //******************************************************************************
+  //Opérations sur les pixels et leurs marques
+  //******************************************************************************
+
+
+  INLINE
+  void CTile::setPixelMark()
+  {
+    assert(m_mark==NULL);
+    assert(width()!=0 && height()!=0);
+    m_mark = new CMatrix< bool >( width(), height() );
+  }
+
+  INLINE
+  TRegionId CTile::getPixel(uint x, uint y) const
+  {
+    assert(false);
+    assert( FImage!=NULL );
+    //image()->getPixelGreyValue(image()->getPixel(x,y));
+    return 0;
+  }
+
+  INLINE
+  bool  CTile::isPixelMarked(uint Ax, uint Ay) const
+  {
+    return m_mark->getValue(Ax, Ay);
+  }
+
+  INLINE
+  void  CTile::setPixelMark(uint Ax, uint Ay, bool AOn)
+  {
+    m_mark->setValue(Ax, Ay, AOn);
+  }
+
+  INLINE
+  void CTile:: markPixel(uint Ax, uint Ay)
+  {
+    m_mark->setValue(Ax, Ay, true);
+  }
+
+  INLINE
+  void  CTile::unmarkPixel(uint Ax, uint Ay)
+  {
+    m_mark->setValue(Ax, Ay, false);
+  }
+
+  INLINE
+  void CTile:: unmarkAllPixels()
+  {
+    m_mark->fill();
+  }
+
+  //******************************************************************************
+  //Opérations sur les brins
+  //******************************************************************************
+
+  INLINE
+  CDart* CTile::addMapDart()
+  {
+    CPyramidalDart* result = static_cast<CPyramidalDart*>(CMapBasic::addMapDart());
+    result->setId(++m_dartCount);
+    result->setUp(NULL);
+    result->setDown(NULL);
+    return result;
+  }
+
+  INLINE
+  CDart* CTile::getDart(uint Ai, uint Aj) const
+  {
+    // Il est nécessaire de caster en CPyramidalDart* pour que l'arithmétique
+    // sur les pointeurs soit correcte, et il est nécessaire de re-caster en
+    // CDart* (de manière implicite) pour que la signature de la fonction soit
+    // la même que dans la classe CMapBasic.
+    return (static_cast<CPyramidalDart*>(FTabsDarts[Ai]) + Aj);
+  }
+
+  INLINE
+  CDart* CTile::newTabDarts()
+  {
+    return new CPyramidalDart[FSizeDartArray];
+  }
+
+  INLINE
+  void CTile::deleteTabDarts(CDart* ATabDart)
+  {
+    assert( ATabDart!=NULL );
+    delete [](static_cast<CPyramidalDart*>(ATabDart));
+  }
+
+  INLINE
+  void CTile::copyDart(CDart* ADartDest, CDart* ADartSrc)
+  {
+    assert(ADartDest != NULL && ADartSrc != NULL);
+    static_cast<CPyramidalDart*>(ADartDest)->
+      copy(static_cast<CPyramidalDart*>(ADartSrc));
+  }
+
+  INLINE
+  CTopologicalDart* CTile::addMapDart(const CDoublet & ADoublet, CRegion* ARegion)
+  {
+    assert( FKhalimsky!=NULL );
+    CPyramidalDart* result = static_cast<CPyramidalDart*>
+      (CTopologicalMap::addMapDart(ADoublet, ARegion));
+    ++m_dartCount;
+    result->setId(m_dartCount);
+    result->setUp(NULL);
+    result->setDown(NULL);
+    return result;
+  }
+
+  INLINE
+  CPyramidalDart* CTile::getDartUp(CDart* ADart) const
+  {
+    assert( ADart!=NULL );
+    return static_cast<CPyramidalDart*>(ADart)->up();
+  }
+
+  INLINE
+  void CTile::setDartUp(CDart* ADart, CDart* ADartUp)
+  {
+    assert( ADart!=NULL && ADartUp!=NULL );
+    static_cast<CPyramidalDart*>(ADart)->setUp(static_cast<CPyramidalDart*>(ADartUp));
+  }
+
+  INLINE
+  CPyramidalDart* CTile::getDartDown(CDart* ADart) const
+  {
+    assert( ADart!=NULL );
+    return static_cast<CPyramidalDart*>(ADart)->down();
+  }
+
+  INLINE
+  void CTile::setDartDown(CDart* ADart, CDart* ADartDown)
+  {
+    assert( ADart!=NULL && ADartDown!=NULL);
+    static_cast<CPyramidalDart*>(ADart)->setDown(static_cast<CPyramidalDart*>(ADartDown));
+  }
+
+  INLINE
+  void CTile::linkDartUpDown(CDart* ADartUp, CDart* ADartDown)
+  {
+    assert( ADartUp!=NULL && ADartDown!=NULL);
+    setDartUp(ADartDown, ADartUp);
+    setDartDown(ADartUp, ADartDown);
+  }
+
+  INLINE
+  CDoublet& CTile::doublet(CDart* ADart) const
+  {
+    assert( ADart!=NULL );
+    return static_cast<CTopologicalDart*>(ADart)->doublet();
+  }
+
+  INLINE
+  CDoublet& CTile::getDoublet(CDart* ADart) const
+  {
+    return doublet(ADart);
+  }
+
+  INLINE
+  void CTile::setDoublet(CDart* ADart, const CDoublet& ADoublet)
+  {
+    assert( ADart!=NULL );
+    static_cast<CPyramidalDart*>(ADart)->setDoublet(ADoublet);
+  }
+
+
+  //******************************************************************************
+  //Opérations sur les régions
+  //******************************************************************************
+
+
+  INLINE
+  CDart* CTile::insertVertexOnEdge( CDart* ADart )
+  {
+    CDoublet t2 = getDoublet(ADart).getNextPointel();
+    CDoublet t1 = getOtherLinel(t2);
+    return insertVertexOnEdge(ADart, t1, t2);
+  }
+
+  INLINE
+  CDart* CTile::insertVertexOnEdge( CDart* ADart, const CDoublet& ADoublet )
+  {
+    return insertVertexOnEdge(ADart, ADoublet, getOtherLinel(ADoublet));
+  }
+
+
+  INLINE
+  CRegion* CTile::newRegion()
+  {
+    assert(false);
+    ++FNbRegions;
+    return new CPyramidalRegion();
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::getRegion(CDart* ADart) const
+  {
+    return static_cast<CPyramidalRegion*>(static_cast<CPyramidalDart*>(ADart)->getRegion());
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::getRegionUp(CRegion* ARegion) const
+  {
+    assert( ARegion!=NULL );
+    return static_cast<CPyramidalRegion*>(ARegion)->up();
+  }
+
+  INLINE
+  void CTile::setRegionUp(CRegion* ARegion, CRegion* ARegionUp)
+  {
+    assert( ARegion!=NULL && ARegionUp!=NULL );
+    static_cast<CPyramidalRegion*>(ARegion)->setUp(static_cast<CPyramidalRegion*>(ARegionUp));
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::getRegionDown(CRegion* ARegion) const
+  {
+    assert( ARegion!=NULL );
+    return static_cast<CPyramidalRegion*>(ARegion)->down();
+  }
+
+  INLINE
+  void CTile::setRegionDown(CRegion* ARegion, CRegion* ARegionDown)
+  {
+    assert( ARegion!=NULL && ARegionDown!=NULL);
+    static_cast<CPyramidalRegion*>(ARegion)->setDown(static_cast<CPyramidalRegion*>(ARegionDown));
+  }
+
+  INLINE
+  void CTile::linkRegionUpDown(CRegion* ARegionUp, CRegion* ARegionDown)
+  {
+    assert(ARegionUp != NULL && ARegionDown != NULL);
+    setRegionUp(ARegionDown, ARegionUp);
+    setRegionDown(ARegionUp, ARegionDown);
+  }
+
+  INLINE
+  void CTile::setNbRegions(uint ANbRegions)
+  {
+    FNbRegions = ANbRegions;
+  }
+
+  INLINE
+  void CTile::setNbDarts(uint ANbDarts)
+  {
+    FNbDarts = ANbDarts;
+  }
+
+  INLINE
+  CInfinitePyramidalRegion* CTile::addMapInfiniteRegion()
+  {
+    assert(inclusionTreeRoot() == NULL );
+    ++FNbRegions;
+    CInfinitePyramidalRegion* result = new CInfinitePyramidalRegion();
+    result->setId(++m_regionCount);
+    return result;
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::addMapRegion()
+  {
+    ++FNbRegions;
+    CPyramidalRegion* result = new CPyramidalRegion();
+    result->setId(++m_regionCount);
+    return result;
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::addMapRegion(CRegion* ARegion)
+  {
+    assert( ARegion!=NULL );
+    ++FNbRegions;
+    CPyramidalRegion* result = new CPyramidalRegion(*static_cast<CPyramidalRegion*>(ARegion));
+    result->setId(++m_regionCount);
+    return result;
+  }
+
+  INLINE
+  void CTile::addPixel( IM_Pixel & APixel, CRegion* ARegion)
+  {
+    image()->getPixel( APixel, index(2));
+    std::cout << "CTile::addPixel(" << APixel.x << "," << APixel.y << ") = " << image()->getPixelGreyValue(APixel) << std::endl;
+    ARegion->addPixel( image()->getPixelGreyValue(APixel) & 0xFF ); // Le & 0xFF fait un modulo 256
+  }
+  //
+  //  INLINE
+  //  void CTile::addPixel2(uint8* data, CRegion* ARegion)
+  //  {
+  //    if( image()->colorMode() == CImageTiff::RGB )
+  //      ARegion->addPixel( (data[m_pixIndex++] + data[m_pixIndex++] + data[m_pixIndex++])/3 );
+  //    else if(image()->colorMode() == CImageTiff::Grey)
+  //      ARegion->addPixel( data[m_pixIndex++] );
+  //  }
+
+  //INLINE
+  //void setRegion(CPyramidalDart* dart, CPyramidalRegion* region)
+  //{
+  //  CTopologicalMap::setRegion(dart, region);
+  //}
+
+  INLINE
+  void CTile::setRepresentativeDart(CPyramidalRegion* region, CPyramidalDart* dart)
+  {
+    region->setRepresentativeDart(dart);
+  }
+
+  INLINE
+  void CTile::setFirstSon(CPyramidalRegion* region, CPyramidalRegion* son)
+  {
+    region->setFirstSon(son);
+  }
+
+  INLINE
+  void CTile::setBrother(CPyramidalRegion* region, CPyramidalRegion* brother)
+  {
+    region->setBrother(brother);
+  }
+
+  INLINE
+  void CTile::setNextSameCC(CPyramidalRegion* region, CPyramidalRegion* cc)
+  {
+    region->setNextSameCC(cc);
+  }
+
+  INLINE
+  CPyramidalRegion* CTile::findRegionRoot(CPyramidalRegion* region)
+  {
+    return static_cast<CPyramidalRegion*>(CTopologicalMap::findRegionRoot(region));
+  }
+  //******************************************************************************
+  //Opérations sur la géométrie
+  //******************************************************************************
+
+  INLINE
+  void CTile::setPCell(const CDoublet& ADoublet, bool ABool)
+  {
+    FKhalimsky->setPCell(ADoublet, ABool);
+  }
+
+  INLINE
+  void CTile::setLCell(const CDoublet& ADoublet, bool ABool)
+  {
+    FKhalimsky->setLCell(ADoublet, ABool);
+  }
+
+  INLINE
+  uint CTile::depth() const
+  {
+    return index(2);
+  }
+
+  INLINE
+  void CTile::assignClassifLabelsToRegions(const FocusAttentionMode & AFocusAttentionMode)
+  {
+    //std::cout<< "[start] Assign labels to regions at level" << depth() << std::endl;
+    uint value;
+    IM_Pixel pix;
+    for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
+      {
+	CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);
+
+	if(region->isInfiniteRegion())
+	  {
+	    region->setLabel(CPyramidalRegion::Invalid);
+	  }
+	else if(tileUp()->isRegionToSplit(region->up(), AFocusAttentionMode))
+	  {
+	    CPoint2D pixel = region->firstPixel() ;
+	    //pour la classif sur tout le niveau
+	    //uint pos2 = ( (pixel.x()+xmin() ) + (image()->getXSize(depth()))*(pixel.y()+ymin()) ) * 3 ;
+	    uint pos2 = ( (pixel.x()+xmin() ) + (image()->getXSize(depth()))*(pixel.y()+ymin()) ) ;
+
+	    switch(AFocusAttentionMode)
+	      {
+	      case FocusHisto:
+		if(depth()==1)
+		  {
+		    if(!m_classif) return;
+		    value = m_classif[pos2];
+		    region->setLabel(intToLabel(value));
+		  }
+		else
+		  {
+		    if(!m_assignment) return;
+		    pix.x = pixel.x()+xmin();
+		    pix.y = pixel.y()+ymin();
+		    image()->getPixel( pix, depth() );
+		    value = m_assignment->getValue( pix.value[0], pix.value[1], pix.value[2]);
+		    region->setLabel(intToLabel(value));
+		    //std::cout<<"value = " << value << std::endl;
+		  }
+		break;
+
+	      default:
+		if(region->up()->down()==region)
+		  region->setLabel( (CPyramidalRegion::Label) ((int) region->up()->label()+2) );
+		else if(m_classif)
+		  region->setLabel( (CPyramidalRegion::Label)m_classif[pos2] );
+		break;
+	      }
+	  }
+      }
+    //std::cout<< "[end] Assign labels to regions at level" << std::endl;
+  }
+
+  INLINE
+  CPyramidalRegion::Label CTile::intToLabel(const uint label)
+  {
+    //std::cout<<"intToLabel "<<label << " at depth " << depth()<<std::endl;
+    switch(depth())
+      {
+      case 1:
+	if(label==1)
+	  return CPyramidalRegion::Tissue;
+	return CPyramidalRegion::Background;
+
+      case 2:
+	if(label==1)
+	  return CPyramidalRegion::DarkTissue;
+	return CPyramidalRegion::BrightTissue;
+
+      case 3:
+	if(label==1)
+	  return CPyramidalRegion::Lesion;
+	return CPyramidalRegion::Tissue;
+
+	//      case 4:
+	//	if(label==1)
+	//	  return CPyramidalRegion::Stroma;
+	//	if(label==2)
+	//	  return CPyramidalRegion::Cancer;
+	//	return CPyramidalRegion::Stroma;
+
+      case 4:
+	if(label==1)
+	  return CPyramidalRegion::Mitosis;
+	return CPyramidalRegion::InSitu;
+
+      default:
+	//std::cout<<"CTile::intToLabel warning label "<<label<<" is not supported at depth "<<depth()<<std::endl;
+	return CPyramidalRegion::Invalid;
+      }
+  }
+
+
+  INLINE
+  void CTile::histogram(CVolume<uint>* histo)
+  {
+    IM_Pixel pix;
+    uint ratiox = downRatioX();
+    uint ratioy = downRatioY();
+
+    for( CDynamicCoverageAllRegions it(this); it.cont(); ++it )
+      if(isRegionToSplit(*it, FocusHisto))
+	{
+	  CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);
+	  for( CCoverageRegionPixels it2(this, region); it2.cont(); ++it2)
+	    for(uint j=0; j<ratioy; ++j)
+	      for(uint i=0; i<ratiox; ++i)
+		{
+		  pix.x = ((*it2).getX() + xmin())*ratiox + i;
+		  pix.y = ((*it2).getY() + ymin())*ratioy + j;
+		  image()->getPixel(pix, depth()+1);
+		  histo->setValue(pix.value[0], pix.value[1], pix.value[2],
+				  histo->getValue(pix.value[0], pix.value[1], pix.value[2])+1);
+		}
+	}
+  }
+
+  INLINE
+  uint8* CTile::regionsData()
+  {
+    IM_Pixel pix;
+    uint ratiox = downRatioX();
+    uint ratioy = downRatioY();
+    uint size = width()*ratiox*height()*ratioy*3;
+    uint8* data = new uint8[size];
+    bzero(data, size*sizeof(uint8));
+
+    //IM_Box box;
+    //box.XTop = xmin()*ratiox;  box.YTop = ymin()*ratioy;
+    //box.XBtm = xmax()*ratiox;  box.YBtm = ymax()*ratioy;
+    //image()->read(box, depth()+1);
+    //image()->regularization(box, depth()+1, 20, 2, 0, 1);
+
+    for( CDynamicCoverageAllRegions it(this); it.cont(); ++it )
+      if(isRegionToSplit(*it, FocusHisto))
+	{
+	  //std::cout<<" region to split" << std::endl;
+	  CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);
+	  for( CCoverageRegionPixels it2(this, region); it2.cont(); ++it2)
+	    for(uint j=0; j<ratioy; ++j)
+	      for(uint i=0; i<ratiox; ++i)
+		{
+		  pix.x = ((*it2).getX() + xmin())*ratiox + i;
+		  pix.y = ((*it2).getY() + ymin())*ratioy + j;
+		  image()->getPixel(pix, depth()+1);
+		  //std::cout<<" pix ("<<(uint)pix.value[0]<<","<<(uint)pix.value[1]<<","<<(uint)pix.value[2]<<")"<<std::endl;
+		  uint pos = ((*it2).getX()*ratiox+i + (width()*ratiox)*((*it2).getY()*ratioy+j))*3;
+		  data[pos]   = pix.value[0];
+		  data[pos+1] = pix.value[1];
+		  data[pos+2] = pix.value[2];
+		}
+	}
+    return data;
+  }
+} // namespace pyramid

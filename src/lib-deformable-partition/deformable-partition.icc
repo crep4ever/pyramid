@@ -1,0 +1,396 @@
+/*
+ * lib-mapkernel : Un noyau de 2-cartes et des opérations.
+ * Copyright (C) Guillaume Damiand, guillaume.damiand@liris.cnrs.fr
+ *               http://liris.cnrs.fr/guillaume.damiand/
+ *
+ * This file is part of lib-mapkernel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "coverage-edge-linels.hh"
+
+//*****************************************************************************
+INLINE
+CDeformablePartition::CDeformablePartition(Map2d::CTopologicalMap* AMap,
+             double ARegionW, double AContourW/*, double AEdgeW*/) :
+  FMap(AMap),
+  FOmegaRegion(ARegionW),
+  FOmegaEdge(0/*AEdgeW*/),
+  FOmegaContour(AContourW),
+  FEnergy(0),
+  FIndex(-1),
+  FRevertDart(NULL)
+{}
+//******************************************************************************
+INLINE
+double CDeformablePartition::getEnergy() const
+{ return FEnergy; }
+//******************************************************************************
+INLINE
+Map2d::CEdge* CDeformablePartition::getEdge(Map2d::CDart* ADart) const
+{
+  assert( ADart!=NULL );
+  return static_cast<Map2d::CTopologicalDart*>(ADart)->getEdge();
+}
+//------------------------------------------------------------------------------
+INLINE
+void CDeformablePartition::setEdge(Map2d::CDart* ADart,
+				   Map2d::CEdge* AEdge)
+{
+  assert( ADart!=NULL );
+  static_cast<Map2d::CTopologicalDart*>(ADart)->setEdge(AEdge);
+}
+//******************************************************************************
+INLINE
+Map2d::CContour* CDeformablePartition::getContour(Map2d::CDart* ADart) const
+{
+  assert( ADart!=NULL );
+  return static_cast<Map2d::CTopologicalDart*>(ADart)->getContour();
+}
+//------------------------------------------------------------------------------
+INLINE
+void CDeformablePartition::setContour(Map2d::CDart* ADart,
+				      Map2d::CContour* AContour)
+{
+  assert( ADart!=NULL );
+  static_cast<Map2d::CTopologicalDart*>(ADart)->setContour(AContour);
+}
+//******************************************************************************
+INLINE
+void CDeformablePartition::addLinelInEdge( Map2d::CDart * ADart, 
+					   const CDoublet & ALinel )
+{
+  assert( getEdge(ADart)!=NULL );
+  getEdge(ADart)->incGradient
+    ((double)std::abs
+     (static_cast<int>(FMap->getPixel(FMap->getPixelIn(ALinel)))-
+      static_cast<int>(FMap->getPixel(FMap->getPixelOut(ALinel))))/
+     (double)FMap->getImage()->getMaxGradient());
+
+  getEdge(ADart)->incNbLinels();
+}
+//------------------------------------------------------------------------------
+INLINE
+void CDeformablePartition::removeLinelInEdge( Map2d::CDart * ADart, 
+					      const CDoublet & ALinel )
+{
+  assert( getEdge(ADart)!=NULL );
+  getEdge(ADart)->incGradient
+    (-(double)std::abs
+     (static_cast<int>(FMap->getPixel(FMap->getPixelIn(ALinel)))-
+      static_cast<int>(FMap->getPixel(FMap->getPixelOut(ALinel))))/
+     (double)FMap->getImage()->getMaxGradient());
+
+  getEdge(ADart)->incNbLinels(-1);
+}
+//******************************************************************************
+INLINE
+double CDeformablePartition::getEdgeEnergy( Map2d::CDart * ADart ) const
+{
+  assert(ADart!=NULL);
+  if( FMap->getRegion(ADart)->isInfiniteRegion() ||
+      FMap->getRegion(ADart->getBeta(2))->isInfiniteRegion() )
+    return 0.0;
+  
+  return (double)-(FOmegaEdge*getEdge(ADart)->getGradient())/
+    getEdge(ADart)->getNbLinels();
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::getSavedEdgeEnergy( Map2d::CDart * ADart ) const
+{
+  assert(ADart!=NULL);
+  if( FMap->getRegion(ADart)->isInfiniteRegion() ||
+      FMap->getRegion(ADart->getBeta(2))->isInfiniteRegion() )
+    return 0.0;
+  
+  return (double)-(FOmegaEdge*getEdge(ADart)->getSavedGradient())/
+    getEdge(ADart)->getSavedNbLinels();
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::computeEdgeEnergy(Map2d::CDart * ADart) const
+{
+  assert( ADart != NULL );
+  if( FMap->getRegion(ADart)->isInfiniteRegion() ||
+      FMap->getRegion(ADart->getBeta(2))->isInfiniteRegion() )
+    return 0.0;
+
+  double gradient = 0;
+  double nblinels = 0;
+  for( Map2d::CCoverageEdgeLinels tEdge( FMap, ADart ) ; tEdge.cont() ; ++tEdge )
+    {
+      gradient += (double)std::abs(static_cast<int>(FMap->getPixel(FMap->getPixelIn(*tEdge)))-
+				   static_cast<int>(FMap->getPixel(FMap->getPixelOut(*tEdge))))/
+	(double)FMap->getImage()->getMaxGradient();
+      ++nblinels;
+    }
+  return (double)-(FOmegaEdge*gradient)/nblinels;
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::initializeEdgeEnergy(Map2d::CDart* ADart)
+{
+  assert( ADart != NULL );
+  if( FMap->getRegion(ADart)->isInfiniteRegion() ||
+      FMap->getRegion(ADart->getBeta(2))->isInfiniteRegion() )
+    {
+      return 0.0;
+    }
+
+  double gradient = 0;
+  double nblinels = 0;
+
+  for( Map2d::CCoverageEdgeLinels tEdge( FMap, ADart ) ; tEdge.cont() ; ++tEdge )
+    {
+      gradient += std::abs(static_cast<int>(FMap->getPixel(FMap->getPixelIn(*tEdge)))-
+			   static_cast<int>(FMap->getPixel(FMap->getPixelOut(*tEdge))))/
+	(double)FMap->getImage()->getMaxGradient();
+      ++nblinels;
+    }
+
+  getEdge(ADart)->setGradient(gradient);
+  getEdge(ADart)->setNbLinels(nblinels);
+  return getEdgeEnergy(ADart);
+}
+//******************************************************************************
+INLINE
+double CDeformablePartition::getRegionEnergy(Map2d::CRegion * ARegion) const
+{
+  assert( ARegion != NULL );
+
+  if( ARegion->isInfiniteRegion() )
+    return 0.0;
+
+  return FOmegaRegion * ARegion->mse();
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::getRegionEnergy(Map2d::CDart * ADart) const
+{
+  assert( ADart != NULL );
+  return getRegionEnergy(FMap->getRegion(ADart));
+}
+//******************************************************************************
+INLINE
+double CDeformablePartition::getContourEnergy(Map2d::CDart * ADart) const
+{
+  assert (getContour(ADart)!=NULL );
+  if( FMap->getRegion(ADart)->isInfiniteRegion() ) return 0.0;
+      
+  return getContour(ADart)->getEnergy() * FOmegaContour;
+}
+//------------------------------------------------------------------------------
+INLINE
+unsigned int findLinel(int ALinel, std::vector<unsigned int>& vi)
+{
+  for (unsigned int i=0; i<vi.size()-1; ++i)
+    {
+      if ( vi[i]<vi[i+1] )
+	{
+	  if ( (vi[i]<= ALinel) && (ALinel<vi[i+1]) )
+	    return i;
+	}
+      else
+	{
+         if ( (vi[i]<=ALinel)  // fin du polygone
+              || ( ALinel<vi[i+1]) ) // debut du polygone
+           return i;
+	}
+    }
+
+  assert( (vi[vi.size()-1]<vi[0] && vi[vi.size()-1]<=ALinel && ALinel<vi[0]) ||
+	  (vi[vi.size()-1]<=ALinel || ALinel<vi[0]) );
+  
+  return vi.size()-1;
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::computeMLPLengthGradient(Map2d::CDart * ADart) const
+{
+  if( FMap->getRegion(ADart)->isInfiniteRegion() )
+    {
+      return 0.0;
+    }
+  
+  //  return ImaGene::FreemanChain::lengthMLP(freemanChainFromFace( ADart ));
+
+  std::vector<int> vx, vy;
+  std::vector<unsigned int> vi;
+  ImaGene::FreemanChain::computeMLP(vx,vy,vi,freemanChainFromFace(ADart));
+  
+  /*  for (unsigned int i=0;i<vx.size(); ++i)
+    {
+      std::cout<<"("<<vx[i]<<","<<vy[i]<<"); "<<std::flush;
+    }
+  for (unsigned int i=0;i<vi.size(); ++i)
+    {
+      std::cout<<vi[i]<<","<<std::flush;
+    }
+  std::cout<<std::endl;
+
+  for (Map2d::CDynamicCoverage1 it(FMap,ADart); it.cont(); ++it)
+    for( Map2d::CCoverageEdgeLinels tEdge( FMap, *it ) ; tEdge.cont() ; ++tEdge )
+      std::cout<<*tEdge<<"  ";
+      std::cout<<std::endl;*/
+  
+  double res=0;
+  double gradient = 0;
+  
+  unsigned int curlinel=0;
+  int curmlpsegment=findLinel(curlinel,vi);
+  
+  for (Map2d::CDynamicCoverage1 it(FMap,ADart); it.cont(); ++it)
+    for( Map2d::CCoverageEdgeLinels tEdge( FMap, *it ) ; tEdge.cont() ; ++tEdge )
+      {
+        /*	if ( FMap->getRegion(*it)->isInfiniteRegion() ||
+       FMap->getRegion((*it)->getBeta(2))->isInfiniteRegion() )
+	  gradient=0;
+    else */ gradient = 1/*-(std::abs(static_cast<int>(FMap->getPixel(FMap->getPixelIn(*tEdge)))-
+				    static_cast<int>(FMap->getPixel(FMap->getPixelOut(*tEdge))))/
+            (double)FMap->getImage()->getMaxGradient())*/;
+			   
+	//	std::cout<<"linel ["<<curlinel<<"]: "<<std::flush;	
+
+	if ( gradient>0 )
+	  {
+	    //	std::cout<<"i="<<i<<std::flush;
+	    
+	    TLinel cur=(*tEdge).getLinel();
+	    double vx1=(cur==XPOS?+1:(cur==XNEG?-1:0));	
+	    double vy1=(cur==YPOS?+1:(cur==YNEG?-1:0));
+	    double vx2=vx[(curmlpsegment+1)%vx.size()]-vx[curmlpsegment];
+	    double vy2=vy[(curmlpsegment+1)%vx.size()]-vy[curmlpsegment];
+	    
+	    /*std::cout<<" v1=["<<vx1<<","<<vy1<<"] "<<std::flush;
+	      std::cout<<" v2=["<<vx2<<","<<vy2<<"] "<<std::flush;*/
+	    
+	    if ( vx2!=0 || vy2!=0 )
+	      {
+		double len= std::sqrt(vx2*vx2+vy2*vy2);
+		assert( len!=0 );
+		vx2/=len; vy2/=len;
+		
+		double dot=std::abs(vx1*vx2 + vy1*vy2);
+		// std::cout<<"dot="<<dot<<"  gradient="<<gradient<<std::endl;
+		res += dot*gradient;
+		// res += dot;
+	      }
+	    else res += 1 * gradient;
+	  }
+	
+	++curlinel;
+
+	if ( curlinel==vi[(curmlpsegment+1)%vx.size()] )
+	  curmlpsegment = (curmlpsegment+1)%vx.size();
+
+	assert( findLinel(curlinel,vi)==curmlpsegment );
+      }
+
+  /*  std::cout<<"RES="<<res<<"  MLP length="
+  	   <<ImaGene::FreemanChain::lengthMLP(freemanChainFromFace( ADart ))<<std::endl;
+  */
+  
+  //  assert(res>=0 && res<=ImaGene::FreemanChain::lengthMLP(freemanChainFromFace( ADart )));
+  
+  return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::computeContourEnergy(Map2d::CDart * ADart) const
+{
+  if( FMap->getRegion(ADart)->isInfiniteRegion() )
+    {
+      return 0.0;
+    }
+
+#if DEFORMABLE_METHOD==CONTOUR_ENERGY_LINEL
+  assert (getContour(ADart)!=NULL );  
+  return getContour(ADart)->getNbLinels() * FOmegaContour;
+
+#elif  DEFORMABLE_METHOD==CONTOUR_ENERGY_MLP
+  return FOmegaContour * computeMLPLengthGradient(ADart);
+
+#elif DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+  assert (getContour(ADart)!=NULL );
+  return FOmegaContour*getContour(ADart)->getDMLP()->getLength();
+
+#else
+  return 0.0;
+
+#endif
+}
+//------------------------------------------------------------------------------
+INLINE
+double CDeformablePartition::initializeContourEnergy(Map2d::CDart* ADart)
+{
+  assert( ADart != NULL );
+
+  if( FMap->getRegion( ADart )->isInfiniteRegion() )
+    {
+      return 0.0;
+    }
+  
+#if DEFORMABLE_METHOD==CONTOUR_ENERGY_LINEL
+  assert (getContour(ADart)!=NULL );
+  unsigned int nblinels = 0;
+  
+  for (CDynamicCoverage1 it(FMap,ADart); it.cont(); ++it)
+    for( CCoverageEdgeLinels tEdge( FMap, *it ) ; tEdge.cont() ; ++tEdge )
+      ++nblinels;
+  
+  getContour(ADart)->setNbLinels(nblinels);
+  
+#elif  DEFORMABLE_METHOD==CONTOUR_ENERGY_MLP
+  assert (getContour(ADart)!=NULL );
+  getContour(ADart)->setLengthMLP(computeMLPLengthGradient(ADart));
+
+#elif DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+  assert( getContour(ADart)!=NULL );
+  assert( getContour(ADart)->getDMLP()==NULL );
+  ImaGene::FreemanChain ch = freemanChainFromFace(ADart);
+
+  ImaGene::GridCurve * dmlp = new ImaGene::GridCurve(ch, "INTERPIXEL");
+  getContour(ADart)->setDMLP(dmlp);
+  // dmlp->simplify(); // REMOVE ?
+  // dmlp->updateLength(); // REMOVE ?
+  getContour(ADart)->setLengthMLP(dmlp->getLength());
+
+  /*  if ( !(getContour(ADart)->getDMLP()->getFreemanChain()==freemanChainFromFace(ADart)) )
+    {
+      std::cout<<"PB INIT"<<std::endl;
+      std::cout<<"Freeman DMLP: "<<getContour(ADart)->getDMLP()->getFreemanChain()<<std::endl;
+      std::cout<<"        CMLP: "<<freemanChainFromFace(ADart)<<std::endl;
+      std::cout<<"        CMLP: ";ImaGene::FreemanChain::write(std::cout,freemanChainFromFace(ADart));std::cout<<std::endl;
+      std::cout<<"Edges="<<*(getContour(ADart)->getDMLP())<<std::endl;
+      exit(-1);
+      }*/
+
+  
+  if (FMap->getRegion(ADart)->getDMLPIterator()==NULL)
+  {
+      Map2d::CDart* initDart =
+              FMap->getRegion(ADart)->getRepresentativeDart();
+
+      FMap->getRegion(ADart)->setDMLPIterator(new ImaGene::GridCurve::Visitor(dmlp->begin()));
+      FMap->getRegion(ADart)->setDMLPIterator2(new ImaGene::GridCurve::Visitor(dmlp->begin()));
+  }
+#else
+  return 0.0;
+#endif
+  return getContourEnergy(ADart);
+}
+//******************************************************************************

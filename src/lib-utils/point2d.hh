@@ -16,15 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-//*****************************************************************************
 #ifndef POINT2D_HH
 #define POINT2D_HH
-//*****************************************************************************
+
 #include <iostream>
 #include "inline-macro.hh"
-//#include "doublet.hh"
 #include "macros.hh"
-//*****************************************************************************
 
 /**
  * La classe CPoint2D représente une coordonnée 2D entière.
@@ -98,13 +95,11 @@ public:
   /**
    * Accès en lecture à la première composante du sommet.
    */
-  uint getX() const;
   uint x() const;
 
   /**
    * Accès en lecture à la deuxième composante du sommet.
    */
-  uint getY() const;
   uint y() const;
 
   /**
@@ -112,7 +107,6 @@ public:
    *
    * @param ADim Une dimension (0 ou 1)
    */
-  uint getCoord(uint ADim) const;
   uint coord(uint ADim) const;
 
   /**
@@ -179,40 +173,6 @@ public:
   friend std::ostream& operator<<(std::ostream& AStream,
 				  const CPoint2D& AVector);
 
-
-
 };
-
-// @}
-// @name Constantes
-// @{
-
-/**
- * Le sommet de cordonnées (0,0).
- */
-static const CPoint2D COORDINATE_ORIGIN(0,0);
-
-/**
- * Le vecteur de composantes (1,0).
- */
-static const CPoint2D COORDINATE_OX(1,0);
-
-/**
- * Le vecteur de composantes (0,1).
- */
-static const CPoint2D COORDINATE_OY(0,1);
-
-
-/** BASE
- * Les trois vecteurs de base OX et OY placés dans un tableau.
- */
-static const CPoint2D COORDINATE_BASE[2] = { COORDINATE_OX,
-					     COORDINATE_OY };
-
-// @}
-
-//******************************************************************************
 #include INCLUDE_INLINE("point2d.icc")
-//******************************************************************************
 #endif // POINT2D_HH
-//******************************************************************************

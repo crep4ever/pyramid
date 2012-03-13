@@ -36,12 +36,12 @@ void CMapBasic::removeAllDarts()
     {
       deleteTabDarts(FTabsDarts[i]); FTabsDarts[i]=NULL;
     }
-  
+
   FNbTabsDarts      = 0;
   FNbDartsInLastTab = 0;
   FNbDarts          = 0;
   FFirstDeleteDart  = NULL;
-} 
+}
 //------------------------------------------------------------------------------
 INLINE
 void CMapBasic::empty()
@@ -69,7 +69,7 @@ void CMapBasic::empty()
 
   for (i=0; i<NB_DIRECT_INFO; ++i)
     FDirectInfos[i] = i;
-  
+
   // On réserve la marque des brins à détuire.
   FMarkToDelete = getNewMark();
   assert( FMarkToDelete!=-1 );
@@ -102,7 +102,7 @@ CDart* CMapBasic::getDart(unsigned int Ai, unsigned int Aj) const
 {
   assert(false);
   assert( Ai<FNbTabsDarts && Aj<FSizeDartArray );
-  
+
   return (FTabsDarts[Ai])+Aj;
 }
 //------------------------------------------------------------------------------
@@ -132,16 +132,16 @@ void CMapBasic::delMapDart(CDart* ADart)
 //------------------------------------------------------------------------------
 INLINE
 bool CMapBasic::isMarkedDeleted(CDart* ADart) const
-{ 
+{
    assert( ADart!=NULL );
    return isMarked(ADart,FMarkToDelete);
-}   
+}
 //------------------------------------------------------------------------------
 INLINE
 void CMapBasic::copyDart(CDart* ADartDest, CDart* ADartSrc)
 {
   assert( false );
-  
+
   assert( ADartDest!=NULL && ADartSrc!=NULL );
   ADartDest->copy(ADartSrc);
 }
@@ -162,7 +162,7 @@ CDart* CMapBasic::addMapDart()
       ++FNbTabsDarts;
       FNbDartsInLastTab = 0;
     }
-      
+
       ++FNbDartsInLastTab;
 
       res = getDart(FNbTabsDarts-1, FNbDartsInLastTab-1);
@@ -173,10 +173,10 @@ CDart* CMapBasic::addMapDart()
       res = FFirstDeleteDart;
       FFirstDeleteDart=FFirstDeleteDart->getBeta0();
     }
-  
+
   ++FNbDarts;
   initDart(res);
-  
+
   return res;
 }
 //------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ int CMapBasic::getNewDirectInfo()
   if (FNbUsedDirectInfos == FMaxNbUsedDirectInfos)
     FMaxNbUsedDirectInfos = FNbUsedDirectInfos + 1;
 #endif // NDEBUG
-  
+
   if (FNbUsedDirectInfos == NB_DIRECT_INFO)
     {
 #ifndef NDEBUG
@@ -303,14 +303,14 @@ void* CMapBasic::getDirectInfo(CDart* ADart, int ADirectIndex) const
 {
   assert( ADart!=NULL );
   assert( FUsedDirectInfo[ADirectIndex] );
-  
+
   return ADart->getDirectInfo(ADirectIndex);
 }
 //------------------------------------------------------------------------------
 INLINE
 void CMapBasic::setDirectInfo(CDart* ADart, int ADirectIndex, void* APointer)
 {
-  assert( ADart!=NULL );    
+  assert( ADart!=NULL );
   assert( FUsedDirectInfo[ADirectIndex] );
 
   ADart->setDirectInfo(ADirectIndex, APointer);
@@ -371,7 +371,7 @@ void CMapBasic::setMarkTo(CDart* ADart, int AMarkNumber, bool AState)
 {
   assert( ADart!=NULL );
   assert(FUsedMarks[AMarkNumber]);
-  
+
   ADart->setMark(AMarkNumber, AState ^ FMaskMarks[AMarkNumber]);
 }
 //------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ bool CMapBasic::isWholeMapUnmarked(int AMarkNumber)
      if ( !isMarkedDeleted(getDart(FNbTabsDarts-1,j)) )
         if (isMarked(getDart(FNbTabsDarts-1,j), AMarkNumber))
     return false;
-  
+
   return true;
 }
 //------------------------------------------------------------------------------
@@ -420,7 +420,7 @@ INLINE
 void CMapBasic::linkBeta(CDart* ADart1, CDart* ADart2, int AIndex)
 {
   assert( ADart1!=NULL && ADart2!=NULL);
-  
+
   ADart1->setBeta(ADart2, AIndex);
 
   if      (AIndex==0) ADart2->setBeta(ADart1, 1);
@@ -448,7 +448,7 @@ void CMapBasic::unlinkBeta(CDart* ADart, int AIndex)
   if (AIndex==0)       ADart->getBeta0()->setFree1();
   else if (AIndex==1)  ADart->getBeta1()->setFree0();
   else                 ADart->getBeta(AIndex)->setFree(AIndex);
-  
+
   ADart->setFree(AIndex);
 }
 //------------------------------------------------------------------------------

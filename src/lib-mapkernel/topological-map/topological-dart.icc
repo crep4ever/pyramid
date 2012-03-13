@@ -28,7 +28,11 @@ INLINE
 CTopologicalDart::CTopologicalDart() :
   CDart   (),
   FDoublet(),
-  FRegion (NULL)
+  FRegion (NULL),
+  FEdge(NULL)
+#ifdef DEFORMABLE_METHOD
+  , FContour(NULL)
+#endif // DEFORMABLE_METHOD
 {}
 //------------------------------------------------------------------------------
 INLINE
@@ -36,6 +40,10 @@ void CTopologicalDart::init(const CDoublet & ADoublet, CRegion* ARegion)
 {
   FDoublet = ADoublet;
   FRegion  = ARegion;
+  FEdge = NULL;
+#ifdef DEFORMABLE_METHOD
+  FContour = NULL;
+#endif // DEFORMABLE_METHOD
 }
 //------------------------------------------------------------------------------
 INLINE
@@ -45,15 +53,15 @@ void CTopologicalDart::copy( CTopologicalDart* ADart )
 
   FDoublet = ADart->FDoublet;
   FRegion  = ADart->FRegion;
+  FEdge = ADart->FEdge;
+#ifdef DEFORMABLE_METHOD
+  FContour = ADart->FContour;
+#endif // DEFORMABLE_METHOD
 }
 //******************************************************************************
 INLINE
 CDoublet& CTopologicalDart::doublet()
 { return FDoublet; }
-//******************************************************************************
-INLINE
-void CTopologicalDart::setDoublet(const CDoublet& ADoublet)
-{ FDoublet = ADoublet; }
 //******************************************************************************
 INLINE
 CRegion* CTopologicalDart::getRegion() const
@@ -63,7 +71,7 @@ INLINE
 void CTopologicalDart::setRegion(CRegion* ARegion)
 {
   assert( ARegion!=NULL );
-  
+
   FRegion=ARegion;
 }
 //******************************************************************************

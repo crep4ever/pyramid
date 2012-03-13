@@ -28,7 +28,6 @@
 #include <iostream>
 #include <cassert>
 #include "alt-stdint.hh"
-#include <string>
 //******************************************************************************
 typedef uint16_t TNatural;
 typedef uint8_t  TLinel;
@@ -91,31 +90,31 @@ public:
    *
    *  @param Ax, Ay     Les coordonnées entières du doublet
    *  @param ALinel     Le type de lignel
-  
+
    */
   CDoublet(TNatural Ax, TNatural Ay, const TLinel& ALinel);
   //@}
 
   /// @name Destructeur
-  virtual ~CDoublet();
+  ~CDoublet();
 
   /// @name Accesseurs
   //@{
   TNatural getX() const;
   TNatural getY() const;
- 
+
   TNatural incX(int ANb = 1);
   TNatural incY(int ANb = 1);
- 
+
   void setX(const TNatural& Ax);
   void setY(const TNatural& Ay);
- 
-  void setDoublet(const TNatural& Ax, const TNatural& Ay, 
+
+  void setDoublet(const TNatural& Ax, const TNatural& Ay,
 		  const TLinel& ALinel);
-  
+
   TLinel getLinel() const;
   void   setLinel(const TLinel& ALinel);
-  
+
   bool samePointel(const CDoublet& ADoublet) const;
 
   void setPointel (const CDoublet& ADoublet);
@@ -148,12 +147,8 @@ public:
   /// @see getPrevLinel()
   void setPrevLinel();
 
-  /// Display doublet information on stdout
-  /// @param APrefix : prefix additionnal comment
-  void print(const std::string & APrefix="");
-
   //@}
-  
+
   /**
    * @param  AStream  Le flot dans lequel afficher le doublet
    * @param  ADoublet Le doublet à afficher
@@ -174,7 +169,7 @@ public:
   static bool isX( TLinel L );
   static bool isY( TLinel L );
 
-protected:
+private:
   /// @name Attributs privés
   //@{
   TNatural Fx, Fy; //Pointel

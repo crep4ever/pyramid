@@ -22,11 +22,9 @@
 //******************************************************************************
 #ifndef PIXEL_HH
 #define PIXEL_HH
-
-#include <ostream>
 //******************************************************************************
 enum
-  {
+{
     FIRST_DIR = 0,
 
     FIRST_DIR_4CONNECTED = FIRST_DIR,
@@ -48,56 +46,54 @@ enum
     RIGHT_BOTTOM,
 
     LAST_DIR_8CONNECTED
-  };
+};
 //******************************************************************************
 typedef int TPixelCoord;
 
 class CPixel
 {
 public:
-  CPixel();
-  CPixel(TPixelCoord Ax, TPixelCoord Ay);
-  CPixel(const CPixel&);
-  ~CPixel();
+    CPixel();
+    CPixel(TPixelCoord Ax, TPixelCoord Ay);
+    CPixel(const CPixel&);
+    ~CPixel();
 
-  // Accesseurs
-  TPixelCoord getX() const;
-  TPixelCoord x() const;
-  TPixelCoord getY() const;
-  TPixelCoord y() const;
+    // Accesseurs
+    TPixelCoord getX() const;
+    TPixelCoord getY() const;
 
-  // Modificateurs
-  void setX(TPixelCoord);
-  void setY(TPixelCoord);
-  void set(TPixelCoord, TPixelCoord);
+    // Modificateurs
+    void setX(TPixelCoord);
+    void setY(TPixelCoord);
+    void set(TPixelCoord, TPixelCoord);
 
-  // Incrementation
-  void incX(int ADx = 1);
-  void incY(int ADy = 1);
+    // Incrementation
+    void incX(int ADx = 1);
+    void incY(int ADy = 1);
 
-  // Opérateurs
-  CPixel& operator = (const CPixel&);
+    // Opérateurs
+    CPixel& operator = (const CPixel&);
 
-  bool operator == (const CPixel&) const;
-  bool operator != (const CPixel&) const;
+    bool operator == (const CPixel&) const;
+    bool operator != (const CPixel&) const;
 
-  friend std::ostream& operator << (std::ostream & os, const CPixel&);
+    friend std::ostream& operator << (std::ostream & os, const CPixel&);
 
-  // Voisins
-  CPixel left() const;
-  CPixel right() const;
-  CPixel top() const;
-  CPixel bottom() const;
+    // Voisins
+    CPixel left() const;
+    CPixel right() const;
+    CPixel top() const;
+    CPixel bottom() const;
 
-  CPixel leftTop() const;
-  CPixel rightTop() const;
-  CPixel leftBottom() const;
-  CPixel rightBottom() const;
+    CPixel leftTop() const;
+    CPixel rightTop() const;
+    CPixel leftBottom() const;
+    CPixel rightBottom() const;
 
-  CPixel neighboor(int ADir) const;
+    CPixel neighboor(int ADir) const;
 
 private:
-  TPixelCoord Fx, Fy;
+    TPixelCoord Fx, Fy;
 };
 //******************************************************************************
 #include "pixel.icc"

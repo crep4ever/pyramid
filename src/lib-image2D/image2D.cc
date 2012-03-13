@@ -28,6 +28,7 @@
 #include<map>
 #include<vector>
 #include<stdint.h>
+#include<cstring>
 
 #include<cassert>
 #include<cmath>
@@ -57,6 +58,7 @@ bool CImage2D::allocateData(unsigned int Ax, unsigned int Ay)
 
     FMinLevel = (TLabel(-1));     // La plus grande valeur possible.
     FMaxLevel = 0; // La plus petite valeur possible.
+    FMaxGradient = 0;
 
     FImage = new TLabel[getXSize()*getYSize()];
     FMark  = new bool  [getXSize()*getYSize()];
@@ -97,6 +99,7 @@ CImage2D& CImage2D::operator= (const CImage2D & AImage2D)
                 if (AImage2D.isMarked(x, y)) setMark(x, y);
             }
 
+        FMaxGradient = AImage2D.FMaxGradient;
         FDisplayMin = AImage2D.FDisplayMin;
         FDisplayMax = AImage2D.FDisplayMax;
     }
@@ -107,13 +110,11 @@ CImage2D::CImage2D(const CImage2D & AImage2D) :
         FImage(NULL), FMark(NULL), FUFTree(NULL)
 { operator=(AImage2D); }
 //******************************************************************************
-/*
-CImage2D::CImage2D(const char * AFilename) :
+CImage2D::CImage2D(const char* AFilename) :
         FImage(NULL), FMark(NULL), FUFTree(NULL)
 { importWithMagick(AFilename); }
-*/
 //******************************************************************************
-CImage2D::CImage2D(const char * AFilename,
+CImage2D::CImage2D(const char* AFilename,
                    unsigned int AXLarg, unsigned int AYLarg) :
         FImage(NULL), FMark(NULL), FUFTree(NULL)
 { loadRaw(AFilename, AXLarg, AYLarg); }
@@ -209,6 +210,9 @@ TLabel CImage2D::getMinLabel() const
 TLabel CImage2D::getMaxLabel() const
 { return FMaxLevel; }
 //------------------------------------------------------------------------------
+TLabel CImage2D::getMaxGradient() const
+{ return FMaxGradient; }
+//------------------------------------------------------------------------------
 TLabel CImage2D::getDisplayMin() const
 { return FDisplayMin; }
 //------------------------------------------------------------------------------
@@ -294,6 +298,17 @@ void CImage2D::setPixel(unsigned int Ax, unsigned int Ay,
         if (AVal < FMinLevel) FMinLevel = AVal;
         if (AVal > FMaxLevel) FMaxLevel = AVal;
 
+        if ( Ax>0 )
+        {
+          TLabel delta = std::abs((int)getPixel(Ax-1,Ay)-(int)AVal);
+          if (delta>FMaxGradient) FMaxGradient=delta;
+        }
+        if ( Ay>0 )
+        {
+          TLabel delta = std::abs((int)getPixel(Ax,Ay-1)-(int)AVal);
+          if (delta>FMaxGradient) FMaxGradient=delta;
+        }
+
         FValidUF = false;
     }
 }
@@ -354,6 +369,9 @@ void CImage2D::fillImage(TLabel AIdRegion)
 {
     assert(isOk());
 
+    FMinLevel=AIdRegion;
+    FMaxLevel=AIdRegion;
+    FMaxGradient=0;
     for (unsigned int y = 0; y < getYSize(); ++y)
         for (unsigned int x = 0; x < getXSize(); ++x)
             setPixel(x, y, AIdRegion);
@@ -497,7 +515,7 @@ Magick::Image CImage2D::getImage() const
     assert(isOk());
 
     Image res;
-    //res.size(Geometry(getXSize(), getYSize()));
+    res.size(Geometry(getXSize(), getYSize()));
     res.type(GrayscaleType);
 
     Pixels view(res);
@@ -514,16 +532,20 @@ Magick::Image CImage2D::getImage() const
 //******************************************************************************
 void CImage2D::setImage(Magick::Image & AImage)
 {
-    assert(isOk());
-    assert(getXSize() == AImage.columns() && getYSize() == AImage.rows());
+  assert(isOk());
+  assert(getXSize() == AImage.columns() && getYSize() == AImage.rows());
 
-    Pixels view(AImage);
-    const PixelPacket *pixels = view.getConst(0, 0, getXSize(), getYSize());
+  Pixels view(AImage);
+  const PixelPacket *pixels = view.getConst(0, 0, getXSize(), getYSize());
 
-    unsigned int x, y;
-    for (y = 0; y < getYSize();++y)
-        for (x = 0; x < getXSize();++x)
-            setPixelColor(x, y, ColorGray(*pixels++));
+  unsigned int x, y;
+  for (y = 0; y < getYSize();++y)
+    {
+      for (x = 0; x < getXSize();++x)
+	{
+	  setPixelColor(x, y, ColorGray(*pixels++));
+	}
+    }
 }
 //******************************************************************************
 void CImage2D::displayImage(int AZoom) const
@@ -531,17 +553,17 @@ void CImage2D::displayImage(int AZoom) const
     Image res(getImage());
     if (AZoom < -1 || AZoom > 1)
     {
-        //if (AZoom > 1)
-        //    res.zoom(Geometry(getXSize()*AZoom, getYSize()*AZoom));
-        //else
-        //    res.zoom(Geometry((unsigned int)(getXSize() / abs(AZoom)),
-      //                     (unsigned int)(getYSize() / abs(AZoom))));
+        if (AZoom > 1)
+            res.zoom(Geometry(getXSize()*AZoom, getYSize()*AZoom));
+        else
+            res.zoom(Geometry((unsigned int)(getXSize() / abs(AZoom)),
+                              (unsigned int)(getYSize() / abs(AZoom))));
     }
 
     res.display();
 }
 //******************************************************************************
-bool CImage2D::loadRaw(const char * AFilename, int AXLarg, int AYLarg)
+bool CImage2D::loadRaw(const char* AFilename, int AXLarg, int AYLarg)
 {
 // 1) On initialise la matrice
     if (!allocateData(AXLarg, AYLarg)) return false;
@@ -553,7 +575,7 @@ bool CImage2D::loadRaw(const char * AFilename, int AXLarg, int AYLarg)
     for (unsigned int y = 0; y < getYSize(); ++y)
         for (unsigned int x = 0; x < getXSize(); ++x)
         {
-            is.read((char *) &val16, sizeof(val16));
+            is.read((char*) &val16, sizeof(val16));
 
             setPixel(x, y, val16);
         }
@@ -561,7 +583,7 @@ bool CImage2D::loadRaw(const char * AFilename, int AXLarg, int AYLarg)
     return true;
 }
 //*****************************************************************************
-void CImage2D::writeRaw(const char * AFilename) const
+void CImage2D::writeRaw(const char* AFilename) const
 {
     assert(isOk());
 
@@ -573,12 +595,12 @@ void CImage2D::writeRaw(const char * AFilename) const
         for (unsigned int x = 0; x < getXSize(); ++x)
         {
             val16 = static_cast<uint16_t>(getPixel(x, y));
-            os.write((char *) &val16, sizeof(val16));
+            os.write((char*) &val16, sizeof(val16));
         }
     os.close();
 }
 //******************************************************************************
-bool CImage2D::importWithMagick(const char * AFilename)
+bool CImage2D::importWithMagick(const char* AFilename)
 {
 // 1) On lit l'image
     Image imageTemp;
@@ -602,7 +624,7 @@ bool CImage2D::importWithMagick(const char * AFilename)
     return true;
 }
 //*****************************************************************************
-void CImage2D::exportWithMagick(const char * AFilename) const
+void CImage2D::exportWithMagick(const char* AFilename) const
 {
     assert(isOk());
 

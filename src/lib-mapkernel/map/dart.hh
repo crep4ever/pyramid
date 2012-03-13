@@ -60,12 +60,12 @@ namespace Map2d
 
     /// Copy les informations du brin ADart
     void copy( CDart* ADart );
-    
+
     /** Destructeur
      *
      *  Détruit une instance de la classe CDart.
      */
-    virtual ~CDart();
+    ~CDart();
 
     //@}
 
@@ -147,7 +147,7 @@ namespace Map2d
      */
     void setBeta2(CDart* ADart);
 
- 
+
     /** Définition de l'involution betaI
      *
      *  @param ADart le brin à lier par betaI à l'instance.
@@ -155,8 +155,8 @@ namespace Map2d
      */
     void setBeta (CDart* ADart, int AIndex);
 
- 
-  
+
+
  /** Test permettant de savoir si un brin est libre (non cousu) par beta0.
      *
      *  @return un booléen signifiant si l'instance est libre par beta0.
@@ -175,7 +175,7 @@ namespace Map2d
      */
     bool isFree2() const;
 
-   
+
     /** Test permettant de savoir si un brin est libre (non cousu) par betaI.
      *
      *  @param ADimension la dimension de la liaison à tester.
@@ -195,7 +195,7 @@ namespace Map2d
      */
     void setFree2();
 
-   
+
     /** Libèration pour le brin instancié de son involution betaI
      */
     void setFree(int AIndex);
@@ -265,13 +265,13 @@ namespace Map2d
      *  soient tous deux porteur de l"attributs.
      */
     void orientEdgesAttribute( CDart* ADart );
-    
+
 #endif // CONTOUR_SIMPLIFICATION
 
     /// Affichage d'un brin.
-    void print( std::ostream& AOs ) const;    
+    void print( std::ostream& AOs ) const;
     friend std::ostream& operator<<(std::ostream&, const CDart &);
-    
+
   private:
     /// Tableau des liaisons beta (suite de pointeurs sur un brin)
     CDart* FBeta[3];
@@ -286,7 +286,7 @@ namespace Map2d
 #ifdef CONTOUR_SIMPLIFICATION
     public: CEdgeAttribute* FEdgeAttribute;
 #endif // CONTOUR_SIMPLIFICATION
-    
+
   };
 
 } // namespace Map2d

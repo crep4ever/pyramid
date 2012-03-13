@@ -35,7 +35,7 @@ namespace Map2d
   class CDart;
   class CMapBasic;
 
-  
+
   //****************************************************************************
   /** Classe CBasicDynamicCoverageVertex : classe pour le parcours sommet
    *   qui ne gère pas les marques (pas de démarquage des brins marqués)
@@ -84,13 +84,13 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible 
+     *  @return vrai si et seulement si il est encore possible
      *          de continuer le parcours.
      */
     virtual bool cont();
@@ -123,12 +123,12 @@ namespace Map2d
 
 #define GET_BETAIJ(D,AI,AJ) ( FMap->beta(FMap->beta(D,AI),AJ) )
 
- 
+
 //******************************************************************************
 // CBasicDynamicCoverageVertex
 //******************************************************************************
 inline
-CBasicDynamicCoverageVertex::CBasicDynamicCoverageVertex(CMapBasic* AMap, 
+CBasicDynamicCoverageVertex::CBasicDynamicCoverageVertex(CMapBasic* AMap,
 							 const CDart* ADart1, int, int) :
   CCoverage     (AMap),
   FFirstDart    ((CDart*) ADart1),
@@ -145,7 +145,7 @@ CBasicDynamicCoverageVertex::~CBasicDynamicCoverageVertex()
 //******************************************************************************
 inline
 void CBasicDynamicCoverageVertex::reinit()
-{  
+{
   FDoContinue	 = true;
   FCurrentDart	 = FFirstDart;
   FPrevOp	 = OP_NONE;

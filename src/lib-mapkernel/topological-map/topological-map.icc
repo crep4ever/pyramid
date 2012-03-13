@@ -37,7 +37,9 @@ CTopologicalMap::CTopologicalMap(unsigned int ASizeDartArray) :
         FImage(NULL),
         FKhalimsky(NULL),
         FInclusionTreeRoot(NULL),
-        FNbRegions(0)
+        FNbRegions(0),
+	FUFTreeMode(false)
+	,FLastCavityCount(0)
 {
 }
 //------------------------------------------------------------------------------
@@ -48,7 +50,9 @@ CTopologicalMap::CTopologicalMap(CImage2D* AImage, unsigned int ALevel,
         FImage(NULL),
         FKhalimsky(NULL),
         FInclusionTreeRoot(NULL),
-        FNbRegions(0)
+        FNbRegions(0),
+	FUFTreeMode(false)
+	,FLastCavityCount(0)
 {
     // Extraction de la carte à partir de l'image
     extractTopologicalMap(AImage, ALevel);
@@ -110,19 +114,20 @@ INLINE
 #ifdef CONTOUR_SIMPLIFICATION
    assert(res->FEdgeAttribute == NULL);
 #endif // CONTOUR_SIMPLIFICATION
-    
+
    return res;
 }
 //------------------------------------------------------------------------------
 INLINE
 void CTopologicalMap::empty()
 {
-  //std::cout<<"topo map empty"<<std::endl;
-  CMapGeneric::empty();
+    CMapGeneric::empty();
 
     delete FKhalimsky;         FKhalimsky         = NULL;
     delete FInclusionTreeRoot; FInclusionTreeRoot = NULL;
     FNbRegions = 0;
+    FUFTreeMode = false;
+    FLastCavityCount = 0;
 
     // On réserve la marque des brins à détuire.
     FMarkToDelete = getNewMark();
@@ -194,6 +199,96 @@ unsigned long int CTopologicalMap::getMemoryForImage() const
 }
 //******************************************************************************
 INLINE
+bool CTopologicalMap::isRegionRoot(CRegion* ARegion) const
+{
+  assert( ARegion!=NULL );
+  assert( FUFTreeMode );
+  return ARegion->getFather()==NULL;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CTopologicalMap::isRegionRoot(CDart* ADart) const
+{
+  assert( ADart!=NULL );
+  assert( FUFTreeMode );
+  return isRegionRoot(static_cast<CTopologicalDart*>(ADart)->getRegion());
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CTopologicalMap::findRegionRoot(CRegion* ARegion)
+{
+  assert( ARegion!=NULL );
+  assert( FUFTreeMode );
+  CRegion* res = ARegion;
+  CRegion* tmp = ARegion;
+  CRegion* next= NULL;
+
+  while (res->getFather() != NULL)
+    {
+      res = res->getFather();
+    }
+
+  while (tmp->getFather() != NULL)
+    {
+      next=tmp->getFather();
+      tmp->setFather(res);
+      tmp = next;
+    }
+
+  return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CTopologicalMap::getRegion(CDart* ADart)
+{
+    assert(ADart != NULL);
+
+    if ( FUFTreeMode )
+      return findRegionRoot(static_cast<CTopologicalDart*>(ADart)->getRegion());
+    return static_cast<CTopologicalDart*>(ADart)->getRegion();
+}
+  //-----------------------------------------------------------------------------
+INLINE
+void CTopologicalMap::setRegion(CDart* ADart,CRegion* ARegion) const
+{
+  assert( ADart!=NULL );
+  assert ( !FUFTreeMode || isRegionRoot(ARegion) );
+  static_cast<CTopologicalDart*>(ADart)->setRegion(ARegion);
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CTopologicalMap::unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2)
+{
+  assert( ARegion1!=NULL );
+  assert( ARegion2!=NULL );
+  assert( FUFTreeMode );
+
+  ARegion1 = findRegionRoot(ARegion1);
+  ARegion2 = findRegionRoot(ARegion2);
+
+  //si les deux régions racines sont égales on sort de la fonction
+  if (ARegion1 == ARegion2) return false;
+
+  // sinon on les fusionne en mettant la région d'identifiant le + petit
+  // racine de l'arbre (cad la première pour notre ordre de parcours)
+  if (ARegion1->getFirstPixel() < ARegion2->getFirstPixel())
+    {
+      ARegion2->setFather(ARegion1);
+      ARegion2->setRepresentativeDart(NULL);
+      ARegion1->mergeWith(ARegion2);
+    }
+  else
+    {
+      assert( ARegion1->getFirstPixel()!=ARegion2->getFirstPixel() );
+      ARegion1->setFather(ARegion2);
+      ARegion1->setRepresentativeDart(NULL);
+      ARegion2->mergeWith(ARegion1);
+    }
+
+  return true;
+}
+//******************************************************************************
+INLINE
 CDoublet CTopologicalMap::getDoublet(CDart* ADart) const
 {
     assert(ADart != NULL);
@@ -215,17 +310,10 @@ void CTopologicalMap::setDoublet(CDart* ADart, const CDoublet& ADoublet)
 }
 //------------------------------------------------------------------------------
 INLINE
-CRegion* CTopologicalMap::getRegion(CDart* ADart)
-{
-    assert(ADart != NULL);
-    return static_cast<CTopologicalDart*>(ADart)->getRegion();
-}
-//------------------------------------------------------------------------------
-INLINE
 CDart* CTopologicalMap::getRepresentativeDart(CRegion* ARegion)
 {
     assert(ARegion != NULL);
-
+    if ( FUFTreeMode ) ARegion = findRegionRoot(ARegion);
     return ARegion->getRepresentativeDart();
 }
 //------------------------------------------------------------------------------
@@ -234,7 +322,8 @@ bool CTopologicalMap::isRepresentativeDart(CDart* ADart)
 {
    assert(ADart != NULL);
 
-   return getRepresentativeDart(getRegion(ADart)) == ADart;
+   return getRepresentativeDart(static_cast<CTopologicalDart*>(ADart)->getRegion())
+     == ADart;
 }
 //------------------------------------------------------------------------------
 INLINE
@@ -242,9 +331,13 @@ void CTopologicalMap::setRepresentativeDart(CRegion* ARegion, CDart* ADart)
 {
     assert(ARegion != NULL);
     assert(ADart != NULL);
-
+    if ( FUFTreeMode ) ARegion = findRegionRoot(ARegion);
     return ARegion->setRepresentativeDart(ADart);
 }
+//------------------------------------------------------------------------------
+INLINE
+CImage2D * CTopologicalMap::getImage()
+{ return FImage; }
 //******************************************************************************
 INLINE
 TRegionId CTopologicalMap::getMaxGreyLevel() const
@@ -262,7 +355,7 @@ TRegionId CTopologicalMap::getPixel(unsigned int x,
 }
 //------------------------------------------------------------------------------
 INLINE
-TRegionId CTopologicalMap::getPixel( const CPoint2D & ACoord ) const
+TRegionId CTopologicalMap::getPixel( const CCoordinate & ACoord ) const
 { return getPixel( ACoord.getX(), ACoord.getY() ); }
 //------------------------------------------------------------------------------
 INLINE
@@ -301,16 +394,16 @@ void CTopologicalMap:: unmarkAllPixels()
 }
 //*****************************************************************************
 INLINE
-CPoint2D
+CCoordinate
 CTopologicalMap::getPixelFromDoublet(const CDoublet & ADoublet) const
 {
   return getPixelIn( ADoublet );
 }
 //------------------------------------------------------------------------------
 INLINE
-CPoint2D CTopologicalMap::getPixelIn( const CDoublet & ADoublet ) const
+CCoordinate CTopologicalMap::getPixelIn( const CDoublet & ADoublet ) const
 {
-  CPoint2D AVertex(ADoublet.getX(), ADoublet.getY());
+  CCoordinate AVertex(ADoublet);
   switch ( ADoublet.getLinel() )
     {
     case YPOS:
@@ -328,9 +421,9 @@ CPoint2D CTopologicalMap::getPixelIn( const CDoublet & ADoublet ) const
 }
 //------------------------------------------------------------------------------
 INLINE
-CPoint2D CTopologicalMap::getPixelOut( const CDoublet & ADoublet ) const
+CCoordinate CTopologicalMap::getPixelOut( const CDoublet & ADoublet ) const
 {
-  CPoint2D AVertex(ADoublet.getX(), ADoublet.getY());
+  CCoordinate AVertex(ADoublet);
   switch ( ADoublet.getLinel() )
     {
     case XPOS:
@@ -348,9 +441,9 @@ CPoint2D CTopologicalMap::getPixelOut( const CDoublet & ADoublet ) const
 }
 //------------------------------------------------------------------------------
 INLINE
-CPoint2D CTopologicalMap::getFirstPixel(CRegion* ARegion)
+CCoordinate CTopologicalMap::getFirstPixel(CRegion* ARegion)
 {
-  return getPixelFromDoublet(getDoublet(ARegion->getRepresentativeDart()));
+  return getPixelFromDoublet(getDoublet(getRepresentativeDart(ARegion)));
 }
 //******************************************************************************
 INLINE
@@ -406,7 +499,7 @@ unsigned int CTopologicalMap::getPointelDegree(const CDoublet& ADoublet) const
       doublet.setNextLinel();
    }
    while (doublet != ADoublet);
-      
+
    return count;
 }
 //------------------------------------------------------------------------------
@@ -469,7 +562,7 @@ CDart* CTopologicalMap::createSquareFace(CDart* Alast, CDart* Aup,
 
 	otherDoublet.setNextPointel();
 	otherDoublet.setNextLinel();
-      }    
+      }
 
     linkBeta1(prev, first);
 
@@ -477,7 +570,7 @@ CDart* CTopologicalMap::createSquareFace(CDart* Alast, CDart* Aup,
     linkBeta2(prev, Alast);
     linkBeta2(first, Aup);
 
-    /* Si on veut des attributs sur les arêtes, on les ajoutes. 
+    /* Si on veut des attributs sur les arêtes, on les ajoutes.
      Uniquement sur les brins prev et first car un seul brin par arête porte
      l'attribut. */
 #ifdef CONTOUR_SIMPLIFICATION
@@ -521,7 +614,7 @@ CVertex CTopologicalMap::barycenter(CDart * ADart, TOrbit AOrbit)
     for (; cov->cont(); ++(*cov))
         if (!isMarked(**cov, treated))
         {
-	  bary += CVertex(getDoublet(**cov).getX(), getDoublet(**cov).getY());
+            bary += getDoublet(**cov);
             ++n;
             markOrbit(**cov, ORBIT_VERTEX, treated);
         }

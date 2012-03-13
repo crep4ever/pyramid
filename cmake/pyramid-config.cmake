@@ -9,8 +9,41 @@ set(CODENAME "")
 option(GENERATE_MANPAGES "generate manpages" ON)
 option(COMPRESS_MANPAGES "compress manpages" ON)
 option(OPENMP "multithreading with openmp" ON)
-option(RELEASE "release mode" ON)
+option(RELEASE "release mode" OFF)
 option(PROFILE "profile mode" OFF)
+option(DEBUG_PYRAMID "debug info for lib-pyramid" OFF)
+
+# Pour activer la partition déformable ou la désactiver.
+# 0 : pas de partition déformable
+# 1 : contour energy lignels
+# 2 : contour energy mlp
+# 3 : contour energy dynamic mlp
+# La librairie ImaGene est requise pour que cette option fonctionne;
+option(DEFORMABLE_PARTITION "deformable partitions method" OFF)
+
+set(DEFORMABLE_METHOD 0)
+
+if (DEFORMABLE_PARTITION)
+  if (${DEFORMABLE_METHOD} EQUAL 0)
+    add_definitions(-DCONTOUR_ENERGY_LINEL=1 -DCONTOUR_ENERGY_MLP=2 -DCONTOUR_ENERGY_DMLP=3)
+  else (${DEFORMABLE_METHOD} EQUAL 0)
+    add_definitions(-DDEFORMABLE_METHOD=${DEFORMABLE_METHOD})
+    add_definitions(-DCONTOUR_ENERGY_LINEL=1 -DCONTOUR_ENERGY_MLP=2 -DCONTOUR_ENERGY_DMLP=3)
+
+    if (NOT ${DEFORMABLE_METHOD} EQUAL 1)
+      set(CMAKE_MODULE_PATH "/home/gdamiand/sources/codes-autres/imagene")
+      message(CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH})
+      find_package(ImaGene REQUIRED)
+      include_directories("${ImaGene_INCLUDE_DIRS}")
+    endif (NOT ${DEFORMABLE_METHOD} EQUAL 1)
+
+    include_directories (${CMAKE_SOURCE_DIR}/src/lib-deformable-partition)
+    message( STATUS "Built-in deformable partition enabled.")
+  endif (${DEFORMABLE_METHOD} EQUAL 0)
+else ()
+  message( STATUS "Built-in deformable partition disabled.")
+  add_definitions(-DDEFORMABLE_METHOD=0 -DCONTOUR_ENERGY_LINEL=1 -DCONTOUR_ENERGY_MLP=2 -DCONTOUR_ENERGY_DMLP=3)
+endif ()
 
 # {{{ CFLAGS
 add_definitions(-DNO_FREETYPE)

@@ -137,7 +137,7 @@ void CCoveragePixelsRegionJouTsai::operator++()
 
 
             // Here, we have just finished to fill a span, thus we need to
-            // test and push seeds around the span depending on
+            // test and push seeds around the span depending on 
             // the current configuration
             if (FCurrentPixel.getY() > 0)
                 checkSpan(FCurrentPixel.getY() - 1,

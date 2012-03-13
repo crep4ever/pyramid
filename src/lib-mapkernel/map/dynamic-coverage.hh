@@ -78,13 +78,13 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible de 
+     *  @return vrai si et seulement si il est encore possible de
      *  continuer le parcours.
      */
     virtual bool cont();
@@ -117,7 +117,7 @@ namespace Map2d
   /** Classe CDynamicCoverage2 : classe de base pour les parcours
    *  correspondant à une orbite spécifiée par une seule involution beta2
    *  (mais pas pour beta1 qui est un cas particulier).
-   *  
+   *
    *  Cette classe contient une structure de données permettant de parcourir
    *  tous les brins de l'orbite (à partir d'un brin de départ) associée à une
    *  seule involution. Cela implique donc seulement 2 brins.
@@ -127,7 +127,7 @@ namespace Map2d
   private:
     /// Brin de départ du parcours.
     CDart* FDart1;
-    
+
     /// Booléen indiquant si le parcours est fini ou non.
     bool FDoContinue;
 
@@ -137,7 +137,7 @@ namespace Map2d
      */
     bool FDart1Active;
 
-  public:	
+  public:
     /// @name Constructeurs et destructeur
     //@{
 
@@ -163,13 +163,13 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible de 
+     *  @return vrai si et seulement si il est encore possible de
      *  continuer le parcours.
      */
     virtual bool cont();
@@ -240,13 +240,13 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible de 
+     *  @return vrai si et seulement si il est encore possible de
      *          continuer le parcours.
      */
     virtual bool cont();
@@ -317,13 +317,13 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible de 
+     *  @return vrai si et seulement si il est encore possible de
      *          continuer le parcours.
      */
     virtual bool cont();
@@ -380,7 +380,7 @@ namespace Map2d
   protected:
     /// Indices de la marque booléenne utilisée.
     int FMarkNumber;
-    
+
     /// Numéro du direct info utilisé. Si -1, n'utilise pas de direct info
     /// et utilise alors la file FToTreat.
     int FDirectIndex;
@@ -418,7 +418,7 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
@@ -487,7 +487,7 @@ namespace Map2d
     //@}
   };
 
-  
+
   //****************************************************************************
   /** Classe CBasicDynamicCoverageVertex : classe pour le parcours sommet
    *   qui ne gère pas les marques (pas de démarquage des brins marqués)
@@ -516,11 +516,11 @@ namespace Map2d
   protected:
     /// Indices de la marque booléenne utilisée.
     int FMarkNumber;
-    
+
     /// Numéro du direct info utilisé. Si -1, n'utilise pas de direct info
     /// et utilise alors la file FToTreat.
     int FDirectIndex;
-    
+
   public:
     /// @name Constructeurs et destructeur
     //@{
@@ -552,13 +552,13 @@ namespace Map2d
     /// Passage au brin suivant du parcours.
     virtual void operator++();
 
-    /** Passage au brin suivant postfix. Réalise le déplacement du curseur 
+    /** Passage au brin suivant postfix. Réalise le déplacement du curseur
      *  et retourne le brin avant l'incrémentation
      */
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible 
+     *  @return vrai si et seulement si il est encore possible
      *          de continuer le parcours.
      */
     virtual bool cont();
@@ -621,7 +621,7 @@ namespace Map2d
     //@}
   };
 
- 
+
   //****************************************************************************
   /// Classe pour parcourir tous les brins de la carte
   class CDynamicCoverageAll : public CCoverage
@@ -654,7 +654,7 @@ namespace Map2d
 
     /// @name Opérations de parcours
     //@{
-    
+
     /// Réinitialisation du parcours à son état original.
     virtual void reinit();
 
@@ -667,7 +667,7 @@ namespace Map2d
     virtual CDart* operator++(int);
 
     /** Indication de fin de parcours.
-     *  @return vrai si et seulement si il est encore possible 
+     *  @return vrai si et seulement si il est encore possible
      *          de continuer le parcours.
      */
     virtual bool cont();
@@ -697,7 +697,7 @@ namespace Map2d
   };
 
   //****************************************************************************
- 
+
   /// Nouveaux noms pour les cellules
   typedef CDynamicCoverage1  CDynamicCoverageEdge;
   typedef CDynamicCoverage2  CDynamicCoverageFace;
@@ -726,7 +726,7 @@ namespace Map2d
   ( !FMap->isFree(D, AI) && !FMap->isFree(FMap->beta(D,AI), AJ) )
 
 #define GET_BETAIJ(D,AI,AJ) ( FMap->beta(FMap->beta(D,AI),AJ) )
-      
+
 #define IS_UNMARKED(D,AI) \
   ( !FMap->isFree(D, AI) && !FMap->isMarked(FMap->beta(D,AI), FMarkNumber) )
 
@@ -939,7 +939,7 @@ void CDynamicCoverage0::operator ++()
     {
       FPrevOp = OP_BETAI;
     }
-  
+
   if ( FFirstDirection )
     {
       assert(!FMap->isFree0(FDartCurrent));
@@ -1030,7 +1030,7 @@ void CDynamicCoverage1::operator ++()
     {
       FPrevOp = OP_BETAI;
     }
-  
+
   if ( FFirstDirection )
     {
       assert(!FMap->isFree1(FDartCurrent));
@@ -1120,7 +1120,7 @@ void CBasicDynamicCoverage12::reinit()
     {
       delete FToTreat; FToTreat = new std::queue<CDart*>;
     }
-  
+
   FDartCurrent	 = FDart1;
   FPrevOp	 = OP_NONE;
   FFirstCoverage = false;
@@ -1135,9 +1135,9 @@ inline
 void CBasicDynamicCoverage12::operator ++()
 {
   assert(cont());
-  
+
   if ( FFirstCoverage || FDirectIndex==-1 )
-    {      
+    {
       CDart* nd = NULL;
 
       if (IS_UNMARKED(FDartCurrent, 0))
@@ -1185,7 +1185,7 @@ void CBasicDynamicCoverage12::operator ++()
 	      if ( nd!=NULL )
 		{
 		  FMap->setDirectInfo(FDartCurrent, FDirectIndex,
-				      FMap->getDirectInfo(nd,FDirectIndex)); 
+				      FMap->getDirectInfo(nd,FDirectIndex));
 		  FPrevOp = OP_JUMP;
 		}
 	      else
@@ -1193,7 +1193,7 @@ void CBasicDynamicCoverage12::operator ++()
 		  FMap->setDirectInfo(FDartCurrent, FDirectIndex, NULL);
 		  FPrevOp = OP_END;
 		}
-	    }	  
+	    }
 	}
 
       if ( FDirectIndex!=-1 )
@@ -1207,7 +1207,7 @@ void CBasicDynamicCoverage12::operator ++()
 	  // prochain parcours.
 	  FMap->setDirectInfo(FDartCurrent, FDirectIndex, nd);
 	}
-    
+
       FDartCurrent = nd;
     }
   else
@@ -1263,14 +1263,14 @@ CDynamicCoverage12::~CDynamicCoverage12()
   // Si on refais exactement le même parcours, en ayant d'abord
   // inversé les marques, ça enlève les marques déjà posées.
   FMap->negateMaskMark(FMarkNumber);
-  
+
   CBasicDynamicCoverage12::reinit();
-  
+
   while ( cont() )
     operator++();
-  
+
   FMap->negateMaskMark(FMarkNumber);
-  
+
   if ( FDirectIndex!=-1 )
     FMap->freeDirectInfo(FDirectIndex);
 
@@ -1283,12 +1283,12 @@ void CDynamicCoverage12::reinit()
   // Si on refais exactement le même parcours, en ayant d'abord
   // inversé les marques, ça enlève les marques déjà posées.
   FMap->negateMaskMark(FMarkNumber);
-  
+
   CBasicDynamicCoverage12::reinit();
-  
+
   while ( cont() )
     operator++();
-  
+
   FMap->negateMaskMark(FMarkNumber);
 
   // Puis on se repositionne en début de liste.
@@ -1344,7 +1344,7 @@ void CBasicDynamicCoverageVertex::reinit()
     {
       delete FToTreat; FToTreat = new std::queue<CDart*>;
     }
-  
+
   FDartCurrent	 = FDart1;
   FPrevOp	 = OP_NONE;
   FFirstCoverage = false;
@@ -1361,7 +1361,7 @@ void CBasicDynamicCoverageVertex::operator ++()
   assert(cont());
 
   if ( FFirstCoverage || FDirectIndex==-1 )
-    {      
+    {
       CDart* nd = NULL;
 
       if ( IS_UNMARKED2(FDartCurrent, 0, 2) )
@@ -1370,7 +1370,7 @@ void CBasicDynamicCoverageVertex::operator ++()
 	  FPrevOp = OP_BETA02;
 	}
 
-      
+
       if ( IS_UNMARKED2(FDartCurrent, 2, 1) )
 	{
 	  if ( nd==NULL )
@@ -1382,7 +1382,7 @@ void CBasicDynamicCoverageVertex::operator ++()
 	    PUSH_AND_MARK2(FDartCurrent, 2, 1);
 	}
 
-           
+
        if ( nd==NULL)
 	{
 	  if ( FDirectIndex==-1 )
@@ -1404,7 +1404,7 @@ void CBasicDynamicCoverageVertex::operator ++()
 	      if ( nd!=NULL )
 		{
 		  FMap->setDirectInfo(FDartCurrent, FDirectIndex,
-				      FMap->getDirectInfo(nd,FDirectIndex)); 
+				      FMap->getDirectInfo(nd,FDirectIndex));
 		  FPrevOp = OP_JUMP;
 		}
 	      else
@@ -1414,7 +1414,7 @@ void CBasicDynamicCoverageVertex::operator ++()
 		}
 	    }
 	}
-      
+
       if ( FDirectIndex!=-1 )
 	{
 	  // On récupère la liste des brins à traiter de FDartCurrent pour la
@@ -1426,7 +1426,7 @@ void CBasicDynamicCoverageVertex::operator ++()
 	  // prochain parcours.
 	  FMap->setDirectInfo(FDartCurrent, FDirectIndex, nd);
 	}
-      
+
       FDartCurrent = nd;
     }
   else
@@ -1434,7 +1434,7 @@ void CBasicDynamicCoverageVertex::operator ++()
       // Pour avoir exactement le même effet que le parcours sans direct info,
       // on marque tout le voisinage du brin courant.
       if (EXIST_BETAIJ(FDartCurrent, 0, 2)) MARK_BETAIJ(FDartCurrent, 0, 2);
-     
+
       if (EXIST_BETAIJ(FDartCurrent, 2, 1)) MARK_BETAIJ(FDartCurrent, 2, 1);
 
       // Ici on utilise le direct info lors du 2ème (et suivant) parcours.
@@ -1483,14 +1483,14 @@ CDynamicCoverageVertex::~CDynamicCoverageVertex()
   // Si on refais exactement le même parcours, en ayant d'abord
   // inversé les marques, ça enlève les marques déjà posées.
   FMap->negateMaskMark(FMarkNumber);
-  
+
   CBasicDynamicCoverageVertex::reinit();
-  
+
   while ( cont() )
     operator++();
-  
+
   FMap->negateMaskMark(FMarkNumber);
-    
+
   if ( FDirectIndex!=-1 )
     FMap->freeDirectInfo(FDirectIndex);
 
@@ -1503,12 +1503,12 @@ void CDynamicCoverageVertex::reinit()
   // Si on refais exactement le même parcours, en ayant d'abord
   // inversé les marques, ça enlève les marques déjà posées.
   FMap->negateMaskMark(FMarkNumber);
-  
+
   CBasicDynamicCoverageVertex::reinit();
-  
+
   while ( cont() )
     operator++();
-  
+
   FMap->negateMaskMark(FMarkNumber);
 
   // Puis on se repositionne en début de parcours.
@@ -1526,7 +1526,7 @@ inline
 void CDynamicCoverageAll::goToNextDart()
 {
   assert( FMap->getNbTabsDarts()>0 );
-  
+
   do
     {
       ++Fj;
@@ -1538,7 +1538,7 @@ void CDynamicCoverageAll::goToNextDart()
 	    {
 	      ++Fi; Fj=0;
 	    }
-	  
+
 	  FCurrent = FMap->getDart(Fi,Fj);
 	}
     }

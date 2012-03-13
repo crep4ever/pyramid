@@ -54,19 +54,19 @@ namespace Map2d
     /** Constructeur
      */
     CMap(unsigned int ASizeDartArray = 1000);
-  
+
     /** Destructeur
      */
     virtual ~CMap();
 
     //@}
 
-  
+
     /**  @name Méthodes "sûres" pour la couture et décousure.
      */
 
     //@{
-  
+
     /** canSew[i]
      *
      *  @param ADart1 et ADart2 Deux brins
@@ -76,13 +76,13 @@ namespace Map2d
     bool canSew0(CDart* ADart1, CDart* ADart2);
     bool canSew1(CDart* ADart1, CDart* ADart2);
     bool canSew2(CDart* ADart1, CDart* ADart2);
-   
+
     /** canSew
      *
      *  @param ADart1 et ADart2 Deux brins
      *  @param ADimension Une dimension
      *  @return si la [ADimension]-couture de ces deux brins est possible.
-     */  
+     */
     bool canSew(CDart* ADart1, CDart* ADart2, int ADimension);
 
     /** sew[i]
@@ -98,8 +98,8 @@ namespace Map2d
     void sew0(CDart* ADart1, CDart* ADart2);
     void sew1(CDart* ADart1, CDart* ADart2);
     void sew2(CDart* ADart1, CDart* ADart2);
-   
-  
+
+
     /** sew
      *
      *  @param ADart1 et ADart2 Deux brins
@@ -123,19 +123,19 @@ namespace Map2d
     void unsew0(CDart* ADart);
     void unsew1(CDart* ADart);
     void unsew2(CDart* ADart);
-   
+
     /** unsew
      *
      *  @param ADart Un brin
      *  @param ADimension Une dimension
      *
      *  Décousure géométrique du brin pour la dimension donnée. (cf. unsew[i])
-     */  
+     */
     void unsew (CDart* ADart, int ADimension);
 
     //@}
 
-  
+
     /**  @name Méthodes pour récupérer des parcours étant donné un brin et une
      *         orbite. Voir les différents types de parcours dans
      *         dynamic-coverage.hh et static-coverage.hh.
@@ -149,17 +149,17 @@ namespace Map2d
      */
     CCoverage* getBasicDynamicCoverage(const CDart* ADart, TOrbit AOrbit,
 				       int AMark, int ADirectIndex = -1);
-    //@}  
-  
+    //@}
+
     /** isSameOrbit
      *
      *  @param ADart1 et ADart2 Deux brins
-     *  @param AOrbit Une orbite 
+     *  @param AOrbit Une orbite
      *
      *  @return vrai si ADart1 et ADart2 appartiennent à la même orbite <AOrbit>
      *          faux sinon
      */
-    bool isSameOrbit(CDart* ADart1, CDart* ADart2, TOrbit AOrbit);  
+    bool isSameOrbit(CDart* ADart1, CDart* ADart2, TOrbit AOrbit);
 
     /**  @name Méthodes "non-sûres" pour la coutures. Le résultat de ces
      *   méthodes entraîne l'obtention d'un objet éventuellement non valide
@@ -178,12 +178,12 @@ namespace Map2d
      *  [i]-couture géométrique des 2 brins uniquement (et pas de toute l'orbite
      *  contrairement à sew[i]). Les attributs sont mis à jour lorsque c'est
      *  nécessaire (quand deux orbites sont fusionnées et que
-     *  chacune avait un attribut). 
+     *  chacune avait un attribut).
      */
     void dartSew0(CDart*, CDart* ADart2);
     void dartSew1(CDart*, CDart* ADart2);
     void dartSew2(CDart*, CDart* ADart2);
-   
+
     void dartSew (CDart*, CDart* ADart2, int ADimension);
 
     /** unsew[i]
@@ -192,12 +192,12 @@ namespace Map2d
      *
      *  [i]-décousure géométrique uniquement du brin (et pas de toute l'orbite
      *  contrairement à unsew[i]). Les attributs sont mis à jour lorsque c'est
-     *  nécessaire (quand on coupe une orbites en deux). 
+     *  nécessaire (quand on coupe une orbites en deux).
      */
     void dartUnsew0(CDart* ADart);
     void dartUnsew1(CDart* ADart);
     void dartUnsew2(CDart* ADart);
-   
+
     void dartUnsew (CDart* ADart, int ADimension);
 
 
@@ -227,12 +227,12 @@ namespace Map2d
     void topoUnsew0(CDart* ADart);
     void topoUnsew1(CDart* ADart);
     void topoUnsew2(CDart* ADart);
-    
+
     void topoUnsew (CDart* ADart, int ADimension);
-    
+
     //@}
   };
-  
+
 } // namespace Map2d
 //******************************************************************************
 #include INCLUDE_INLINE("map.icc")

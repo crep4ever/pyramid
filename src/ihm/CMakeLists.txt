@@ -36,10 +36,11 @@ set (IHM_RCS
 #-------------------------------------------------------------------------------
 include_directories (${BUILD_DIR}) #for config.hh
 include_directories (${CMAKE_SOURCE_DIR}/lib-utils)
+include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map-generic)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/topological-map)
-include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/pyramid)
+include_directories (${CMAKE_SOURCE_DIR}/lib-pyramid)
 
 include_directories (${CMAKE_SOURCE_DIR}/lib-image2D)
 include_directories (${CMAKE_SOURCE_DIR}/lib-clustering)
@@ -77,7 +78,7 @@ add_custom_target(
 
 #-------------------------------------------------------------------------------
 add_executable(../../${PYRAMID_APPLICATION_NAME} ${IHM_SRCS} ${MOC_SRCS} ${IHM_RC_RCS} ${TRANSLATIONS})
-target_link_libraries(../../${PYRAMID_APPLICATION_NAME} mapkernel)
+target_link_libraries(../../${PYRAMID_APPLICATION_NAME} pyramid)
 target_link_libraries(../../${PYRAMID_APPLICATION_NAME} ${QT_LIBRARIES})
 target_link_libraries(../../${PYRAMID_APPLICATION_NAME} ${QT_QTSCRIPT_LIBRARY})
 #-------------------------------------------------------------------------------

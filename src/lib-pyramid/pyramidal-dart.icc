@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2008-2011, Romain Goffe <romain.goffe@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+namespace pyramid
+{
+  INLINE
+  CPyramidalDart::~CPyramidalDart()
+  { }
+
+  INLINE
+  CPyramidalDart::CPyramidalDart() :
+    CTopologicalDart (),
+    m_id             ( static_cast<TDartId>(0) ),
+    m_up	     (NULL),
+    m_down           (NULL),
+    m_phi            (NULL),
+    m_fictive        (false)
+  { }
+
+  INLINE
+  CPyramidalDart::CPyramidalDart(const CPyramidalDart & dart) :
+    CTopologicalDart (dart),
+    m_id             (dart.m_id),
+    m_up             (dart.m_up),
+    m_down           (dart.m_down),
+    m_phi            (dart.m_phi),
+    m_fictive        (dart.m_fictive)
+  { /*std::cout<<"CPyramidal Dart : constructeur par recopie"<<std::endl;*/ }
+
+  INLINE
+  CPyramidalDart::CPyramidalDart(const CDoublet & doublet, Map2d::CRegion* region,
+				 const std::bitset<NB_MARKS> & AMarks) :
+    CTopologicalDart (),
+    m_id             ( static_cast<TDartId>(0) ),
+    m_up	     (NULL),
+    m_down 	     (NULL),
+    m_phi            (NULL),
+    m_fictive        (false)
+  { }
+
+  INLINE
+  TDartId CPyramidalDart::id() const
+  { return m_id; }
+
+  INLINE
+  void CPyramidalDart::setId(TDartId value)
+  { m_id = value; }
+
+  INLINE
+  CPyramidalDart* CPyramidalDart::up() const
+  { return m_up; }
+
+  INLINE
+  void CPyramidalDart::setUp(CPyramidalDart* dart)
+  { m_up = dart; }
+
+  INLINE
+  CPyramidalDart* CPyramidalDart::down() const
+  { return m_down; }
+
+  INLINE
+  void CPyramidalDart::setDown(CPyramidalDart* dart)
+  { m_down = dart; }
+
+  INLINE
+  CPyramidalDart* CPyramidalDart::phi() const
+  { return m_phi; }
+
+  INLINE
+  void CPyramidalDart::setPhi(CPyramidalDart* dart)
+  { m_phi = dart; }
+
+  INLINE
+  bool CPyramidalDart::isFictive() const
+  { return m_fictive; }
+
+  INLINE
+  void CPyramidalDart::setFictive(bool value)
+  { m_fictive = value; }
+
+  INLINE
+  CPyramidalDart* CPyramidalDart::getBeta0() const
+  { return static_cast<CPyramidalDart*>(CTopologicalDart::getBeta0()); }
+
+  INLINE
+  CPyramidalDart* CPyramidalDart::getBeta1() const
+  { return static_cast<CPyramidalDart*>(CTopologicalDart::getBeta1()); }
+
+  INLINE
+  CPyramidalDart* CPyramidalDart::getBeta2() const
+  { return static_cast<CPyramidalDart*>(CTopologicalDart::getBeta2()); }
+
+  INLINE
+  bool CPyramidalDart::existUp()
+  { return( m_up != NULL); }
+
+  INLINE
+  bool CPyramidalDart::existDown()
+  { return( m_down != NULL); }
+
+  INLINE
+  void CPyramidalDart::setDoublet(const CDoublet & doublet)
+  { FDoublet = doublet; }
+
+  //******************************************************************************
+} // namespace pyramid
+//******************************************************************************

@@ -222,8 +222,8 @@ template< typename TElement >
 inline
 TElement CMatrix< TElement >::getValue( const CPoint2D & ACoordinate ) const
 {
-  return getValue( ACoordinate.getX(),
-		   ACoordinate.getY() );
+  return getValue( ACoordinate.x(),
+		   ACoordinate.y() );
 }
 
 template< typename TElement >
@@ -231,8 +231,8 @@ inline
 void CMatrix< TElement >::setValue( const CPoint2D & ACoordinate,
 				    const TElement & AVal )
 {
-  setValue( ACoordinate.getX(),
-	    ACoordinate.getY(), AVal );
+  setValue( ACoordinate.x(),
+	    ACoordinate.y(), AVal );
 }
 //*****************************************************************************
 #endif // __MATRIX_HH__

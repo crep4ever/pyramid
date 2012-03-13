@@ -47,7 +47,7 @@ bool CTopologicalMap::isMapOk()
    // En premier on teste la topologie cad les contraintes générales des cartes.
    if (!checkTopology())
    {
-      std::cerr << "CTopologicalMap::isMapOk : Problème de topologie." 
+      std::cerr << "CTopologicalMap::isMapOk : Problème de topologie."
             << std::endl;
       return false;
    }
@@ -210,19 +210,18 @@ void CTopologicalMap::displayMapCharacteristics()
    double std_dev=0;
    for(CDynamicCoverageAll it(this) ; it.cont() ; it++)
    {
-     CVertex v1(getDoublet(*it).getX(), getDoublet(*it).getY());
-     CVertex v2(getDoublet(beta0(*it)).getX(), getDoublet(beta0(*it)).getY());
-     sum_length += (v1 - v2).norm();
+      sum_length += (CVertex(getDoublet(*it)) - getDoublet(beta0(*it))).norm();
    }
    for(CDynamicCoverageAll it(this) ; it.cont() ; it++)
    {
-     CVertex v1(getDoublet(*it).getX(), getDoublet(*it).getY());
-     CVertex v2(getDoublet(beta0(*it)).getX(), getDoublet(beta0(*it)).getY());
-     std_dev += ((v1 - v2).norm() - sum_length/nbD) * ((v1 - v2).norm() - sum_length/nbD);
+      std_dev += ((CVertex(getDoublet(*it)) -
+            getDoublet(beta0(*it))).norm() - sum_length/nbD) *
+            ((CVertex(getDoublet(*it)) -
+            getDoublet(beta0(*it))).norm() - sum_length/nbD);
    }
    cout << " Longueur moyenne : "<<sum_length/nbD
    << " Std Dev : "<<std_dev/nbD<<endl;
-   
+
    cout << "  Espace mémoire : "
    << "  carte : " << getMemoryForMap()
    << ", arbre : " << getMemoryForInclusionTree()
@@ -231,143 +230,6 @@ void CTopologicalMap::displayMapCharacteristics()
    << "  Total : "
    << getMemoryForMap() + getMemoryForInclusionTree() +
    getMemoryForKhalimsky() + getMemoryForImage() << endl << endl;
-}
-//******************************************************************************
-bool CTopologicalMap::findMotifFrom(CDart* AStartDart,
-                                    unsigned int AIndex,
-                                    unsigned int AMarkToTest,
-                                    unsigned int AMarkTreated,
-                                    CTopologicalMap* AMap,
-                                    CDart* ADestDart,
-                                    unsigned int AMarkTreated2,
-                                    unsigned int* ANbMatched, bool AMirror)
-
-{
-   bool match = true;
-
-   if ( ANbMatched!=NULL) *ANbMatched = 0;
-
-   // Les 2 piles pour parcourir les 2 cartes en parallèle.
-   stack<CDart*> toTreat;
-   stack<CDart*> toTreat2;
-
-   toTreat.push(AStartDart);
-   toTreat2.push(ADestDart);
-
-   // Le parcours, tant que la pile n'est pas vide.
-   CDart* current;
-   CDart* other;
-
-   int i = 0;
-   int j = 0;
-
-   while (match && !toTreat.empty())
-   {
-      // Le prochain brin.
-      current = toTreat.top();  toTreat.pop();
-      other   = toTreat2.top(); toTreat2.pop();
-
-      // On fixe l'injection.
-      if (isMarked(current, AMarkToTest) &&
-            !isMarked(current, AMarkTreated))
-      {
-	if ( ANbMatched!=NULL) ++(*ANbMatched);
-	
-	if (AMap->isMarked(other, AMarkTreated2))
-            match = false;
-         else
-         {
-            setDirectInfo(current, AIndex, other);
-
-            setMark(current, AMarkTreated);
-            AMap->setMark(other, AMarkTreated2);
-
-            // On teste si l'injection est valide avec les voisins.
-            // On sort dès qu'il y a un problème.
-            for (i = 0; match && i <= 2; ++i)
-            {
-               j = (AMirror && (i == 0 || i == 1)) ? (i + 1) % 2 : i;
-
-               if (isMarked(beta(current, i), AMarkTreated))
-               {
-                  if (getDirectInfoAsDart(beta(current, i), AIndex) !=
-                        AMap->beta(other, j))
-                     match = false;
-               }
-               else
-               {
-                  if (AMap->isMarked(AMap->beta(other, j), AMarkTreated2))
-                     match = false;
-                  else
-                  {
-                     toTreat.push(beta(current, i));
-                     toTreat2.push(AMap->beta(other, j));
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   return match;
-}
-//******************************************************************************
-int CTopologicalMap::findMotif(unsigned int AMarkToTest,
-                               CTopologicalMap* AMap,
-                               unsigned int* ANbMatched, bool AMirror)
-{
-   unsigned int oneMatching;
-   unsigned int * ptrOneMatching=NULL;
-   
-   if ( ANbMatched!=NULL )
-     {
-       *ANbMatched=0; ptrOneMatching = &oneMatching;
-     }
-
-   int index = getNewDirectInfo();
-
-   CDynamicCoverageAll it1(this);
-   for (; it1.cont(); ++it1)
-      setDirectInfo(*it1, index, NULL);
-
-   for (it1.reinit(); !isMarked(*it1, AMarkToTest) && it1.cont(); ++it1) {}
-
-   if (!it1.cont()) return -1;
-
-   int markTreated  = getNewMark();
-   int markTreated2 = AMap->getNewMark();
-   bool match = false;
-
-   // Now we mark each infinite face inside the map.
-   for (CDynamicCoverageCCRegions itr(AMap->getInclusionTreeRoot());
-        itr.cont(); ++itr)
-     {
-       AMap->markOrbit(AMap->beta2(itr->getRepresentativeDart()), ORBIT_FACE, markTreated2);
-     }
-
-   for (CDynamicCoverageAll it2(AMap); !match && it2.cont(); ++it2)
-   {
-     match = findMotifFrom(*it1, index, AMarkToTest, markTreated,
-			   AMap, *it2, markTreated2, ptrOneMatching,
-			   AMirror);
-     
-     unmarkMotifMark(*it1, markTreated, (match ? -1 : index), -1,
-		     AMap, *it2, markTreated2, AMirror);
-     
-     if ( ANbMatched!=NULL && oneMatching>(*ANbMatched) )
-       (*ANbMatched) = oneMatching;
-   }
-
-   freeMark(markTreated);
-   AMap->freeMark(markTreated2);
-
-   if (!match)
-   {
-      freeDirectInfo(index);
-      return -1;
-   }
-
-   return index;
 }
 //******************************************************************************
 void CTopologicalMap::markInteriorWithoutInfiniteFace(unsigned int AMark)
@@ -387,7 +249,7 @@ void CTopologicalMap::markInteriorWithoutInfiniteFace(unsigned int AMark)
      {
        markOrbit(itr->getRepresentativeDart()->getBeta(2), ORBIT_FACE, AMark);
      }
-   
+
    negateMaskMark(AMark);
 }
 //******************************************************************************
@@ -400,13 +262,15 @@ void CTopologicalMap::markBiggestCC(unsigned int AMark)
   unsigned int currentCC = 0;
   unsigned int tmp;
 
+  assert(isWholeMapUnmarked(AMark));
+
   markInteriorWithoutInfiniteFace(treated);
   negateMaskMark(treated); // Because we want to mark the infinite face
 			   // and its adjacent faces
 
   std::stack<CDart*> totreat;
   CDart* currentDart=NULL;
-  
+
   for (CDynamicCoverageAll it(this); it.cont(); ++it)
     {
       if (!isMarked(*it, treated))
@@ -435,318 +299,42 @@ void CTopologicalMap::markBiggestCC(unsigned int AMark)
 	      tmp = biggestCCMark;
 	      biggestCCMark = currentmark;
 	      currentmark = tmp;
-	      unmarkAll(currentmark);
 	    }
+	  unmarkAll(currentmark);
 	}
     }
 
+  unsigned int res=0;
   if ( biggestCCMark!=AMark )
     {
       for (CDynamicCoverageAll it(this); it.cont(); ++it)
 	{
 	  if ( isMarked(*it, biggestCCMark))
 	    {
+	      ++res;
 	      setMark(*it, AMark);
 	      unsetMark(*it, biggestCCMark);
 	    }
-	  else unsetMark(*it, AMark); 
+	  else unsetMark(*it, AMark);
+	  unsetMark(*it,treated);
 	}
       currentmark = biggestCCMark;
     }
-  
-  negateMaskMark(treated);
+  else
+    {
+      for (CDynamicCoverageAll it(this); it.cont(); ++it)
+	{
+	  if ( isMarked(*it, biggestCCMark))  ++res;
+	  unsetMark(*it, treated);
+	  unsetMark(*it, currentmark);
+	}
+    }
+
+  //  assert( isWholeMapUnmarked(treated) );
   freeMark(treated);
+
+  //  assert( isWholeMapUnmarked(currentmark) );
   freeMark(currentmark);
-}
-//******************************************************************************
-bool CTopologicalMap::isFacesMatch(CDart * AFromDart, int AIndex,
-                                   unsigned int AMarkTreated,
-                                   CTopologicalMap * AMap, CDart * ADestDart)
-{
-   assert(!isMarked(AFromDart, AMarkTreated));
-
-   CDynamicCoverage1 it1(this, AFromDart);
-   CDynamicCoverage1 it2(AMap, ADestDart);
-   bool match = true;
-
-   while (it1.cont())
-   {
-      if (!it2.cont())
-         match = false;
-      else
-      {
-         // On vérifie la comptabilité du voisin par beta2 si besoin
-         if (match && isMarked(beta2(*it1), AMarkTreated) &&
-               getDirectInfoAsDart(beta2(*it1), AIndex) != beta2(*it2))
-            match = false;
-         ++it2;
-      }
-      setMark(*it1, AMarkTreated);
-      ++it1;
-   }
-
-   // On a fini it1, si on n'a pas fini it2 alors on ne matche pas.
-   if (it2.cont()) match = false;
-
-   return match;
-}
-//******************************************************************************
-/*unsigned int CTopologicalMap::findMaximalMotifFrom(CDart * AFromDart,
-      unsigned int AMarkTreated, int AIndex, CTopologicalMap * AMap,
-      CDart * ADestDart)
-{
-   // Les 2 piles pour parcourir les 2 cartes en parallèle.
-   stack<CDart*> toTreat;
-   stack<CDart*> toTreat2;
-
-   toTreat.push(AFromDart);
-   toTreat2.push(ADestDart);
-
-   // Le parcours, tant que la pile n'est pas vide.
-   CDart* current;
-   CDart* other;
-
-   unsigned int nbMatch = 0;
-
-   while (!toTreat.empty())
-   {
-      // Le prochain brin.
-      current = toTreat.top();  toTreat.pop();
-      other   = toTreat2.top(); toTreat2.pop();
-
-      // On teste si les faces matche
-      if ( !isMarked(current, AMarkTreated)
-    && isFacesMatch(current, AIndex, AMarkTreated, AMap, other) )
-      {
-         CDynamicCoverage1 it1(this, current);
-         CDynamicCoverage1 it2(AMap, other);
-         while (it1.cont())
-         {
-            setDirectInfo(*it1, AIndex, *it2);
-
-            if (!isMarked(beta2(*it1), AMarkTreated))
-            {
-               toTreat.push(beta2(*it1));
-               toTreat2.push(beta2(*it2));
-            }
-
-            ++it1; ++it2;
-            ++nbMatch;
-         }
-      }
-   }
-
-   return nbMatch;
-}
-*/
-//******************************************************************************
-unsigned int CTopologicalMap::findMaximalMotif2From(CDart * AFromDart,
-      unsigned int AMarkTreated, int AIndex, CTopologicalMap * AMap,
-      CDart * ADestDart, unsigned int AMarkTreated2)
-{
-   // Les 2 piles pour parcourir les 2 cartes en parallèle.
-   stack<CDart*> toTreat;
-   stack<CDart*> toTreat2;
-
-   toTreat.push(AFromDart);
-   toTreat2.push(ADestDart);
-
-   // Le parcours, tant que la pile n'est pas vide.
-   CDart* current;
-   CDart* other;
-
-   unsigned int nbMatch = 0;
-   bool match = true;
-   int i = 0;
-
-   while (!toTreat.empty())
-   {
-      // Le prochain brin.
-      current = toTreat.top();  toTreat.pop();
-      other   = toTreat2.top(); toTreat2.pop();
-
-      // On teste si les brins matche
-      if (!isMarked(current, AMarkTreated))
-      {
-         setMark(current, AMarkTreated);
-         
-         if (!AMap->isMarked(other, AMarkTreated2))
-         {
-            AMap->setMark(other, AMarkTreated2);
-            match = true;
-            for (i = 0; match && i <= 2; ++i)
-            {
-               if (isMarked(beta(current, i), AMarkTreated))
-               {
-                  if (getDirectInfo(beta(current, i), AIndex)
-                        != AMap->beta(other, i))
-                     match = false;
-               }
-               else
-               {
-                  if (AMap->isMarked(AMap->beta(other, i),
-                                     AMarkTreated2))
-                     match = false;
-               }
-            }
-            if (match)
-            {
-               setDirectInfo(current, AIndex, other);
-               ++nbMatch;
-
-               for ( i=0; i<=2; ++i )
-               {
-                  if (!isMarked(beta(current, i), AMarkTreated))
-                  {
-                     toTreat.push(beta(current, i));
-                     toTreat2.push(AMap->beta(other, i));
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   return nbMatch;
-}
-//******************************************************************************
-void CTopologicalMap::unmarkMotifIndex(CDart* ADart, int AIndex)
-{
-   assert(getDirectInfo(ADart, AIndex) != NULL);
-
-   stack<CDart*> toTreat;
-   toTreat.push(ADart);
-   CDart* current;
-   int i;
-
-   while (!toTreat.empty())
-   {
-      current = toTreat.top(); toTreat.pop();
-
-      if (getDirectInfo(current, AIndex) != NULL)
-      {
-         for (i = 0; i <= 2; ++i)
-            if (getDirectInfo(beta(current, i), AIndex) != NULL)
-               toTreat.push(beta(current, i));
-
-         setDirectInfo(current, AIndex, NULL);
-      }
-   }
-}
-//******************************************************************************
-void CTopologicalMap::unmarkMotifMark(CDart* ADart, int AMark, int AIndex,
-                                      int AIndexCopy, CTopologicalMap* AMap,
-                                      CDart* ADart2, int AMark2,
-                                      bool AMirror)
-{
-   if (!isMarked(ADart, AMark)) return;
-
-   stack<CDart*> toTreat;
-   stack<CDart*> toTreat2;
-   
-   toTreat.push(ADart);
-   if (AMark2!=-1)
-   {
-      assert(AMap!=NULL);
-      assert(ADart2!=NULL);
-      toTreat2.push(ADart2);
-   }
-   
-   CDart* current=NULL;
-   CDart* other=NULL;
-   int i,j;
-
-   while (!toTreat.empty())
-   {
-      current = toTreat.top(); toTreat.pop();
-      
-      if ( AMark2!=-1 )
-         { other = toTreat2.top(); toTreat2.pop(); }
-
-      if ( isMarked(current, AMark) )
-      {
-         for (i = 0; i <= 2; ++i)
-         {         
-            j = (AMirror && (i == 0 || i == 1)) ? (i + 1) % 2 : i;         
-            
-            toTreat.push(beta(current, i));   
-            if ( AMark2!=-1 )         
-                  toTreat2.push(AMap->beta(other, j));
-         }
-         if (AIndex != -1)
-         {
-            if (AIndexCopy!=-1)
-               setDirectInfo(current, AIndexCopy, 
-                             getDirectInfo(current, AIndex));
-            
-            setDirectInfo(current, AIndex, NULL);
-         }
-         unsetMark(current, AMark);         
-         if ( AMark2!=-1 ) AMap->unsetMark(other, AMark2);   
-      }
-   }   
-}
-//******************************************************************************
-unsigned int CTopologicalMap::findMaximalMotif(int AIndex,
-                                               CTopologicalMap * AMap)
-{
-   unsigned int nbMatch = 0;
-   unsigned int res = 0;
-   CDart* precModif = NULL;
-   bool newMax = false;
-
-   int treatedMark = getNewMark();
-   int index2 = getNewDirectInfo();
-   int treatedMark2 = AMap->getNewMark();
-
-   for (CDynamicCoverageAll it1(this); it1.cont(); ++it1)
-   {
-      setDirectInfo(*it1, AIndex, NULL);
-      setDirectInfo(*it1, index2, NULL);
-   }
-
-   unsigned int nbDarts = 0;
-   unsigned int percent = 0;
-   unsigned int onePercent = (getNbDarts() + 99) / 100;
-
-   for (CDynamicCoverageAll it1(this); it1.cont(); ++it1)
-   {
-      for (CDynamicCoverageAll it2(AMap); it2.cont(); ++it2)
-      {
-         res = findMaximalMotif2From(*it1, treatedMark,
-                                     index2, AMap, *it2, treatedMark2);
-
-         if (res > nbMatch)
-         {
-            if (precModif != NULL) unmarkMotifIndex(precModif, AIndex);
-            nbMatch = res;
-            precModif = *it1;
-            newMax = true;
-            std::cout << "Nouveau plus grand motif de taille "
-            << res << std::endl;
-         }
-         else newMax = false;
-
-         unmarkMotifMark(*it1, treatedMark, index2, (newMax?AIndex:-1));
-         // Bug bizarre....  //   AMap, *it2, treatedMark2);
-         AMap->unmarkMotifMark(*it2, treatedMark2); 
-      }
-      ++nbDarts;
-      if (nbDarts == onePercent && it1.cont())
-      {
-         ++percent;
-         std::cout << " [" << setw(3) << percent
-         << "%] findMaximalMotif" << std::endl;
-         nbDarts = 0;
-      }
-   }
-
-   if (nbDarts != 0)
-      std::cout << " [100%] findMaximalMotif" << std::endl;
-
-   freeMark(treatedMark);
-   AMap->freeMark(treatedMark2);
-   return nbMatch;
 }
 //******************************************************************************
 TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
@@ -758,14 +346,14 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
    CDoublet doublet(getDoublet(ADart));
    CDoublet tempDoublet(doublet);
 
-   res = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
+   res = distancePointToLine(tempDoublet, AV1, AV2);
 
    do
    {
       /*doublet suivant*/
       tempDoublet.setNextPointel();
 
-      temp = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
+      temp = distancePointToLine(tempDoublet, AV1, AV2);
       if (temp > res) res = temp;
 
       /*on récupère le linel du doublet suivant de l'arête*/
@@ -779,7 +367,7 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
 }
 //******************************************************************************
 TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
-                                             const CVertex& AV2, 
+                                             const CVertex& AV2,
                                              TCoordinate AThreshold)
 {
    TCoordinate res = 0;
@@ -788,18 +376,17 @@ TCoordinate CTopologicalMap::distanceToCurve(CDart* ADart, const CVertex & AV1,
    CDoublet doublet(getDoublet(ADart));
    CDoublet tempDoublet(doublet);
 
-   res = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
+   res = distancePointToLine(tempDoublet, AV1, AV2);
    if (temp > res) res = temp;
    if (res>=AThreshold) return res;
-   
+
    do
    {
       /*doublet suivant*/
       tempDoublet.setNextPointel();
 
-      temp = distancePointToLine(CVertex(tempDoublet.getX(), tempDoublet.getY()), AV1, AV2);
-
-      if (temp > res) 
+      temp = distancePointToLine(tempDoublet, AV1, AV2);
+      if (temp > res)
       {
          res = temp;
          if (res>=AThreshold) return res;
@@ -876,9 +463,9 @@ void CTopologicalMap::randomizeDarts()
       copyDart(destDart, randomDart);
 
       // On met à jour les brins représentants
-      if ( isRepresentativeDart(randomDart) )   
+      if ( isRepresentativeDart(randomDart) )
          setRepresentativeDart(getRegion(randomDart),destDart);
-      
+
 #ifdef CONTOUR_SIMPLIFICATION
       randomDart->setEdgeAttribute(NULL);
 #endif
@@ -933,7 +520,7 @@ void CTopologicalMap::randomizeDarts()
    freeMark(treated);
 }
 //******************************************************************************
-bool CTopologicalMap::savePartition(const char* AFilename)
+bool CTopologicalMap::saveImage(const char* AFilename)
 {
    CChrono c;
    c.start();
@@ -942,23 +529,51 @@ bool CTopologicalMap::savePartition(const char* AFilename)
    for ( CDynamicCoverageAllRegions it(this); it.cont(); ++it )
    {
       if (!it->isInfiniteRegion())
-      {         
-      TRegionId val(it->getColorMean());   
-      for (CCoverageRegionPixels pixels(this,*it); 
+      {
+      TRegionId val(it->getColorMean());
+      for (CCoverageRegionPixels pixels(this,*it);
            pixels.cont(); ++pixels)
       {
-         im.setPixel((*pixels).getX(),(*pixels).getY(),val);      
+         im.setPixel((*pixels).getX(),(*pixels).getY(),val);
       }
       }
    }
-   
+
    c.display("Calcul de l'image");
-   
+
    im.setDisplayMinMax(0, 255);
    im.exportWithMagick(AFilename);
    c.display("Sauvegarde");
    return true;
-}      
+}
+//******************************************************************************
+bool CTopologicalMap::savePartition(const char* AFilename)
+{
+   CChrono c;
+   c.start();
+
+   TLabel i=0;
+   CImage2D im(FImage->getXSize(),FImage->getYSize());
+   for ( CDynamicCoverageAllRegions it(this); it.cont(); ++it )
+   {
+      if (!it->isInfiniteRegion())
+      {
+        ++i;
+        for (CCoverageRegionPixels pixels(this,*it);
+        pixels.cont(); ++pixels)
+        {
+          im.setPixel((*pixels).getX(),(*pixels).getY(),i);
+        }
+      }
+    }
+
+   c.display("Calcul de l'image de label");
+
+   im.setDisplayMinMax(1, i);
+   im.exportWithMagick(AFilename);
+   c.display("Sauvegarde");
+   return true;
+}
 //******************************************************************************
 bool CTopologicalMap::changeImageData( CImage2D * AImage )
 {
@@ -987,8 +602,69 @@ bool CTopologicalMap::changeImageData( CImage2D * AImage )
   return true;
 }
 //******************************************************************************
-CImage2D * CTopologicalMap::getImage()
+void CTopologicalMap::exportGraph(std::ostream &os, int mark)
 {
-  return FImage;
+  int index = getNewDirectInfo();
+  int treated = getNewMark();
+  //  assert( isWholeMapUnmarked(treated) );
+
+  unsigned int nbv=0;
+  unsigned int nbe=0;
+  for (CDynamicCoverageAll it(this); it.cont(); ++it)
+    {
+      if ( !isMarked(*it, treated) )
+	{
+	  if ( mark==-1 || isMarked(*it,mark) )
+	    {
+	      ++nbv;
+	      for (CDynamicCoverageVertex it2(this,*it); it2.cont(); ++it2)
+		{
+		  setDirectInfo(*it2, index, (void*)nbv);
+		  setMark(*it2,treated);
+		}
+	    }
+	  else
+	    {
+	      setDirectInfo(*it, index, (void*)0);
+	    }
+	}
+
+      if ( mark==-1 || isMarked(*it,mark) || isMarked((*it)->getBeta2(),mark) )
+	++nbe;
+    }
+
+  os<<"#nbv #nbe"<<std::endl;
+  os<<nbv<<"  "<<nbe/2<<std::endl;
+
+  negateMaskMark(treated);
+  for (CDynamicCoverageAll it(this); it.cont(); ++it)
+    {
+      if (!isMarked(*it, treated) &&
+	  (unsigned long)getDirectInfo(*it, index)!=0 )
+	{
+	  os<<getDoublet(*it).getX()<<" "<<getDoublet(*it).getY()<<std::endl;
+	  markOrbit(*it, ORBIT_VERTEX, treated);
+	}
+    }
+
+  negateMaskMark(treated);
+  for (CDynamicCoverageAll it(this); it.cont(); ++it)
+    {
+      if (!isMarked(*it, treated) &&
+	  (unsigned long)getDirectInfo(*it, index)!=0 &&
+	  (unsigned long)getDirectInfo((*it)->getBeta2(), index)!=0 )
+	{
+	  assert( (unsigned long)getDirectInfo(*it, index)<=nbv );
+	  assert( (unsigned long)getDirectInfo((*it)->getBeta2(), index)<=nbv );
+	  os<<(unsigned long)getDirectInfo(*it, index)<<" "
+	    <<(unsigned long)getDirectInfo((*it)->getBeta2(), index)<<std::endl;
+	  markOrbit(*it, ORBIT_EDGE, treated);
+	}
+      else setMark(*it, treated);
+    }
+
+  negateMaskMark(treated);
+  freeMark(treated);
+  freeDirectInfo(index);
 }
 //******************************************************************************

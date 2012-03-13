@@ -24,21 +24,30 @@
 #include "inline-macro.hh"
 #include "topological-map.hh"
 #include "region.hh"
-#include INCLUDE_NON_INLINE("tm-deformation.icc")
+#include "contour.hh"
+#include "coverage-edge-linels.hh"
 //******************************************************************************
 using namespace Map2d;
 using namespace std;
 //******************************************************************************
-void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
+int CTopologicalMap::deformationApply( CDart * ADart,
+                                       const CDoublet & ALinel,
+                                       CDoublet & ARevert )
 {
   assert( ADart != NULL );
+  assert( !getRegion(ADart)->isInfiniteRegion() &&
+	  !getRegion(ADart->getBeta(2))->isInfiniteRegion());
   assert( deformationIsSimple( ALinel ) );
 
   CDart * dEdge = ADart;
   CDart * dEdge2 = beta2( ADart );
 
-  CRegion * r1 = getRegion( dEdge );
-  CRegion * r2 = getRegion( dEdge2 );
+  CRegion * r1 = getRegion( dEdge ); // région du pixel X
+  CRegion * r2 = getRegion( dEdge2 ); // région ou flipper le pixel R
+
+  bool vertex1Moved = false;
+  bool vertex2Moved = false;
+  int linels = 0;
 
   // Mise à jour des informations associées aux régions
   r1->removePixel( getPixel( getPixelIn( ALinel ) ) );
@@ -76,6 +85,7 @@ void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
   for( int i = 0 ; i < jump ; ++i )
     {
       FKhalimsky->setLCell( tCur, false );
+      --linels;
       // Lignel suivant autour du pixel
       tCur.setNextPointel();
       tCur.setNextLinel();
@@ -84,7 +94,7 @@ void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
   // si le brin appartient à une boucle, il faut faire attention à
   // déplacer le brin convenablement.
   // autre solution, déplacer le brin sauvagement
-  if ( ADart == beta1(ADart) )
+  if ( ADart == beta1(ADart) && beta2(ADart) == beta21(ADart)  )
     {
       t1.setPrevLinel();
       setDoublet( ADart, t1 );
@@ -103,6 +113,7 @@ void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
 	  // Tant que t1 est un lignel alors on décale le pointel
 	  while( isLCell( t1 ) )
 	    {
+	      vertex1Moved = true;
 	      FKhalimsky->setPCell( t1, false );
 	      t1.setNextPointel();
 	      t1.setPrevLinel();
@@ -111,14 +122,40 @@ void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
 	  // Nouveau plongement
 	  setDoublet( dEdge, t1 );
 	  // Mise à jour du plongement des brins de l'orbite sommet
-	  CDart * dFirst = dEdge;
-	  dEdge = beta02( dEdge );
-	  while( dFirst != dEdge )
+	  // (si nécessaire)
+	  if( vertex1Moved )
 	    {
-	      do t1.setPrevLinel();
-	      while( !isLCell( t1 ) );
-	      setDoublet( dEdge, t1 );
+	      CDart * dFirst = dEdge;
 	      dEdge = beta02( dEdge );
+	      while( dFirst != dEdge )
+		{
+		  // Si frontière OR => augmente (r2=R)
+		  // Si frontière OX => diminue (r1=x)
+		  t1 = getDoublet(dEdge);
+		  if ( getRegion(dEdge->getBeta(2))==r1 )
+		    {
+		      assert( getRegion(dEdge)!=r1 && getRegion(dEdge)!=r2 );
+		      do
+			{
+			  t1.setNextPointel();
+			  t1 = getOtherLinel(t1);
+			}
+		      while( !isPCell( t1 ) );
+		    }
+		  else
+		    {
+		      assert( getRegion(dEdge->getBeta(2))!=r2 );
+		      assert( getRegion(dEdge)==r2 );
+		      do
+			{
+			  t1 = getOtherLinel(t1);
+			  t1.setNextPointel();
+			}
+		      while( !isPCell( t1 ) );
+		    }
+		  setDoublet( dEdge, t1 );
+		  dEdge = beta02( dEdge );
+		}
 	    }
 	}
       // si t2 est un pointel alors getDoublet( dEdge2 ) == t2
@@ -129,6 +166,7 @@ void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
 	  // Tant que t2 est un lignel alors on décale le pointel
 	  while( isLCell( t2 ) )
 	    {
+	      vertex2Moved = true;
 	      FKhalimsky->setPCell( t2, false );
 	      t2.setNextPointel();
 	      t2.setNextLinel();
@@ -137,31 +175,66 @@ void CTopologicalMap::deformationApply( CDart * ADart, const CDoublet & ALinel )
 	  // Nouveau plongement
 	  setDoublet( dEdge2, t2 );
 	  // Mise à jour du plongement des brins de l'orbite sommet
-	  CDart * dFirst = dEdge2;
-	  dEdge2 = beta02( dEdge2 );
-	  while( dFirst != dEdge2 )
+	  // (si nécessaire)
+	  if( vertex2Moved )
 	    {
-	      do t2.setPrevLinel();
-	      while( !isLCell( t2 ) );
-	      setDoublet( dEdge2, t2 );
+	      CDart * dFirst = dEdge2;
 	      dEdge2 = beta02( dEdge2 );
+	      while( dFirst != dEdge2 )
+		{
+		  // Si frontière OR => augmente (r2=R)
+		  // Si frontière OX => diminue (r1=X)
+		  t2 = getDoublet(dEdge2);
+		  if ( getRegion(dEdge2)==r1 )
+		    {
+		      assert( getRegion(dEdge2->getBeta(2))!=r1 &&
+			      getRegion(dEdge2->getBeta(2))!=r2 );
+		      do
+			{
+			  t2.setNextPointel();
+			  t2 = getOtherLinel(t2);
+			}
+		      while( !isPCell( t2 ) );
+		    }
+		  else
+		    {
+		      assert( getRegion(dEdge2)!=r2 );
+		      assert( getRegion(dEdge2->getBeta(2))==r2 );
+		      do
+			{
+			  t2 = getOtherLinel(t2);
+			  t2.setNextPointel();
+			}
+		      while( !isPCell( t2 ) );
+		    }
+		  setDoublet( dEdge2, t2 );
+		  dEdge2 = beta02( dEdge2 );
+		}
 	    }
 	}
     }
+
   // On peut à présent remplir les lignels vides
   // Remplissage des lignels vides
   for( int i = jump ; i < 4 ; ++i )
     {
       if( !isLCell( tCur ) )
-	FKhalimsky->setLCell( tCur, true );
+	{
+	  ARevert = tCur;
+	  FKhalimsky->setLCell( tCur, true );
+	  ++linels;
+	}
       // Lignel suivant autour du pixel
       tCur.setNextPointel();
       tCur.setNextLinel();
     }
+
+  return (vertex1Moved ? 1 : 0) + (vertex2Moved ? 2 : 0);
 }
 //******************************************************************************
 bool CTopologicalMap::deformationIsSimple( const CDoublet & ALinel ) const
 {
+   assert( isLCell(ALinel) );
   uint32_t deg = 0;
   return deformationCheckPointelDegree( ALinel, &deg )
     && deformationCheckLinelBody( ALinel )
@@ -257,22 +330,20 @@ bool CTopologicalMap::deformationCheckPointelDegreeOther( const CDoublet &
   // t1 est le premier lignel de clf( ALinel )
 
   CDoublet t2( tCur );
-  t2.setNextPointel();
-  while( !isPCell( t2 ) && isLCell( t2 ) )
+  do
     {
-      t2.setNextLinel();
       t2.setNextPointel();
+      t2.setNextLinel();
     }
-  t2.setNextLinel();
-  // t2 est le lignel suivant le dernier de clf( ALinel )
+  while( !isPCell( t2 ) && isLCell( t2 ) );
+  // t2 est le lignel suivant clf( ALinel )
 
-  for( int i = 0 ; i < 2 ; ++i )
+  for( int i = 0 ; i < 3 ; ++i )
     {
       t2.setNextPointel();
       t2.setNextLinel();
-      if( t2 == t1 )
-	return true;
-      else if( getPointelDegree( t2 ) > 2 )
+      if (    t2 != t1
+	   && getPointelDegree( t2 ) > 2 )
 	return false;
     }
 

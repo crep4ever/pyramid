@@ -28,7 +28,7 @@ void CMapGeneric::markOrbit(CDart * ADart, TOrbit AOrbit, int AMarkNumber)
 {
   assert(ADart!=NULL);
   CCoverage * cov= NULL;
-  
+
   if ( AOrbit==ORBIT_12 || AOrbit==ORBIT_VERTEX)
     {
       cov = getBasicDynamicCoverage(ADart, AOrbit, AMarkNumber);
@@ -36,7 +36,7 @@ void CMapGeneric::markOrbit(CDart * ADart, TOrbit AOrbit, int AMarkNumber)
     }
    else
     {
-      cov = getDynamicCoverage(ADart, AOrbit);      
+      cov = getDynamicCoverage(ADart, AOrbit);
       while (cov->cont())
 	setMark((*cov)++, AMarkNumber);
     }
@@ -74,8 +74,8 @@ void CMapGeneric::halfMarkOrbit(CDart * ADart, TOrbit AOrbit, int AMarkNumber)
 
   usedDim[2]=
     (AOrbit == ORBIT_2)  ||
-    (AOrbit == ORBIT_12); 
-  
+    (AOrbit == ORBIT_12);
+
   CCoverage * cov= getDynamicCoverage(ADart, AOrbit);
 
   setMark(**cov, selected);
@@ -94,7 +94,7 @@ void CMapGeneric::halfMarkOrbit(CDart * ADart, TOrbit AOrbit, int AMarkNumber)
 
   for (cov->reinit(); cov->cont(); ++(*cov))
     unsetMark((**cov), selected);
-  
+
   delete cov;
 
   freeMark(selected);
@@ -122,7 +122,7 @@ int CMapGeneric::markIncidentCells(TOrbit AOrbit, int AMarkNumberSrce,
 
   int treated = getNewMark();
   int nb_cells = 0;
-  
+
   CDynamicCoverageAll it(this);
 
   for (; it.cont(); ++it)

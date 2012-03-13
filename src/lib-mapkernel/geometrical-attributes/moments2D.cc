@@ -119,7 +119,7 @@ void CMoments2D::updateMomentsForVertexRemoval(CDart* ADart,
    deltaMoments[1][2]=0;
    deltaMoments[2][1]=0;
    deltaMoments[2][2]=0;
-   
+
    deltaMoments[0][0] -= getEdgeMoment0_0(ADart);
    deltaMoments[1][0] -= getEdgeMoment1_0(ADart);
    deltaMoments[0][1] -= getEdgeMoment0_1(ADart);
@@ -182,8 +182,8 @@ bool CMoments2D::vertexRemoval(CDart* ADart, unsigned int APercentage)
              std::cout << ratio<< "("
                    <<(ratio <= (100 - APercentage) / 100.0 ||
                    ratio >= (100 + APercentage) / 100.0)<<"); ";
-                           
-         }         
+
+         }
        std::cout << std::endl;
      }
    else if ( !region2->isInfiniteRegion() && region2->getId() == 2 )
@@ -194,16 +194,16 @@ bool CMoments2D::vertexRemoval(CDart* ADart, unsigned int APercentage)
        std::cout << std::endl <<" Ratio : ";
        for ( int i = 0;i <= MOMENT_ORDERS; ++i )
           for ( int j = 0;j <= MOMENT_ORDERS; ++j )
-         {         
+         {
             ratio = newMoments2[i][j] / moments2.FInitialMoments[i][j];
             std::cout << ratio<< "("
                   <<(ratio <= (100 - APercentage) / 100.0 ||
                   ratio >= (100 + APercentage) / 100.0)<<"); ";
-         }         
+         }
        std::cout << std::endl;
      }
   */
-         
+
    double ratio = 0;
    for (int i = 0;i <= MOMENT_ORDERS; ++i)
       for (int j = 0;j <= MOMENT_ORDERS; ++j)

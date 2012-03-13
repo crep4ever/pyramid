@@ -12,6 +12,8 @@
 #cmakedefine OPENMP
 #cmakedefine RELEASE
 #cmakedefine PROFILE
+#cmakedefine DEBUG_PYRAMID
+#cmakedefine DEFORMABLE_PARTITION
 
 // Check windows
 #if defined _WIN32 || defined _WIN64

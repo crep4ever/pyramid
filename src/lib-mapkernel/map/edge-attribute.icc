@@ -56,7 +56,7 @@ CEdgeAttribute::CEdgeAttribute(const CEdgeAttribute & AEdgeAttribute) :
 //------------------------------------------------------------------------------
 INLINE
 CEdgeAttribute::~CEdgeAttribute()
-{// pthread_mutex_unlock(&FMutex); 
+{// pthread_mutex_unlock(&FMutex);
 }
 //******************************************************************************
 INLINE
@@ -81,7 +81,7 @@ INLINE
 bool CEdgeAttribute::tryLock()
 {
 //  int res = pthread_mutex_trylock(&FMutex);
-  
+
 //  if ( res!=0 )
 //    {
 //      if ( res!=EBUSY )
@@ -89,7 +89,7 @@ bool CEdgeAttribute::tryLock()
 //      return false;
 //    }
 //  return true;
-   
+
     return FLock.try_acquire(FMutex);
 }
 //------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ void CEdgeAttribute::unlock()
 {
 // if ( pthread_mutex_unlock(&FMutex)!=0 )
 //   std::cerr<<"Problème lors du unlock dans CEdgeAttribute"<<std::endl;
-   
+
   FLock.release();
 }*/
 //------------------------------------------------------------------------------

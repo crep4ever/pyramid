@@ -22,6 +22,7 @@
 //******************************************************************************
 
 typedef unsigned int uint;
+typedef unsigned int TDartId;
 
 enum SegmentationMode {GreyValue, Thresholds, Classif, Histology, SegmentationOff};
 enum ExtractMode {ConstantTileNumber, ConstantTileSize};

@@ -25,6 +25,7 @@
 #include "topological-map.hh"
 #include "limited-stack.hh"
 #include "orders.hh"
+#include "coverage-edge-linels.hh"
 #include INCLUDE_NON_INLINE("tm-extract-images.icc")
 //******************************************************************************
 using namespace Map2d;
@@ -113,60 +114,10 @@ void CTopologicalMap::destroyBorder(CDart* ADart)
 #endif
 }
 //******************************************************************************
-// Retourne la racine de l'arbre auquel appartient Region
-CRegion*  CTopologicalMap::findRegionRoot(CRegion* Region)
-{
-   //tant que l'on ne trouve pas la région de l'arbre qui pointe
-   //sur elle même, on n'a pas trouvé la racine de l'arbre...
-   CRegion* res = Region;
-   CRegion* tmp = Region;
-   CRegion* next= NULL;
-   
-   while (res->getNextSameCC() != res)
-   {   
-      assert(res->getNextSameCC()!=NULL);
-      res = res->getNextSameCC();
-   }
-   
-   while (tmp->getNextSameCC() != res)
-   {
-      next=tmp->getNextSameCC();   
-      tmp->setNextSameCC(res);
-      tmp = next;
-   }
-
-   return res;
-}
-//******************************************************************************
-// l'union de deux régions revient à unir leurs racines
-int CTopologicalMap::unionRegionRoot(CRegion* Region1, CRegion* Region2)
-{
-   Region1 = findRegionRoot(Region1);
-   Region2 = findRegionRoot(Region2);
-
-   //si les deux régions racines sont égales on sort de la fonction
-   if (Region1 == Region2) return 0;
-
-   // sinon on les fusionne en mettant la région d'identifiant le + petit
-   // racine de l'arbre (cad la première pour notre ordre de parcours)
-   if (Region1->getId() < Region2->getId())
-   {
-      Region2->setNextSameCC(Region1);
-      Region2->setRepresentativeDart(NULL);
-      Region1->mergeWith(Region2);
-   }
-   else
-   {
-      Region1->setNextSameCC(Region2);
-      Region1->setRepresentativeDart(NULL);
-      Region2->mergeWith(Region1);
-   }
-
-   return 1;
-}
-//******************************************************************************
 void CTopologicalMap::computeInclusionTree()
 {
+  assert( !FUFTreeMode );
+
 #ifdef DEBUG_EXTRACT_IMAGE
    std::cout << "\n CTopologicalMap::computeInclusionTree " << std::endl;
 #endif
@@ -183,6 +134,8 @@ void CTopologicalMap::computeInclusionTree()
    FInclusionTreeRoot->setFirstSon(NULL);
    FInclusionTreeRoot->setBrother(NULL);
 
+   if ( toTreat==NULL ) return;
+
    CRegion* tmp = NULL;
    CRegion* father = FInclusionTreeRoot;
 
@@ -191,17 +144,19 @@ void CTopologicalMap::computeInclusionTree()
 
    toTreat->setBrother(NULL);
    while (toTreat != NULL)
-   {
+     {
       actu = toTreat;
       toTreat = toTreat->getFirstSon(); // La prochaine region
-      
+
       if (actu->getFather() == NULL) // Région pas encore traitée.
       {
          assert(actu->getRepresentativeDart()!=NULL);
          assert(!isMarkedDeleted(actu->getRepresentativeDart()));
-         
+
          father = getRegion(beta2(actu->getRepresentativeDart()));
-         
+	 assert( father->isInfiniteRegion() ||
+		 father->getFirstPixel()<actu->getFirstPixel() );
+
          CDynamicCoverageCC it(this, actu->getRepresentativeDart());
          while (it.cont())
          {
@@ -209,7 +164,10 @@ void CTopologicalMap::computeInclusionTree()
 
             if (!tmp->isInfiniteRegion() && tmp->getFather() == NULL)
             {
-               // On va ajouter la région tmp comme fils de father
+	      assert( father->isInfiniteRegion() ||
+		      father->getFirstPixel()<tmp->getFirstPixel() );
+
+              // On va ajouter la région tmp comme fils de father
                // mais avant il faut l'enlever de la "liste" des régions.
 
                // on met a jour les 2 cellules voisines
@@ -253,17 +211,18 @@ void CTopologicalMap::computeInclusionTree()
    c.stop();
    c.display("Calcul de l'arbre d'inclusion");
 #endif
-   
+
 #ifdef DEBUG_EXTRACT_IMAGE
    std::cout << "OK." << std::endl;
 #endif
 }
 //******************************************************************************
 CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
-      CDart*    ALast, unsigned int ALevel)
+      CDart* ALast, unsigned int ALevel)
 {
-   assert(AImage != NULL);
-   assert(AImage->isOk());
+   assert( AImage != NULL );
+   assert( AImage->isOk() );
+   assert( FUFTreeMode );
 
 #ifdef DISPLAY_TIME_EXTRACT_IMAGE
    chronoShiftEdges.reset();
@@ -327,22 +286,19 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
             //si les pixels last et up sont identiques
             //et si les regions de last et up sont différentes
             //alors ces regions doivent être fusionnées.
-            unionRegionRoot(getRegion(last), getRegion(up));
-            currentRegion = findRegionRoot(getRegion(last));
+	   unionRegionRoot(getRegion(last), getRegion(up));
+	   currentRegion = getRegion(last);
          }
          else if (AImage->samePixelActuLeft(x, y))
-            currentRegion = findRegionRoot(getRegion(last));
+            currentRegion = getRegion(last);
          else if (AImage->samePixelActuUp(x, y))
-            currentRegion = findRegionRoot(getRegion(up));
+            currentRegion = getRegion(up);
          else
          {
             // On crée la région.
-            currentRegion = new CRegion(++FNbRegions);
-            newRegion = true;
-
-            //On initialise le pointeur des fusions (FNextSameCC)
-            //Par defaut, la region pointe sur elle même.
-            currentRegion->setNextSameCC(currentRegion);
+	   currentRegion = new CRegion(CCoordinate(x,y));
+	   ++FNbRegions;
+	   newRegion = true;
 
             // Et on la rajoute à la fin de la liste.
             // Rappel, la dernière cellule est désigné par le frère
@@ -364,6 +320,7 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
          // est rattaché à la carte déja créé.
          current  = CDoublet(x, y);
          nextLast = createSquareFace(last, up, current, currentRegion);
+	 currentRegion->incBoundarySize(4);
 
          if (!currentRegion->isInfiniteRegion())
          {
@@ -373,10 +330,10 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
          /* Si on vient de créer la région, on doit
             initialiser son représentant. */
          if (newRegion)
-         {         
+         {
             currentRegion->setRepresentativeDart(beta2(last));
          }
-         
+
          //3. On conserve un brin (réel) incidents au sommet central.
          vertex = last;
 
@@ -392,6 +349,7 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
                vertex = beta02(vertex);
 
             topoEdgeRemoval(last);
+	    currentRegion->incBoundarySize(-1);
          }
          else
          {
@@ -418,6 +376,7 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
             }
 
             topoEdgeRemoval(up);
+	    currentRegion->incBoundarySize(-1);
          }
          else
          {
@@ -444,7 +403,7 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
                   beta02(vertex) == beta21(vertex) &&
                   beta0(vertex) != beta2(vertex))
             {
-               vertexRemovalWithUnionFindRegions(vertex);
+               vertexRemoval(vertex);
             }
             else
                FKhalimsky->setPCell(current, true);
@@ -491,40 +450,36 @@ CDart* CTopologicalMap::extractTopologicalMapMainLoop(CImage2D* AImage,
 //******************************************************************************
 void CTopologicalMap::relabelDarts()
 {
-  assert(false);
+  assert( FUFTreeMode );
+
    // 1. On parcours les brins de la carte pour effectuer une mise à
    //    jour de leur étiquettage
    for (CDynamicCoverageAll It(this);It.cont();++It)
    {
-      // Si la région d'appartenance du brin pointe sur elle même,
-      // il n'y a aucune mise à jour à faire.
-      if (getRegion(*It)->getNextSameCC() != getRegion(*It))
+      // Si la région d'appartenance du brin n'est pas racine d'un arbre uf.
+      if ( !isRegionRoot(*It) )
       {
-         assert(getRegion(*It)->getNextSameCC() != NULL);
-	 // dans les cartes tuilées, on utilise le first pixel pour la comparaison des régions
-         //assert(findRegionRoot(getRegion(*It))->getId() <= getRegion(*It)->getId());
+	assert(getRegion(*It)->getFirstPixel() <
+	       static_cast<CTopologicalDart*>(*It)->getRegion()
+	       ->getFirstPixel());
 
          //on récupère la région avec laquelle il va falloir étiquetter
          //la région courante
-         setRegion(*It, findRegionRoot(getRegion(*It)));
+         setRegion(*It, getRegion(*It));
       }
    }
 
    // 2. On parcours maintenant les régions à partir de la première région
-   //    contenue dans le fils de FInclusioTreeRoot.
+   //    contenue dans le fils de FInclusionTreeRoot.
    //    On supprime toutes celles qui sont inutiles et on met à jour
    //    la liste chainée des régions
 
-   //vaiable de parcours de la chaine
-   FInclusionTreeRoot->setNextSameCC(NULL);
+   //variable de parcours de la chaine
    CRegion* currentRegion = FInclusionTreeRoot->getFirstSon();
    while (currentRegion != NULL)
    {
-      assert(currentRegion->getNextSameCC()!=NULL);
-      
-      //si la région ne pointe pas sur elle même elle doit être supprimée
-      //car elle ne correspond pas à une racine d'un arbre
-      if (currentRegion->getNextSameCC() != currentRegion)
+      //si la région n'est pas racine d'un arbre uf elle doit être supprimée.
+      if (  !isRegionRoot(currentRegion) )
       {
          CRegion* TempRegion = currentRegion; //contient la région à supprimer
 
@@ -555,6 +510,7 @@ void CTopologicalMap::relabelDarts()
          TempRegion->setFirstSon(NULL);
          TempRegion->setBrother(NULL);
          TempRegion->setNextSameCC(NULL);
+         TempRegion->setFather(NULL);
 
          delete TempRegion;
 
@@ -564,7 +520,6 @@ void CTopologicalMap::relabelDarts()
       //sinon on passe directement à la région suivante
       else
       {
-         currentRegion->setNextSameCC(NULL);
          currentRegion = currentRegion->getFirstSon();
       }
    }
@@ -599,32 +554,37 @@ void CTopologicalMap::extractTopologicalMap(CImage2D* AImage,
    // l'ordre de parcours. Pour cela, le début de liste est FInclusionTreeRoot,
    // et la dernière cellule de la liste est désigné par le frère de
    // FInclusionTreeRoot ceci afin de pouvoir ajouter en fin en O(1).
-   // Le champ FNextSameCC lie les régions entre elle de manière similaire
+   // Le champ FFather lie les régions entre elle de manière similaire
    // à dans un arbre union-find.
    FInclusionTreeRoot->setBrother(FInclusionTreeRoot);
-   FInclusionTreeRoot->setNextSameCC(FInclusionTreeRoot);
 
    /* Et on peut commencer l'extraction de la carte. */
    /* 1. On crée le bord supérieur. */
    CDart* last = makeBorder(AImage->getXSize(), AImage->getYSize());
 
    setRepresentativeDart(FInclusionTreeRoot, last);
-   
+
+   // On passe en mode UFTree
+   FUFTreeMode = true;
+
    /* 2. On parcours l'image en faisant les fusions nécessaires. */
    extractTopologicalMapMainLoop(AImage, last, ALevel);
 
    /* 3. On reétiquette les brins des régions fusionnées. */
    relabelDarts();
 
+   // On sort du mode UFTree
+   FUFTreeMode = false;
+
    /* 4. On calcule l'arbre d'inclusion des régions. */
    computeInclusionTree();
-   
+
    if (!isMapOk())
-   {   
+   {
       std::cerr << "PROBLEME après extractTopologicalMap" << std::endl;
       assert(false);
    }
-   
+
 #ifdef DEBUG_EXTRACT_IMAGE
    std::cout << "OK...Fin de extractTopologicalMap" << std::endl;
 #endif
@@ -638,7 +598,9 @@ void CTopologicalMap::simplifyMap()
    {
       tmpDart = *it;
 
-      if (!isMarkedDeleted(tmpDart))
+      assert(!isMarkedDeleted(tmpDart));
+
+      //  if (!isMarkedDeleted(tmpDart))
       {
          if (beta21(tmpDart) == beta02(tmpDart))  //sommet de degré 2
          {
@@ -654,137 +616,4 @@ void CTopologicalMap::simplifyMap()
       }
    }
 }
-//******************************************************************************
-void CTopologicalMap::transformInclusionTreeInOrderedList()
-{
-   CDynamicCoverageAllRegions it(this);
-   assert((*it)->isInfiniteRegion());
-   
-   CRegion* first = it++;
-   CRegion* prev  = first;
-   CRegion* actu  = NULL;
-
-   std::deque< CRegion* > regionQueue;
-         
-   while ( it.cont() )
-   {
-      regionQueue.push_front( *it );
-      ++it;   
-   }
-   std::sort< std::deque< CRegion* >::iterator >
-         ( regionQueue.begin(), regionQueue.end(), orderRegionId() );
-   
-   first->setFather(NULL);
-   first->setBrother(NULL); // précédent
-   first->setNextSameCC(first); // pour les arbres UF
-   
-   while ( !regionQueue.empty() )
-   {
-      actu=regionQueue.front(); regionQueue.pop_front();
-     
-      prev->setFirstSon(actu); // suivant         
-      actu->setBrother(prev);  // précédent
-      
-      actu->setFather(NULL);
-      actu->setNextSameCC(actu);   
-        
-      prev = actu;
-   }
-   
-   prev->setFirstSon(NULL);
-   first->setBrother(prev); 
-}
-//******************************************************************************
-unsigned int CTopologicalMap::
-mergeRegions(bool (CRegion::*AMethod)(CRegion*,int)const, int AThreshold)
-{
-#ifdef DISPLAY_TIME_EXTRACT_IMAGE
-   CChrono c;
-   c.start();
-#endif
-   
-   unsigned int nbMerged = 0;
-   
-   // 1) On remet les régions en list
-   transformInclusionTreeInOrderedList();
- 
-   // 2) On ordonne les arêtes par différence de couleur entre les 2 régions
-   //    adjacentes
-   std::deque< CTopologicalDart* > edgeQueue;
-   for (CDynamicCoverageAll it(this); it.cont(); ++it)
-   {
-      assert( !isMarkedDeleted(*it) );
-      if ( *it<beta2(*it) && // On traite seulement un brin par arête
-            (getRegion(*it)->*AMethod)(getRegion(beta2(*it)),AThreshold) )
-      {
-         edgeQueue.push_front( static_cast<CTopologicalDart*>(*it) );
-      }
-   }
-   std::sort< std::deque< CTopologicalDart* >::iterator >
-         ( edgeQueue.begin(), edgeQueue.end(), orderEdgesInterval() );
-       
-   // 3) On traite chaque arête dans l'ordre croissant pour commencer à 
-   //    fusionner les régions les plus proches.
-   CTopologicalDart* currentDart = NULL; 
-   CRegion* r1 = NULL;
-   CRegion* r2 = NULL;
-   while ( !edgeQueue.empty() )
-   {
-      currentDart = edgeQueue.front();
-      edgeQueue.pop_front();   
-      assert( !isMarkedDeleted(currentDart) );
-      
-      r1 = findRegionRoot(getRegion(currentDart));
-      r2 = findRegionRoot(getRegion(beta2(currentDart)));
-      if ( r1==r2 || (r1->*AMethod)(r2,AThreshold) )
-      {      
-         if (r1!=r2)
-         {               
-            unionRegionRoot(r1,r2);
-            ++nbMerged;         
-         }         
-         edgeRemoval(currentDart);
-      }
-   }
-   
-   // 4) Il faut reparcourir la carte pour le cas ou il reste des arêtes 
-   // interne (i.e. incidente 2 fois à la même région)
-   for (CDynamicCoverageAll it(this); it.cont(); ++it)
-   {
-      assert( !isMarkedDeleted(*it) );   
-      if ( *it<beta2(*it) ) // On traite seulement un brin par arête
-      { 
-         if ( findRegionRoot(getRegion(*it))==
-              findRegionRoot(getRegion(beta2(*it))) )
-         {
-            edgeRemoval(*it);
-         }         
-      }
-   }
-
-   // 5) On simplifie la carte et on recalcule l'arbre d'inclusion
-   relabelDarts();
-   // simplifyMap();
-   
-#ifdef DISPLAY_TIME_EXTRACT_IMAGE
-   c.stop();
-   c.display("Fusion des régions");
-#endif
-
-   computeInclusionTree();
-      
-   assert(isMapOk());
-   
-   return nbMerged;
-}   
-//******************************************************************************
-unsigned int CTopologicalMap::segment(unsigned int AThreshold)
-{
-   return mergeRegions(&CRegion::canMergeWith,(int)AThreshold);
-}
-//******************************************************************************
-unsigned int CTopologicalMap::removeSmallRegions(unsigned int AThreshold)
-{
-   return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
-}   
 //******************************************************************************

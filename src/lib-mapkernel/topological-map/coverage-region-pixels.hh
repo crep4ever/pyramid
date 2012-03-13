@@ -3,7 +3,7 @@
 #define COVERAGE_REGION_PIXELS_HH
 //*****************************************************************************
 #include "topological-map.hh"
-#include "point2d.hh"
+#include "coordinate.hh"
 #include "region.hh"
 #include <stack>
 using namespace std;
@@ -48,7 +48,7 @@ namespace Map2d
      * Itérateur postfixe.
      * @return Le pixel suivant.
      */
-    const CPoint2D & operator++(int);
+    const CCoordinate & operator++(int);
 
     /**
      * Drapeau d'arrêt du parcours.
@@ -61,7 +61,7 @@ namespace Map2d
      * Déréférencement de l'iterateur en pixel.
      * @return Le pixel actuel.
      */
-    const CPoint2D & operator*();
+    const CCoordinate & operator*();
 
   protected:
     /// Pointeur sur les données topologique.
@@ -69,9 +69,9 @@ namespace Map2d
     /// Pointeur sur la région parcourue.
     CRegion *              FRegion;
     /// Pile des pixels que l'on doit traiter et parcourir.
-    stack<CPoint2D>     FPixelsStack;
+    stack<CCoordinate>     FPixelsStack;
     /// Pixel en cours.
-    CPoint2D            FCurrentPixel;
+    CCoordinate            FCurrentPixel;
     /// Flag de fin de parcours.
     bool                   FStop;
   };

@@ -42,13 +42,7 @@ inline
 TPixelCoord CPixel::getX() const
 { return Fx; }
 inline
-TPixelCoord CPixel::x() const
-{ return Fx; }
-inline
 TPixelCoord CPixel::getY() const
-{ return Fy; }
-inline
-TPixelCoord CPixel::y() const
 { return Fy; }
 //------------------------------------------------------------------------------
 inline

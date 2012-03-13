@@ -24,13 +24,15 @@
 #include <iostream>
 #include <cassert>
 #include "topological-map.hh"
+#include "topological-dart.hh"
+#include "edge.hh"
 //******************************************************************************
 namespace Map2d
 {
 //******************************************************************************
 INLINE
 CRegion::CRegion() :
-      FId(static_cast<TRegionId>(0)),
+      FFirstPixel(CCoordinate(0,0)),
       FFather(NULL),
       FFirstSon(NULL),
       FBrother(NULL),
@@ -41,15 +43,25 @@ CRegion::CRegion() :
       FColorSum(0),
       FSquaredColorSum(0),
       FColorMin(0),
-      FColorMax(0)
+      FColorMax(0),
+      FBoundarySize(0),
+      FCavityCount(0)
 #ifdef CONTOUR_SIMPLIFICATION
       , FMoments(this)
 #endif // CONTOUR_SIMPLIFICATION
+#ifdef DEFORMABLE_METHOD
+      , FDeformationDart(NULL)
+      , FDeformationGain(-1)
+#if DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+      , FDMLPIterator(NULL)
+      , FDMLPIterator2(NULL)
+#endif // DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+#endif // DEFORMABLE_METHOD
 {}
 //------------------------------------------------------------------------------
 INLINE
-CRegion::CRegion(TRegionId AId, CDart* ADart, CRegion* AFather) :
-      FId(AId),
+CRegion::CRegion(const CCoordinate& ACoord, CDart* ADart, CRegion* AFather) :
+      FFirstPixel(ACoord),
       FFather(AFather),
       FFirstSon(NULL),
       FBrother(NULL),
@@ -60,15 +72,25 @@ CRegion::CRegion(TRegionId AId, CDart* ADart, CRegion* AFather) :
       FColorSum(0),
       FSquaredColorSum(0),
       FColorMin(0),
-      FColorMax(0)
+      FColorMax(0),
+      FBoundarySize(0),
+      FCavityCount(0)
 #ifdef CONTOUR_SIMPLIFICATION
       , FMoments(this)
 #endif // CONTOUR_SIMPLIFICATION
+#ifdef DEFORMABLE_METHOD
+      , FDeformationDart(NULL)
+      , FDeformationGain(-1)
+#if DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+      , FDMLPIterator(NULL)
+      , FDMLPIterator2(NULL)
+#endif // DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+#endif // DEFORMABLE_METHOD
 {}
 //------------------------------------------------------------------------------
 INLINE
-CRegion::CRegion(TRegionId AId, CRegion* AFather) :
-      FId(AId),
+CRegion::CRegion(const CCoordinate& ACoord, CRegion* AFather) :
+      FFirstPixel(ACoord),
       FFather(AFather),
       FFirstSon(NULL),
       FBrother(NULL),
@@ -79,12 +101,31 @@ CRegion::CRegion(TRegionId AId, CRegion* AFather) :
       FColorSum(0),
       FSquaredColorSum(0),
       FColorMin(0),
-      FColorMax(0)
+      FColorMax(0),
+      FBoundarySize(0),
+      FCavityCount(0)
 #ifdef CONTOUR_SIMPLIFICATION
       , FMoments(this)
 #endif // CONTOUR_SIMPLIFICATION
+#ifdef DEFORMABLE_METHOD
+      , FDeformationDart(NULL)
+      , FDeformationGain(-1)
+#if DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+      , FDMLPIterator(NULL)
+      , FDMLPIterator2(NULL)
+#endif // DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+#endif // DEFORMABLE_METHOD
 {}
 //******************************************************************************
+
+INLINE
+CRegion::~CRegion()
+{
+  if ( existSon()        ) delete getFirstSon  ();
+  if ( existBrother()    ) delete getBrother   ();
+  if ( existNextSameCC() ) delete getNextSameCC();
+}
+
 INLINE
 CRegion* CRegion::getFather() const
 { return FFather; }
@@ -102,8 +143,8 @@ CRegion* CRegion::getNextSameCC() const
 {return FNextSameCC; }
 
 INLINE
-TRegionId CRegion::getId() const
-{ return FId; }
+const CCoordinate& CRegion::getFirstPixel() const
+{ return FFirstPixel; }
 
 INLINE
 unsigned int CRegion::getNbPixels() const
@@ -139,12 +180,44 @@ TSumColor CRegion::getSquaredColorSum() const
 INLINE
 double CRegion::variance() const
 {
-  return static_cast<double>(getSquaredColorSum())/static_cast<double>(getPixelCount()) - sqr( static_cast<double>(getColorSum())/static_cast<double>(getPixelCount()));
+  return
+    static_cast<double>(getSquaredColorSum())/
+    static_cast<double>(getPixelCount()) -
+    sqr( static_cast<double>(getColorSum())/
+	 static_cast<double>(getPixelCount()));
 }
 
 INLINE
 double CRegion::mse() const
 { return variance() * getPixelCount(); }
+
+INLINE
+unsigned int CRegion::getBoundarySize() const
+{ return FBoundarySize; }
+
+INLINE
+void CRegion::setBoundarySize(unsigned int ANb)
+{ FBoundarySize = ANb; }
+
+INLINE
+void CRegion::incBoundarySize(int ANb)
+{
+  assert( ANb>0 || (unsigned int)std::abs(ANb)<=FBoundarySize );
+  FBoundarySize += ANb;
+}
+
+INLINE
+unsigned int CRegion::getCavityCount() const
+{
+  return FCavityCount;
+}
+
+INLINE
+void CRegion::setCavityCount(unsigned int cavityCount)
+{
+  FCavityCount = cavityCount;
+}
+
 //******************************************************************************
 INLINE
 void CRegion::resetColorData()
@@ -196,8 +269,8 @@ void CRegion::setNextSameCC(CRegion* ARegion)
 { FNextSameCC = ARegion; }
 
 INLINE
-void CRegion::setId(TRegionId AId)
-{ FId = AId; }
+void CRegion::setFirstPixel(const CCoordinate& ACoord)
+{ FFirstPixel = ACoord; }
 
 //******************************************************************************
 INLINE
@@ -227,25 +300,25 @@ void CRegion::addSameCC(CRegion* ARegion)
 }
 //******************************************************************************
 INLINE
-CRegion* CRegion::addSon(TRegionId AId)
+CRegion* CRegion::addSon(const CCoordinate& ACoord)
 {
-   CRegion* tmp = new CRegion(AId, this);
+   CRegion* tmp = new CRegion(ACoord, this);
    addSon(tmp);
 
    return tmp;
 }
 //------------------------------------------------------------------------------
 INLINE
-CRegion* CRegion::addBrother(TRegionId AId)
+CRegion* CRegion::addBrother(const CCoordinate& ACoord)
 {
    assert(getFather() != NULL);
-   return getFather()->addSon(AId);
+   return getFather()->addSon(ACoord);
 }
 //------------------------------------------------------------------------------
 INLINE
-CRegion* CRegion::addSameCC(TRegionId AId)
+CRegion* CRegion::addSameCC(const CCoordinate& ACoord)
 {
-   CRegion* tmp = new CRegion(AId, getFather());
+   CRegion* tmp = new CRegion(ACoord, getFather());
    addSameCC(tmp);
    return tmp;
 }
@@ -269,9 +342,9 @@ INLINE
 void CRegion::addPixel(TRegionId ACoul, CDart* ADart)
 {
    if (FNbPixels == 0)
-   { 
-      FColorMin = FColorMax = ACoul; 
-   }      
+   {
+      FColorMin = FColorMax = ACoul;
+   }
    else
    {
       if (ACoul < FColorMin) FColorMin = ACoul;
@@ -283,8 +356,8 @@ void CRegion::addPixel(TRegionId ACoul, CDart* ADart)
    FSquaredColorSum += ACoul * ACoul;
 
 #ifdef CONTOUR_SIMPLIFICATION
-   assert(ADart!=NULL);
-   FMoments.addPixel(static_cast<CTopologicalDart*>(ADart));
+   if (ADart!=NULL)
+       FMoments.addPixel(static_cast<CTopologicalDart*>(ADart));
 #endif // CONTOUR_SIMPLIFICATION
 }
 //------------------------------------------------------------------------------
@@ -332,28 +405,34 @@ TRegionId CRegion::distanceWith(CRegion* ARegion) const
    if ( (FColorMin>=ARegion->FColorMin && FColorMax<=ARegion->FColorMax) ||
         (ARegion->FColorMin>=FColorMin && ARegion->FColorMax<=FColorMax) )
      return 0;
-   
-   TRegionId oldInterval = std::max( FColorMax-FColorMin, 
+
+   TRegionId oldInterval = std::max( FColorMax-FColorMin,
                                      ARegion->FColorMax-ARegion->FColorMin);
    TRegionId newInterval = std::max(FColorMax, ARegion->FColorMax)-
          std::min(FColorMin,ARegion->FColorMin);
-   
+
    return newInterval-oldInterval;
-}   
-//------------------------------------------------------------------------------
-INLINE
-bool CRegion::canMergeWith(CRegion* ARegion, int AThreshold) const
-{
-   if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
-   return (std::max(FColorMax, ARegion->FColorMax)-
-         std::min(FColorMin,ARegion->FColorMin) < (TRegionId)AThreshold);
 }
 //------------------------------------------------------------------------------
 INLINE
-bool CRegion::smallRegion(CRegion* ARegion, int AThreshold) const
+bool CRegion::canMergeWith(CTopologicalMap* AMap,
+			   CRegion* ARegion, int AThreshold)
 {
    if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
-   return (int)getNbPixels()<=AThreshold || 
+   // Criterion based on interval
+     return (std::max(FColorMax, ARegion->FColorMax)-
+     std::min(FColorMin,ARegion->FColorMin) < (TRegionId)AThreshold);
+
+   // Criterion based on mse
+   //return (std::abs((mse() - ARegion->mse()))<(double)AThreshold);
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CRegion::smallRegion(CTopologicalMap* AMap,
+			  CRegion* ARegion, int AThreshold)
+{
+   if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
+   return (int)getNbPixels()<=AThreshold ||
          (int)ARegion->getNbPixels()<=AThreshold;
 }
 //------------------------------------------------------------------------------
@@ -367,10 +446,112 @@ void CRegion::mergeWith(CRegion* ARegion)
    if (ARegion->FColorMin < FColorMin) FColorMin = ARegion->FColorMin;
    if (ARegion->FColorMax > FColorMax) FColorMax = ARegion->FColorMax;
 
+   FBoundarySize += ARegion->FBoundarySize;
+
 #ifdef CONTOUR_SIMPLIFICATION
    FMoments += ARegion->FMoments;
 #endif
 }
+//------------------------------------------------------------------------------
+INLINE
+bool CRegion::canMergeWithPonderated(CTopologicalMap* AMap,
+				     CRegion* ARegion, int AThreshold)
+{
+   if (isInfiniteRegion() || ARegion->isInfiniteRegion()) return false;
+
+   unsigned int perimCommon=0;
+
+   // Si sans la pondération c'est inférieur, on sort car ponderation est
+   // entre 0 et 1.
+   /*   if ((std::max(FColorMax, ARegion->FColorMax)-
+       std::min(FColorMin,ARegion->FColorMin)) > (TRegionId)AThreshold)
+       return false;*/
+
+   unsigned int nbedges=0;
+   for (CDynamicCoverage1 it(AMap, this->getRepresentativeDart());
+	it.cont(); ++it)
+     {
+       if ( AMap->getRegion((*it)->getBeta2())==ARegion )
+	 {
+	   perimCommon += static_cast<CTopologicalDart*>(*it)->getEdge()->getNbLinels();
+	   ++nbedges;
+	 }
+     }
+
+   if ( perimCommon==0 )
+     for (CDynamicCoverage1 it(AMap, ARegion->getRepresentativeDart());
+	  it.cont(); ++it)
+       {
+	 if ( AMap->getRegion((*it)->getBeta2())==ARegion )
+	   {
+	     perimCommon += static_cast<CTopologicalDart*>(*it)->getEdge()->getNbLinels();
+	     ++nbedges;
+	   }
+       }
+
+   double ponderation = (double)perimCommon /
+     double(AMap->FMaxLg*nbedges);
+     //     double(std::max(getBoundarySize(),ARegion->getBoundarySize()));
+
+   /*   std::cout<<"common="<<perimCommon<<"  perim1="<<getBoundarySize()
+	    <<"  perim2="<<ARegion->getBoundarySize()<<std::endl;
+
+   std::cout<<"ponderation="<<ponderation<<"  intervalle="
+	    <<std::max(FColorMax, ARegion->FColorMax)-
+     std::min(FColorMin,ARegion->FColorMin)<<"  fusion="<<
+     (((std::max(FColorMax, ARegion->FColorMax)-
+	std::min(FColorMin,ARegion->FColorMin))) < AThreshold*ponderation)
+	    <<std::endl;
+   */
+   return ((std::max(FColorMax, ARegion->FColorMax)-
+	    std::min(FColorMin,ARegion->FColorMin)) < AThreshold*ponderation);
+}
+//******************************************************************************
+#ifdef DEFORMABLE_METHOD
+//******************************************************************************
+INLINE
+CDart* CRegion::getDeformationDart() const
+{ return FDeformationDart; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setDeformationDart( CDart* ADart )
+{ FDeformationDart=ADart; }
+//******************************************************************************
+INLINE
+const CDoublet& CRegion::getDeformationDoublet() const
+{ return FDeformationDoublet; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setDeformationDoublet( const CDoublet& ADoublet )
+{ FDeformationDoublet = ADoublet; }
+//******************************************************************************
+INLINE
+double CRegion::getDeformationGain() const
+{ return FDeformationGain; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setDeformationGain( double value )
+{ FDeformationGain = value; }
+//******************************************************************************
+#if DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+INLINE
+ImaGene::GridCurve::Visitor* CRegion::getDMLPIterator() const
+{ return FDMLPIterator; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setDMLPIterator( ImaGene::GridCurve::Visitor* AIte )
+{ FDMLPIterator = AIte; }
+  //------------------------------------------------------------------------------
+INLINE
+ImaGene::GridCurve::Visitor* CRegion::getDMLPIterator2() const
+{ return FDMLPIterator2; }
+//------------------------------------------------------------------------------
+INLINE
+void CRegion::setDMLPIterator2( ImaGene::GridCurve::Visitor* AIte )
+{ FDMLPIterator2 = AIte; }
+#endif // DEFORMABLE_METHOD==CONTOUR_ENERGY_DMLP
+//******************************************************************************
+#endif // DEFORMABLE_METHOD
 //******************************************************************************
 INLINE
 CDynamicCoverageCCSons::CDynamicCoverageCCSons(CRegion* ARegion) :
@@ -550,6 +731,70 @@ CRegion* CDynamicCoverageRegions::operator * () const
 { return FNextCCActu; }
 //******************************************************************************
 INLINE
+CDynamicCoverageNeighbors::CDynamicCoverageNeighbors( CTopologicalMap* AMap,
+                                                      CRegion* ARegion )
+{
+   CDart* initDart = ARegion->getRepresentativeDart();
+   CDynamicCoverageCCSons it(ARegion);
+   while ( initDart !=NULL )
+   {
+      for ( CDynamicCoverage1 it2(AMap,initDart); it2.cont(); ++it2 )
+      {
+         FRegions.insert(AMap->getRegion((*it2)->getBeta(2)));
+      }
+      if ( it.cont() )
+      {
+         initDart = it->getRepresentativeDart()->getBeta(2);
+         ++it;
+      }
+      else initDart = NULL;
+   }
+   FItRegions = FRegions.begin();
+}
+//------------------------------------------------------------------------------
+INLINE
+CDynamicCoverageNeighbors::~CDynamicCoverageNeighbors()
+{}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageNeighbors::operator ++ ()
+{
+   assert(cont());
+   ++FItRegions;
+   if ( !cont() ) return NULL;
+
+   return operator*();
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageNeighbors::operator ++ ( int )
+{
+   CRegion* res = operator*();
+   operator++();
+   return res;
+}
+//------------------------------------------------------------------------------
+INLINE
+bool CDynamicCoverageNeighbors::cont() const
+{
+   return FItRegions!=FRegions.end();
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageNeighbors::operator -> () const
+{
+   assert(cont());
+   return *FItRegions;
+}
+//------------------------------------------------------------------------------
+INLINE
+CRegion* CDynamicCoverageNeighbors::operator *  () const
+{
+   assert(cont());
+   return *FItRegions;
+}
+//******************************************************************************
+INLINE
 CDynamicCoverageAllCCRegions::
 CDynamicCoverageAllCCRegions(CTopologicalMap* AMap) :
       CDynamicCoverageCCRegions(AMap->getInclusionTreeRoot())
@@ -572,19 +817,19 @@ CRegion* CRegion::find(CRegion* ARegion)
 }
 //------------------------------------------------------------------------------
 INLINE
-CRegion* CRegion::find(TRegionId ARegionId)
+CRegion* CRegion::find(const CCoordinate& ACoord)
 {
    for (CDynamicCoverageRegions it(this); it.cont(); ++it)
    {
-      if (it->getId() == ARegionId) return *it;
+      if (it->getFirstPixel() == ACoord) return *it;
    }
 
    return NULL;
 }
 //------------------------------------------------------------------------------
 INLINE
-bool CRegion::exist(TRegionId AId)
-{ return (find(AId) != NULL); }
+bool CRegion::exist(const CCoordinate& ACoord)
+{ return (find(ACoord) != NULL); }
 //******************************************************************************
 INLINE
 void CRegion::setRepresentativeDart(CDart* ADart)
@@ -598,7 +843,7 @@ INLINE
 CInfiniteRegion::CInfiniteRegion() :
       CRegion()
 {
-   // On met 1 pixel dans la région infinie pour pouvoir calculer sa couleur 
+   // On met 1 pixel dans la région infinie pour pouvoir calculer sa couleur
    FNbPixels=1;
 }
 //------------------------------------------------------------------------------

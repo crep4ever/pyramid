@@ -264,7 +264,7 @@ void CCoverageAllPixelsFishkinBarsky::operator++()
                 }
             }
 
-        if ((unsigned int)y != FImage2D->getYSize())
+        if ((unsigned int)y != FImage2D->getYSize()) 
             // Sinon c'est la fin du parcours
         {
             FIteratorRegion =

@@ -41,17 +41,17 @@ class CDss
     //Create a DSS based on specific edge.
     //PRECOND : the two points APoint1 and APoint2 must be 4-connected
     CDss(const Point<int> &APoint1, const Point<int> &APoint2);
-        
+
     //Create a DSS by copy constructor.
     CDss(const CDss &ADss);
 
     // Affectation operator.
     CDss &operator=(const CDss &ADss);
-    
+
     // Init a DSS given two 4-connected points.
     bool init(const Point<int> &APoint1, const Point<int> &APoint2);
     bool init(int Ax1, int Ay1, int Ax2, int Ay2);
-    
+
     //Reverse a DSS
     void reverse();
 
@@ -66,8 +66,8 @@ class CDss
      *  Self becomes the merge between a DSS and self
      *
      *  PRECOND:   --self-->o--dss-->    (no  --->o<----, <---o--->,...)
-     * 
-     * @param ADss 
+     *
+     * @param ADss
      * @return True or false if the union has been done
      */
     bool unionDSS(const CDss &ADss);
@@ -77,7 +77,7 @@ class CDss
 
     // Affichage de tout les pixels du DSS
     void drawPixels(std::ostream& AOs) const;
-    
+
     // Return the previous following APoint in the DSS
     // @precond APoint in the DSS and not equal to FStartingPoint
     Point<int> prevPoint(Point<int> &APoint) const;
@@ -88,21 +88,21 @@ class CDss
 
     // Return the number of pixels that belong to the DSS
     int getNbPixels() const;
-    
+
 	////
 	//Preimage Related Stuffs
 	////
-	
+
 	//Rotate the DSS to the first Quadrant
 	void rotateFirstQuadrant();
-	
+
 	//We update the Preimage
 	void updateToPreimage();
-	
+
 	//We update the CDss parameters from Preimage
 	void updateFromPreimage();
-	
-	
+
+
 	// private:
     // Datas
 

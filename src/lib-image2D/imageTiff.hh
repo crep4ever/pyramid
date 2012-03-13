@@ -47,7 +47,7 @@ public:
   bool FIsOk;    // Vrai si l'image est valide
   uint FNbPages; // Le nombre de pages dans l'image
   uint* FPages ; // Tableau des pages du tif (utile pour le tri)
-  uint FColorMode;
+  ColorMode FColorMode;
   uint FDepth; //current depth
 
   std::string FFilename;
@@ -73,7 +73,7 @@ public:
   /// Accesseur sur la propriété tiff du colorMode pour savoir
   /// si l'image est codée sur 8bits (n&b) ou 24bits(rgb)
   /// @return nombre de canaux de 8bits utilisés
-  int colorMode() const;
+  ColorMode colorMode() const;
 
   uint depth() const;
   void setDepth(uint ADepth);

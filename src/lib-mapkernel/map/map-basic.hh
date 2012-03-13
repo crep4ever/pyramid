@@ -49,7 +49,7 @@ namespace Map2d
   class CMapBasic
   {
     friend class CDynamicCoverageAll;
-    
+
   public:
     /// @name Constructeur et destructeur
     //@{
@@ -78,7 +78,7 @@ namespace Map2d
 
     /// Récupère le Aj ème brin du Ai ème tableau
     virtual CDart* getDart(unsigned int Ai, unsigned int Aj) const;
-    
+
     /// Initialise un brin donné (nécessaire car on n'utilise plus le
     /// constructeur des brins avec paramètres).
     void initDart(CDart* ADart);
@@ -97,58 +97,58 @@ namespace Map2d
      * Le brin n'est supprimé mais marqué supprimé et peut désormais être
      * ré-utilisé lors d'un addMapDart. ATTENTION: modifie le champ beta0
      * de ADart.
-     * 
+     *
      *  @param ADart Le brin à supprimer
      */
     virtual void delMapDart(CDart* ADart);
 
-   /** 
-    * @return vrai ssi ADart est marqué supprimé.
+   /**
+    * @retur vrai ssi ADart est marqué supprimé.
     */
    bool isMarkedDeleted(CDart* ADart) const;
- 
+
     /**
      *  Méthode permettant de vider la carte.
      *  Tous les brins sont détruits.
      */
     void removeAllDarts();
 
-    /** 
+    /**
      *  Méthode permettant de réinitialiser la carte.
      *  La méthode removeAllDarts est appelée, puis toutes les marques, champs
      *  direc-info, etc, sont réinitialisés.
      */
     virtual void empty();
- 
+
     /// @return Le nombre de brins présent dans la carte.
     unsigned int getNbDarts() const;
-    
+
     /// @return Le nombre de brins dans les tableaux
     unsigned int getNbDartsInTabs() const;
-    
+
     /// @return La taille de chaque tableau de brins.
     unsigned int getSizeDartArray() const;
-    
+
     /// @return Le nombre de tableaux de brins.
     unsigned int getNbTabsDarts() const;
-    
+
     /// @return  Le nombre de brins dans le dernier tableau.
     unsigned int getNbDartsInLastTab() const;
 
     /// @return La marque des brins à détruire.
     int getMarkToDelete() const;
-    
+
     /// @name Gestion des champs direct-info
     //@{
 
-    /** 
+    /**
      *  Permet de réserver un champ direct info libre.
      *
      *  @return L'indice du champ direct-info réservé.
      */
     int  getNewDirectInfo();
 
-    /** 
+    /**
      *  Permet de libérer un champ direct-info préalablement réservé avec la
      *  méthode getNewDirectInfo.
      *
@@ -275,7 +275,7 @@ namespace Map2d
      */
     void unsetMark(CDart* ADart, int AMarkNumber);
 
-    /** 
+    /**
      *  Cette méthode permet d'initialiser toutes les marques du brin ADart.
      *  AMarks est modifié pour prendre en comte le masque des marques.
      *
@@ -294,7 +294,7 @@ namespace Map2d
     std::bitset<NB_MARKS> getMarks(CDart* ADart) const;
 
     //@}
-    
+
     /** @name Accès aux involutions
      *
      *  Attention, les méthodes d'accès en écritures qui suivent ne sont pas
@@ -314,7 +314,7 @@ namespace Map2d
     bool isFree0(const CDart* ADart) const;
     bool isFree1(const CDart* ADart) const;
     bool isFree2(const CDart* ADart) const;
-    
+
     /** isFree
      *
      *  @param ADart Un brin de la carte
@@ -334,7 +334,7 @@ namespace Map2d
     CDart* beta0(const CDart* ADart) const;
     CDart* beta1(const CDart* ADart) const;
     CDart* beta2(const CDart* ADart) const;
-   
+
     /** beta[i]
      *
      *  @param ADart Un brin de la carte
@@ -416,7 +416,7 @@ namespace Map2d
     int FMaxNbUsedDirectInfos;
     bool FMsgDirectInfo; // Pour afficher le message une seule fois.
 #endif // NDEBUG
-    
+
     /// Compteurs pour le nombre de brins
     unsigned int FNbDarts;
 
@@ -426,7 +426,7 @@ namespace Map2d
 
     /// Le nombre de tableau de brins.
     unsigned int FNbTabsDarts;
-    
+
     /// Le nombre de brins dans le dernier tableau.
     unsigned int FNbDartsInLastTab;
 

@@ -71,7 +71,7 @@ namespace Map2d
     /// Pile des pixels que l'on doit traiter et parcourir.
     stack<CPoint2D>     FPixelsStack;
     /// Pixel en cours.
-    CPoint2D            FCurrentPixel;  
+    CPoint2D            FCurrentPixel;
     /// Flag de fin de parcours.
     bool                   FStop;
   };

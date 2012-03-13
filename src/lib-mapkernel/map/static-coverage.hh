@@ -54,7 +54,7 @@ namespace Map2d
      *  Indique le premier brin du parcours
      */
     CDart* FDart1;
-    
+
     /** Brin 2
      *  Indique le brin 2 du parcours
      */
@@ -70,7 +70,7 @@ namespace Map2d
      */
     bool FDart1Active;
 
-  public:	
+  public:
     /** @name Constructeurs et destructeur
      */
 
@@ -115,7 +115,7 @@ namespace Map2d
     virtual bool cont();
 
     //@}
-    
+
     /** @name Accesseurs
      */
 
@@ -130,7 +130,7 @@ namespace Map2d
      *  @return un identifiant de parcours correspondant à la classe.
      */
     virtual int type() const;
-    
+
     //@}
   };
   //****************************************************************************
@@ -139,33 +139,33 @@ namespace Map2d
   protected:
     std::list<CDart*> FAllDarts;
     std::list<CDart*>::iterator FIt;
-    
+
   public:
     /// @name Constructeurs et destructeur
     //@{
-    
+
     /// Constructeur
     CGenericStaticCoverage(CMapBasic* AMap);
-    
+
     /// Destructeur
-    virtual ~CGenericStaticCoverage();    
+    virtual ~CGenericStaticCoverage();
     //@}
-    
+
     /// @name Opérateurs de parcours
     //@{
-    
+
     /// La fonction reinit (re)positionne le pointeur de parcours
     /// sur le premier brin (FDart1)
     void reinit();
-    
+
     /// Cet opérateur permet de déplacer le curseur de parcours sur le brin
     /// suivant (et met à jour si besoin le booléen de fin de parcours)
     void operator++();
-    
+
     /// Opérateur postfix
     /// Réalise le déplacement du curseur après avoir retourné le brin courant
     CDart* operator++(int);
-    
+
     /** Indication de fin de parcours.
      *  Cette méthode indique si le parcours est achevé ou non. Il n'y a aucun
      *  paramètre d'entrée.
@@ -174,10 +174,10 @@ namespace Map2d
      *  parcours.
      */
     bool cont();
-    
+
     /// Cet opérateur retourne un pointeur sur le brin courant.
     CDart* operator*();
-    
+
     //@}
     };
   //****************************************************************************
@@ -186,14 +186,14 @@ namespace Map2d
   public:
     /// @name Constructeurs et destructeur
     //@{
-    
+
     /// Constructeur
     CStaticCoverage0(CMapBasic* AMap, const CDart* ADart1);
-    
+
     /// Destructeur
-    virtual ~CStaticCoverage0();    
+    virtual ~CStaticCoverage0();
     //@}
-    
+
     /// cette fonction retourne le type du parcours.
     int type() const;
   };
@@ -203,14 +203,14 @@ namespace Map2d
   public:
     /// @name Constructeurs et destructeur
     //@{
-    
+
     /// Constructeur
     CStaticCoverage1(CMapBasic* AMap, const CDart* ADart1);
-    
+
     /// Destructeur
-    virtual ~CStaticCoverage1();    
+    virtual ~CStaticCoverage1();
     //@}
-    
+
     /// cette fonction retourne le type du parcours.
     int type() const;
   };
@@ -220,14 +220,14 @@ namespace Map2d
   public:
     /// @name Constructeurs et destructeur
     //@{
-    
+
     /// Constructeur :
     CStaticCoverage12(CMapBasic* AMap, const CDart* ADart1);
-    
+
     /// Destructeur :
-    virtual ~CStaticCoverage12();    
+    virtual ~CStaticCoverage12();
     //@}
-    
+
     /// cette fonction retourne le type du parcours.
     int type() const;
   };
@@ -235,16 +235,16 @@ namespace Map2d
    class CStaticCoverageVertex : public CGenericStaticCoverage
   {
   public:
-    /// @name Constructeurs et destructeur    
+    /// @name Constructeurs et destructeur
     //@{
-    
+
     /// Constructeur :
     CStaticCoverageVertex(CMapBasic* AMap, const CDart* ADart1);
-    
+
     /// Destructeur :
-    virtual ~CStaticCoverageVertex();    
+    virtual ~CStaticCoverageVertex();
     //@}
-    
+
     /// cette fonction retourne le type du parcours.
     int type() const;
   };
@@ -252,16 +252,16 @@ namespace Map2d
   class CStaticCoverageAll : public CGenericStaticCoverage
   {
   public:
-    /// @name Constructeurs et destructeur    
+    /// @name Constructeurs et destructeur
     //@{
-    
+
     /// Constructeur :
     CStaticCoverageAll(CMapBasic* AMap);
-    
+
     /// Destructeur :
-    virtual ~CStaticCoverageAll();    
+    virtual ~CStaticCoverageAll();
     //@}
-    
+
     /// cette fonction retourne le type du parcours.
     int type() const;
   };
@@ -420,7 +420,7 @@ CStaticCoverage0::CStaticCoverage0(CMapBasic* AMap, const CDart* ADart1) :
   CGenericStaticCoverage(AMap)
 {
   CDynamicCoverage0 it(AMap, ADart1);
-  
+
   while (it.cont())
     FAllDarts.push_back(it++);
 
@@ -444,7 +444,7 @@ CStaticCoverage1::CStaticCoverage1(CMapBasic* AMap, const CDart* ADart1) :
   CGenericStaticCoverage(AMap)
 {
   CDynamicCoverage1 it(AMap, ADart1);
-  
+
   while (it.cont())
     FAllDarts.push_back(it++);
 
@@ -468,7 +468,7 @@ CStaticCoverage12::CStaticCoverage12(CMapBasic* AMap, const CDart* ADart1) :
   CGenericStaticCoverage(AMap)
 {
   CDynamicCoverage12 it(AMap, ADart1);
-  
+
   while (it.cont())
     FAllDarts.push_back(it++);
 
@@ -493,7 +493,7 @@ CStaticCoverageVertex::CStaticCoverageVertex(CMapBasic* AMap,
   CGenericStaticCoverage(AMap)
 {
   CDynamicCoverageVertex it(AMap, ADart1);
-  
+
   while (it.cont())
     FAllDarts.push_back(it++);
 
@@ -517,7 +517,7 @@ CStaticCoverageAll::CStaticCoverageAll(CMapBasic* AMap) :
   CGenericStaticCoverage(AMap)
 {
   CDynamicCoverageAll it(AMap);
-  
+
   while (it.cont())
     FAllDarts.push_back(it++);
 
