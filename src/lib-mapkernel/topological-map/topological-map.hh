@@ -411,6 +411,7 @@ private:
      */
     bool isRegionRoot(CDart* ADart) const;
 
+protected:
     /**
      * Réalise l'union entre une région et sa racine
      * si la région est déjà la racine de l'arbre on n'effectue rien...
@@ -422,7 +423,6 @@ private:
      */
     bool unionRegionRoot(CRegion* ARegion1, CRegion* ARegion2);
 
-protected:
     /// Initialise un brin donné (nécessaire car on n'utilise plus le
     /// constructeur des brins avex paramètres).
     void initDart(CDart* ADart, const CDoublet & ADoublet, CRegion* ARegion);
