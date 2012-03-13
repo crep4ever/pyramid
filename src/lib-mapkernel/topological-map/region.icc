@@ -32,6 +32,7 @@ namespace Map2d
 //******************************************************************************
 INLINE
 CRegion::CRegion() :
+      FFirstPixel(CCoordinate(0,0)),
       FFather(NULL),
       FFirstSon(NULL),
       FBrother(NULL),
