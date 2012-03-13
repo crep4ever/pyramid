@@ -1054,10 +1054,6 @@ namespace pyramid
     /// @param ASize: sa taille
     void printPropertiesStruct(struct SProperties* AProperties);
 
-    // on est obligé de redéfinir le unionRegionRoot pour trier
-    // les régions par first pixel et pas par id
-    int unionRegionRoot(CPyramidalRegion* ARegion1, CPyramidalRegion* ARegion2);
-
     // on est obligé de redéfinir le relabelDarts pour les
     //relations up/down
     void relabelDarts();

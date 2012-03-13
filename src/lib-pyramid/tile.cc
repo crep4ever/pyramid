@@ -20,7 +20,7 @@
 #include "tile.hh"
 #include "pyramidal-dart.hh"
 #include "pyramidal-region.hh"
-#include "traversal-region-pixels.hh"
+#include "coverage-region-pixels.hh"
 #include <pngwriter.h>
 #include <iostream>
 #include INCLUDE_NON_INLINE("tile.icc")
@@ -150,42 +150,11 @@ void CTile::traversePixels()
   image()->read(boundingBox(), index(2));
   IM_Pixel pix;
   for( CDynamicCoverageAllRegions it( this ); it.cont();++it )
-    for( CTraversalRegionPixels it2(this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
+    for( CCoverageRegionPixels it2(this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
       {
-	pix.x = (*it2).x()+xmin(); pix.y = (*it2).y()+ymin();
+	pix.x = (*it2).getX()+xmin(); pix.y = (*it2).getY()+ymin();
 	addPixel(pix, *it);
       }
-}
-
-int CTile::unionRegionRoot(CPyramidalRegion* region1, CPyramidalRegion* region2)
-{
-  // l'union de deux régions revient à unir leurs racines
-  region1=findRegionRoot(region1);
-  region2=findRegionRoot(region2);
-
-  //si les deux régions racines sont égales on sort de la fonction
-  if(region1 == region2)
-    return 0;
-
-  // sinon on les fusionne en mettant la région d'identifiant le + petit
-  // racine de l'arbre (cad la première pour notre ordre de parcours)
-  if ( region1->firstPixel() < region2->firstPixel() )
-    {
-      region2->setNextSameCC(region1);
-      region2->setRepresentativeDart( NULL );
-      region1->mergeWith( region2 );//maj des paramètres des régions
-    }
-  else
-    {
-      region1->setNextSameCC(region2);
-      region1->setRepresentativeDart( NULL );
-      region2->mergeWith( region1 );//maj des paramètres des régions
-    }
-
-  assert(region1->getRepresentativeDart()!=NULL ||
-	 region2->getRepresentativeDart() != NULL);
-
-  return 1;
 }
 
 void CTile::simplifyMap()

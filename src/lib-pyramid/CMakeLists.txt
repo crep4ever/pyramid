@@ -1,6 +1,5 @@
 set(SOURCES
   dk-doublet.cc
-  traversal-region-pixels.cc
   pyramid.cc
   level.cc
   pyramidal-region.cc
@@ -17,7 +16,6 @@ set(SOURCES
 
 set(HEADERS
   dk-doublet.hh
-  traversal-region-pixels.hh
   pyramid.hh
   level.hh
   pyramidal-region.hh
