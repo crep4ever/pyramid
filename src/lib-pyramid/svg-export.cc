@@ -24,7 +24,7 @@
 #include "level.hh"
 #include "region.hh"
 #include "pyramidal-dart.hh"
-#include "traversal-region-pixels.hh"
+#include "coverage-region-pixels.hh"
 #include "vertex.hh"
 
 using namespace Map2d;
@@ -402,10 +402,10 @@ void CSvgExporter::drawFirstPixels(CTile* ATile, CSvgCreator& svg)
 
   // Parcours de toutes les régions de l'arbre d'inclusion
   for( CDynamicCoverageAllRegions it(ATile); it.cont(); ++it)
-    for( CTraversalRegionPixels it2(ATile, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
-      if( (*it2) == static_cast<CPyramidalRegion*>(*it)->firstPixel() && !(*it)->isInfiniteRegion() )
+    for( CCoverageRegionPixels it2(ATile, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
+      if( (*it2) == (*it)->getFirstPixel() && !(*it)->isInfiniteRegion() )
 	{
-	  svg.rect((*it2).x()+0.3, (*it2).y()+0.3, 0.4, 0.4, "class=\"fpixel\" ");
+	  svg.rect((*it2).getX()+0.3, (*it2).getY()+0.3, 0.4, 0.4, "class=\"fpixel\" ");
 	  break;
 	}
 
@@ -423,11 +423,11 @@ void CSvgExporter::fillRegions(CTile* AMap, CSvgCreator& svg)
 	  std::stringstream ss;
 	  ss << std::hex << static_cast<CPyramidalRegion*>(*it)->getAverageGrey();
 	  std::string value = ss.str();
-	  for( CTraversalRegionPixels it2(AMap, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
+	  for( CCoverageRegionPixels it2(AMap, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
 	    {
 	      std::ostringstream color;
 	      color<<"fill=\"#"<<value<<value<<value<<"\" ";
-	      svg.rect((*it2).x()+0.3, (*it2).y()+0.3, 0.4, 0.4, color.str() );
+	      svg.rect((*it2).getX()+0.3, (*it2).getY()+0.3, 0.4, 0.4, color.str() );
 	    }
 	}
     }

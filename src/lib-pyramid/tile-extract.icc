@@ -20,7 +20,7 @@
 #include "array.hh"
 #include "pyramidal-dart.hh"
 #include "pyramidal-region.hh"
-#include "traversal-region-pixels.hh"
+#include "coverage-region-pixels.hh"
 
 namespace pyramid
 {
@@ -31,8 +31,8 @@ namespace pyramid
     matrix->fill();
 
     for( CDynamicCoverageAllRegions it( this ); it.cont(); ++it )
-      for( CTraversalRegionPixels it2( this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
-	matrix->setValue( (*it2).x(), (*it2).y(), (*it) );
+      for( CCoverageRegionPixels it2( this, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
+	matrix->setValue( (*it2).getX(), (*it2).getY(), (*it) );
 
     return matrix;
   }

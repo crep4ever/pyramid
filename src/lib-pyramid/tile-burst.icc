@@ -17,7 +17,7 @@
  */
 
 #include "tile.hh"
-#include "traversal-region-pixels.hh"
+#include "coverage-region-pixels.hh"
 #include "split-nbpix.hh"
 #include "split-grey.hh"
 #include "split-histo.hh"
@@ -85,10 +85,10 @@ namespace pyramid
 	{
 	  //std::cout<<"CTile::isRegionToSplit focus red"<<std::endl;
 	  int red= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
-	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
+	  for( CCoverageRegionPixels it(this, r); it.cont(); ++it)
 	    {
-	      pix.x=(*it).x();
-	      pix.y=(*it).y();
+	      pix.x=(*it).getX();
+	      pix.y=(*it).getY();
 	      image()->getPixel( pix, index(2) );
 	      ++count;
 	      red += pix.value[0];
@@ -101,10 +101,10 @@ namespace pyramid
 	{
 	  //std::cout<<"CTile::isRegionToSplit focus red"<<std::endl;
 	  int blue= 0; IM_Pixel pix; uint count =0; CPyramidalRegion* r = static_cast<CPyramidalRegion*>(ARegion);
-	  for( CTraversalRegionPixels it(this, r); it.cont(); ++it)
+	  for( CCoverageRegionPixels it(this, r); it.cont(); ++it)
 	    {
-	      pix.x=(*it).x();
-	      pix.y=(*it).y();
+	      pix.x=(*it).getX();
+	      pix.y=(*it).getY();
 	      image()->getPixel( pix, index(2) );
 	      ++count;
 	      blue += pix.value[2];

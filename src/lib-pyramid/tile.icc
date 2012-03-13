@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <map>
-#include "traversal-region-pixels.hh"
+#include "coverage-region-pixels.hh"
 
 namespace pyramid
 {
@@ -947,6 +947,7 @@ namespace pyramid
   void CTile::addPixel( IM_Pixel & APixel, CRegion* ARegion)
   {
     image()->getPixel( APixel, index(2));
+    std::cout << "CTile::addPixel(" << APixel.x << "," << APixel.y << ") = " << image()->getPixelGreyValue(APixel) << std::endl;
     ARegion->addPixel( image()->getPixelGreyValue(APixel) & 0xFF ); // Le & 0xFF fait un modulo 256
   }
   //
@@ -1121,12 +1122,12 @@ namespace pyramid
       if(isRegionToSplit(*it, FocusHisto))
 	{
 	  CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);
-	  for( CTraversalRegionPixels it2(this, region); it2.cont(); ++it2)
+	  for( CCoverageRegionPixels it2(this, region); it2.cont(); ++it2)
 	    for(uint j=0; j<ratioy; ++j)
 	      for(uint i=0; i<ratiox; ++i)
 		{
-		  pix.x = ((*it2).x() + xmin())*ratiox + i;
-		  pix.y = ((*it2).y() + ymin())*ratioy + j;
+		  pix.x = ((*it2).getX() + xmin())*ratiox + i;
+		  pix.y = ((*it2).getY() + ymin())*ratioy + j;
 		  image()->getPixel(pix, depth()+1);
 		  histo->setValue(pix.value[0], pix.value[1], pix.value[2],
 				  histo->getValue(pix.value[0], pix.value[1], pix.value[2])+1);
@@ -1155,15 +1156,15 @@ namespace pyramid
 	{
 	  //std::cout<<" region to split" << std::endl;
 	  CPyramidalRegion* region = static_cast<CPyramidalRegion*>(*it);
-	  for( CTraversalRegionPixels it2(this, region); it2.cont(); ++it2)
+	  for( CCoverageRegionPixels it2(this, region); it2.cont(); ++it2)
 	    for(uint j=0; j<ratioy; ++j)
 	      for(uint i=0; i<ratiox; ++i)
 		{
-		  pix.x = ((*it2).x() + xmin())*ratiox + i;
-		  pix.y = ((*it2).y() + ymin())*ratioy + j;
+		  pix.x = ((*it2).getX() + xmin())*ratiox + i;
+		  pix.y = ((*it2).getY() + ymin())*ratioy + j;
 		  image()->getPixel(pix, depth()+1);
 		  //std::cout<<" pix ("<<(uint)pix.value[0]<<","<<(uint)pix.value[1]<<","<<(uint)pix.value[2]<<")"<<std::endl;
-		  uint pos = ((*it2).x()*ratiox+i + (width()*ratiox)*((*it2).y()*ratioy+j))*3;
+		  uint pos = ((*it2).getX()*ratiox+i + (width()*ratiox)*((*it2).getY()*ratioy+j))*3;
 		  data[pos]   = pix.value[0];
 		  data[pos+1] = pix.value[1];
 		  data[pos+2] = pix.value[2];

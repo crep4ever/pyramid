@@ -27,7 +27,7 @@
 #include "tile.hh"
 #include "dart-path.hh"
 #include "region.hh"
-#include "traversal-region-pixels.hh"
+#include "coverage-region-pixels.hh"
 using namespace Map2d;
 using namespace pyramid;
 using namespace fogrimmi;
@@ -567,9 +567,9 @@ void CScene::drawLabels(CTile* a_map, QGraphicsItemGroup * group)
 	}
       painter.setPen(*pen);
       painter.setBrush(*brush);
-      for( CTraversalRegionPixels it2(a_map, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
+      for( CCoverageRegionPixels it2(a_map, static_cast<CPyramidalRegion*>(*it)); it2.cont(); ++it2)
 	{
-	  painter.drawPoint(QPoint((*it2).x(), (*it2).y()));
+	  painter.drawPoint(QPoint((*it2).getX(), (*it2).getY()));
 	}
     }
   painter.end();

@@ -398,10 +398,10 @@ void CTile::saveMitosis()
 	{
 	  int sum=0, count=0;
 	  IM_Pixel pix;
-	  for( CTraversalRegionPixels it2(this, region); it2.cont(); ++it2)
+	  for( CCoverageRegionPixels it2(this, region); it2.cont(); ++it2)
 	    {
-	      pix.x = (*it2).x() + xmin();
-	      pix.y = (*it2).y() + ymin();
+	      pix.x = (*it2).getX() + xmin();
+	      pix.y = (*it2).getY() + ymin();
 	      image()->getPixel( pix, depth() );
 	      sum += 2*pix.value[0] - pix.value[1] - pix.value[2];
 	      ++count;
