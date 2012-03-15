@@ -271,11 +271,11 @@ public:
     TRegionId getPixel( const CCoordinate & ACoord ) const;
 
     /// Accesseur sur les marques des pixels
-    bool isPixelMarked(unsigned int Ax, unsigned int Ay) const;
-    void setPixelMark(unsigned int Ax, unsigned int Ay, bool AOn);
-    void markPixel(unsigned int Ax, unsigned int Ay);
-    void unmarkPixel(unsigned int Ax, unsigned int Ay);
-    void unmarkAllPixels();
+    virtual bool isPixelMarked(unsigned int Ax, unsigned int Ay) const;
+    virtual void setPixelMark(unsigned int Ax, unsigned int Ay, bool AOn);
+    virtual void markPixel(unsigned int Ax, unsigned int Ay);
+    virtual void unmarkPixel(unsigned int Ax, unsigned int Ay);
+    virtual void unmarkAllPixels();
 
     /**
      * Donne le pixel interne à la région délimité par le doublet ADoublet.
