@@ -483,8 +483,6 @@ namespace pyramid
 			 const FocusAttentionMode & AFocusAttentionMode,
 			 CChrono & AChrono);
 
-    CDart* makeTileBorder();
-
     /// Chaîne de traitement principale de l'extraction
     /// @param ALast: dernier brin crée lors de la construction du bord
     void extractMapMainLoop( CDart* ALast,

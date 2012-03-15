@@ -33,46 +33,6 @@
 using namespace Map2d;
 using namespace pyramid;
 
-CDart* CTile::makeTileBorder()
-{
-  //std::cout<<" [start] CTile::makeBorder"<<std::endl;
-  CDart *first, *last, *tmp;
-  uint x,y;
-
-  CDoublet doublet(0, 0, YPOS);
-  first = addMapDart(doublet, getInclusionTreeRoot());
-
-  // Ajout du brin de la diagonale
-  doublet.setY(1);
-  tmp = addMapDart(doublet, getInclusionTreeRoot());
-  linkBeta1(first, tmp);
-  last = tmp;
-
-  // On crée le bord supérieur de l'image
-  x = width();
-  y = 0;
-
-  // Initialisation du doublet
-  doublet.setY(y);
-  doublet.setLinel(XNEG);
-
-  // Parcours du bord supérieur de "droite à gauche"
-  // et ajout des brins créés à la carte.
-  while(x>0)
-    {
-      doublet.setX(x);
-      tmp = addMapDart(doublet, getInclusionTreeRoot());
-      assert(tmp!=NULL);
-      linkBeta1(last, tmp);
-      last=tmp;
-      --x;
-    }
-  linkBeta1(last,first); // on ferme le bord
-
-  //std::cout<<" [end] CTile::makeBorder"<<std::endl;
-  return first;
-}
-
 void CTile::extractMapMainLoop( CDart* ALast,
 				const SegmentationMode & ASegmentationMode,
 				const FocusAttentionMode & AFocusAttentionMode)
@@ -240,7 +200,7 @@ void CTile::extractMap( CTile* ATileUp,
   setNextSameCC( inclusionTreeRoot(), inclusionTreeRoot() );
 
   // 1. On crée le bord supérieur.
-  CDart* last = makeTileBorder();
+  CDart* last = makeBorder(width(), height());
   setRepresentativeDart(inclusionTreeRoot(), static_cast<CPyramidalDart*>(last));
 
   // 2. On parcours l'image en faisant les fusions nécessaires.
