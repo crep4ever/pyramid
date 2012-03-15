@@ -41,6 +41,7 @@ include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/map-generic)
 include_directories (${CMAKE_SOURCE_DIR}/lib-mapkernel/topological-map)
 include_directories (${CMAKE_SOURCE_DIR}/lib-pyramid)
+include_directories (${CMAKE_SOURCE_DIR}/lib-pyramid/image)
 
 include_directories (${CMAKE_SOURCE_DIR}/lib-image2D)
 include_directories (${CMAKE_SOURCE_DIR}/lib-clustering)

@@ -31,7 +31,7 @@
 
 #include "topological-map.hh"
 #include "pyramidal-region.hh"
-#include "imageTiff.hh"
+#include "image/imageTiff.hh"
 #include "matrix.hh"
 #include "dp-maxrow.hh"
 #include "heap.hh"

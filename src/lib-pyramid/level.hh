@@ -21,7 +21,7 @@
 
 #include <deque>
 #include "point2d.hh"
-#include "imageTiff.hh"
+#include "image/imageTiff.hh"
 #include "inline-macro.hh"
 #include "chrono.hh"
 #include "macros.hh"

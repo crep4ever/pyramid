@@ -20,7 +20,7 @@
 #include "scene.hh"
 #include "controler.hh"
 #include "view.hh"
-#include "imageTiff.hh"
+#include "image/imageTiff.hh"
 #include "pyramid.hh"
 #include "level.hh"
 #include "pyramidal-dart.hh"

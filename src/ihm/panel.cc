@@ -20,7 +20,7 @@
 #include "panel.hh"
 #include "file-chooser.hh"
 #include "controler.hh"
-#include "imageTiff.hh"
+#include "image/imageTiff.hh"
 
 CPanel::CPanel( CControler *a_controler )
   : QWidget()

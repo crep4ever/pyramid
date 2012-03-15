@@ -24,7 +24,7 @@
 #include "level.hh"
 #include "svg-export.hh"
 #include "chrono.hh"
-#include "imageTiff.hh"
+#include "image/imageTiff.hh"
 #include "file-chooser.hh"
 using namespace Map2d;
 using namespace pyramid;

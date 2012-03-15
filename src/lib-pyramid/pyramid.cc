@@ -18,7 +18,7 @@
 
 #include "inline-macro.hh"
 #include "pyramid.hh"
-#include "imageTiff.hh"
+#include "image/imageTiff.hh"
 #include "tile.hh"
 #include "region.hh"
 #include "pyramidal-dart.hh"
