@@ -1124,9 +1124,6 @@ namespace pyramid
 
     void histogram(CVolume<uint>* histo);
 
-    unsigned int mergeRegions(bool (CRegion::*AMethod)(CRegion*,int)const, int AThreshold);
-    unsigned int removeSmallRegions(unsigned int AThreshold);
-
     //fait un tableau de la taille de l'ensemble des tuiles filles
     //comportant les valeurs des pixels au niveau k+1
     //des pixels appartenant à des régions d'intérêt au niveau k

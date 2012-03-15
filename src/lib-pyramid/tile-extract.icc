@@ -77,11 +77,4 @@ namespace pyramid
     return sameRegions(APixel, pix2, doublet, ASegmentationMode, AFocusAttentionMode);
   }
 
-  INLINE
-  unsigned int CTile::removeSmallRegions(unsigned int AThreshold)
-  {
-    assert(false);
-    //return mergeRegions(&CRegion::smallRegion,(int)AThreshold);
-    return 0;
-  }
 } //namespace pyramid
