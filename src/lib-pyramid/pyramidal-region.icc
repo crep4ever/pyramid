@@ -37,7 +37,7 @@ namespace pyramid
     m_down       ( NULL ),
     m_label      ( Invalid )
   {
-    setNextSameCC(this);
+    setNextSameCC(NULL);
     setFirstSon(NULL);
   }
 
@@ -268,7 +268,8 @@ namespace pyramid
     setDown( NULL);
     setGreyMin( 255 );
     setGreyMax( 0 );
-    setNextSameCC(this);
+    setNextSameCC(NULL);
+    setFirstSon(NULL);
   }
 
   INLINE

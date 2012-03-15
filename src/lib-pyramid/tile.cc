@@ -98,9 +98,11 @@ void CTile::createSingleRegion(uint AWidth, uint AHeight)
   setRepresentativeDart(infRegion, inf);
   setFirstSon(infRegion, region);      //élément suivant
   setBrother(infRegion, region);       //élément précédent
+  setNextSameCC(infRegion, infRegion); //on boucle sur soi
 
   setRepresentativeDart(region, dart);
   setBrother(region, infRegion);
+  setNextSameCC(region, region);
 
   // Calcul de l'arbre d'inclusion des régions
   relabelDarts();
