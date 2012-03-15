@@ -135,16 +135,6 @@ private:
     ///@name Méthodes privées pour l'extraction d'images.
     //@{
 
-    /**
-     *  Crée le bord initial supérieur avant l'extraction d'une image 2D.
-     *
-     *  @param ALargX largeur en X de l'image
-     *  @param ALargY largeur en Y de l'image
-     *  @return Le brin en haut à gauche incident au premier pointel
-     *          (cf. thèse page 166).
-     */
-    CDart* makeBorder(int ALargX, int ALargY);
-
    /**
     * Effectue la simplification complète de la carte pour supprimer tout les
     * sommets de degré deux.
@@ -156,6 +146,17 @@ private:
     //@{
 
 protected:
+
+    /**
+     *  Crée le bord initial supérieur avant l'extraction d'une image 2D.
+     *
+     *  @param ALargX largeur en X de l'image
+     *  @param ALargY largeur en Y de l'image
+     *  @return Le brin en haut à gauche incident au premier pointel
+     *          (cf. thèse page 166).
+     */
+    CDart* makeBorder(int ALargX, int ALargY);
+
     /**
      *  Calcule le brin "up" à partir du brin "last".
      *
