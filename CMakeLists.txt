@@ -17,14 +17,9 @@ endif()
 include(${CMAKE_CONFIG_PATH}/pyramid-config.cmake)
 
 #-------------------------------------------------------------------------------
-#Find lib-imtiff
-
-
-#-------------------------------------------------------------------------------
 add_subdirectory (src/lib-utils)
 add_subdirectory (src/lib-kmlocal)
 add_subdirectory (src/lib-clustering)
-#add_subdirectory (src/lib-imtiff)
 add_subdirectory (src/lib-image2D)
 add_subdirectory (src/lib-mapkernel)
 add_subdirectory (src/lib-deformable-partition)
@@ -38,7 +33,7 @@ add_subdirectory (src/test)
 if(GENERATE_MANPAGES)
 
   set(PYRAMID_MAN_SRCS
-    ${SOURCE_DIR}/debian/manpages/pryamid.1.txt
+    ${SOURCE_DIR}/debian/manpages/pyramid.1.txt
     )
 
   set(PYRAMID_MAN_LANGS default fr)
@@ -46,7 +41,7 @@ if(GENERATE_MANPAGES)
   foreach(lang ${PYRAMID_MAN_LANGS})
 
     foreach(txtfile ${PYRAMID_MAN_SRCS})
-      # figure the base name of the file (ie "songbook-client.1")
+      # figure the base name of the file (ie "pyramid.1")
       GET_FILENAME_COMPONENT(tmpname ${txtfile} NAME)
       string(REGEX REPLACE ".txt\$" "" basename ${tmpname})
 
