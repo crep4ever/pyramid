@@ -374,9 +374,9 @@ void CTile::saveTree()
       else
 	{
 	  current = static_cast<CInfinitePyramidalRegion*>(*it);
-	  m_regionFields[count].id = 1;
-	  m_regionFields[count].up = 1;
-	  m_regionFields[count].down = 1;
+	  m_regionFields[count].id = (TRegionId) 1;
+	  m_regionFields[count].up = (TRegionId) 1;
+	  m_regionFields[count].down = (TRegionId) 1;
 	  m_regionFields[count].infinite = true;
 	  m_regionFields[count].firstPixel    = CPoint2D(0,0);
 	  m_regionFields[count].nbPixels      = 0;
