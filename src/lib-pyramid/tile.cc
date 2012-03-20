@@ -103,9 +103,17 @@ void CTile::createSingleRegion(uint AWidth, uint AHeight)
   setRepresentativeDart(region, dart);
   setBrother(region, infRegion);
   setNextSameCC(region, region);
+  setFirstSon(region, NULL);
+
+  // On passe en mode UFTree
+  FUFTreeMode = true;
 
   // Calcul de l'arbre d'inclusion des régions
   relabelDarts();
+
+  // On sort du mode UFTree
+  FUFTreeMode = false;
+
   computeInclusionTree();
 }
 
@@ -220,18 +228,15 @@ void CTile::deleteRegionList(std::deque<CRegion*>& AList)
 
 void CTile::relabelDarts()
 {
+  assert( FUFTreeMode );
   // 1. On parcours les brins de la carte pour effectuer une mise à
-  //    jour de leur étiquettage
+  // jour de leur étiquettage
   for (CDynamicCoverageAll it(this); it.cont(); ++it)
     {
       // Si la région d'appartenance du brin pointe sur elle même,
       // il n'y a aucune mise à jour à faire.
       if (getRegion(*it)->getNextSameCC() != getRegion(*it))
 	{
-	  assert(getRegion(*it)->getNextSameCC() != NULL);
-	  // dans les cartes tuilées, on utilise le first pixel pour la comparaison des régions
-	  //assert(findRegionRoot(getRegion(*it))->getId() <= getRegion(*it)->getId());
-
 	  //Conservation des up/down
 	  CPyramidalRegion* region = getRegion(*it);
 	  if( region->existUp() && region->up()->down()==region)
@@ -244,55 +249,51 @@ void CTile::relabelDarts()
     }
 
   // 2. On parcours maintenant les régions à partir de la première région
-  //    contenue dans le fils de m_inclusioTreeRoot.
-  //    On supprime toutes celles qui sont inutiles et on met à jour
-  //    la liste chainée des régions
+  // contenue dans le fils de FInclusioTreeRoot.
+  // On supprime toutes celles qui sont inutiles et on met à jour
+  // la liste chainée des régions
 
   //variable de parcours de la chaine
   setNextSameCC(inclusionTreeRoot(), NULL);
   CPyramidalRegion* currentRegion = inclusionTreeRoot()->firstSon();
   while (currentRegion != NULL)
     {
-      assert(currentRegion->nextSameCC());
-
       //si la région ne pointe pas sur elle même elle doit être supprimée
       //car elle ne correspond pas à une racine d'un arbre
       if (currentRegion->nextSameCC() != currentRegion)
 	{
-	  CPyramidalRegion* tempRegion = currentRegion; //contient la région à supprimer
+	  CPyramidalRegion* TempRegion = currentRegion; //contient la région à supprimer
 
 	  //normalement la région infinie n'est pas parcourue
-	  assert(tempRegion != inclusionTreeRoot());
+	  assert(TempRegion != inclusionTreeRoot());
 	  // et il y a au moins une région avant la région courante
 	  // (au pire la région infinie).
-	  assert(tempRegion->brother());
+	  assert(TempRegion->brother() != NULL);
 
 	  //on met à jour la liste chainée des régions
 
 	  // prev -> next
-	  setFirstSon(tempRegion->brother(), tempRegion->firstSon());
+	  setFirstSon(TempRegion->brother(), TempRegion->firstSon());
 
 	  //si on est pas en bout de chaine
-	  if (tempRegion->firstSon() != NULL)
+	  if (TempRegion->getFirstSon() != NULL)
 	    {
 	      //prev <- next
-	      setBrother(tempRegion->firstSon(), tempRegion->brother());
+	      setBrother(TempRegion->firstSon(), TempRegion->brother());
 	    }
 
 	  //on conserve la région suivante dans la variable currentRegion
-	  currentRegion = tempRegion->firstSon();
+	  currentRegion = TempRegion->firstSon();
 
 	  //on détruit la région courante par appel au destructeur.
 	  //Avant de la détruire on remet les champs de la région à NULL
 	  //afin de ne pas supprimer l'arbre union
-	  setFirstSon(tempRegion, NULL);
-	  setBrother(tempRegion, NULL);
-	  setNextSameCC(tempRegion, NULL);
+	  setFirstSon(TempRegion, NULL);
+	  setBrother(TempRegion, NULL);
+	  setNextSameCC(TempRegion, NULL);
 
-	  assert( !tempRegion->existUp() ||
-		  !(tempRegion->up()->down()==tempRegion));
+	  delete TempRegion;
 
-	  delete tempRegion;
 	  //on décrémente le nombre de régions de la carte
 	  --FNbRegions;
 	}
