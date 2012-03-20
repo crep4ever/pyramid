@@ -39,6 +39,8 @@ namespace pyramid
   {
     setNextSameCC(NULL);
     setFirstSon(NULL);
+    setFather(NULL);
+    setBrother(NULL);
   }
 
   INLINE
@@ -270,6 +272,8 @@ namespace pyramid
     setGreyMax( 0 );
     setNextSameCC(NULL);
     setFirstSon(NULL);
+    setFather(NULL);
+    setBrother(NULL);
   }
 
   INLINE
