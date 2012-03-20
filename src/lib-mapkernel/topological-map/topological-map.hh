@@ -395,13 +395,6 @@ public:
   void exportGraph(std::ostream &os, int amark=-1);
 
 private:
-     /**
-     * @return vrai ssi ARegion est une racine d'un arbre uf.
-     * rmq: On utilise le pointeur FFather pour construire l'arbre
-     * d'une composante connexe.
-     * @pre FUFTreeMode
-     */
-    bool isRegionRoot(CRegion* ARegion) const;
 
   /**
      * @return vrai ssi la région de ADart est une racine d'un arbre uf.
@@ -412,6 +405,15 @@ private:
     bool isRegionRoot(CDart* ADart) const;
 
 protected:
+
+     /**
+     * @return vrai ssi ARegion est une racine d'un arbre uf.
+     * rmq: On utilise le pointeur FFather pour construire l'arbre
+     * d'une composante connexe.
+     * @pre FUFTreeMode
+     */
+    bool isRegionRoot(CRegion* ARegion) const;
+
     /**
      * Réalise l'union entre une région et sa racine
      * si la région est déjà la racine de l'arbre on n'effectue rien...
