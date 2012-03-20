@@ -827,6 +827,12 @@ namespace pyramid
     /// @param cc the next connected component
     void setNextSameCC(CPyramidalRegion* region, CPyramidalRegion* cc);
 
+    /// Wrapper method that denotes a region as the father region in
+    /// the inclusion tree.
+    /// @param region a region
+    /// @param father the father region
+    void setFather(CPyramidalRegion* region, CPyramidalRegion* father);
+
     /// @return true there exist a tile up, false otherwise
     bool existMapUp();
 

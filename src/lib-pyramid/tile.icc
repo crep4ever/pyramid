@@ -991,6 +991,12 @@ namespace pyramid
   }
 
   INLINE
+  void CTile::setFather(CPyramidalRegion* region, CPyramidalRegion* father)
+  {
+    region->setFather(father);
+  }
+
+  INLINE
   CPyramidalRegion* CTile::findRegionRoot(CPyramidalRegion* region)
   {
     return static_cast<CPyramidalRegion*>(CTopologicalMap::findRegionRoot(region));
