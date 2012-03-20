@@ -92,7 +92,7 @@ public:
      */
     void computeInclusionTree();
 
-private:
+protected:
     /**
      *  Boucle principale pour l'extraction de la carte topologique.
      *
@@ -132,7 +132,7 @@ private:
 
     //@}
 
-    ///@name Méthodes privées pour l'extraction d'images.
+    ///@name Méthodes protégées pour l'extraction d'images.
     //@{
 
    /**
@@ -140,12 +140,6 @@ private:
     * sommets de degré deux.
     */
     void simplifyMap();
-    //@}
-
-    ///@name Méthodes protégées pour l'extraction d'images.
-    //@{
-
-protected:
 
     /**
      *  Crée le bord initial supérieur avant l'extraction d'une image 2D.
