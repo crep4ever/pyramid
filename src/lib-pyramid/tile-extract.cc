@@ -121,6 +121,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
 	  // est rattaché à  la carte déja créé.
 	  current  = CDoublet(x,y,XPOS);
 	  nextLast = createSquareFace(last, up, current, currentRegion);
+	  currentRegion->incBoundarySize(4);
 
 	  if( !currentRegion->isInfiniteRegion() )
 	    currentRegion->addPixel( image()->getPixelGreyValue(pix) & 0xFF );
@@ -140,6 +141,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
 	      if ( beta2(last) == vertex || last==vertex )
 		vertex = beta02(vertex);
 	      topoEdgeRemoval(last);
+	      currentRegion->incBoundarySize(-1);
 	    }
 	  else
 	    {
@@ -157,6 +159,7 @@ void CTile::extractMapMainLoop( CDart* ALast,
 		    vertex = NULL;
 		}
 	      topoEdgeRemoval(up);
+	      currentRegion->incBoundarySize(-1);
 	    }
 	  else
 	    {
@@ -202,6 +205,9 @@ void CTile::extractMap( CTile* ATileUp,
   // 1. On crée le bord supérieur.
   CDart* last = makeBorder(width(), height());
   setRepresentativeDart(inclusionTreeRoot(), static_cast<CPyramidalDart*>(last));
+
+   // On passe en mode UFTree
+   FUFTreeMode = true;
 
   // 2. On parcours l'image en faisant les fusions nécessaires.
   extractMapMainLoop( last, ASegmentationMode, AFocusAttentionMode );
